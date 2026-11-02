@@ -243,6 +243,33 @@ struct sBankList {
     int f8FC;                   // 0x8FC
     int f900;                   // 0x900
 };
+
+struct sBankEntry64 {
+    char data[0x64];
+};
+
+// The speech-bank monitor (func_002B3398 dtor): up to 64 named banks, the selection mask and per-kind counts.
+// PORT: 64-bit `long` mask (8 bytes on EE, 4 on Windows); use uint64_t off-PS2.
+struct sSpeechMon {
+    cBankManager** pp;          // 0x000
+    int arr[64];                // 0x004
+    char obj[0x20];             // 0x104
+    char names[64][11];         // 0x124
+    int count;                  // 0x3E4 (number of names)
+    int selected;               // 0x3E8
+    int f3EC;                   // 0x3EC
+    int current;                // 0x3F0
+    int pad3F4;
+    ulong mask;                 // 0x3F8
+    char pad400[0x40C - 0x400];
+    int res;                    // 0x40C
+    char pad410[0x420 - 0x410];
+    int grid[64][5];            // 0x420
+    int totals[5];              // 0x920
+    sBankEntry64 a[64];         // 0x934
+    sBankEntry64 b[64];         // 0x2234
+    sBankEntry64 c[64];         // 0x3B34
+};
 extern "C" void func_003B58D8(void);
 extern "C" void func_003B58A0(void);
 extern char* D_004A37B4;
@@ -3715,18 +3742,6 @@ extern "C" void func_002B3AC0(void* self);
 extern "C" void func_002B43D8(void* self);
 extern "C" void* func_002B1B98(int a0, int a1, int a2, int a3, char a4, int a5, int a6, int a7);
 
-struct sBMon3838 {
-    cBankManager** pp;          // 0x000
-    int arr[64];                // 0x004
-    char obj[0x20];             // 0x104
-    char names[64][11];         // 0x124
-    int count;                  // 0x3E4
-    int pad3E8[2];
-    int cur;                    // 0x3F0
-    int pad3F4[6];
-    int res;                    // 0x40C - see below
-};
-
 // PORT: g++ >?/<? (min/max) operator, removed in GCC 4.3.
 static inline float bmMin3838(float a, float b)
 {
@@ -3739,7 +3754,7 @@ static inline float bmMax3838(float a, float b)
 
 extern "C" void func_002B3838(void* self_, int a1, int a2, int a3)
 {
-    sBMon3838* self = (sBMon3838*)self_;
+    sSpeechMon* self = (sSpeechMon*)self_;
     cBankManager* t;
     sSndPlayer* sub;
     float* pf;
@@ -3775,12 +3790,12 @@ extern "C" void func_002B3838(void* self_, int a1, int a2, int a3)
             }
             idx--;
         }
-        self->cur = idx;
+        self->current = idx;
         name = a1;
         base = (int)&(*self->pp)->sub;
         *(int*)((char*)self + 0x408) = (int)func_002B1B98((int)self->obj, name, self->arr[idx], base, c, (int)pf, a2, a3);
     } else {
-        int k = self->cur;
+        int k = self->current;
         name = (int)self->names[k];
         arg = self->arr[k];
         base = (int)&(*self->pp)->sub;
@@ -4041,26 +4056,13 @@ INCLUDE_ASM("sound/bankmonitor", func_002B3EE8);
 #ifdef SKIP_ASM
 extern "C" char* func_0041AD80(const char* a, const char* b);
 
-// PORT: 64-bit `long` (8 bytes on EE, 4 on Windows); use int64_t/uint64_t off-PS2.
-struct sBankMonFind {
-    char pad0[0x124];
-    char names[64][11];         // 0x124
-    int nnames;                 // 0x3E4
-    int count;                  // 0x3E8
-    char pad3EC[0x3F8 - 0x3EC];
-    ulong mask;                 // 0x3F8
-    char pad400[0x420 - 0x400];
-    int grid[64][5];            // 0x420
-    int totals[5];              // 0x920
-};
-
-extern "C" void func_002B3EE8(sBankMonFind* self, const char* name)
+extern "C" void func_002B3EE8(sSpeechMon* self, const char* name)
 {
-    if (self->count < 64) {
-        for (int i = 0; i < self->nnames; i++) {
+    if (self->selected < 64) {
+        for (int i = 0; i < self->count; i++) {
             if (func_0041AD80(self->names[i], name) != 0) {
                 self->mask |= (ulong)1 << i;
-                self->count++;
+                self->selected++;
                 for (int j = 0; j < 5; j++) {
                     if (self->grid[i][j] != 0) {
                         self->totals[j]++;
@@ -4076,21 +4078,10 @@ extern "C" void func_002B3EE8(sBankMonFind* self, const char* name)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002B3FE8);
 #ifdef SKIP_ASM
-// PORT: 64-bit `long` (8 bytes on EE, 4 on Windows); use int64_t/uint64_t off-PS2.
-struct sBankMonUse {
-    char pad0[0x3E8];
-    int count;                  // 0x3E8
-    char pad3EC[0x3F8 - 0x3EC];
-    ulong mask;                 // 0x3F8
-    char pad400[0x420 - 0x400];
-    int grid[64][5];            // 0x420
-    int totals[5];              // 0x920
-};
-
-extern "C" void func_002B3FE8(sBankMonUse* self, int idx)
+extern "C" void func_002B3FE8(sSpeechMon* self, int idx)
 {
-    if (self->count < 64) {
-        self->count++;
+    if (self->selected < 64) {
+        self->selected++;
         self->mask |= (ulong)1 << idx;
         for (int i = 0; i < 5; i++) {
             if (self->grid[idx][i] != 0) {
@@ -4122,9 +4113,8 @@ extern "C" long func_002B4068(void *arg0) {
 INCLUDE_ASM("sound/bankmonitor", func_002B4070);
 #ifdef SKIP_ASM
 // PORT: 64-bit `long` mask (8 bytes on EE); use uint64_t off-PS2.
-struct sBankMonUse;
 extern "C" void func_002B3EB0(void* self);
-extern "C" void func_002B3FE8(sBankMonUse* self, int idx);
+extern "C" void func_002B3FE8(sSpeechMon* self, int idx);
 void func_002B4060(void* self);
 
 extern "C" void func_002B4070(void* self, ulong mask)
@@ -4133,7 +4123,7 @@ extern "C" void func_002B4070(void* self, ulong mask)
     for (int i = 0; i < *(int*)((char*)self + 0x3EC); i++) {
         int bit = (mask >> i) & 1;
         if (bit) {
-            func_002B3FE8((sBankMonUse*)self, i);
+            func_002B3FE8((sSpeechMon*)self, i);
         }
     }
     func_002B4060(self);
@@ -4143,20 +4133,7 @@ extern "C" void func_002B4070(void* self, ulong mask)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002B40F0);
 #ifdef SKIP_ASM
-struct sBankEntry64 {
-    char data[0x64];
-};
-
-struct sBankMonitor934 {
-    char pad[0x3f0];
-    int current;                // 0x3F0
-    char pad2[0x934 - 0x3f4];
-    sBankEntry64 a[64];         // 0x934
-    sBankEntry64 b[64];         // 0x2234
-    sBankEntry64 c[64];         // 0x3B34
-};
-
-extern "C" sBankEntry64* func_002B40F0(sBankMonitor934* self, int i)
+extern "C" sBankEntry64* func_002B40F0(sSpeechMon* self, int i)
 {
     if (i < 0) {
         i = self->current;
@@ -4171,7 +4148,7 @@ extern "C" sBankEntry64* func_002B40F0(sBankMonitor934* self, int i)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002B4120);
 #ifdef SKIP_ASM
-extern "C" sBankEntry64* func_002B4120(sBankMonitor934* self, int i)
+extern "C" sBankEntry64* func_002B4120(sSpeechMon* self, int i)
 {
     if (i < 0) {
         i = self->current;
@@ -4186,7 +4163,7 @@ extern "C" sBankEntry64* func_002B4120(sBankMonitor934* self, int i)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002B4150);
 #ifdef SKIP_ASM
-extern "C" sBankEntry64* func_002B4150(sBankMonitor934* self, int i)
+extern "C" sBankEntry64* func_002B4150(sSpeechMon* self, int i)
 {
     if (i < 0) {
         i = self->current;
@@ -4215,21 +4192,9 @@ extern "C" void func_002B4180(void* self, int n)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002B41E8);
 #ifdef SKIP_ASM
-struct sMon41E8 {
-    char pad[0x3E4];
-    int count;              // 0x3E4
-    char pad3E8[0x3F0 - 0x3E8];
-    int current;            // 0x3F0
-    char pad3F4[0x3F8 - 0x3F4];
-    unsigned long mask;     // 0x3F8 (PORT: 64-bit long)
-    char pad400[0x420 - 0x400];
-    int table[64][5];       // 0x420
-    int counts[5];          // 0x920
-};
-
-extern "C" void func_002B41E8(sMon41E8* self, int filter, int kind)
+extern "C" void func_002B41E8(sSpeechMon* self, int filter, int kind)
 {
-    if (filter == 0 || self->counts[kind] == 0) {
+    if (filter == 0 || self->totals[kind] == 0) {
         do {
             if (--self->current < 0) {
                 self->current = self->count - 1;
@@ -4240,7 +4205,7 @@ extern "C" void func_002B41E8(sMon41E8* self, int filter, int kind)
             if (--self->current < 0) {
                 self->current = self->count - 1;
             }
-        } while (!((self->mask >> self->current) & 1) || self->table[self->current][kind] == 0);
+        } while (!((self->mask >> self->current) & 1) || self->grid[self->current][kind] == 0);
     }
 }
 #endif
@@ -4248,21 +4213,9 @@ extern "C" void func_002B41E8(sMon41E8* self, int filter, int kind)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002B42B8);
 #ifdef SKIP_ASM
-struct func_002B42B8_sMon {
-    char pad[0x3E4];
-    int count;              // 0x3E4
-    char pad3E8[0x3F0 - 0x3E8];
-    int current;            // 0x3F0
-    char pad3F4[0x3F8 - 0x3F4];
-    unsigned long mask;     // 0x3F8 (PORT: 64-bit long)
-    char pad400[0x420 - 0x400];
-    int table[64][5];       // 0x420
-    int counts[5];          // 0x920
-};
-
-extern "C" void func_002B42B8(func_002B42B8_sMon* self, int filter, int kind)
+extern "C" void func_002B42B8(sSpeechMon* self, int filter, int kind)
 {
-    if (filter == 0 || self->counts[kind] == 0) {
+    if (filter == 0 || self->totals[kind] == 0) {
         do {
             if (++self->current >= self->count) {
                 self->current = 0;
@@ -4273,7 +4226,7 @@ extern "C" void func_002B42B8(func_002B42B8_sMon* self, int filter, int kind)
             if (++self->current >= self->count) {
                 self->current = 0;
             }
-        } while (!((self->mask >> self->current) & 1) || self->table[self->current][kind] == 0);
+        } while (!((self->mask >> self->current) & 1) || self->grid[self->current][kind] == 0);
     }
 }
 #endif
