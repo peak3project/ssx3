@@ -22,6 +22,23 @@ inline sFsVec3 operator+(const sFsVec3& a, const sFsVec3& b) { return sFsVec3(a.
 inline sFsVec3 operator-(const sFsVec3& a, const sFsVec3& b) { return sFsVec3(a.x - b.x, a.y - b.y, a.z - b.z); }
 inline sFsVec3 operator*(const sFsVec3& a, float s) { return sFsVec3(a.x * s, a.y * s, a.z * s); }
 
+// Two floats with an empty and a by-value ctor (texture coordinates).
+struct sFsVec2 {
+    float x, y;
+    sFsVec2() {}
+    sFsVec2(float ax, float ay) : x(ax), y(ay) {}
+};
+
+inline sFsVec2 operator+(const sFsVec2& a, const sFsVec2& b) { return sFsVec2(a.x + b.x, a.y + b.y); }
+inline sFsVec2 operator-(const sFsVec2& a, const sFsVec2& b) { return sFsVec2(a.x - b.x, a.y - b.y); }
+inline sFsVec2 operator*(const sFsVec2& a, float s) { return sFsVec2(a.x * s, a.y * s); }
+
+// A float colour (a, r, g, b) with an empty ctor.
+struct sFsColor {
+    float a, r, g, b;
+    sFsColor() {}
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -36,19 +53,8 @@ extern "C" void func_0034BCA0(void* self, void* verts);
 void* operator new[](unsigned int size, const char* tag, unsigned int flags, int d) __asm__("operator_new__FUi");
 
 
-struct sFsV2_CM {
-    float x, y;
-    sFsV2_CM() {}
-    sFsV2_CM(float ax, float ay) : x(ax), y(ay) {}
-};
 
-struct sFsCol_CM {
-    float a, r, g, b;
-    sFsCol_CM() {}
-};
 
-inline sFsV2_CM operator+(const sFsV2_CM& a, const sFsV2_CM& b) { return sFsV2_CM(a.x + b.x, a.y + b.y); }
-inline sFsV2_CM operator*(const sFsV2_CM& a, float s) { return sFsV2_CM(a.x * s, a.y * s); }
 
 // Uniform float in [0, 1) built from the random mantissa bits.
 static inline float randf_CM()
@@ -70,13 +76,13 @@ struct sFsVE_CM {
 struct sFsQuadVE_CM {
     short delta;
     short index;
-    void (*fn)(void*, void*, int, sFsVec3*, sFsV2_CM*, sFsCol_CM*);
+    void (*fn)(void*, void*, int, sFsVec3*, sFsVec2*, sFsColor*);
 };
 
 struct sFsMeshVE_CM {
     short delta;
     short index;
-    void (*fn)(void*, sFsVec3*, sFsCol_CM*, sFsV2_CM*);
+    void (*fn)(void*, sFsVec3*, sFsColor*, sFsVec2*);
 };
 
 struct sFsMesh_CM {
@@ -110,8 +116,8 @@ extern "C" void cFlagSet_CreateMesh(void* p, void* item)
     self->u = 0.0f;
     self->v = 0.0f;
     char* mgr = D_004A5B80;
-    sFsV2_CM quv[4];
-    sFsCol_CM qcol[4];
+    sFsVec2 quv[4];
+    sFsColor qcol[4];
     sFsVec3 pos[4];
     sFsQuadVE_CM* vt = *(sFsQuadVE_CM**)(mgr + 0x10D8);
     vt[97].fn(mgr + vt[97].delta, item, 0, pos, quv, qcol);
@@ -132,8 +138,8 @@ extern "C" void cFlagSet_CreateMesh(void* p, void* item)
     int n = self->cols * self->rows;
     sFsVec3** pv = &self->verts;
     *pv = new (D_0048E850, 0x20000000, 0) sFsVec3[n];
-    sFsV2_CM uv[50];
-    sFsCol_CM col[50];
+    sFsVec2 uv[50];
+    sFsColor col[50];
     int idx = 0;
     for (int r = 0; r < self->rows; r++) {
         for (int c = 0; c < self->cols; c++) {
@@ -1146,20 +1152,8 @@ extern char* D_004A5B80;
 extern "C" void func_0034CF98(void* self);
 
 
-struct sFsV2_D1E8 {
-    float x, y;
-    sFsV2_D1E8() {}
-    sFsV2_D1E8(float ax, float ay) : x(ax), y(ay) {}
-};
 
-struct sFsCol_D1E8 {
-    float a, r, g, b;
-    sFsCol_D1E8() {}
-};
 
-inline sFsV2_D1E8 operator+(const sFsV2_D1E8& a, const sFsV2_D1E8& b) { return sFsV2_D1E8(a.x + b.x, a.y + b.y); }
-inline sFsV2_D1E8 operator-(const sFsV2_D1E8& a, const sFsV2_D1E8& b) { return sFsV2_D1E8(a.x - b.x, a.y - b.y); }
-inline sFsV2_D1E8 operator*(const sFsV2_D1E8& a, float s) { return sFsV2_D1E8(a.x * s, a.y * s); }
 
 struct sFsVE_D1E8 {
     short delta;
@@ -1170,13 +1164,13 @@ struct sFsVE_D1E8 {
 struct sFsQuadVE_D1E8 {
     short delta;
     short index;
-    void (*fn)(void*, void*, int, sFsVec3*, sFsV2_D1E8*, sFsCol_D1E8*);
+    void (*fn)(void*, void*, int, sFsVec3*, sFsVec2*, sFsColor*);
 };
 
 struct sFsMeshVE_D1E8 {
     short delta;
     short index;
-    void (*fn)(void*, sFsVec3*, sFsCol_D1E8*, sFsV2_D1E8*);
+    void (*fn)(void*, sFsVec3*, sFsColor*, sFsVec2*);
 };
 
 struct sFsMesh_D1E8 {
@@ -1210,12 +1204,12 @@ extern "C" void func_0034D1E8(void* p)
     sFsVE_D1E8* e = &(*(sFsVE_D1E8**)(mgr + 0x10D8))[76];
     self->mesh = (sFsMesh_D1E8*)e->fn(mgr + e->delta, 8, 2, 0x60000000u);
     sFsVec3 pos[4];
-    sFsV2_D1E8 quv[4];
-    sFsCol_D1E8 qcol[4];
+    sFsVec2 quv[4];
+    sFsColor qcol[4];
     sFsQuadVE_D1E8* vt = *(sFsQuadVE_D1E8**)(mgr + 0x10D8);
     vt[97].fn(mgr + vt[97].delta, self->node, 0, pos, quv, qcol);
-    sFsV2_D1E8 uv[16];
-    sFsCol_D1E8 col[16];
+    sFsVec2 uv[16];
+    sFsColor col[16];
     for (int i = 0; i < 8; i++) {
         float t = (float)i;
         self->top[i] = pos[0] + (pos[1] - pos[0]) * t * 0.1428571492433548f;
