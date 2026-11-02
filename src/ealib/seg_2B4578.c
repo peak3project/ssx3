@@ -150,7 +150,7 @@ struct sA8E8 {
     signed char f179;
     char pad17A[0x17E - 0x17A];
     short f17E;                     /* number of channels (f1F0) */
-    unsigned int f180;              /* tick */
+    volatile unsigned int f180;     /* tick */
     void (*f184[6])(void);          /* f177 entries */
     void (*f19C[6])(void);          /* f178 entries */
     struct sA8E8Node *f1B4;
@@ -7039,12 +7039,6 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003C1B80);
 INCLUDE_ASM("ealib/seg_2B4578", func_003C2268);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-typedef struct {
-    char pad0[0x176];
-    unsigned char f176;
-    char pad177[0x180 - 0x177];
-    unsigned int f180;
-} G_2268;
 typedef struct { int h; int pad[3]; } V_2268;
 typedef struct {
     char pad0[0xE8C];
@@ -7063,7 +7057,6 @@ typedef struct {
     char pad1AFC[0x1B38 - 0x1AFC];
     int f1B38;
 } H_2268;
-extern volatile G_2268 D_0050A8E8_2268 __asm__("D_0050A8E8");
 extern H_2268 D_0050AD00_2268 __asm__("D_0050AD00");
 extern int D_00512B20;
 extern void func_003C0B10_2268(int, int, int) __asm__("func_003C0B10");
@@ -7083,11 +7076,11 @@ int func_003C2268(void) {
     unsigned int t;
     int i;
 
-    while (D_0050A8E8_2268.f176 != 0) {
+    while (D_0050A8E8.f176 != 0) {
         func_003B58D8();
     }
-    t = D_0050A8E8_2268.f180 + 10;
-    while (D_0050A8E8_2268.f180 < t) {
+    t = D_0050A8E8.f180 + 10;
+    while (D_0050A8E8.f180 < t) {
         func_003C60E0();
     }
     if (D_0050AD00_2268.f1AA8 >= 0) {
