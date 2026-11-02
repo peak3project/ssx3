@@ -108,6 +108,11 @@ struct sPtVtIIII {
     int (*fn)(void*, int, int, int);
 };
 
+// Byte colour (r, g, b, a).
+struct sPtRGBA {
+    unsigned char r, g, b, a;
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -568,9 +573,6 @@ extern "C" void func_003715B0(void* self, int a1)
 //100%
 INCLUDE_ASM("render/particle", cDynamicColourEmitter_reset);
 #ifdef SKIP_ASM
-struct sRGBA_1600 {
-    unsigned char r, g, b, a;
-};
 
 // Function-local static `sRGBA black(0,0,0,0)` and its init guard, spelled out
 // as the globals splat named.
@@ -592,7 +594,7 @@ extern "C" void cDynamicColourEmitter_reset(void* self)
             D_004A599B = 0;
             D_004A599C = 1;
         }
-        (*(sRGBA_1600**)((char*)self + 0x204))[i] = *(sRGBA_1600*)&D_004A5998;
+        (*(sPtRGBA**)((char*)self + 0x204))[i] = *(sPtRGBA*)&D_004A5998;
     }
 }
 #endif
@@ -660,9 +662,6 @@ struct sPtCol17C0 {
     float r, g, b, a;
 } __attribute__((aligned(16)));
 
-struct sPtRGBA17C0 {
-    unsigned char r, g, b, a;
-};
 
 struct sPtObj17C0 {
     char pad_0x0[0x17C];
@@ -670,7 +669,7 @@ struct sPtObj17C0 {
     char pad_0x180[0x50];
     sPtCol17C0 col;             // 0x1D0
     char pad_0x1E0[0x24];
-    sPtRGBA17C0* colors;        // 0x204
+    sPtRGBA* colors;        // 0x204
 };
 
 extern "C" void func_003710D0(void* self, int a1, int a2, int a3);
