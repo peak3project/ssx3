@@ -64,6 +64,11 @@ struct sGifQuad {
     unsigned int w[4];
 } __attribute__((aligned(16)));
 
+// Plain three-float vector.
+struct sPtVec3 {
+    float x, y, z;
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -1382,16 +1387,13 @@ extern "C" void func_003739D0(sPtPools39D0* self)
 //100%
 INCLUDE_ASM("render/particle", func_00373C28);
 #ifdef SKIP_ASM
-struct sPtVec3_3C28 {
-    float x, y, z;
-};
 
 // One bone matrix: 4 rows of 4 floats; column j of each row is used for output component j.
 struct sPtMtx_3C28 {
     float m[4][4];
 };
 
-static inline float ptBlend_3C28(sPtVec3_3C28* p, sPtMtx_3C28* mt, float* w, int j)
+static inline float ptBlend_3C28(sPtVec3* p, sPtMtx_3C28* mt, float* w, int j)
 {
     float x = p->x;
     float y = p->y;
@@ -1404,7 +1406,7 @@ static inline float ptBlend_3C28(sPtVec3_3C28* p, sPtMtx_3C28* mt, float* w, int
 
 // Blends p through four matrices: out = M0 p * w[0] + M1 p * w[1] + M2 p * w[2] + M3 p
 // (rows 0-2 scale x, y, z; row 3 is the translation).
-extern "C" void func_00373C28(void* self, sPtVec3_3C28* p, sPtMtx_3C28* mt, float* w, float* out)
+extern "C" void func_00373C28(void* self, sPtVec3* p, sPtMtx_3C28* mt, float* w, float* out)
 {
     out[0] = ptBlend_3C28(p, mt, w, 0);
     out[1] = ptBlend_3C28(p, mt, w, 1);
@@ -1447,9 +1449,6 @@ extern "C" void func_00373EA8(void* self, sPtVec4_3EA8* p, sPtMtx_3EA8* mt, floa
 INCLUDE_ASM("render/particle", func_00374180);
 #ifdef SKIP_ASM
 
-struct sPatchOut {
-    float x, y, z;
-};
 
 struct sPatchSet {
     char pad_0x00[0x190];
@@ -1459,7 +1458,7 @@ struct sPatchSet {
 
 // PORT: PS2-only VU0 inline asm (tensor-product patch evaluation: out[i][j] =
 // sum over basis[i] (x) basis[j] of the 4x4 control block at mat+0x40).
-extern "C" void func_00374180(sPatchSet* self, char* mat, sPatchOut* out, int idx)
+extern "C" void func_00374180(sPatchSet* self, char* mat, sPtVec3* out, int idx)
 {
     int n = self->count[idx];
     t4Vector* basis = self->basis[idx];
@@ -1516,7 +1515,7 @@ extern "C" void func_00374180(sPatchSet* self, char* mat, sPatchOut* out, int id
                 "sqc2      $vf23, %0\n"
                 : "=m"(t)
                 : "r"(&basis[j]));
-            *out++ = *(sPatchOut*)&t;
+            *out++ = *(sPtVec3*)&t;
         }
     }
 }
@@ -1745,9 +1744,6 @@ extern "C" void func_00374518(sPatchSet4518* self, char* mat, sPatchOut4518* out
 INCLUDE_ASM("render/particle", func_003747A0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct sPV3_47A0 {
-    float x, y, z;
-};
 
 struct sPV2_47A0 {
     float x, y;
@@ -1765,9 +1761,9 @@ struct sPMgr_47A0 {
     char pad_0x24[0xC];
     int* freeList[3];               // 0x30
     int freeCount[3];               // 0x3C
-    sPV3_47A0 (*pos0)[16];          // 0x48
-    sPV3_47A0 (*pos1)[36];          // 0x4C
-    sPV3_47A0 (*pos2)[64];          // 0x50
+    sPtVec3 (*pos0)[16];          // 0x48
+    sPtVec3 (*pos1)[36];          // 0x4C
+    sPtVec3 (*pos2)[64];          // 0x50
     sPV2_47A0 (*uv0)[16];           // 0x54
     sPV2_47A0 (*uv1)[36];           // 0x58
     sPV2_47A0 (*uv2)[64];           // 0x5C
@@ -1775,16 +1771,16 @@ struct sPMgr_47A0 {
     sPV2_47A0 (*col1)[36];          // 0x64
     sPV2_47A0 (*col2)[64];          // 0x68
     char pad_0x6C[0x1B4 - 0x6C];
-    sPV3_47A0 (*nrm0)[16];          // 0x1B4
-    sPV3_47A0 (*nrm1)[36];          // 0x1B8
-    sPV3_47A0 (*nrm2)[64];          // 0x1BC
+    sPtVec3 (*nrm0)[16];          // 0x1B4
+    sPtVec3 (*nrm1)[36];          // 0x1B8
+    sPtVec3 (*nrm2)[64];          // 0x1BC
     char pad_0x1C0[0xC];
     int* nfreeList[3];              // 0x1CC
     int nfreeCount[3];              // 0x1D8
 };
 
 // func_00374518 is declared through a local view so the unit's own definition keeps its types
-extern "C" void func_00374518_47A0(sPMgr_47A0* self, char* mat, sPV3_47A0* out, int idx) __asm__("func_00374518");
+extern "C" void func_00374518_47A0(sPMgr_47A0* self, char* mat, sPtVec3* out, int idx) __asm__("func_00374518");
 
 static inline int PopSlot_47A0(sPMgr_47A0* self, int idx)
 {
@@ -1797,7 +1793,7 @@ static inline int PopSlot_47A0(sPMgr_47A0* self, int idx)
     return r;
 }
 
-static inline sPV3_47A0* PosOf_47A0(sPMgr_47A0* self, int idx, int slot)
+static inline sPtVec3* PosOf_47A0(sPMgr_47A0* self, int idx, int slot)
 {
     switch (idx) {
     case 0:
@@ -1836,7 +1832,7 @@ static inline sPV2_47A0* ColOf_47A0(sPMgr_47A0* self, int idx, int slot)
     return 0;
 }
 
-static inline sPV3_47A0* NrmOf_47A0(sPMgr_47A0* self, int idx, int slot)
+static inline sPtVec3* NrmOf_47A0(sPMgr_47A0* self, int idx, int slot)
 {
     switch (idx) {
     case 0:
@@ -1852,10 +1848,10 @@ static inline sPV3_47A0* NrmOf_47A0(sPMgr_47A0* self, int idx, int slot)
 extern "C" int func_003747A0(sPMgr_47A0* self, char* mat, int idx, int bit, int normals)
 {
     int slot = PopSlot_47A0(self, idx);
-    sPV3_47A0* pos = PosOf_47A0(self, idx, slot);
+    sPtVec3* pos = PosOf_47A0(self, idx, slot);
     sPV2_47A0* uv = UVOf_47A0(self, idx, slot);
     sPV2_47A0* col = ColOf_47A0(self, idx, slot);
-    func_00374180((sPatchSet*)self, mat, (sPatchOut*)pos, idx);
+    func_00374180((sPatchSet*)self, mat, (sPtVec3*)pos, idx);
     func_00374298((char*)self, mat, (sV2_4298*)uv, idx);
     func_00374440((char*)self, (sPtRect*)mat, (sPtVec2*)col, idx);
     sPEnt_47A0* e = &self->entries[idx][slot];
@@ -1864,7 +1860,7 @@ extern "C" int func_003747A0(sPMgr_47A0* self, char* mat, int idx, int bit, int 
     e->flags |= 0xC | (1 << bit);
     if (normals) {
         int nslot = self->nfreeList[idx][--self->nfreeCount[idx]];
-        sPV3_47A0* nrm = NrmOf_47A0(self, idx, nslot);
+        sPtVec3* nrm = NrmOf_47A0(self, idx, nslot);
         func_00374518_47A0(self, mat, nrm, idx);
         e->nslot = nslot;
     }
@@ -5132,9 +5128,6 @@ INCLUDE_ASM("render/particle", func_0037E238);
 //100%
 INCLUDE_ASM("render/particle", func_00380380);
 #ifdef SKIP_ASM
-struct sV3_0380 {
-    float x, y, z;
-};
 
 struct sCol0380 {
     unsigned short r : 5;
@@ -5154,7 +5147,7 @@ struct sMdl0380 {
     char pad_0x0[0x8];
     sEnt0380* ents;         // 0x8
     char pad_0xC[0xC];
-    sV3_0380 scale;         // 0x18
+    sPtVec3 scale;         // 0x18
     int dataOff;            // 0x24
 };
 
@@ -5166,8 +5159,8 @@ extern "C" void func_00380380(void* self, char* obj, int idx, float* pos, float*
     short* t = (short*)(data + 0x80);
     short* p = (short*)(data + 0xA0);
     sCol0380* c = (sCol0380*)(*(char**)(base + *(int*)(obj + 0x98) + 0x14) + 0x10);
-    sV3_0380 k;
-    sV3_0380 s = mdl->scale;
+    sPtVec3 k;
+    sPtVec3 s = mdl->scale;
     k.x = s.x * 3.0518509447574615e-05f;
     k.y = s.y * 3.0518509447574615e-05f;
     k.z = s.z * 3.0518509447574615e-05f;
@@ -6790,14 +6783,11 @@ INCLUDE_ASM("render/particle", func_003856B8);
 //100%
 INCLUDE_ASM("render/particle", func_00385A38);
 #ifdef SKIP_ASM
-struct sPartVec3 {
-    float x, y, z;
-};
 
-extern "C" void func_00385A38(void* self, short* out, int i, sPartVec3* v)
+extern "C" void func_00385A38(void* self, short* out, int i, sPtVec3* v)
 {
     float s = *(float*)((char*)self + 0x198);
-    sPartVec3 t;
+    sPtVec3 t;
     t.x = v->x * s;
     t.y = v->y * s;
     t.z = v->z * s;
