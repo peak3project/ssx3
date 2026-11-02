@@ -120,27 +120,12 @@ void* operator new[](unsigned int size, const char* tag, unsigned int flags, int
 
 
 
-struct sFsVE_CM {
-    short delta;
-    short index;
-    void* (*fn)(void*, int, int, unsigned int);
-};
 
-struct sFsQuadVE_CM {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int, sFsVec3*, sFsVec2*, sFsColor*);
-};
 
-struct sFsMeshVE_CM {
-    short delta;
-    short index;
-    void (*fn)(void*, sFsVec3*, sFsColor*, sFsVec2*);
-};
 
 struct sFsMesh_CM {
     int pad0;
-    sFsMeshVE_CM* vt;   // 0x4
+    sVEntry<void(void*, sFsVec3*, sFsColor*, sFsVec2*)>* vt;   // 0x4
 };
 
 struct sFlagElem_CM {
@@ -172,7 +157,7 @@ extern "C" void cFlagSet_CreateMesh(void* p, void* item)
     sFsVec2 quv[4];
     sFsColor qcol[4];
     sFsVec3 pos[4];
-    sFsQuadVE_CM* vt = *(sFsQuadVE_CM**)(mgr + 0x10D8);
+    sVEntry<void(void*, void*, int, sFsVec3*, sFsVec2*, sFsColor*)>* vt = *(sVEntry<void(void*, void*, int, sFsVec3*, sFsVec2*, sFsColor*)>**)(mgr + 0x10D8);
     vt[97].fn(mgr + vt[97].delta, item, 0, pos, quv, qcol);
     if (self->windX < 0.01f && self->windY < 0.01f) {
         self->cols = 8;
@@ -183,7 +168,7 @@ extern "C" void cFlagSet_CreateMesh(void* p, void* item)
     }
     self->colScale = (float)(self->cols - 1);
     self->rowScale = (float)(self->rows - 1);
-    sFsVE_CM* e = &(*(sFsVE_CM**)(mgr + 0x10D8))[76];
+    sVEntry<void*(void*, int, int, unsigned int)>* e = &(*(sVEntry<void*(void*, int, int, unsigned int)>**)(mgr + 0x10D8))[76];
     self->mesh = (sFsMesh_CM*)e->fn(mgr + e->delta, self->cols, self->rows, 0x60000000u);
     if (self->mesh == 0) {
         return;
@@ -220,11 +205,6 @@ INCLUDE_ASM("object/flagset", func_0034B7B8);
 extern char* D_004A5B80;
 void cMemMan_free(void*);
 
-struct sFlagSetVEntryB7B8 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*);
-};
 
 extern "C" void func_0034B7B8(void* self)
 {
@@ -232,7 +212,7 @@ extern "C" void func_0034B7B8(void* self)
     void* h = *(void**)(s + 0x60);
     if (h != 0) {
         char* mgr = D_004A5B80;
-        sFlagSetVEntryB7B8* vt = *(sFlagSetVEntryB7B8**)(mgr + 0x10D8);
+        sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)(mgr + 0x10D8);
         vt[77].fn(mgr + vt[77].delta, h);
         *(void**)(s + 0x60) = 0;
     }
@@ -257,15 +237,10 @@ struct sFlagVert_B818 {
     sFlagVert_B818() {}
 };
 
-struct sFlagVEntry_B818 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*);
-};
 
 struct sFlagMesh_B818 {
     int pad0;
-    sFlagVEntry_B818* vt;   // 0x4
+    sVEntry<void(void*, void*)>* vt;   // 0x4
 };
 
 struct sFlagElem_B818 {
@@ -311,7 +286,7 @@ extern "C" void func_0034B818(void* elem)
         sFlagVert_B818 verts[50];
         func_0034BCA0(self, verts);
         sFlagMesh_B818* m = self->mesh;
-        sFlagVEntry_B818* e = &m->vt[3];
+        sVEntry<void(void*, void*)>* e = &m->vt[3];
         e->fn((char*)m + e->delta, verts);
     }
     if (0.001f < self->scrollU || 0.001f < self->scrollV) {
@@ -342,10 +317,6 @@ extern char D_004FF1A0[];
 
 
 
-struct sVE43_34B9B0 { short delta; short index; t4Matrix (*fn)(void*); };
-struct sVE93_34B9B0 { short delta; short index; int (*fn)(void*, sFsVec4*, sFsVec4*, t4Matrix*); };
-struct sVE96_34B9B0 { short delta; short index; void (*fn)(void*, void*, int, int, int); };
-struct sVE7_34B9B0 { short delta; short index; void (*fn)(void*, void*, void*, t4Matrix*); };
 
 
 // PORT: PS2-only VU0 inline asm (4x4 matrix copy).
@@ -394,12 +365,12 @@ extern "C" void func_0034B9B0(sFlagSetEntry* e)
             continue;
         }
         {
-            sVE93_34B9B0* vt = *(sVE93_34B9B0**)(ctx + 0x10D8);
+            sVEntry<int(void*, sFsVec4*, sFsVec4*, t4Matrix*)>* vt = *(sVEntry<int(void*, sFsVec4*, sFsVec4*, t4Matrix*)>**)(ctx + 0x10D8);
             char* thisp = ctx + vt[93].delta;
             sFsVec4 a(*(float*)((char*)m + 0x60), *(float*)((char*)m + 0x64), *(float*)((char*)m + 0x68), 1.0f);
             sFsVec4 b(*(float*)((char*)m + 0x6C), *(float*)((char*)m + 0x70), *(float*)((char*)m + 0x74), 1.0f);
             sFsVec4* pb = &b;
-            sVE43_34B9B0* vt43 = *(sVE43_34B9B0**)(ctx + 0x10D8);
+            sVEntry<t4Matrix(void*)>* vt43 = *(sVEntry<t4Matrix(void*)>**)(ctx + 0x10D8);
             t4Matrix c = vt43[43].fn(ctx + vt43[43].delta);
             if (vt[93].fn(thisp, &a, pb, &c) == 1) {
                 continue;
@@ -413,10 +384,10 @@ extern "C" void func_0034B9B0(sFlagSetEntry* e)
             mat.row[3].y = *(float*)(self + 0x8C);
             char* h = *(char**)(self + 0x60);
             if (h != 0) {
-                sVE7_34B9B0* hv = *(sVE7_34B9B0**)(h + 4);
+                sVEntry<void(void*, void*, void*, t4Matrix*)>* hv = *(sVEntry<void(void*, void*, void*, t4Matrix*)>**)(h + 4);
                 hv[7].fn(h + hv[7].delta, pos, *(void**)((char*)m + 0x94), &mat);
             } else {
-                sVE96_34B9B0* v96 = *(sVE96_34B9B0**)(ctx + 0x10D8);
+                sVEntry<void(void*, void*, int, int, int)>* v96 = *(sVEntry<void(void*, void*, int, int, int)>**)(ctx + 0x10D8);
                 v96[96].fn(ctx + v96[96].delta, m, 0, 0, 0);
             }
         }
@@ -430,17 +401,7 @@ INCLUDE_ASM("object/flagset", func_0034BCA0);
 //100%
 INCLUDE_ASM("object/flagset", func_0034C2E0);
 #ifdef SKIP_ASM
-struct sFlagSetVEntryC2E0a {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
 
-struct sFlagSetVEntryC2E0b {
-    short delta;
-    short index;
-    void (*fn)(void*, void*);
-};
 
 struct sFlagSet_C2E0 {
     char pad0[0x5C];
@@ -453,10 +414,10 @@ extern "C" void func_0034C2E0(void* elem, void* stream)
 {
     int i;
     sFlagSet_C2E0* self = (sFlagSet_C2E0*)elem;
-    sFlagSetVEntryC2E0a* e = &(*(sFlagSetVEntryC2E0a**)stream)[1];
+    sVEntry<void(void*, void*, int)>* e = &(*(sVEntry<void(void*, void*, int)>**)stream)[1];
     e->fn((char*)stream + e->delta, self, 0x60);
     for (i = 0; i < self->count; i++) {
-        sFlagSetVEntryC2E0b* e2 = &(*(sFlagSetVEntryC2E0b**)stream)[5];
+        sVEntry<void(void*, void*)>* e2 = &(*(sVEntry<void(void*, void*)>**)stream)[5];
         e2->fn((char*)stream + e2->delta, self->items[i]);
     }
 }
@@ -465,17 +426,7 @@ extern "C" void func_0034C2E0(void* elem, void* stream)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("object/flagset", func_0034C378);
 #ifdef SKIP_ASM
-struct sFlagSetVEntryC378a {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
 
-struct sFlagSetVEntryC378b {
-    short delta;
-    short index;
-    void* (*fn)(void*);
-};
 
 extern "C" void cFlagSet_CreateMesh(void* self, void* item);
 
@@ -483,10 +434,10 @@ extern "C" void func_0034C378(void* elem, void* stream)
 {
     int i;
     sFlagSet_C2E0* self = (sFlagSet_C2E0*)elem;
-    sFlagSetVEntryC378a* e = &(*(sFlagSetVEntryC378a**)stream)[2];
+    sVEntry<void(void*, void*, int)>* e = &(*(sVEntry<void(void*, void*, int)>**)stream)[2];
     e->fn((char*)stream + e->delta, self, 0x60);
     for (i = 0; i < self->count; i++) {
-        sFlagSetVEntryC378b* e2 = &(*(sFlagSetVEntryC378b**)stream)[3];
+        sVEntry<void*(void*)>* e2 = &(*(sVEntry<void*(void*)>**)stream)[3];
         self->items[i] = e2->fn((char*)stream + e2->delta);
     }
     if (self->count > 0) {
@@ -539,15 +490,10 @@ INCLUDE_ASM("object/flagset", func_0034C4B8);
 extern "C" void func_003546C8(void* self, int flags);
 extern void* D_0048FB80[];
 
-struct sFlagSetVEntry_C4B8 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 struct sFlagSetElem_C4B8 {
     char pad0[0x184];
-    sFlagSetVEntry_C4B8* vt;        // 0x184
+    sVEntry<void(void*, int)>* vt;        // 0x184
 };
 
 struct sFlagSet_C4B8 {
@@ -830,11 +776,6 @@ extern char* D_004A5B80;
 extern void* D_0048FA00[];
 extern "C" void func_0034FBF0(void* self, int flags);
 
-struct sFlagSetVEntryCB80 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*);
-};
 
 extern "C" void func_0034CB80(void* self, int flags)
 {
@@ -843,7 +784,7 @@ extern "C" void func_0034CB80(void* self, int flags)
     void* h = *(void**)(s + 0x40);
     if (h != 0) {
         char* mgr = D_004A5B80;
-        sFlagSetVEntryCB80* vt = *(sFlagSetVEntryCB80**)(mgr + 0x10D8);
+        sVEntry<void(void*, void*)>* vt = *(sVEntry<void(void*, void*)>**)(mgr + 0x10D8);
         vt[77].fn(mgr + vt[77].delta, h);
     }
     func_0034FBF0(self, flags);
@@ -857,11 +798,6 @@ extern "C" void* cInstanceNode_cInstanceNode(void* self, void* a1, void* stream)
 extern "C" void func_0034D1E8(void* self);
 extern void* D_0048FA00[];
 
-struct sFlagSetVEntry_CBE8 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
 
 struct sFlagElem_CBE8 {
     float v[4];
@@ -875,7 +811,7 @@ extern "C" void* func_0034CBE8(void* self, void* a1, void* stream)
     *(unsigned int*)((char*)self + 0x1C) = 0xFFFFFFFF;
     *(void***)((char*)self + 0xC) = D_0048FA00;
     new ((char*)self + 0x40) sFlagElem_CBE8[16];
-    sFlagSetVEntry_CBE8* e = &(*(sFlagSetVEntry_CBE8**)stream)[2];
+    sVEntry<void(void*, void*, int)>* e = &(*(sVEntry<void(void*, void*, int)>**)stream)[2];
     e->fn((char*)stream + e->delta, (char*)self + 0x1C, 0x24);
     func_0034D1E8(self);
     return self;
@@ -982,11 +918,6 @@ INCLUDE_ASM("object/flagset", func_0034CE48);
 extern "C" void func_0034CC80(char* self, char* obj, int flag);
 extern "C" void func_0034CF98(void* self);
 
-struct sFlagVE_34CE48 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 
 extern "C" void func_0034CE48(char* self)
@@ -1004,7 +935,7 @@ extern "C" void func_0034CE48(char* self)
     char* osc = self + 0x1C;
     *(float*)(self + 0x2C) += *(float*)(self + 0x34);
     if (*(float*)(self + 0x30) < 0.01f && fsAbs(*(float*)(osc + 0x10)) < 0.01f) {
-        sFlagVE_34CE48* vt = *(sFlagVE_34CE48**)(self + 0xC);
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(self + 0xC);
         vt[34].fn(self + vt[34].delta, 1);
         return;
     }
@@ -1077,15 +1008,10 @@ static inline sFsVec3 fsAdd_CF98(const sFsVec3& a, const sFsVec4_CF98& b)
     return sFsVec3(a.x + b.x, a.y + b.y, a.z + b.z);
 }
 
-struct sFlagVEntry_CF98 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*);
-};
 
 struct sFlagMesh_CF98 {
     int pad0;
-    sFlagVEntry_CF98* vt;   // 0x4
+    sVEntry<void(void*, void*)>* vt;   // 0x4
 };
 
 struct sFlagSet_CF98 {
@@ -1127,7 +1053,7 @@ extern "C" void func_0034CF98(void* p)
         }
     }
     sFlagMesh_CF98* m = self->mesh;
-    sFlagVEntry_CF98* e = &m->vt[3];
+    sVEntry<void(void*, void*)>* e = &m->vt[3];
     e->fn((char*)m + e->delta, pts);
 }
 #endif
@@ -1142,27 +1068,12 @@ extern "C" void func_0034CF98(void* self);
 
 
 
-struct sFsVE_D1E8 {
-    short delta;
-    short index;
-    void* (*fn)(void*, int, int, unsigned int);
-};
 
-struct sFsQuadVE_D1E8 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int, sFsVec3*, sFsVec2*, sFsColor*);
-};
 
-struct sFsMeshVE_D1E8 {
-    short delta;
-    short index;
-    void (*fn)(void*, sFsVec3*, sFsColor*, sFsVec2*);
-};
 
 struct sFsMesh_D1E8 {
     int pad0;
-    sFsMeshVE_D1E8* vt;   // 0x4
+    sVEntry<void(void*, sFsVec3*, sFsColor*, sFsVec2*)>* vt;   // 0x4
 };
 
 struct sFsNode_D1E8 {
@@ -1188,12 +1099,12 @@ extern "C" void func_0034D1E8(void* p)
     self->obj108 = 0;
     self->node->flags = (self->node->flags & ~2u) | 4;
     char* mgr = D_004A5B80;
-    sFsVE_D1E8* e = &(*(sFsVE_D1E8**)(mgr + 0x10D8))[76];
+    sVEntry<void*(void*, int, int, unsigned int)>* e = &(*(sVEntry<void*(void*, int, int, unsigned int)>**)(mgr + 0x10D8))[76];
     self->mesh = (sFsMesh_D1E8*)e->fn(mgr + e->delta, 8, 2, 0x60000000u);
     sFsVec3 pos[4];
     sFsVec2 quv[4];
     sFsColor qcol[4];
-    sFsQuadVE_D1E8* vt = *(sFsQuadVE_D1E8**)(mgr + 0x10D8);
+    sVEntry<void(void*, void*, int, sFsVec3*, sFsVec2*, sFsColor*)>* vt = *(sVEntry<void(void*, void*, int, sFsVec3*, sFsVec2*, sFsColor*)>**)(mgr + 0x10D8);
     vt[97].fn(mgr + vt[97].delta, self->node, 0, pos, quv, qcol);
     sFsVec2 uv[16];
     sFsColor col[16];
@@ -1297,10 +1208,6 @@ INCLUDE_ASM("object/flagset", func_0034D778);
 
 
 
-struct sVE43_D778 { short delta; short index; t4Matrix (*fn)(void*); };
-struct sVE93_D778 { short delta; short index; int (*fn)(void*, sFsVec4*, sFsVec4*, t4Matrix*); };
-struct sVE96_D778 { short delta; short index; void (*fn)(void*, void*, int, int, int); };
-struct sVE7_D778 { short delta; short index; void (*fn)(void*, void*, void*, t4Matrix*); };
 
 
 #define TOP_D778(c) (*(sFsRenderState**)((c) + 0xE84))
@@ -1314,12 +1221,12 @@ extern "C" void func_0034D778(void* vself)
     char* ctx = D_004A5B80;
     {
         sFsModel* m = *(sFsModel**)(self + 0x18);
-        sVE93_D778* vt = *(sVE93_D778**)(ctx + 0x10D8);
+        sVEntry<int(void*, sFsVec4*, sFsVec4*, t4Matrix*)>* vt = *(sVEntry<int(void*, sFsVec4*, sFsVec4*, t4Matrix*)>**)(ctx + 0x10D8);
         char* thisp = ctx + vt[93].delta;
         sFsVec4 a(*(float*)((char*)m + 0x60), *(float*)((char*)m + 0x64), *(float*)((char*)m + 0x68), 1.0f);
         sFsVec4 b(*(float*)((char*)m + 0x6C), *(float*)((char*)m + 0x70), *(float*)((char*)m + 0x74), 1.0f);
         sFsVec4* pb = &b;
-        sVE43_D778* vt43 = *(sVE43_D778**)(ctx + 0x10D8);
+        sVEntry<t4Matrix(void*)>* vt43 = *(sVEntry<t4Matrix(void*)>**)(ctx + 0x10D8);
         t4Matrix c = vt43[43].fn(ctx + vt43[43].delta);
         if (vt[93].fn(thisp, &a, pb, &c) == 1) {
             return;
@@ -1333,10 +1240,10 @@ extern "C" void func_0034D778(void* vself)
     char* pos = (char*)m + 0x10;
     char* h = *(char**)(self + 0x40);
     if (h != 0) {
-        sVE7_D778* hv = *(sVE7_D778**)(h + 4);
+        sVEntry<void(void*, void*, void*, t4Matrix*)>* hv = *(sVEntry<void(void*, void*, void*, t4Matrix*)>**)(h + 4);
         hv[7].fn(h + hv[7].delta, pos, *(void**)((char*)m + 0x94), 0);
     } else {
-        sVE96_D778* v96 = *(sVE96_D778**)(ctx + 0x10D8);
+        sVEntry<void(void*, void*, int, int, int)>* v96 = *(sVEntry<void(void*, void*, int, int, int)>**)(ctx + 0x10D8);
         v96[96].fn(ctx + v96[96].delta, m, 0, 0, 0);
     }
     TOP_D778(ctx)--;
@@ -1346,18 +1253,13 @@ extern "C" void func_0034D778(void* vself)
 //100%
 INCLUDE_ASM("object/flagset", func_0034D960);
 #ifdef SKIP_ASM
-struct sSerVEntry_0034D960 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
 
 extern "C" void func_0034FE90(void* self, void* stream);
 
 extern "C" void func_0034D960(void* self, void* stream)
 {
     func_0034FE90(self, stream);
-    sSerVEntry_0034D960* vt = *(sSerVEntry_0034D960**)stream;
+    sVEntry<void(void*, void*, int)>* vt = *(sVEntry<void(void*, void*, int)>**)stream;
     vt[1].fn((char*)stream + vt[1].delta, (char*)self + 0x1C, 0x24);
 }
 #endif
@@ -1412,11 +1314,6 @@ INCLUDE_ASM("object/flagset", func_0034DAC8);
 #ifdef SKIP_ASM
 extern "C" void* cMoveNode_cMoveNode(void* self, void* a1, void* stream);
 
-struct sStreamVE_DAC8 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
 
 // Element type with an empty constructor; the array new leaves only its loop counters.
 struct sFlagSlot_34DAC8 {
@@ -1433,9 +1330,9 @@ extern "C" void* func_0034DAC8(char* self, void* a1, void* stream)
     *(void***)(self + 0x20) = D_00490CC8;
     *slot = new (D_0048E758, 0x20000000, 0) sFlagSlot_34DAC8[*(int*)(*(char**)(*(char**)(node + 0x18) + 0x80) + 4)];
     cAnimNode_setAnimMeshCache(self);
-    sStreamVE_DAC8* vt = *(sStreamVE_DAC8**)stream;
+    sVEntry<void(void*, void*, int)>* vt = *(sVEntry<void(void*, void*, int)>**)stream;
     vt[2].fn((char*)stream + vt[2].delta, self, 0x14);
-    sStreamVE_DAC8* vt2 = *(sStreamVE_DAC8**)stream;
+    sVEntry<void(void*, void*, int)>* vt2 = *(sVEntry<void(void*, void*, int)>**)stream;
     vt2[2].fn((char*)stream + vt2[2].delta, &unusedFlag, 4);
     func_0034E348((sFlagOwner_E348*)self);
     return self;
@@ -1445,15 +1342,10 @@ extern "C" void* func_0034DAC8(char* self, void* a1, void* stream)
 //100%
 INCLUDE_ASM("object/flagset", func_0034DBA8);
 #ifdef SKIP_ASM
-struct sFlagVEntry_DBA8 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 struct sFlagItem_DBA8 {
     char pad_0x0[0x84];
-    sFlagVEntry_DBA8* vt;       // 0x84
+    sVEntry<void(void*, int)>* vt;       // 0x84
     char pad_0x88[0x48];
 };
 
@@ -1500,32 +1392,17 @@ extern "C" void func_0034DBA8(sFlagOwner_DBA8* self, int flags)
 //100%
 INCLUDE_ASM("object/flagset", func_0034DC90);
 #ifdef SKIP_ASM
-struct sFlagSetVEntry_DC90a {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
 
-struct sFlagSetVEntry_DC90b {
-    short delta;
-    short index;
-    void* (*fn)(void*);
-};
 
-struct sFlagSetVEntry_DC90c {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
 
 extern "C" void func_0034DC90(void* self)
 {
-    sFlagSetVEntry_DC90a* vt = *(sFlagSetVEntry_DC90a**)((char*)self + 0x20);
+    sVEntry<void(void*)>* vt = *(sVEntry<void(void*)>**)((char*)self + 0x20);
     vt[52].fn((char*)self + vt[52].delta);
     char* sub = (char*)self + 0x14;
-    sFlagSetVEntry_DC90c* vt2 = *(sFlagSetVEntry_DC90c**)((char*)self + 0x20);
+    sVEntry<void(void*, void*, int)>* vt2 = *(sVEntry<void(void*, void*, int)>**)((char*)self + 0x20);
     void* objB = sub + vt2[33].delta;
-    void* r = ((sFlagSetVEntry_DC90b*)vt2)[24].fn(sub + vt2[24].delta);
+    void* r = ((sVEntry<void*(void*)>*)vt2)[24].fn(sub + vt2[24].delta);
     vt2[33].fn(objB, r, *(int*)((char*)self + 0x44));
     *(unsigned short*)((char*)self + 0x26) &= ~1;
 }
@@ -1550,15 +1427,10 @@ extern "C" void* func_0034E320(void* self, int i) {
 //100%
 INCLUDE_ASM("object/flagset", func_0034E348);
 #ifdef SKIP_ASM
-struct sFlagSetVEntry_E348 {
-    short delta;
-    short index;
-    void (*fn)(void*, float);
-};
 
 struct sFlagItem_E348 {
     char pad0[0x84];
-    sFlagSetVEntry_E348* vt;    // 0x84
+    sVEntry<void(void*, float)>* vt;    // 0x84
     char pad88[0x48];
 };
 
@@ -1590,11 +1462,6 @@ extern "C" void func_0034E348(sFlagOwner_E348* self)
 //100%
 INCLUDE_ASM("object/flagset", func_0034E3D8);
 #ifdef SKIP_ASM
-struct sSerVEntry_0034E3D8 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, int);
-};
 
 extern "C" void func_00356B30(void* self, void* stream);
 
@@ -1602,9 +1469,9 @@ extern "C" void func_0034E3D8(void* self, void* stream)
 {
     int dummy;
     func_00356B30((char*)self + 0x14, stream);
-    sSerVEntry_0034E3D8* e = &(*(sSerVEntry_0034E3D8**)stream)[1];
+    sVEntry<void(void*, void*, int)>* e = &(*(sVEntry<void(void*, void*, int)>**)stream)[1];
     e->fn((char*)stream + e->delta, self, 0x14);
-    e = &(*(sSerVEntry_0034E3D8**)stream)[1];
+    e = &(*(sVEntry<void(void*, void*, int)>**)stream)[1];
     e->fn((char*)stream + e->delta, &dummy, 4);
 }
 #endif
