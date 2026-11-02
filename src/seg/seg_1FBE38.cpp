@@ -3961,10 +3961,9 @@ extern "C" cLunoValue func_00301F48(int n, Ent_1F48* e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_00302048);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern int *D_004A3DD8_2048 __asm__("D_004A3DD8");
 extern char *D_004A28A8_2048 __asm__("D_004A28A8");
 extern int D_00445E40_2048[] __asm__("D_00445E40");
-extern "C" void func_0030B7F8(int*);
+extern "C" void func_0030B7F8(cWScriptMan*);
 extern "C" void func_0022D6C8_2048(int, int) __asm__("func_0022D6C8");
 struct Sh_2048 { virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual int v09(); };
 extern unsigned D_2048[] __asm__("D_004FBC10");
@@ -3993,7 +3992,7 @@ extern "C" cLunoValue func_00302048(int n, Ent_2048 *e) {
             *d = x->val;
     }
     int r;
-    int k = *D_004A3DD8_2048;
+    int k = D_004A3DD8->being;
     if (k != -1) {
         int k4 = k * 4;
         char *lvl = *(char**)(*(char**)(D_004A28A8_2048 + 0x84) + 0xC);
@@ -4014,7 +4013,7 @@ extern "C" cLunoValue func_00302048(int n, Ent_2048 *e) {
             v16 = D_00445E40_2048[id];
         if (b1 == 0) {
             if (v16 != 1)
-                func_0030B7F8(D_004A3DD8_2048);
+                func_0030B7F8(D_004A3DD8);
             func_0022D6C8_2048(w, v16);
         }
     }
