@@ -818,7 +818,43 @@ int func_003F5470(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F5478);
+#ifdef SKIP_ASM
+extern char D_00525F00[];
+extern int *RpcAlloc(int);
+extern void *f6210h(void *, int, int) __asm__("func_00416210");
+extern int func_00424698(int, int);
+extern void func_00424020(int);
+extern void func_00256BD8(int *);
+extern int func_003F4C98(char *, int, int);
+extern int func_003F4C68(char *, int, int, int, int, int, int, int, int, int);
+int *func_003F5478(int size) {
+    int *p;
+
+    if (size < 0x1000) size = 0x1000;
+    if (size > 0x2000) size = 0x2000;
+
+    p = RpcAlloc(size + 0x9C);
+    if (p == 0) return 0;
+    f6210h(p, 0, 0x9C);
+    p[1] = ((int)p + 0x5B) & ~0x3F;
+    p[5] = size;
+    p[6] = p[1] + 0x40;
+    f6210h((void *)p[1], 0, 0x20);
+    f6210h((void *)p[6], 0, p[5]);
+    func_00424698(p[1], p[1] + 0x20);
+    func_00424698(p[6], p[6] + p[5]);
+    func_00424020(0);
+    func_003F4C98(D_00525F00, 'sess', 'crea');
+    func_003F4C68(D_00525F00, 1, 0, size, 0, 0, 0, 0, 1, (int)p);
+    if (p[0] == 0) {
+        func_00256BD8(p);
+        p = 0;
+    }
+    return p;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F55B8);
