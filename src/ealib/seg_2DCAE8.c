@@ -10,13 +10,16 @@ struct sC10 {
     int f0C;
     int f10;
     int f14;
-    int f18;
-    int f1C;
+    char *f18;                      /* also D_00450C58.f00 */
+    char *f1C;                      /* also D_00450C50 */
     struct sC10File *f20;
 };
 extern struct sC10 D_00450C10;
 extern void *(*D_00450C14)(char *, int, int);   /* D_00450C10.f04 */
 extern int (*D_00450C18)(void *);               /* D_00450C10.f08 */
+extern char *D_00450C50;
+struct sC58 { char *f00; int f04; int f08; int f0C; };     /* D_00450C58: the CD settings */
+extern struct sC58 D_00450C58;
 extern int D_00450C38;                          /* FILESYS_atomic lock */
 struct sReq {                       /* 0x30, a file request (D_00450C34[], D_00519BF0 of them) */
     int f00;                        /* id: sequence << 8 | index */
@@ -1429,7 +1432,6 @@ extern int strlen_DE78(char *) __asm__("strlen");
 extern char *strcpy_DE78(char *, char *) __asm__("strcpy");
 extern int func_00416B18_DE78(char *, char *, int) __asm__("func_00416B18");
 extern char* func_004162D0(char *, char *);
-extern char *D_00450C50_DE78[] __asm__("D_00450C50");
 extern char *D_00450C08;
 extern int D_00450C44;
 extern int D_00450C48;
@@ -1438,12 +1440,12 @@ extern char D_00495D78_DE78[] __asm__("D_00495D78");
 
 void func_003DDE78(char *a) {
     int n, len;
-    n = strlen_DE78(D_00450C50_DE78[0]);
+    n = strlen_DE78(D_00450C50);
     if (func_00416B18_DE78(a, D_00450C08, 3) == 0) {
         if ((D_00450C48 & 3) == 2) return;
         D_00450C44 = 1;
         a += 3;
-    } else if (func_00416B18_DE78(a, D_00450C50_DE78[0], n) == 0) {
+    } else if (func_00416B18_DE78(a, D_00450C50, n) == 0) {
         if (!(D_00450C48 & 2)) return;
         D_00450C44 = 2;
         a += n;
