@@ -1,5 +1,21 @@
 #include "common.h"
 
+// A UI widget as cUIScreen_getObjectByHashName returns it: vptr at 0x8. Slot names from the prototype's
+// _vt$8cUIThing (as in fe/feasyncfile); the other slots are known only by position.
+class cUIThing {
+public:
+    char pad[0x8];
+    virtual void v01();
+    virtual void v02();
+    virtual void v03();
+    virtual void v04();
+    virtual void v05();
+    virtual void setEnabled(int v);
+    virtual void setFocus(int v);
+    virtual void setStatic(int v);
+    virtual void setVisible(int v);
+};
+
 //100%
 INCLUDE_ASM("fe/ovstatereplay", cOVState_REPLAY_onWidgetCreate);
 #ifdef SKIP_ASM
@@ -9,28 +25,14 @@ extern char D_00471C08[];
 extern char D_00471C20[];
 extern void* D_004A28A8;
 
-class cUIObj_20DE30 {
-public:
-    int pad[2];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06(int v);
-    virtual void v07(int v);
-    virtual void setEnabled(int v);
-    virtual void setVisible(int v);
-};
-
-extern "C" void cOVState_REPLAY_onWidgetCreate(void* self, cUIObj_20DE30* w)
+extern "C" void cOVState_REPLAY_onWidgetCreate(void* self, cUIThing* w)
 {
     int id = *(int*)((char*)w + 0x38);
     if (id == GetHashValue32(D_00471BF0)) {
         *(int*)((char*)w + 0x18) = 0;
         if (*(int*)(*(char**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x28) + 0x608) != 0) {
-            w->v06(0);
-            w->setEnabled(1);
+            w->setEnabled(0);
+            w->setStatic(1);
             w->setVisible(0);
         }
     } else {
