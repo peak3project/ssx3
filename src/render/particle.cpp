@@ -37,6 +37,28 @@ struct sPtMatrix {
     float m[4][4];
 } __attribute__((aligned(16)));
 
+// 4x4 float matrix with an empty ctor and a VU0 copy ctor (copies go through vf1..vf4).
+struct sPtMatrixV {
+    float m[4][4];
+    sPtMatrixV() {}
+    // PORT: PS2-only VU0 inline asm (4x4 matrix copy through VU0 registers).
+    sPtMatrixV(const sPtMatrixV& s)
+    {
+        __asm__ __volatile__(
+            "lqc2      $vf1, 0x0(%1)\n"
+            "lqc2      $vf2, 0x10(%1)\n"
+            "lqc2      $vf3, 0x20(%1)\n"
+            "lqc2      $vf4, 0x30(%1)\n"
+            "sqc2      $vf1, 0x0(%0)\n"
+            "sqc2      $vf2, 0x10(%0)\n"
+            "sqc2      $vf3, 0x20(%0)\n"
+            "sqc2      $vf4, 0x30(%0)\n"
+            :
+            : "r"(this), "r"(&s)
+            : "memory");
+    }
+} __attribute__((aligned(16)));
+
 // ---- end of shared declarations ----
 
 //100%
@@ -5583,26 +5605,6 @@ struct sQuad_1310 {
     unsigned int w[4];
 } __attribute__((aligned(16)));
 
-struct sMat_1310 {
-    float m[4][4];
-    sMat_1310() {}
-    // PORT: PS2-only VU0 inline asm (4x4 matrix copy through VU0 registers).
-    sMat_1310(const sMat_1310& s)
-    {
-        __asm__ __volatile__(
-            "lqc2      $vf1, 0x0(%1)\n"
-            "lqc2      $vf2, 0x10(%1)\n"
-            "lqc2      $vf3, 0x20(%1)\n"
-            "lqc2      $vf4, 0x30(%1)\n"
-            "sqc2      $vf1, 0x0(%0)\n"
-            "sqc2      $vf2, 0x10(%0)\n"
-            "sqc2      $vf3, 0x20(%0)\n"
-            "sqc2      $vf4, 0x30(%0)\n"
-            :
-            : "r"(this), "r"(&s)
-            : "memory");
-    }
-} __attribute__((aligned(16)));
 
 
 struct sPtGfx_1310 {
@@ -5611,7 +5613,7 @@ struct sPtGfx_1310 {
     char pad_0xE88[0x18F0 - 0xE88];
     sPtRing* ring;             // 0x18F0
     char pad_0x18F4[0x5860 - 0x18F4];
-    sMat_1310 m5860;                // 0x5860
+    sPtMatrixV m5860;                // 0x5860
     char pad_0x58A0[0x5A00 - 0x58A0];
     unsigned int bufAddr;           // 0x5A00
     char pad_0x5A04[0x6B90 - 0x5A04];
@@ -5620,7 +5622,7 @@ struct sPtGfx_1310 {
 
 struct sPtObj_1310 {
     sQuad_1310 q[5];                // 0x00
-    sMat_1310 mat;                  // 0x50
+    sPtMatrixV mat;                  // 0x50
 };
 
 extern int D_004A4474;
@@ -5630,9 +5632,9 @@ extern "C" unsigned int func_0038F668(int dma, unsigned long* p, int a2);
 extern "C" void func_0037D968(void* self);
 
 // PORT: PS2-only VU0 inline asm (4x4 matrix product).
-static inline sMat_1310 MulMat_1310(const sMat_1310& a, const sMat_1310& b)
+static inline sPtMatrixV MulMat_1310(const sPtMatrixV& a, const sPtMatrixV& b)
 {
-    sMat_1310 d;
+    sPtMatrixV d;
     __asm__ __volatile__(
         "lqc2      $vf4, 0x0(%1)\n"
         "lqc2      $vf5, 0x10(%1)\n"
@@ -5689,7 +5691,7 @@ extern "C" void func_00381310(sPtGfx_1310* self, sPtObj_1310* obj)
     if (self->texReady == 0) {
         func_0037D968(self);
     }
-    sMat_1310 m = MulMat_1310(self->m5860, obj->mat);
+    sPtMatrixV m = MulMat_1310(self->m5860, obj->mat);
     unsigned int buf = self->bufAddr;
     unsigned long* p = func_0038F460(D_004A4474, buf, -1, 0);
     p[0] = 0x1000000D;
@@ -5746,26 +5748,6 @@ struct sQuad_16F0 {
     unsigned int w[4];
 } __attribute__((aligned(16)));
 
-struct sMat_16F0 {
-    float m[4][4];
-    sMat_16F0() {}
-    // PORT: PS2-only VU0 inline asm (4x4 matrix copy through VU0 registers).
-    sMat_16F0(const sMat_16F0& s)
-    {
-        __asm__ __volatile__(
-            "lqc2      $vf1, 0x0(%1)\n"
-            "lqc2      $vf2, 0x10(%1)\n"
-            "lqc2      $vf3, 0x20(%1)\n"
-            "lqc2      $vf4, 0x30(%1)\n"
-            "sqc2      $vf1, 0x0(%0)\n"
-            "sqc2      $vf2, 0x10(%0)\n"
-            "sqc2      $vf3, 0x20(%0)\n"
-            "sqc2      $vf4, 0x30(%0)\n"
-            :
-            : "r"(this), "r"(&s)
-            : "memory");
-    }
-} __attribute__((aligned(16)));
 
 
 struct sPtGfx_16F0 {
@@ -5774,7 +5756,7 @@ struct sPtGfx_16F0 {
     char pad_0xE88[0x18F0 - 0xE88];
     sPtRing* ring;             // 0x18F0
     char pad_0x18F4[0x5860 - 0x18F4];
-    sMat_16F0 m5860;                // 0x5860
+    sPtMatrixV m5860;                // 0x5860
     char pad_0x58A0[0x5A00 - 0x58A0];
     unsigned int bufAddr;           // 0x5A00
     char pad_0x5A04[0x6B90 - 0x5A04];
@@ -5783,7 +5765,7 @@ struct sPtGfx_16F0 {
 
 struct sPtObj_16F0 {
     sQuad_16F0 q[5];                // 0x00
-    sMat_16F0 mat;                  // 0x50
+    sPtMatrixV mat;                  // 0x50
 };
 
 extern int D_004A4474;
@@ -5793,9 +5775,9 @@ extern "C" unsigned int func_0038F668(int dma, unsigned long* p, int a2);
 extern "C" void func_0037D968(void* self);
 
 // PORT: PS2-only VU0 inline asm (4x4 matrix product).
-static inline sMat_16F0 MulMat_16F0(const sMat_16F0& a, const sMat_16F0& b)
+static inline sPtMatrixV MulMat_16F0(const sPtMatrixV& a, const sPtMatrixV& b)
 {
-    sMat_16F0 d;
+    sPtMatrixV d;
     __asm__ __volatile__(
         "lqc2      $vf4, 0x0(%1)\n"
         "lqc2      $vf5, 0x10(%1)\n"
@@ -5852,7 +5834,7 @@ extern "C" void func_003816F0(sPtGfx_16F0* self, sPtObj_16F0* obj)
     if (self->texReady == 0) {
         func_0037D968(self);
     }
-    sMat_16F0 m = MulMat_16F0(self->m5860, obj->mat);
+    sPtMatrixV m = MulMat_16F0(self->m5860, obj->mat);
     unsigned int buf = self->bufAddr;
     unsigned long* p = func_0038F460(D_004A4474, buf, -1, 0);
     p[0] = 0x1000000D;
@@ -6919,26 +6901,6 @@ struct sPtGfx_5C10 {
     int texReady;                   // 0x6B90
 };
 
-struct sMat_5C10 {
-    float m[4][4];
-    sMat_5C10() {}
-    // PORT: PS2-only VU0 inline asm (4x4 matrix copy through VU0 registers).
-    sMat_5C10(const sMat_5C10& s)
-    {
-        __asm__ __volatile__(
-            "lqc2      $vf1, 0x0(%1)\n"
-            "lqc2      $vf2, 0x10(%1)\n"
-            "lqc2      $vf3, 0x20(%1)\n"
-            "lqc2      $vf4, 0x30(%1)\n"
-            "sqc2      $vf1, 0x0(%0)\n"
-            "sqc2      $vf2, 0x10(%0)\n"
-            "sqc2      $vf3, 0x20(%0)\n"
-            "sqc2      $vf4, 0x30(%0)\n"
-            :
-            : "r"(this), "r"(&s)
-            : "memory");
-    }
-} __attribute__((aligned(16)));
 
 
 struct sBez_5C10 {
@@ -6954,9 +6916,9 @@ struct sBez_5C10 {
 };
 
 // PORT: PS2-only VU0 inline asm (scale the rows of a 4x4 matrix by a vector).
-static inline sMat_5C10 ScaleMat_5C10(const sMat_5C10& m, const t4Vector& v)
+static inline sPtMatrixV ScaleMat_5C10(const sPtMatrixV& m, const t4Vector& v)
 {
-    sMat_5C10 d;
+    sPtMatrixV d;
     __asm__ __volatile__(
         "lqc2      $vf1, 0x0(%2)\n"
         "lqc2      $vf4, 0x0(%1)\n"
@@ -6981,10 +6943,10 @@ extern int D_004A4474;
 extern "C" unsigned long* func_0038F460(int dma, unsigned int buf, int a2, int a3);
 extern "C" unsigned int func_0038F668(int dma, unsigned long* p, int a2);
 extern "C" void func_0037D968(void* self);
-extern "C" void func_0037E120_5C10(sPtGfx_5C10* gfx, sMat_5C10* m, sMat_5C10* hdr, t4Vector* scale, int flag, int a5, int prim, char** pp) __asm__("func_0037E120");
+extern "C" void func_0037E120_5C10(sPtGfx_5C10* gfx, sPtMatrixV* m, sPtMatrixV* hdr, t4Vector* scale, int flag, int a5, int prim, char** pp) __asm__("func_0037E120");
 
 // PORT: uncached (0x30000000) pointers held in int; 64-bit GS words are `ulong`.
-extern "C" void func_00385C10(sBez_5C10* self, sMat_5C10* mat, int tex, int flag)
+extern "C" void func_00385C10(sBez_5C10* self, sPtMatrixV* mat, int tex, int flag)
 {
     if (self->flip) {
         self->flip = 0;
@@ -6997,14 +6959,14 @@ extern "C" void func_00385C10(sBez_5C10* self, sMat_5C10* mat, int tex, int flag
     self->gfx->top->fC &= 0xC0000000;
     self->gfx->top->tex = tex;
     unsigned int addr = self->gfx->bufAddr;
-    sMat_5C10 m = *mat;
+    sPtMatrixV m = *mat;
     float s = self->scale;
     t4Vector sc;
     sc.x = s;
     sc.y = s;
     sc.z = s;
     sc.w = 1.0f;
-    sMat_5C10 m2 = ScaleMat_5C10(*mat, sc);
+    sPtMatrixV m2 = ScaleMat_5C10(*mat, sc);
     char* p = (char*)func_0038F460(D_004A4474, addr, -1, 0);
     func_0037E120_5C10(self->gfx, &m2, &m, &sc, flag, 0, flag ? 0x22 : 0x20, &p);
     *(ulong*)p = ((ulong)self->tags[self->buf] << 32) | 0x50000000;
