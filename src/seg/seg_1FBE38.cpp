@@ -1473,15 +1473,13 @@ extern "C" cLunoValue func_002FD420(int n, Ent_D420 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FD758);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern char *D_004A28A8_D758 __asm__("D_004A28A8");
 struct V4_D758 { float x, y, z, w; V4_D758() {} V4_D758(float a, float b, float c, float d) : x(a), y(b), z(c), w(d) {} } __attribute__((aligned(16)));
 struct M4_D758 { V4_D758 r[4]; };
 struct Sh_D758 { virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual V4_D758 *v05(); virtual M4_D758 *v06(); };
 extern "C" void func_003558B8_D758(void*, V4_D758*) __asm__("func_003558B8");
-struct Lvl_D758 { char pad[0x28]; char *sh[1]; };
 static inline Sh_D758 *shape_D758(int k) {
-    Lvl_D758 *lvl = *(Lvl_D758**)(*(char**)(D_004A28A8_D758 + 0x84) + 0xC);
-    char *q = lvl->sh[k];
+    sRace *lvl = D_004A28A8->game->race;
+    char *q = lvl->riders[k];
     return (Sh_D758*)(q ? q + 0x6C0 : 0);
 }
 // PORT: PS2-only VU0 inline asm; the PC port needs a C fallback (matrix * vector).
