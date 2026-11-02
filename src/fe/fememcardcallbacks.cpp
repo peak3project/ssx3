@@ -1,5 +1,13 @@
 #include "common.h"
 
+// g++ 2.95 vtable slot: this-pointer adjustment, index, function (F is the slot's function type;
+// sVEntry<void> is a raw slot). Virtual calls in this unit go through these by hand.
+template <class F> struct sVEntry {
+    short delta;
+    short index;
+    F* fn;
+};
+
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", cFEMemCard_callbackSaveSuccess);
 #ifdef SKIP_ASM
@@ -10,17 +18,7 @@ extern char D_004677B8[];
 extern char D_0045F7E0[];
 void func_001D8C38(void* self);
 
-struct sVEntryS1D66B0 {
-    short delta;
-    short index;
-    void* (*fn)(void*, ...);
-};
 
-struct sVEntryVS1D66B0 {
-    short delta;
-    short index;
-    void (*fn)(void*, ...);
-};
 
 extern "C" void cFEMemCard_callbackSaveSuccess(void)
 {
@@ -29,20 +27,20 @@ extern "C" void cFEMemCard_callbackSaveSuccess(void)
     *(int*)(fe + 0x1F0) = 0;
     if (*(int*)(fe + 0x208) == 0) {
         char* o = *(char**)((char*)D_004A28A8 + 0x8C);
-        sVEntryS1D66B0* ovt = *(sVEntryS1D66B0**)(o + 4);
+        sVEntry<void*(void*, ...)>* ovt = *(sVEntry<void*(void*, ...)>**)(o + 4);
         void* str = ovt[4].fn(o + ovt[4].delta, GetHashValue32(D_004677B8));
         char* fe2 = (char*)D_004A2028;
         *(int*)(fe2 + 0x19C) = 5;
-        sVEntryVS1D66B0* vt = *(sVEntryVS1D66B0**)(fe2 + 8);
+        sVEntry<void(void*, ...)>* vt = *(sVEntry<void(void*, ...)>**)(fe2 + 8);
         vt[36].fn(fe2 + vt[36].delta, str, 1, 0, 0, 0, 0);
         char* o2 = *(char**)((char*)D_004A28A8 + 0x8C);
-        sVEntryS1D66B0* o2vt = *(sVEntryS1D66B0**)(o2 + 4);
+        sVEntry<void*(void*, ...)>* o2vt = *(sVEntry<void*(void*, ...)>**)(o2 + 4);
         void* str2 = o2vt[4].fn(o2 + o2vt[4].delta, GetHashValue32(D_0045F7E0));
         char* m = *(char**)((char*)D_004A2028 + 0x218);
-        sVEntryVS1D66B0* mvt = *(sVEntryVS1D66B0**)(m + 8);
+        sVEntry<void(void*, ...)>* mvt = *(sVEntry<void(void*, ...)>**)(m + 8);
         mvt[26].fn(m + mvt[26].delta, str2, 0);
     } else {
-        sVEntryVS1D66B0* vt = *(sVEntryVS1D66B0**)(fe + 8);
+        sVEntry<void(void*, ...)>* vt = *(sVEntry<void(void*, ...)>**)(fe + 8);
         vt[40].fn(fe + vt[40].delta);
     }
 }
@@ -58,17 +56,7 @@ extern char D_004677D0[];
 extern char D_0045F7E0[];
 extern "C" void func_001D9308(void*, int);
 
-struct sVEntryR1D67C8 {
-    short delta;
-    short index;
-    void* (*fn)(void*, ...);
-};
 
-struct sVEntryVR1D67C8 {
-    short delta;
-    short index;
-    void (*fn)(void*, ...);
-};
 
 extern "C" void cFEMemCard_callbackReadSuccess(void)
 {
@@ -78,20 +66,20 @@ extern "C" void cFEMemCard_callbackReadSuccess(void)
     *(int*)(fe + 0x1A8) = 0;
     if (*(int*)(fe + 0x204) == 0) {
         char* o = *(char**)((char*)D_004A28A8 + 0x8C);
-        sVEntryR1D67C8* ovt = *(sVEntryR1D67C8**)(o + 4);
+        sVEntry<void*(void*, ...)>* ovt = *(sVEntry<void*(void*, ...)>**)(o + 4);
         void* str = ovt[4].fn(o + ovt[4].delta, GetHashValue32(D_004677D0));
         char* fe2 = (char*)D_004A2028;
         *(int*)(fe2 + 0x19C) = 6;
-        sVEntryVR1D67C8* vt = *(sVEntryVR1D67C8**)(fe2 + 8);
+        sVEntry<void(void*, ...)>* vt = *(sVEntry<void(void*, ...)>**)(fe2 + 8);
         vt[36].fn(fe2 + vt[36].delta, str, 1, 0, 0, 0, 0);
         char* o2 = *(char**)((char*)D_004A28A8 + 0x8C);
-        sVEntryR1D67C8* o2vt = *(sVEntryR1D67C8**)(o2 + 4);
+        sVEntry<void*(void*, ...)>* o2vt = *(sVEntry<void*(void*, ...)>**)(o2 + 4);
         void* str2 = o2vt[4].fn(o2 + o2vt[4].delta, GetHashValue32(D_0045F7E0));
         char* m = *(char**)((char*)D_004A2028 + 0x218);
-        sVEntryVR1D67C8* mvt = *(sVEntryVR1D67C8**)(m + 8);
+        sVEntry<void(void*, ...)>* mvt = *(sVEntry<void(void*, ...)>**)(m + 8);
         mvt[26].fn(m + mvt[26].delta, str2, 0);
     } else {
-        sVEntryVR1D67C8* vt = *(sVEntryVR1D67C8**)(fe + 8);
+        sVEntry<void(void*, ...)>* vt = *(sVEntry<void(void*, ...)>**)(fe + 8);
         vt[40].fn(fe + vt[40].delta);
     }
 }
@@ -111,17 +99,7 @@ extern void* D_004A28A8;
 extern char D_0045E2A0[];
 extern char D_004642F8[];
 
-struct sVEntryK1D68E8 {
-    short delta;
-    short index;
-    void* (*fn)(void*, ...);
-};
 
-struct sVEntryVK1D68E8 {
-    short delta;
-    short index;
-    void (*fn)(void*, ...);
-};
 
 extern "C" void func_001D68E8(void)
 {
@@ -129,14 +107,14 @@ extern "C" void func_001D68E8(void)
     unsigned short* buf = (unsigned short*)operator_new__FUi(0x640, D_0045E2A0, 0x100, 0);
     char* mp = (char*)func_00227F80(D_004A28A8);
     char* s = *(char**)(mp + 0x434);
-    sVEntryVK1D68E8* svt = *(sVEntryVK1D68E8**)s;
+    sVEntry<void(void*, ...)>* svt = *(sVEntry<void(void*, ...)>**)s;
     svt[14].fn(s + svt[14].delta, *(int*)(mp + 0xF8), name);
     char* o = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEntryK1D68E8* ovt = *(sVEntryK1D68E8**)(o + 4);
+    sVEntry<void*(void*, ...)>* ovt = *(sVEntry<void*(void*, ...)>**)(o + 4);
     func_002C26D0(buf, (unsigned short*)ovt[4].fn(o + ovt[4].delta, GetHashValue32(D_004642F8)), name);
     char* fe = (char*)D_004A2028;
     *(int*)(fe + 0x19C) = 1;
-    sVEntryVK1D68E8* vt = *(sVEntryVK1D68E8**)(fe + 8);
+    sVEntry<void(void*, ...)>* vt = *(sVEntry<void(void*, ...)>**)(fe + 8);
     vt[36].fn(fe + vt[36].delta, buf, 0, 0, 0, 1, 0);
     if (buf != 0) {
         cMemMan_free(buf);
@@ -157,30 +135,20 @@ extern void* D_004A28A8;
 extern char D_0045E2A0[];
 extern char D_004641F0[];
 
-struct sVEntry001D69E0 {
-    short delta;
-    short index;
-    void* (*fn)(void*, ...);
-};
 
-struct sVEntryV001D69E0 {
-    short delta;
-    short index;
-    void (*fn)(void*, ...);
-};
 
 extern "C" void func_001D69E0(void)
 {
     void* buf = operator_new__FUi(0x7D0, D_0045E2A0, 0x100, 0);
     char* o = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEntry001D69E0* vt = *(sVEntry001D69E0**)(o + 4);
+    sVEntry<void*(void*, ...)>* vt = *(sVEntry<void*(void*, ...)>**)(o + 4);
     func_002C2508(buf, vt[4].fn(o + vt[4].delta, GetHashValue32(D_004641F0)));
     char* fe = (char*)D_004A2028;
     *(int*)(fe + 0x19C) = 2;
-    sVEntryV001D69E0* vt2 = *(sVEntryV001D69E0**)(fe + 8);
+    sVEntry<void(void*, ...)>* vt2 = *(sVEntry<void(void*, ...)>**)(fe + 8);
     vt2[36].fn(fe + vt2[36].delta, buf, 0, 0, 0, 0, 0);
     char* m = *(char**)((char*)D_004A2028 + 0x218);
-    sVEntryV001D69E0* vt3 = *(sVEntryV001D69E0**)(m + 8);
+    sVEntry<void(void*, ...)>* vt3 = *(sVEntry<void(void*, ...)>**)(m + 8);
     vt3[25].fn(m + vt3[25].delta, 1);
     if (buf != 0) {
         cMemMan_free(buf);
@@ -211,17 +179,17 @@ extern "C" void func_001D6AD0(void)
     unsigned short* buf = (unsigned short*)operator_new__FUi(0x7D0, D_0045E2A0, 0x100, 0);
     func_00241DC8(mp, name, *(int*)(mp + 0x428));
     char* o = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEntry001D69E0* ovt = *(sVEntry001D69E0**)(o + 4);
+    sVEntry<void*(void*, ...)>* ovt = *(sVEntry<void*(void*, ...)>**)(o + 4);
     func_002C26D0(buf, (unsigned short*)ovt[4].fn(o + ovt[4].delta, GetHashValue32(D_00464608)), name);
     char* fe = (char*)D_004A2028;
     *(int*)(fe + 0x19C) = 0xA;
-    sVEntryV001D69E0* vt = *(sVEntryV001D69E0**)(fe + 8);
+    sVEntry<void(void*, ...)>* vt = *(sVEntry<void(void*, ...)>**)(fe + 8);
     vt[36].fn(fe + vt[36].delta, buf, 1, 0, 0, 0, 0);
     char* m = *(char**)((char*)D_004A2028 + 0x218);
-    sVEntryV001D69E0* mvt = *(sVEntryV001D69E0**)(m + 8);
+    sVEntry<void(void*, ...)>* mvt = *(sVEntry<void(void*, ...)>**)(m + 8);
     char* mthis = m + mvt[26].delta;
     char* o2 = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEntry001D69E0* o2vt = *(sVEntry001D69E0**)(o2 + 4);
+    sVEntry<void*(void*, ...)>* o2vt = *(sVEntry<void*(void*, ...)>**)(o2 + 4);
     char* o2this = o2 + o2vt[4].delta;
     void* str2 = o2vt[4].fn(o2this, GetHashValue32(D_0045F7E0));
     mvt[26].fn(mthis, str2, 0);
@@ -255,16 +223,16 @@ extern "C" void func_001D6C28(void)
     *(int*)((char*)D_004A2028 + 0x19C) = 0xB;
     func_00241DC8(mp, name, *(int*)(mp + 0x428));
     char* o = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEntry001D69E0* ovt = *(sVEntry001D69E0**)(o + 4);
+    sVEntry<void*(void*, ...)>* ovt = *(sVEntry<void*(void*, ...)>**)(o + 4);
     func_002C26D0(buf, (unsigned short*)ovt[4].fn(o + ovt[4].delta, GetHashValue32(D_00464628)), name);
     char* fe = (char*)D_004A2028;
-    sVEntryV001D69E0* vt = *(sVEntryV001D69E0**)(fe + 8);
+    sVEntry<void(void*, ...)>* vt = *(sVEntry<void(void*, ...)>**)(fe + 8);
     vt[36].fn(fe + vt[36].delta, buf, 1, 0, 0, 0, 0);
     char* m = *(char**)((char*)D_004A2028 + 0x218);
-    sVEntryV001D69E0* mvt = *(sVEntryV001D69E0**)(m + 8);
+    sVEntry<void(void*, ...)>* mvt = *(sVEntry<void(void*, ...)>**)(m + 8);
     char* mthis = m + mvt[26].delta;
     char* o2 = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEntry001D69E0* o2vt = *(sVEntry001D69E0**)(o2 + 4);
+    sVEntry<void*(void*, ...)>* o2vt = *(sVEntry<void*(void*, ...)>**)(o2 + 4);
     char* o2this = o2 + o2vt[4].delta;
     void* str2 = o2vt[4].fn(o2this, GetHashValue32(D_0045F7E0));
     mvt[26].fn(mthis, str2, 0);
@@ -295,7 +263,7 @@ extern char D_0045F7E0[];
 static inline void* Str_1D6D88(char* key)
 {
     char* o = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEntry001D69E0* ovt = *(sVEntry001D69E0**)(o + 4);
+    sVEntry<void*(void*, ...)>* ovt = *(sVEntry<void*(void*, ...)>**)(o + 4);
     char* othis = o + ovt[4].delta;
     return ovt[4].fn(othis, GetHashValue32(key));
 }
@@ -303,7 +271,7 @@ static inline void* Str_1D6D88(char* key)
 static inline void SetLine_1D6D88(char* key, int a)
 {
     char* m = *(char**)((char*)D_004A2028 + 0x218);
-    sVEntryV001D69E0* mvt = *(sVEntryV001D69E0**)(m + 8);
+    sVEntry<void(void*, ...)>* mvt = *(sVEntry<void(void*, ...)>**)(m + 8);
     char* mthis = m + mvt[26].delta;
     void* str = Str_1D6D88(key);
     mvt[26].fn(mthis, str, a);
@@ -316,21 +284,21 @@ extern "C" void func_001D6D88(void)
     unsigned short* buf = (unsigned short*)operator_new__FUi(0x7D0, D_0045E2A0, 0x100, 0);
     func_00241DC8(mp, name, *(int*)(mp + 0x428));
     char* o = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEntry001D69E0* ovt = *(sVEntry001D69E0**)(o + 4);
+    sVEntry<void*(void*, ...)>* ovt = *(sVEntry<void*(void*, ...)>**)(o + 4);
     func_002C26D0(buf, (unsigned short*)ovt[4].fn(o + ovt[4].delta, GetHashValue32(D_004644D8)), name);
     *(int*)((char*)D_004A2028 + 0x19C) = 9;
     if (!(*(int*)(mp + 0xBC) || *(int*)(mp + 0xC0) || (*(int (**)())(mp + 0x78))())) {
         char* fe = (char*)D_004A2028;
-        sVEntryV001D69E0* vt = *(sVEntryV001D69E0**)(fe + 8);
+        sVEntry<void(void*, ...)>* vt = *(sVEntry<void(void*, ...)>**)(fe + 8);
         vt[36].fn(fe + vt[36].delta, buf, 0, 0, 0, 0, 0);
         SetLine_1D6D88(D_0045DCD8, 1);
         char* m = *(char**)((char*)D_004A2028 + 0x218);
-        sVEntryV001D69E0* mvt = *(sVEntryV001D69E0**)(m + 8);
+        sVEntry<void(void*, ...)>* mvt = *(sVEntry<void(void*, ...)>**)(m + 8);
         mvt[25].fn(m + mvt[25].delta, 1);
         SetLine_1D6D88(D_00462C88, 0);
     } else {
         char* fe = (char*)D_004A2028;
-        sVEntryV001D69E0* vt = *(sVEntryV001D69E0**)(fe + 8);
+        sVEntry<void(void*, ...)>* vt = *(sVEntry<void(void*, ...)>**)(fe + 8);
         vt[36].fn(fe + vt[36].delta, buf, 1, 0, 0, 0, 0);
         SetLine_1D6D88(D_0045F7E0, 0);
     }
@@ -369,20 +337,20 @@ extern "C" void func_001D7010(void)
     unsigned short* buf = (unsigned short*)operator_new__FUi(0x7D0, D_0045E2A0, 0x100, 0);
     func_00241DC8(mp, name, *(int*)(mp + 0x428));
     char* sf = *(char**)(mp + 0x434);
-    sVEntryV001D69E0* sfvt = *(sVEntryV001D69E0**)sf;
+    sVEntry<void(void*, ...)>* sfvt = *(sVEntry<void(void*, ...)>**)sf;
     sfvt[14].fn(sf + sfvt[14].delta, *(int*)(mp + 0xF8), name2);
     ((sFEMC_001D7010*)D_004A2028)->f19C = 0xC;
     char* o = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEntry001D69E0* ovt = *(sVEntry001D69E0**)(o + 4);
+    sVEntry<void*(void*, ...)>* ovt = *(sVEntry<void*(void*, ...)>**)(o + 4);
     func_002C26D0(buf, (unsigned short*)ovt[4].fn(o + ovt[4].delta, GetHashValue32(D_004677E8)), name);
     char* fe = (char*)D_004A2028;
-    sVEntryV001D69E0* vt = *(sVEntryV001D69E0**)(fe + 8);
+    sVEntry<void(void*, ...)>* vt = *(sVEntry<void(void*, ...)>**)(fe + 8);
     vt[36].fn(fe + vt[36].delta, buf, 1, 0, 0, 1, 0);
     char* m = *(char**)((char*)D_004A2028 + 0x218);
-    sVEntryV001D69E0* mvt = *(sVEntryV001D69E0**)(m + 8);
+    sVEntry<void(void*, ...)>* mvt = *(sVEntry<void(void*, ...)>**)(m + 8);
     char* mthis = m + mvt[26].delta;
     char* o2 = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEntry001D69E0* o2vt = *(sVEntry001D69E0**)(o2 + 4);
+    sVEntry<void*(void*, ...)>* o2vt = *(sVEntry<void*(void*, ...)>**)(o2 + 4);
     char* o2this = o2 + o2vt[4].delta;
     void* str2 = o2vt[4].fn(o2this, GetHashValue32(D_0045F7E0));
     mvt[26].fn(mthis, str2, 0);
@@ -409,13 +377,13 @@ extern "C" void func_001D7190(void)
     void* app = D_004A28A8;
     *(int*)((char*)D_004A2028 + 0x19C) = 0xD;
     char* o = *(char**)((char*)app + 0x8C);
-    sVEntry001D69E0* ovt = *(sVEntry001D69E0**)(o + 4);
+    sVEntry<void*(void*, ...)>* ovt = *(sVEntry<void*(void*, ...)>**)(o + 4);
     func_002C26D0(buf, (unsigned short*)ovt[4].fn(o + ovt[4].delta, GetHashValue32(D_00467800)), name);
     char* fe = (char*)D_004A2028;
-    sVEntryV001D69E0* vt = *(sVEntryV001D69E0**)(fe + 8);
+    sVEntry<void(void*, ...)>* vt = *(sVEntry<void(void*, ...)>**)(fe + 8);
     vt[36].fn(fe + vt[36].delta, buf, 0, 0, 0, 1, 0);
     char* m = *(char**)((char*)D_004A2028 + 0x218);
-    sVEntryV001D69E0* mvt = *(sVEntryV001D69E0**)(m + 8);
+    sVEntry<void(void*, ...)>* mvt = *(sVEntry<void(void*, ...)>**)(m + 8);
     mvt[25].fn(m + mvt[25].delta, 1);
     if (buf != 0) {
         cMemMan_free(buf);
@@ -426,11 +394,6 @@ extern "C" void func_001D7190(void)
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", func_001D72A8);
 #ifdef SKIP_ASM
-struct sVEntry001D72A8 {
-    short delta;
-    short index;
-    void (*fn)(void*, ...);
-};
 
 extern void* D_004A2028;
 extern void* D_004A28A8;
@@ -440,12 +403,12 @@ extern "C" void* func_0023D570(void*, int);
 extern "C" void func_001D72A8(void)
 {
     char* fe = (char*)D_004A2028;
-    sVEntry001D72A8* vt = *(sVEntry001D72A8**)(fe + 8);
+    sVEntry<void(void*, ...)>* vt = *(sVEntry<void(void*, ...)>**)(fe + 8);
     vt[41].fn(fe + vt[41].delta);
     void* app = D_004A28A8;
     *(int*)((char*)D_004A2028 + 0x1E4) = 0;
     char* obj = (char*)func_00227F80(app);
-    sVEntry001D72A8* vt2 = *(sVEntry001D72A8**)(obj + 0x748);
+    sVEntry<void(void*, ...)>* vt2 = *(sVEntry<void(void*, ...)>**)(obj + 0x748);
     vt2[1].fn(obj + vt2[1].delta, 0x24);
     func_0023D570(obj, 0);
 }
@@ -465,14 +428,14 @@ extern "C" void func_001D7318(void)
     char* mp = (char*)func_00227F80(D_004A28A8);
     func_00241DC8(mp, name, *(int*)(mp + 0x428));
     char* o = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEntry001D69E0* ovt = *(sVEntry001D69E0**)(o + 4);
+    sVEntry<void*(void*, ...)>* ovt = *(sVEntry<void*(void*, ...)>**)(o + 4);
     func_002C26D0(buf, (unsigned short*)ovt[4].fn(o + ovt[4].delta, GetHashValue32(D_00464330)), name);
     char* fe = (char*)D_004A2028;
     *(int*)(fe + 0x19C) = 0xE;
-    sVEntryV001D69E0* vt = *(sVEntryV001D69E0**)(fe + 8);
+    sVEntry<void(void*, ...)>* vt = *(sVEntry<void(void*, ...)>**)(fe + 8);
     vt[36].fn(fe + vt[36].delta, buf, 0, 0, 0, 1, 0);
     char* m = *(char**)((char*)D_004A2028 + 0x218);
-    sVEntryV001D69E0* mvt = *(sVEntryV001D69E0**)(m + 8);
+    sVEntry<void(void*, ...)>* mvt = *(sVEntry<void(void*, ...)>**)(m + 8);
     mvt[25].fn(m + mvt[25].delta, 1);
     if (buf != 0) {
         cMemMan_free(buf);
@@ -491,17 +454,17 @@ extern "C" void cFEMemCard_callbackConfirmFormatDone(void)
     void* buf = operator_new__FUi(0x7D0, D_0045E2A0, 0x100, 0);
     func_00227F80(D_004A28A8);
     char* o = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEntry001D69E0* vt = *(sVEntry001D69E0**)(o + 4);
+    sVEntry<void*(void*, ...)>* vt = *(sVEntry<void*(void*, ...)>**)(o + 4);
     func_002C2508(buf, vt[4].fn(o + vt[4].delta, GetHashValue32(D_00467818)));
     char* fe = (char*)D_004A2028;
     *(int*)(fe + 0x19C) = 0x10;
-    sVEntryV001D69E0* vt2 = *(sVEntryV001D69E0**)(fe + 8);
+    sVEntry<void(void*, ...)>* vt2 = *(sVEntry<void(void*, ...)>**)(fe + 8);
     vt2[36].fn(fe + vt2[36].delta, buf, 1, 0, 0, 0, 0);
     char* o2 = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEntry001D69E0* vt4 = *(sVEntry001D69E0**)(o2 + 4);
+    sVEntry<void*(void*, ...)>* vt4 = *(sVEntry<void*(void*, ...)>**)(o2 + 4);
     void* str = vt4[4].fn(o2 + vt4[4].delta, GetHashValue32(D_0045F7E0));
     char* m = *(char**)((char*)D_004A2028 + 0x218);
-    sVEntryV001D69E0* vt3 = *(sVEntryV001D69E0**)(m + 8);
+    sVEntry<void(void*, ...)>* vt3 = *(sVEntry<void(void*, ...)>**)(m + 8);
     vt3[26].fn(m + vt3[26].delta, str, 0);
     if (buf != 0) {
         cMemMan_free(buf);
@@ -524,17 +487,17 @@ extern "C" void func_001D7548(void)
     char* mp = (char*)func_00227F80(D_004A28A8);
     func_00241DC8(mp, name, *(int*)(mp + 0x428));
     char* o = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEntry001D69E0* ovt = *(sVEntry001D69E0**)(o + 4);
+    sVEntry<void*(void*, ...)>* ovt = *(sVEntry<void*(void*, ...)>**)(o + 4);
     func_002C26D0(buf, (unsigned short*)ovt[4].fn(o + ovt[4].delta, GetHashValue32(D_004644F0)), name);
     char* fe = (char*)D_004A2028;
     *(int*)(fe + 0x19C) = 0x11;
-    sVEntryV001D69E0* vt = *(sVEntryV001D69E0**)(fe + 8);
+    sVEntry<void(void*, ...)>* vt = *(sVEntry<void(void*, ...)>**)(fe + 8);
     vt[36].fn(fe + vt[36].delta, buf, 1, 0, 0, 0, 0);
     char* o2 = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEntry001D69E0* o2vt = *(sVEntry001D69E0**)(o2 + 4);
+    sVEntry<void*(void*, ...)>* o2vt = *(sVEntry<void*(void*, ...)>**)(o2 + 4);
     void* str2 = o2vt[4].fn(o2 + o2vt[4].delta, GetHashValue32(D_0045F7E0));
     char* m = *(char**)((char*)D_004A2028 + 0x218);
-    sVEntryV001D69E0* mvt = *(sVEntryV001D69E0**)(m + 8);
+    sVEntry<void(void*, ...)>* mvt = *(sVEntry<void(void*, ...)>**)(m + 8);
     mvt[26].fn(m + mvt[26].delta, str2, 0);
     if (buf != 0) {
         cMemMan_free(buf);
@@ -556,32 +519,27 @@ extern void* D_004A28A8;
 extern char D_0045E2A0[];
 extern char D_00467830[];
 
-struct sVEntryI_001D7688 {
-    short delta;
-    short index;
-    int (*fn)(void*, ...);
-};
 
 extern "C" void cFEMemCard_callbackConfirmDelete(void)
 {
     unsigned short name[0x100];
     char* mp = (char*)func_00227F80(D_004A28A8);
     char* sf = *(char**)(mp + 0x434);
-    sVEntryI_001D7688* sfvt = *(sVEntryI_001D7688**)sf;
+    sVEntry<int(void*, ...)>* sfvt = *(sVEntry<int(void*, ...)>**)sf;
     if (sfvt[13].fn(sf + sfvt[13].delta) > 0) {
         unsigned short* buf = (unsigned short*)operator_new__FUi(0x7D0, D_0045E2A0, 0x100, 0);
         *(int*)((char*)D_004A2028 + 0x19C) = 3;
         char* sf2 = *(char**)(mp + 0x434);
-        sVEntryV001D69E0* sfvt2 = *(sVEntryV001D69E0**)sf2;
+        sVEntry<void(void*, ...)>* sfvt2 = *(sVEntry<void(void*, ...)>**)sf2;
         sfvt2[14].fn(sf2 + sfvt2[14].delta, *(int*)(mp + 0xF8), name);
         char* o = *(char**)((char*)D_004A28A8 + 0x8C);
-        sVEntry001D69E0* ovt = *(sVEntry001D69E0**)(o + 4);
+        sVEntry<void*(void*, ...)>* ovt = *(sVEntry<void*(void*, ...)>**)(o + 4);
         func_002C26D0(buf, (unsigned short*)ovt[4].fn(o + ovt[4].delta, GetHashValue32(D_00467830)), name);
         char* fe = (char*)D_004A2028;
-        sVEntryV001D69E0* vt = *(sVEntryV001D69E0**)(fe + 8);
+        sVEntry<void(void*, ...)>* vt = *(sVEntry<void(void*, ...)>**)(fe + 8);
         vt[36].fn(fe + vt[36].delta, buf, 0, 0, 0, 1, 0);
         char* m = *(char**)((char*)D_004A2028 + 0x218);
-        sVEntryV001D69E0* mvt = *(sVEntryV001D69E0**)(m + 8);
+        sVEntry<void(void*, ...)>* mvt = *(sVEntry<void(void*, ...)>**)(m + 8);
         mvt[25].fn(m + mvt[25].delta, 1);
         if (buf != 0) {
             cMemMan_free(buf);
@@ -610,25 +568,25 @@ extern "C" void func_001D77E8(void)
     unsigned short* buf = (unsigned short*)operator_new__FUi(0x7D0, D_0045E2A0, 0x100, 0);
     func_00241DC8(mp, name, *(int*)(mp + 0x428));
     char* o = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEntry001D69E0* ovt = *(sVEntry001D69E0**)(o + 4);
+    sVEntry<void*(void*, ...)>* ovt = *(sVEntry<void*(void*, ...)>**)(o + 4);
     func_002C26D0(buf, (unsigned short*)ovt[4].fn(o + ovt[4].delta, GetHashValue32(D_004644D8)), name);
     char* fe = (char*)D_004A2028;
     *(int*)(fe + 0x19C) = 0x12;
-    sVEntryV001D69E0* vt = *(sVEntryV001D69E0**)(fe + 8);
+    sVEntry<void(void*, ...)>* vt = *(sVEntry<void(void*, ...)>**)(fe + 8);
     vt[36].fn(fe + vt[36].delta, buf, 0, 0, 0, 0, 0);
     char* m = *(char**)((char*)D_004A2028 + 0x218);
-    sVEntryV001D69E0* mvt = *(sVEntryV001D69E0**)(m + 8);
+    sVEntry<void(void*, ...)>* mvt = *(sVEntry<void(void*, ...)>**)(m + 8);
     char* mthis = m + mvt[26].delta;
     char* o2 = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEntry001D69E0* o2vt = *(sVEntry001D69E0**)(o2 + 4);
+    sVEntry<void*(void*, ...)>* o2vt = *(sVEntry<void*(void*, ...)>**)(o2 + 4);
     char* o2this = o2 + o2vt[4].delta;
     void* str2 = o2vt[4].fn(o2this, GetHashValue32(D_0045DCD8));
     mvt[26].fn(mthis, str2, 0);
     char* m3 = *(char**)((char*)D_004A2028 + 0x218);
-    sVEntryV001D69E0* m3vt = *(sVEntryV001D69E0**)(m3 + 8);
+    sVEntry<void(void*, ...)>* m3vt = *(sVEntry<void(void*, ...)>**)(m3 + 8);
     char* m3this = m3 + m3vt[26].delta;
     char* o3 = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEntry001D69E0* o3vt = *(sVEntry001D69E0**)(o3 + 4);
+    sVEntry<void*(void*, ...)>* o3vt = *(sVEntry<void*(void*, ...)>**)(o3 + 4);
     char* o3this = o3 + o3vt[4].delta;
     void* str3 = o3vt[4].fn(o3this, GetHashValue32(D_00462C88));
     m3vt[26].fn(m3this, str3, 1);
@@ -654,11 +612,6 @@ extern char D_0045E2A0[];
 extern char D_00467848[];
 extern char D_0045F7E0[];
 
-struct sVEntryI_001D7998 {
-    short delta;
-    short index;
-    int (*fn)(void*, ...);
-};
 
 extern "C" void func_001D7998(void)
 {
@@ -668,20 +621,20 @@ extern "C" void func_001D7998(void)
     *(int*)((char*)D_004A2028 + 0x19C) = 0x13;
     func_00241DC8(mp, name, *(int*)(mp + 0x428));
     char* o = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEntry001D69E0* ovt = *(sVEntry001D69E0**)(o + 4);
+    sVEntry<void*(void*, ...)>* ovt = *(sVEntry<void*(void*, ...)>**)(o + 4);
     unsigned short* fmt = (unsigned short*)ovt[4].fn(o + ovt[4].delta, GetHashValue32(D_00467848));
     char* sf = *(char**)(mp + 0x434);
-    sVEntryI_001D7998* sfvt = *(sVEntryI_001D7998**)sf;
+    sVEntry<int(void*, ...)>* sfvt = *(sVEntry<int(void*, ...)>**)sf;
     int n = sfvt[23].fn(sf + sfvt[23].delta);
     func_002C26D0(buf, fmt, name, n);
     char* fe = (char*)D_004A2028;
-    sVEntryV001D69E0* vt = *(sVEntryV001D69E0**)(fe + 8);
+    sVEntry<void(void*, ...)>* vt = *(sVEntry<void(void*, ...)>**)(fe + 8);
     vt[36].fn(fe + vt[36].delta, buf, 1, 0, 3, 1, 0);
     char* m = *(char**)((char*)D_004A2028 + 0x218);
-    sVEntryV001D69E0* mvt = *(sVEntryV001D69E0**)(m + 8);
+    sVEntry<void(void*, ...)>* mvt = *(sVEntry<void(void*, ...)>**)(m + 8);
     char* mthis = m + mvt[26].delta;
     char* o2 = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEntry001D69E0* o2vt = *(sVEntry001D69E0**)(o2 + 4);
+    sVEntry<void*(void*, ...)>* o2vt = *(sVEntry<void*(void*, ...)>**)(o2 + 4);
     char* o2this = o2 + o2vt[4].delta;
     void* str2 = o2vt[4].fn(o2this, GetHashValue32(D_0045F7E0));
     mvt[26].fn(mthis, str2, 0);
@@ -703,11 +656,6 @@ extern void* D_004A28A8;
 extern char D_00467848[];
 extern char D_0045F7E0[];
 
-struct sVEntryI_001D7B18 {
-    short delta;
-    short index;
-    int (*fn)(void*, ...);
-};
 
 struct sLocal_001D7B18 {
     int v[8];
@@ -721,20 +669,20 @@ extern "C" void func_001D7B18(void)
     *(int*)((char*)D_004A2028 + 0x19C) = 0x13;
     func_00241DC8(mp, &name, *(int*)(mp + 0x428));
     char* o = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEntry001D69E0* ovt = *(sVEntry001D69E0**)(o + 4);
+    sVEntry<void*(void*, ...)>* ovt = *(sVEntry<void*(void*, ...)>**)(o + 4);
     unsigned short* fmt = (unsigned short*)ovt[4].fn(o + ovt[4].delta, GetHashValue32(D_00467848));
     char* sf = *(char**)(mp + 0x434);
-    sVEntryI_001D7B18* sfvt = *(sVEntryI_001D7B18**)sf;
+    sVEntry<int(void*, ...)>* sfvt = *(sVEntry<int(void*, ...)>**)sf;
     int n = sfvt[23].fn(sf + sfvt[23].delta);
     func_002C26D0(buf, fmt, &name, n);
     char* fe = (char*)D_004A2028;
-    sVEntryV001D69E0* vt = *(sVEntryV001D69E0**)(fe + 8);
+    sVEntry<void(void*, ...)>* vt = *(sVEntry<void(void*, ...)>**)(fe + 8);
     vt[36].fn(fe + vt[36].delta, buf, 1, 0, 3, 1, 0);
     char* m = *(char**)((char*)D_004A2028 + 0x218);
-    sVEntryV001D69E0* mvt = *(sVEntryV001D69E0**)(m + 8);
+    sVEntry<void(void*, ...)>* mvt = *(sVEntry<void(void*, ...)>**)(m + 8);
     char* mthis = m + mvt[26].delta;
     char* o2 = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEntry001D69E0* o2vt = *(sVEntry001D69E0**)(o2 + 4);
+    sVEntry<void*(void*, ...)>* o2vt = *(sVEntry<void*(void*, ...)>**)(o2 + 4);
     char* o2this = o2 + o2vt[4].delta;
     void* str2 = o2vt[4].fn(o2this, GetHashValue32(D_0045F7E0));
     mvt[26].fn(mthis, str2, 0);
@@ -752,14 +700,14 @@ extern "C" void cFEMemCard_callbackFileExists(void)
     void* app = D_004A28A8;
     char* fe = (char*)D_004A2028;
     *(int*)(fe + 0x19C) = 0x17;
-    sVEntryV001D69E0* vt = *(sVEntryV001D69E0**)(fe + 8);
+    sVEntry<void(void*, ...)>* vt = *(sVEntry<void(void*, ...)>**)(fe + 8);
     char* o = *(char**)((char*)app + 0x8C);
-    sVEntry001D69E0* ovt = *(sVEntry001D69E0**)(o + 4);
+    sVEntry<void*(void*, ...)>* ovt = *(sVEntry<void*(void*, ...)>**)(o + 4);
     vt[36].fn(fe + vt[36].delta, ovt[4].fn(o + ovt[4].delta, GetHashValue32(D_00467860)), 1, 0, 0, 0, 0);
     char* m = *(char**)((char*)D_004A2028 + 0x218);
-    sVEntryV001D69E0* mvt = *(sVEntryV001D69E0**)(m + 8);
+    sVEntry<void(void*, ...)>* mvt = *(sVEntry<void(void*, ...)>**)(m + 8);
     char* o2 = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEntry001D69E0* o2vt = *(sVEntry001D69E0**)(o2 + 4);
+    sVEntry<void*(void*, ...)>* o2vt = *(sVEntry<void*(void*, ...)>**)(o2 + 4);
     mvt[26].fn(m + mvt[26].delta, o2vt[4].fn(o2 + o2vt[4].delta, GetHashValue32(D_0045F7E0)), 0);
     *(int*)((char*)D_004A2028 + 0x1C0) = 1;
 }
@@ -788,17 +736,17 @@ extern "C" void func_001D7D70(void)
     func_00241DC8(mp, name, *(int*)(mp + 0x428));
     unsigned short* buf = (unsigned short*)operator_new__FUi(0x640, D_0045E2A0, 0x100, 0);
     char* o = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEntry001D69E0* ovt = *(sVEntry001D69E0**)(o + 4);
+    sVEntry<void*(void*, ...)>* ovt = *(sVEntry<void*(void*, ...)>**)(o + 4);
     func_002C26D0(buf, (unsigned short*)ovt[4].fn(o + ovt[4].delta, GetHashValue32(D_00467878)), name);
     char* fe = (char*)D_004A2028;
     *(int*)(fe + 0x19C) = 0x18;
-    sVEntryV001D69E0* vt = *(sVEntryV001D69E0**)(fe + 8);
+    sVEntry<void(void*, ...)>* vt = *(sVEntry<void(void*, ...)>**)(fe + 8);
     vt[36].fn(fe + vt[36].delta, buf, 1, 0, 0, 0, 0);
     char* m = *(char**)((char*)D_004A2028 + 0x218);
-    sVEntryV001D69E0* mvt = *(sVEntryV001D69E0**)(m + 8);
+    sVEntry<void(void*, ...)>* mvt = *(sVEntry<void(void*, ...)>**)(m + 8);
     char* mthis = m + mvt[26].delta;
     char* o2 = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEntry001D69E0* o2vt = *(sVEntry001D69E0**)(o2 + 4);
+    sVEntry<void*(void*, ...)>* o2vt = *(sVEntry<void*(void*, ...)>**)(o2 + 4);
     char* o2this = o2 + o2vt[4].delta;
     void* str2 = o2vt[4].fn(o2this, GetHashValue32(D_0045F7E0));
     mvt[26].fn(mthis, str2, 0);
@@ -828,17 +776,17 @@ extern "C" int cFEMemCard_callbackDeleteDone(void)
     if (*(int*)((char*)D_004A2028 + 0x204) == 0) {
         void* buf = operator_new__FUi(0x7D0, D_0045E2A0, 0x100, 0);
         char* o = *(char**)((char*)D_004A28A8 + 0x8C);
-        sVEntry001D69E0* vt = *(sVEntry001D69E0**)(o + 4);
+        sVEntry<void*(void*, ...)>* vt = *(sVEntry<void*(void*, ...)>**)(o + 4);
         func_002C2508(buf, vt[4].fn(o + vt[4].delta, GetHashValue32(D_00467898)));
         char* fe = (char*)D_004A2028;
         *(int*)(fe + 0x19C) = 7;
-        sVEntryV001D69E0* vt2 = *(sVEntryV001D69E0**)(fe + 8);
+        sVEntry<void(void*, ...)>* vt2 = *(sVEntry<void(void*, ...)>**)(fe + 8);
         vt2[36].fn(fe + vt2[36].delta, buf, 1, 0, 0, 0, 0);
         char* o2 = *(char**)((char*)D_004A28A8 + 0x8C);
-        sVEntry001D69E0* o2vt = *(sVEntry001D69E0**)(o2 + 4);
+        sVEntry<void*(void*, ...)>* o2vt = *(sVEntry<void*(void*, ...)>**)(o2 + 4);
         void* str2 = o2vt[4].fn(o2 + o2vt[4].delta, GetHashValue32(D_0045F7E0));
         char* m = *(char**)((char*)D_004A2028 + 0x218);
-        sVEntryV001D69E0* mvt = *(sVEntryV001D69E0**)(m + 8);
+        sVEntry<void(void*, ...)>* mvt = *(sVEntry<void(void*, ...)>**)(m + 8);
         mvt[26].fn(m + mvt[26].delta, str2, 0);
         if (buf != 0) {
             cMemMan_free(buf);
@@ -867,17 +815,17 @@ extern "C" int func_001D8020(void)
     char* mp = (char*)func_00227F80(D_004A28A8);
     func_00241DC8(mp, name, *(int*)(mp + 0x428));
     char* o = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEntry001D69E0* ovt = *(sVEntry001D69E0**)(o + 4);
+    sVEntry<void*(void*, ...)>* ovt = *(sVEntry<void*(void*, ...)>**)(o + 4);
     func_002C26D0(buf, (unsigned short*)ovt[4].fn(o + ovt[4].delta, GetHashValue32(D_00464640)), name);
     char* fe = (char*)D_004A2028;
     *(int*)(fe + 0x19C) = 0x8;
-    sVEntryV001D69E0* vt = *(sVEntryV001D69E0**)(fe + 8);
+    sVEntry<void(void*, ...)>* vt = *(sVEntry<void(void*, ...)>**)(fe + 8);
     vt[36].fn(fe + vt[36].delta, buf, 1, 0, 0, 0, 0);
     char* o2 = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEntry001D69E0* o2vt = *(sVEntry001D69E0**)(o2 + 4);
+    sVEntry<void*(void*, ...)>* o2vt = *(sVEntry<void*(void*, ...)>**)(o2 + 4);
     void* str2 = o2vt[4].fn(o2 + o2vt[4].delta, GetHashValue32(D_0045F7E0));
     char* m = *(char**)((char*)D_004A2028 + 0x218);
-    sVEntryV001D69E0* mvt = *(sVEntryV001D69E0**)(m + 8);
+    sVEntry<void(void*, ...)>* mvt = *(sVEntry<void(void*, ...)>**)(m + 8);
     mvt[26].fn(m + mvt[26].delta, str2, 0);
     if (buf != 0) {
         cMemMan_free(buf);
@@ -949,11 +897,6 @@ extern "C" void func_003A0D00(void* self, unsigned short* str);
 extern char D_004678B0[];
 extern char D_004678C8[];
 
-struct sVEntryK1D8240 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 extern "C" void func_001D8240(void)
 {
@@ -961,7 +904,7 @@ extern "C" void func_001D8240(void)
     *(int*)(fe + 0x1C0) = 1;
     if (*(int*)(fe + 0x214) != 1) {
         *(int*)(fe + 0x214) = 1;
-        sVEntryK1D8240* vt = *(sVEntryK1D8240**)(fe + 8);
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(fe + 8);
         vt[35].fn(fe + vt[35].delta, 1);
     }
     char* st = (char*)D_004A2028;
@@ -969,10 +912,10 @@ extern "C" void func_001D8240(void)
     if (obj) {
         unsigned short* buf = (unsigned short*)operator_new__FUi(0x7D0, D_0045E2A0, 0x100, 0);
         char* o = *(char**)((char*)D_004A28A8 + 0x8C);
-        sVEntry001D69E0* ovt = *(sVEntry001D69E0**)(o + 4);
+        sVEntry<void*(void*, ...)>* ovt = *(sVEntry<void*(void*, ...)>**)(o + 4);
         func_002C2508(buf, ovt[4].fn(o + ovt[4].delta, GetHashValue32(D_004678C8)));
         func_003A0D00(obj, buf);
-        sVEntryK1D8240* vt = *(sVEntryK1D8240**)(obj + 8);
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(obj + 8);
         vt[9].fn(obj + vt[9].delta, 1);
         if (buf != 0) {
             cMemMan_free(buf);
@@ -984,11 +927,6 @@ extern "C" void func_001D8240(void)
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", func_001D8358);
 #ifdef SKIP_ASM
-struct sVEntry001D8358 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 extern void* D_004A2028;
 
@@ -997,7 +935,7 @@ extern "C" void func_001D8358(void)
     char* fe = (char*)D_004A2028;
     if (*(int*)(fe + 0x214) != 2 && *(int*)(fe + 0x1C0) == 0) {
         *(int*)(fe + 0x214) = 2;
-        sVEntry001D8358* vt = *(sVEntry001D8358**)(fe + 8);
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(fe + 8);
         vt[35].fn(fe + vt[35].delta, 2);
     }
 }
@@ -1020,17 +958,12 @@ extern char D_0045E2A0[];
 extern char D_004678B0[];
 extern char D_004678C8[];
 
-struct sVEntryI_001D83A8 {
-    short delta;
-    short index;
-    int (*fn)(void*, ...);
-};
 
 static inline void SetMode_001D83A8(char* fe, int mode)
 {
     if (*(int*)(fe + 0x214) != mode) {
         *(int*)(fe + 0x214) = mode;
-        sVEntryV001D69E0* vt = *(sVEntryV001D69E0**)(fe + 8);
+        sVEntry<void(void*, ...)>* vt = *(sVEntry<void(void*, ...)>**)(fe + 8);
         vt[35].fn(fe + vt[35].delta, mode);
     }
 }
@@ -1039,10 +972,10 @@ extern "C" void func_001D83A8(void)
 {
     char* mp = (char*)func_00227F80(D_004A28A8);
     *(int*)((char*)D_004A2028 + 0x1C0) = 1;
-    sVEntryV001D69E0* mvt = *(sVEntryV001D69E0**)(mp + 0x748);
+    sVEntry<void(void*, ...)>* mvt = *(sVEntry<void(void*, ...)>**)(mp + 0x748);
     mvt[1].fn(mp + mvt[1].delta, 2);
     char* sf = *(char**)(mp + 0x434);
-    sVEntryI_001D83A8* sfvt = *(sVEntryI_001D83A8**)sf;
+    sVEntry<int(void*, ...)>* sfvt = *(sVEntry<int(void*, ...)>**)sf;
     int busy = sfvt[53].fn(sf + sfvt[53].delta);
     if (busy) {
         SetMode_001D83A8((char*)D_004A2028, 3);
@@ -1053,10 +986,10 @@ extern "C" void func_001D83A8(void)
         if (obj) {
             unsigned short* buf = (unsigned short*)operator_new__FUi(0x7D0, D_0045E2A0, 0x100, 0);
             char* o = *(char**)((char*)D_004A28A8 + 0x8C);
-            sVEntry001D69E0* ovt = *(sVEntry001D69E0**)(o + 4);
+            sVEntry<void*(void*, ...)>* ovt = *(sVEntry<void*(void*, ...)>**)(o + 4);
             func_002C2508(buf, ovt[4].fn(o + ovt[4].delta, GetHashValue32(D_004678C8)));
             func_003A0D00(obj, buf);
-            sVEntryV001D69E0* bvt = *(sVEntryV001D69E0**)((char*)obj + 8);
+            sVEntry<void(void*, ...)>* bvt = *(sVEntry<void(void*, ...)>**)((char*)obj + 8);
             bvt[9].fn((char*)obj + bvt[9].delta, 1);
             if (buf != 0) {
                 cMemMan_free(buf);
@@ -1159,11 +1092,6 @@ void func_001D86A0(void* self)
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", func_001D86B0);
 #ifdef SKIP_ASM
-struct sVEntry001D86B0 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
 
 extern "C" void func_001D9308(void*, int);
 
@@ -1171,7 +1099,7 @@ extern "C" void func_001D86B0(void* self)
 {
     func_001D9308(self, 1);
     *(int*)((char*)self + 0x1A8) = 1;
-    sVEntry001D86B0* vt = *(sVEntry001D86B0**)((char*)self + 8);
+    sVEntry<void(void*)>* vt = *(sVEntry<void(void*)>**)((char*)self + 8);
     *(int*)((char*)self + 0x1C0) = 5;
     vt[47].fn((char*)self + vt[47].delta);
 }
@@ -1187,13 +1115,8 @@ extern "C" void func_001D9308(void*, int);
 extern "C" void func_001D7190(void);
 extern "C" void* func_0039F190(void* list, int a1);
 
-struct sVEntryK1D8700 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
 
-#define VCALL_K1D8700(obj, idx) ((*(sVEntryK1D8700**)((char*)(obj) + 8))[idx].fn((char*)(obj) + (*(sVEntryK1D8700**)((char*)(obj) + 8))[idx].delta))
+#define VCALL_K1D8700(obj, idx) ((*(sVEntry<void(void*)>**)((char*)(obj) + 8))[idx].fn((char*)(obj) + (*(sVEntry<void(void*)>**)((char*)(obj) + 8))[idx].delta))
 
 static inline void notifyK1D8700(char* self, char* mp)
 {
@@ -1409,18 +1332,13 @@ int GetHashValue32(char* str);
 extern char D_00467940[];
 extern char D_00467950[];
 
-struct sVEntryK1D8C50 {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
 
 extern "C" int cFEMemCard_onInputBegin(void* self, void* input)
 {
     int handled = 0;
     if (*(int*)((char*)self + 0x1A8) == 1)
         return 0;
-    sVEntryK1D8C50* vt = *(sVEntryK1D8C50**)((char*)input + 8);
+    sVEntry<int(void*)>* vt = *(sVEntry<int(void*)>**)((char*)input + 8);
     if (vt[19].fn((char*)input + vt[19].delta)) {
         handled = 1;
         *(int*)((char*)self + 0x1FC) = handled;
@@ -1430,7 +1348,7 @@ extern "C" int cFEMemCard_onInputBegin(void* self, void* input)
                 cUIScreen_playFrame(*(void**)((char*)self + 0x40), frame, 1);
         }
     } else {
-        sVEntryK1D8C50* vt2 = *(sVEntryK1D8C50**)((char*)input + 8);
+        sVEntry<int(void*)>* vt2 = *(sVEntry<int(void*)>**)((char*)input + 8);
         if (vt2[20].fn((char*)input + vt2[20].delta)) {
             handled = 1;
             *(int*)((char*)self + 0x1F8) = handled;
@@ -1448,11 +1366,6 @@ extern "C" int cFEMemCard_onInputBegin(void* self, void* input)
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", func_001D8D68);
 #ifdef SKIP_ASM
-struct sVEntry001D8D68 {
-    short delta;
-    short index;
-    void (*fn)(void*, unsigned short*, int, int, int, int, int);
-};
 
 extern void* D_004A28A8;
 extern "C" void* func_00227F80(void* app);
@@ -1464,7 +1377,7 @@ extern "C" void func_001D8D68(void* self)
     void* obj = func_00227F80(D_004A28A8);
     *(int*)((char*)self + 0x19C) = 0x16;
     func_00241E18(obj, buf, 0x320);
-    sVEntry001D8D68* vt = *(sVEntry001D8D68**)((char*)self + 8);
+    sVEntry<void(void*, unsigned short*, int, int, int, int, int)>* vt = *(sVEntry<void(void*, unsigned short*, int, int, int, int, int)>**)((char*)self + 8);
     vt[36].fn((char*)self + vt[36].delta, buf, 1, 1, 0, 0, 1);
     *(int*)((char*)self + 0x210) = 1;
 }
@@ -1554,13 +1467,8 @@ public:
     virtual void v47();
 };
 
-struct sVEntryK1D8DE0 {
-    short delta;
-    short index;
-    void (*fn)(void*, ...);
-};
 
-#define VCALL_K1D8DE0(obj, off, idx) (*(sVEntryK1D8DE0**)((char*)(obj) + (off)))[idx].fn((char*)(obj) + (*(sVEntryK1D8DE0**)((char*)(obj) + (off)))[idx].delta
+#define VCALL_K1D8DE0(obj, off, idx) (*(sVEntry<void(void*, ...)>**)((char*)(obj) + (off)))[idx].fn((char*)(obj) + (*(sVEntry<void(void*, ...)>**)((char*)(obj) + (off)))[idx].delta
 
 #define BUSY_K1D8DE0(self, mp) ((*(int*)((self) + 0x1B0) == 1 && func_0023C898(mp) == 0) \
         || (*(int*)((self) + 0x1B0) == 0 && (*(cStreamK1D8DE0**)((mp) + 0x434))->v11() != 0))
@@ -1635,7 +1543,7 @@ extern "C" void func_001D8DE0(cMemCardK1D8DE0* card)
         if (menu != 0) {
             sel = *(unsigned char*)((char*)menu + 0x95);
         }
-        sVEntryK1D8DE0* vt = *(sVEntryK1D8DE0**)(self + 8);
+        sVEntry<void(void*, ...)>* vt = *(sVEntry<void(void*, ...)>**)(self + 8);
         void (**pf)(void*, ...) = &vt[38].fn;
         (*pf)(self + vt[38].delta, (*(cStreamK1D8DE0**)(mp + 0x434))->v67(sel) == 0 || (*(cStreamK1D8DE0**)(mp + 0x434))->v53() == 0);
         bool a = !(*(cStreamK1D8DE0**)(mp + 0x434))->v67(sel);
@@ -1677,11 +1585,6 @@ extern "C" void func_001D9258(void* self)
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", func_001D9308);
 #ifdef SKIP_ASM
-struct sVEntry001D9308 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*, void*);
-};
 
 extern void* D_004A28A8;
 extern "C" void* func_00227F80(void* app);
@@ -1692,7 +1595,7 @@ extern "C" void func_001D9308(void* self, int on)
     if (on) {
         char* r = (char*)func_00227F80(D_004A28A8);
         char* obj = *(char**)(r + 0x434);
-        sVEntry001D9308* vt = *(sVEntry001D9308**)obj;
+        sVEntry<void(void*, void*, void*)>* vt = *(sVEntry<void(void*, void*, void*)>**)obj;
         vt[14].fn(obj + vt[14].delta, *(void**)(r + 0xF8), (char*)self + 0x9C);
     } else {
         *(short*)((char*)self + 0x9C) = 0;
@@ -1703,17 +1606,12 @@ extern "C" void func_001D9308(void* self, int on)
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", func_001D9368);
 #ifdef SKIP_ASM
-struct sVEntry001D9368 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 extern "C" void func_001D9368(void* self)
 {
     if (*(int*)((char*)self + 0x214) != 1) {
         *(int*)((char*)self + 0x214) = 1;
-        sVEntry001D9368* vt = *(sVEntry001D9368**)((char*)self + 8);
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)((char*)self + 8);
         vt[35].fn((char*)self + vt[35].delta, 1);
     }
 }
@@ -1815,17 +1713,7 @@ extern char D_004678B0[];
 extern char D_00467980[];
 extern char D_00463F58[];
 
-struct sVEntryT1D9470 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
-struct sVEntryF1D9470 {
-    short delta;
-    short index;
-    unsigned short* (*fn)(void*, int);
-};
 
 extern "C" void cFEMemCard_triggerDisplayState(char* self, int state)
 {
@@ -1836,12 +1724,12 @@ extern "C" void cFEMemCard_triggerDisplayState(char* self, int state)
     case 1: {
         char* o = (char*)cUIScreen_getObjectByHashName(*(void**)(self + 0x40), GetHashValue32(D_004A1600));
         if (o) {
-            sVEntryT1D9470* vt = *(sVEntryT1D9470**)(o + 8);
+            sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(o + 8);
             vt[7].fn(o + vt[7].delta, 0);
         }
         o = (char*)cUIScreen_getObjectByHashName(*(void**)(self + 0x40), GetHashValue32(D_004A1608));
         if (o) {
-            sVEntryT1D9470* vt = *(sVEntryT1D9470**)(o + 8);
+            sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(o + 8);
             vt[7].fn(o + vt[7].delta, 1);
         }
         frame = cUIScreen_getFrameByLabel(*(cUIScreen**)(self + 0x40), GetHashValue32(D_004A2030));
@@ -1851,10 +1739,10 @@ extern "C" void cFEMemCard_triggerDisplayState(char* self, int state)
             char* mp = (char*)func_00227F80(D_004A28A8);
             func_00241DC8(mp, buf, *(int*)(mp + 0x428));
             char* m = *(char**)((char*)D_004A28A8 + 0x8C);
-            sVEntryF1D9470* mvt = *(sVEntryF1D9470**)(m + 4);
+            sVEntry<unsigned short*(void*, int)>* mvt = *(sVEntry<unsigned short*(void*, int)>**)(m + 4);
             func_002C26D0(str, mvt[4].fn(m + mvt[4].delta, GetHashValue32(D_00463F58)), buf);
             func_003A0D00(text, str);
-            sVEntryT1D9470* tvt = *(sVEntryT1D9470**)(text + 8);
+            sVEntry<void(void*, int)>* tvt = *(sVEntry<void(void*, int)>**)(text + 8);
             tvt[9].fn(text + tvt[9].delta, 1);
             if (str)
                 cMemMan_free(str);
@@ -1865,12 +1753,12 @@ extern "C" void cFEMemCard_triggerDisplayState(char* self, int state)
         char* mp = (char*)func_00227F80(D_004A28A8);
         char* o = (char*)cUIScreen_getObjectByHashName(*(void**)(self + 0x40), GetHashValue32(D_004A1600));
         if (o) {
-            sVEntryT1D9470* vt = *(sVEntryT1D9470**)(o + 8);
+            sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(o + 8);
             vt[7].fn(o + vt[7].delta, 0);
         }
         o = (char*)cUIScreen_getObjectByHashName(*(void**)(self + 0x40), GetHashValue32(D_004A1608));
         if (o) {
-            sVEntryT1D9470* vt = *(sVEntryT1D9470**)(o + 8);
+            sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(o + 8);
             vt[7].fn(o + vt[7].delta, 1);
         }
         frame = cUIScreen_getFrameByLabel(*(cUIScreen**)(self + 0x40), GetHashValue32(D_00467980));
@@ -1879,10 +1767,10 @@ extern "C" void cFEMemCard_triggerDisplayState(char* self, int state)
             unsigned short* str = (unsigned short*)operator_new__FUi(0x640, D_0045E2A0, 0x100, 0);
             func_00241DC8(mp, buf, *(int*)(mp + 0x428));
             char* m = *(char**)((char*)D_004A28A8 + 0x8C);
-            sVEntryF1D9470* mvt = *(sVEntryF1D9470**)(m + 4);
+            sVEntry<unsigned short*(void*, int)>* mvt = *(sVEntry<unsigned short*(void*, int)>**)(m + 4);
             func_002C26D0(str, mvt[4].fn(m + mvt[4].delta, GetHashValue32(D_00463F58)), buf);
             func_003A0D00(text, str);
-            sVEntryT1D9470* tvt = *(sVEntryT1D9470**)(text + 8);
+            sVEntry<void(void*, int)>* tvt = *(sVEntry<void(void*, int)>**)(text + 8);
             tvt[9].fn(text + tvt[9].delta, 1);
             if (str)
                 cMemMan_free(str);
@@ -1892,12 +1780,12 @@ extern "C" void cFEMemCard_triggerDisplayState(char* self, int state)
     case 3: {
         char* o = (char*)cUIScreen_getObjectByHashName(*(void**)(self + 0x40), GetHashValue32(D_004A1600));
         if (o) {
-            sVEntryT1D9470* vt = *(sVEntryT1D9470**)(o + 8);
+            sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(o + 8);
             vt[7].fn(o + vt[7].delta, 1);
         }
         o = (char*)cUIScreen_getObjectByHashName(*(void**)(self + 0x40), GetHashValue32(D_004A1608));
         if (o) {
-            sVEntryT1D9470* vt = *(sVEntryT1D9470**)(o + 8);
+            sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(o + 8);
             vt[7].fn(o + vt[7].delta, 0);
         }
         frame = cUIScreen_getFrameByLabel(*(cUIScreen**)(self + 0x40), GetHashValue32(D_004A2038));
@@ -1929,11 +1817,6 @@ extern "C" int func_001D97E0(void* self, void* list, int idx, int back)
 //100%
 INCLUDE_ASM("fe/fememcardcallbacks", func_001D9818);
 #ifdef SKIP_ASM
-struct sVEntry001D9818 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 extern "C" void func_0039E4C0(void* self, int a1);
 int GetHashValue32(char* str);
@@ -1945,7 +1828,7 @@ extern "C" void func_001D9818(void* self, int a1)
     func_0039E4C0(self, a1);
     void* obj = cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_004678B0));
     if (obj != 0) {
-        sVEntry001D9818* vt = *(sVEntry001D9818**)((char*)obj + 8);
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)((char*)obj + 8);
         vt[9].fn((char*)obj + vt[9].delta, 0);
     }
 }
