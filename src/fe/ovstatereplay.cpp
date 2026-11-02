@@ -16,14 +16,18 @@ public:
     virtual void setVisible(int v);
 };
 
+// Declarations shared by the functions of this unit.
+struct cUIText;
+int GetHashValue32(char* str);
+extern void* D_004A28A8;
+extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
+
 //100%
 INCLUDE_ASM("fe/ovstatereplay", cOVState_REPLAY_onWidgetCreate);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
 extern char D_00471BF0[];
 extern char D_00471C08[];
 extern char D_00471C20[];
-extern void* D_004A28A8;
 
 extern "C" void cOVState_REPLAY_onWidgetCreate(void* self, cUIThing* w)
 {
@@ -56,15 +60,12 @@ INCLUDE_ASM("fe/ovstatereplay", func_0020DF38);
 //100%
 INCLUDE_ASM("fe/ovstatereplay", cOVState_REPLAY_onUpdate);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
 extern "C" void cUIState_showObjSafe(void* self, char* name);
 extern "C" void cUIState_hideObjSafe(void* self, char* name);
 extern "C" void func_0020E900(void* self);
 extern "C" void func_0026FA78(void* p);
 extern "C" void cOVState_REPLAY_setupCameraName(void* self);
 extern "C" void cOVState_REPLAY_setupTicker(void* self);
-extern void* D_004A28A8;
 extern char D_00471C30[];
 extern char D_00471BB0[];
 extern char D_00471BA0[];
@@ -128,13 +129,10 @@ extern "C" void cOVState_REPLAY_onUpdate(void* p)
 //100%
 INCLUDE_ASM("fe/ovstatereplay", cOVState_REPLAY_setupCameraName);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-struct cUIText;
 extern "C" void* cUIScreen_getObjectByHashName(void* screen, int hash);
 void cUIText_setAsciiString(cUIText* self, const char* str);
 extern "C" int sprintf(char* buf, const char* fmt, ...);
 extern "C" char* strcpy(char* dst, const char* src);
-extern void* D_004A28A8;
 extern char D_004A2730[];
 extern char D_004A2138[];
 
@@ -166,10 +164,7 @@ extern "C" void cOVState_REPLAY_setupCameraName(void* self)
 //100%
 INCLUDE_ASM("fe/ovstatereplay", cOVState_REPLAY_setupTicker);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
 extern char D_00471CC8[];
-extern void* D_004A28A8;
 struct sVec3_20E818 {
     float x, y, z;
 };
@@ -207,7 +202,6 @@ void func_0020E8E0(void* self)
 //100%
 INCLUDE_ASM("fe/ovstatereplay", func_0020E900);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
 extern "C" int func_00231840(void* game, int a);
 extern "C" void func_0039E510(void* self);
 
