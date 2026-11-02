@@ -273,6 +273,41 @@ struct cSSXAudio : public sSndSys69A0 {
     int idx;                 // 0x6070 rider index (cBeing::getAIIndex)
 };
 
+// cSSXAudio's pending one-shot queue (an int ring of 5-word records).
+static inline int sndRingCount(cSSXAudio* s)
+{
+    return (s->ring.head - s->ring.tail + s->ring.cap) % s->ring.cap;
+}
+static inline int sndRingEmpty(cSSXAudio* s)
+{
+    return s->ring.head == s->ring.tail;
+}
+static inline int sndRingGet(cSSXAudio* s, int i)
+{
+    if (sndRingEmpty(s) || i >= sndRingCount(s)) return -1;
+    sSnd5028Ring* r = &s->ring;
+    return r->data[(s->ring.tail + i) % s->ring.cap];
+}
+static inline int sndRingFull(cSSXAudio* s)
+{
+    return (s->ring.head + 1) % s->ring.cap == s->ring.tail;
+}
+static inline int sndRingPop(cSSXAudio* s)
+{
+    sSnd5028Ring* r = &s->ring;
+    if (sndRingEmpty(s)) return -1;
+    int v = r->data[r->tail];
+    if (++s->ring.tail >= s->ring.cap) s->ring.tail = 0;
+    return v;
+}
+static inline void sndRingPush(cSSXAudio* s, int v)
+{
+    sSnd5028Ring* r = &s->ring;
+    if (sndRingFull(s)) return;
+    r->data[r->head] = v;
+    if (++s->ring.head >= s->ring.cap) s->ring.head = 0;
+}
+
 // ---- end of shared declarations ----
 
 //100%
@@ -2121,30 +2156,16 @@ INCLUDE_ASM("sound/soundsys", func_00295028);
 extern "C" void* func_002AD550(void* self, int idx, int a2);
 
 
-static inline int ring5028Count(cSSXAudio* s)
-{
-    return (s->ring.head - s->ring.tail + s->ring.cap) % s->ring.cap;
-}
-static inline int ring5028Empty(cSSXAudio* s)
-{
-    return s->ring.head == s->ring.tail;
-}
-static inline int ring5028Get(cSSXAudio* s, int i)
-{
-    if (ring5028Empty(s) || i >= ring5028Count(s)) return -1;
-    sSnd5028Ring* r = &s->ring;
-    return r->data[(s->ring.tail + i) % s->ring.cap];
-}
 
 extern "C" int func_00295028(void* vself, int a, int b)
 {
     cSSXAudio* self = (cSSXAudio*)vself;
-    int n = ring5028Count(self);
+    int n = sndRingCount(self);
     for (int i = 0; i < n; i += 5) {
-        int x = ring5028Get(self, i);
-        int y = ring5028Get(self, i + 4);
+        int x = sndRingGet(self, i);
+        int y = sndRingGet(self, i + 4);
         if (a == x && b == y) {
-            int v = ring5028Get(self, i + 1);
+            int v = sndRingGet(self, i + 1);
             if (v != 0 && func_002AD550(&(*self->p118)->sub, v, 1) == 0) continue;
             return 1;
         }
@@ -2157,54 +2178,35 @@ extern "C" int func_00295028(void* vself, int a, int b)
 INCLUDE_ASM("sound/soundsys", func_00295208);
 #ifdef SKIP_ASM
 
-static inline int ring5208Full(cSSXAudio* s)
-{
-    return (s->ring.head + 1) % s->ring.cap == s->ring.tail;
-}
-static inline int ring5208Pop(cSSXAudio* s)
-{
-    sSnd5028Ring* r = &s->ring;
-    if (ring5028Empty(s)) return -1;
-    int v = r->data[r->tail];
-    if (++s->ring.tail >= s->ring.cap) s->ring.tail = 0;
-    return v;
-}
-static inline void ring5208Push(cSSXAudio* s, int v)
-{
-    sSnd5028Ring* r = &s->ring;
-    if (ring5208Full(s)) return;
-    r->data[r->head] = v;
-    if (++s->ring.head >= s->ring.cap) s->ring.head = 0;
-}
 
 // Ages the queue of pending one-shot sounds (records of 5: event, handle, end time, stop flag, index): finished
 // sounds are dropped, timed-out ones are stopped if flagged, the others go back into the queue.
 extern "C" void func_00295208(void* vself)
 {
     cSSXAudio* self = (cSSXAudio*)vself;
-    int n = ring5028Count(self) / 5;
+    int n = sndRingCount(self) / 5;
     for (int i = 0; i < n; i++) {
-        int e = ring5208Pop(self);
-        int h = ring5208Pop(self);
-        int t = ring5208Pop(self);
-        int stop = ring5208Pop(self);
-        int idx = ring5208Pop(self);
+        int e = sndRingPop(self);
+        int h = sndRingPop(self);
+        int t = sndRingPop(self);
+        int stop = sndRingPop(self);
+        int idx = sndRingPop(self);
         if (h < 0) continue;
         if (h != 0 && func_002AD550(&(*self->p118)->sub, h, 1) == 0) continue;
         char* mgr = (char*)*self->p118;
         char* bank = mgr + 0x1D8;
         if (*(int*)(mgr + 0x260) < t) {
-            ring5208Push(self, e);
-            ring5208Push(self, h);
-            ring5208Push(self, t);
-            ring5208Push(self, stop);
-            ring5208Push(self, idx);
+            sndRingPush(self, e);
+            sndRingPush(self, h);
+            sndRingPush(self, t);
+            sndRingPush(self, stop);
+            sndRingPush(self, idx);
         } else if (t == -1) {
-            ring5208Push(self, e);
-            ring5208Push(self, h);
-            ring5208Push(self, t);
-            ring5208Push(self, stop);
-            ring5208Push(self, idx);
+            sndRingPush(self, e);
+            sndRingPush(self, h);
+            sndRingPush(self, t);
+            sndRingPush(self, stop);
+            sndRingPush(self, idx);
         } else if (stop != 0) {
             func_002AD5F0(bank, h, 1, 0.0f);
         }
@@ -2215,84 +2217,46 @@ extern "C" void func_00295208(void* vself)
 //100%
 INCLUDE_ASM("sound/soundsys", func_00295628);
 #ifdef SKIP_ASM
-static inline int ring5628Full(cSSXAudio* s)
-{
-    return (s->ring.head + 1) % s->ring.cap == s->ring.tail;
-}
-static inline int ring5628Pop(cSSXAudio* s)
-{
-    sSnd5028Ring* r = &s->ring;
-    if (ring5028Empty(s)) return -1;
-    int v = r->data[r->tail];
-    if (++s->ring.tail >= s->ring.cap) s->ring.tail = 0;
-    return v;
-}
-static inline void ring5628Push(cSSXAudio* s, int v)
-{
-    sSnd5028Ring* r = &s->ring;
-    if (ring5628Full(s)) return;
-    r->data[r->head] = v;
-    if (++s->ring.head >= s->ring.cap) s->ring.head = 0;
-}
 
 // PORT: the event pointer is stored in an int ring slot.
 extern "C" void func_00295628(void* vself, void* evt, int h, int t, int a, int idx)
 {
     cSSXAudio* self = (cSSXAudio*)vself;
-    if (ring5628Full(self)) {
-        ring5628Pop(self);
-        func_002AD5F0(&(*self->p118)->sub, ring5628Pop(self), 1, 0.0f);
-        ring5628Pop(self);
-        ring5628Pop(self);
-        ring5628Pop(self);
+    if (sndRingFull(self)) {
+        sndRingPop(self);
+        func_002AD5F0(&(*self->p118)->sub, sndRingPop(self), 1, 0.0f);
+        sndRingPop(self);
+        sndRingPop(self);
+        sndRingPop(self);
     }
-    ring5628Push(self, (int)evt);
-    ring5628Push(self, h);
-    ring5628Push(self, t);
-    ring5628Push(self, a);
-    ring5628Push(self, idx);
+    sndRingPush(self, (int)evt);
+    sndRingPush(self, h);
+    sndRingPush(self, t);
+    sndRingPush(self, a);
+    sndRingPush(self, idx);
 }
 #endif
 
 //100%
 INCLUDE_ASM("sound/soundsys", func_00295950);
 #ifdef SKIP_ASM
-static inline int ring5950Full(cSSXAudio* s)
-{
-    return (s->ring.head + 1) % s->ring.cap == s->ring.tail;
-}
-static inline int ring5950Pop(cSSXAudio* s)
-{
-    sSnd5028Ring* r = &s->ring;
-    if (ring5028Empty(s)) return -1;
-    int v = r->data[r->tail];
-    if (++s->ring.tail >= s->ring.cap) s->ring.tail = 0;
-    return v;
-}
-static inline void ring5950Push(cSSXAudio* s, int v)
-{
-    sSnd5028Ring* r = &s->ring;
-    if (ring5950Full(s)) return;
-    r->data[r->head] = v;
-    if (++s->ring.head >= s->ring.cap) s->ring.head = 0;
-}
 
 extern "C" void func_00295950(void* vself, int evt, int h, int idx)
 {
     cSSXAudio* self = (cSSXAudio*)vself;
-    int n = ring5028Count(self);
+    int n = sndRingCount(self);
     for (int i = 0; i < n; i++) {
-        int e = ring5950Pop(self);
-        int v1 = ring5950Pop(self);
-        int v2 = ring5950Pop(self);
-        int v3 = ring5950Pop(self);
-        int v4 = ring5950Pop(self);
+        int e = sndRingPop(self);
+        int v1 = sndRingPop(self);
+        int v2 = sndRingPop(self);
+        int v3 = sndRingPop(self);
+        int v4 = sndRingPop(self);
         if (evt == e && idx == v4) v2 = h;
-        ring5950Push(self, e);
-        ring5950Push(self, v1);
-        ring5950Push(self, v2);
-        ring5950Push(self, v3);
-        ring5950Push(self, v4);
+        sndRingPush(self, e);
+        sndRingPush(self, v1);
+        sndRingPush(self, v2);
+        sndRingPush(self, v3);
+        sndRingPush(self, v4);
     }
 }
 #endif
@@ -2300,48 +2264,29 @@ extern "C" void func_00295950(void* vself, int evt, int h, int idx)
 //100%
 INCLUDE_ASM("sound/soundsys", func_00295CC8);
 #ifdef SKIP_ASM
-static inline int ring5CC8Full(cSSXAudio* s)
-{
-    return (s->ring.head + 1) % s->ring.cap == s->ring.tail;
-}
-static inline int ring5CC8Pop(cSSXAudio* s)
-{
-    sSnd5028Ring* r = &s->ring;
-    if (ring5028Empty(s)) return -1;
-    int v = r->data[r->tail];
-    if (++s->ring.tail >= s->ring.cap) s->ring.tail = 0;
-    return v;
-}
-static inline void ring5CC8Push(cSSXAudio* s, int v)
-{
-    sSnd5028Ring* r = &s->ring;
-    if (ring5CC8Full(s)) return;
-    r->data[r->head] = v;
-    if (++s->ring.head >= s->ring.cap) s->ring.head = 0;
-}
 
 // Drops every queued 5-word event record whose first word is evt (stopping its voice if the
 // record's fourth word is set) and requeues the rest.
 extern "C" void func_00295CC8(void* vself, int evt)
 {
     cSSXAudio* self = (cSSXAudio*)vself;
-    int n = ring5028Count(self);
+    int n = sndRingCount(self);
     for (int i = 0; i < n; i++) {
-        int e = ring5CC8Pop(self);
-        int v1 = ring5CC8Pop(self);
-        int v2 = ring5CC8Pop(self);
-        int v3 = ring5CC8Pop(self);
-        int v4 = ring5CC8Pop(self);
+        int e = sndRingPop(self);
+        int v1 = sndRingPop(self);
+        int v2 = sndRingPop(self);
+        int v3 = sndRingPop(self);
+        int v4 = sndRingPop(self);
         if (evt == e) {
             if (v3 != 0) {
                 func_002AD5F0(&(*self->p118)->sub, v1, 1, 0.0f);
             }
         } else {
-            ring5CC8Push(self, e);
-            ring5CC8Push(self, v1);
-            ring5CC8Push(self, v2);
-            ring5CC8Push(self, v3);
-            ring5CC8Push(self, v4);
+            sndRingPush(self, e);
+            sndRingPush(self, v1);
+            sndRingPush(self, v2);
+            sndRingPush(self, v3);
+            sndRingPush(self, v4);
         }
     }
 }
