@@ -211,6 +211,10 @@ static inline t4Vector vu0Add(const t4Vector& a, const t4Vector& b)
     return r;
 }
 
+// Globals declared by several functions below.
+extern void* D_0048F168[];
+extern char D_004911D0[];
+
 // ---- end of shared declarations ----
 
 //100%
@@ -745,7 +749,6 @@ struct sSmQuad4_359F88 {
     sSmQuad4_359F88(float ax, float ay, float az, float aw) { x = ax; y = ay; z = az; w = aw; }
 };
 
-extern void* D_0048F168[];
 extern "C" void func_003451C0(void* ref, int id);
 extern "C" void func_0035A550(void* self, float v);
 extern "C" void func_0035A3F0(void* self);
@@ -819,7 +822,6 @@ struct cMultiSplineModifier_A118 {
     sSmFollow follow;  // 0x48
 };
 
-extern void* D_0048F168[];
 // PORT: same symbol as the unit's cSpline_readFromReplayFrame(void*, cStream003595D8*).
 extern "C" void cSpline_readFromReplayFrame_A118(void* self, cStream0035A118* stream) __asm__("cSpline_readFromReplayFrame");
 extern "C" void cMultiSplineModifier_allocNodes(void* self);
@@ -859,7 +861,6 @@ void cMemMan_free(void*);
 void* cObjectInterface_getInstanceMan();
 void func_00351260(void* man, void* inst);
 extern "C" void func_0035A780(void* self);
-extern void* D_0048F168[];
 extern void* D_004913F8[];
 
 struct cMultiSplineModifier_A250 {
@@ -1534,7 +1535,6 @@ extern "C" void func_0035B6D0(sSplineLink* link)
 INCLUDE_ASM("object/splinemodifier", func_0035B708);
 #ifdef SKIP_ASM
 extern "C" void* func_002D1BE0();
-extern char D_004911D0[];
 extern "C" void cRailModifier_buildXform(void* self);
 struct sSmMod_C040;
 extern "C" void func_0035C040(sSmMod_C040* self);
@@ -1693,7 +1693,6 @@ INCLUDE_ASM("object/splinemodifier", func_0035BA88);
 extern "C" void* func_002D1BE0();
 
 
-extern char D_004911D0[];
 extern "C" void cRailModifier_buildXform(void* self);
 
 class cSmStream_BA88 {
@@ -1744,7 +1743,6 @@ INCLUDE_ASM("object/splinemodifier", func_0035BD70);
 extern "C" void* func_002D1BE0();
 
 
-extern char D_004911D0[];
 extern char D_00491200[];
 
 
