@@ -2256,7 +2256,6 @@ INCLUDE_ASM("ealib/seg_2DCAE8", func_003DF1E0);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern void fCF70_F1E0(int, char *) __asm__("func_003DCF70");
 extern int fD310_F1E0(int) __asm__("func_003DD310");
-extern int (*D_0C14_F1E0[])(char *, int, int) __asm__("D_00450C14");
 extern char D_5DA8_F1E0[] __asm__("D_00495DA8");
 extern char fF0B8_F1E0[] __asm__("func_003DF0B8");
 extern char fF0F0_F1E0[] __asm__("func_003DF0F0");
@@ -2270,7 +2269,7 @@ void func_003DF1E0(int a, int b, char *s) {
     } else {
         old = *(int *)(s + 0x28);
         *(int *)(s + 0x28) = t5;
-        v = D_0C14_F1E0[0](D_5DA8_F1E0, t5, old);
+        v = (int)D_00450C14(D_5DA8_F1E0, t5, old);
         m = *(int *)(s + 0x28);
         *(int *)(s + 0x14) = v;
         *(int *)(s + 0x2C) = v;
