@@ -2972,14 +2972,12 @@ extern char *D_004A3DD8_0418 __asm__("D_004A3DD8");
 extern char **D_004A47B8_0418 __asm__("D_004A47B8");
 extern char *D_004A28A8_0418 __asm__("D_004A28A8");
 struct O_0418 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16(); virtual void v17(); virtual void v18(); virtual void v19(); virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23(); virtual void v24(); virtual void v25(); virtual void v26(); virtual void v27(); virtual void v28(); virtual void v29(); virtual void v30(); virtual void v31(); virtual void v32(); virtual void v33(); virtual void v34(int); };
-struct V3_0418 { float x, y, z; };
-extern V3_0418 D_004C9098_0418 __asm__("D_004C9098");
 extern unsigned D_0418[] __asm__("D_004FBB38");
 extern int D_004A5670;
 extern int D_004A3C30;
 extern "C" void func_003E6574(void*, void*, int);
 struct Ent_0418 { int idx; int val; int pad; int type; };
-extern "C" V3_0418 func_00300418(int n, Ent_0418 *e) {
+extern "C" cLunoValue func_00300418(int n, Ent_0418 *e) {
     if (D_004A5670 == 0) {
         D_0418[0] = 0xFFFFFFFF;
         ((int*)D_0418)[1] = 0;
@@ -3020,7 +3018,7 @@ extern "C" V3_0418 func_00300418(int n, Ent_0418 *e) {
         else if (b1 == 1)
             p->v34(1);
     }
-    return D_004C9098_0418;
+    return D_004C9098;
 }
 #endif
 
