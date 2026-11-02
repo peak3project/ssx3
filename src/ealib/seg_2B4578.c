@@ -2610,20 +2610,17 @@ int func_003B7E38(int arg0, int arg1, int arg2, int arg3, int arg4, int arg5) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B7E70);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-int *func_003B6A38_func_003B7E70(void) __asm__("func_003B6A38");
 void func_003B85F0_func_003B7E70(int, int) __asm__("func_003B85F0");
 
 int func_003B7E70(int arg0, int arg1) {
-    int *p;
+    struct sA0A0Strm *p;
 
-    p = func_003B6A38_func_003B7E70();
+    p = func_003B6A38(arg0);
     if (p == 0) {
         return -8;
-        do { } while (0);
     }
-    *(char *)((char *)p + 0xEC) = arg1;
-    func_003B85F0_func_003B7E70(p[1], arg1);
+    p->fEC.f00 = arg1;
+    func_003B85F0_func_003B7E70(p->f04, arg1);
     return 0;
 }
 #endif
