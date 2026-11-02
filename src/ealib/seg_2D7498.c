@@ -84,6 +84,9 @@ struct sSel { short x; short y; unsigned char start; unsigned char len; unsigned
 struct sSelSet { struct sSel ent[12]; unsigned char n; unsigned char ntbl; unsigned char tbl[200]; };
 struct sTblEnt { unsigned short a; unsigned short b; };
 
+/* A layer condition: a[i] = 0xFE sets, 0xFF tests the flag word b[i] & 0x7F (when b[i] & 0x80). */
+struct sCond { unsigned short id; unsigned char idx; unsigned char mode; signed char n; char pad5[3]; unsigned char a[8]; unsigned char b[8]; };
+
 //100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003D6498);
 #ifdef SKIP_ASM
@@ -1476,7 +1479,6 @@ INCLUDE_ASM("ealib/seg_2D7498", func_003D8E58);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 struct L_8E58 { char pad[4]; unsigned char cnt; unsigned char n5; unsigned char n6; char pad2; unsigned char list[1]; };
-struct C_8E58 { char pad[4]; signed char n; char pad2[3]; unsigned char a[8]; unsigned char b[8]; };
 
 int func_003D8E58_impl(struct sSelSet *h, struct L_8E58 *l) __asm__("func_003D8E58");
 int func_003D8E58_impl(struct sSelSet *h, struct L_8E58 *l) {
@@ -1490,7 +1492,7 @@ int func_003D8E58_impl(struct sSelSet *h, struct L_8E58 *l) {
     int n;
     int *tab;
     unsigned char *lp;
-    struct C_8E58 *c;
+    struct sCond *c;
     int bv;
     int v;
 
@@ -1510,7 +1512,7 @@ int func_003D8E58_impl(struct sSelSet *h, struct L_8E58 *l) {
             do {
                 if (h->ent[i].flag == 0) {
                     h->ent[i].flag = 1;
-                    c = (struct C_8E58 *)((int *)l + lp[i]);
+                    c = (struct sCond *)((int *)l + lp[i]);
                     n = c->n;
                     if (!func_003DB838(D_004A4824[h->ent[i].x], h->tbl[h->ent[i].cur], &o)) {
                         ok = 0;
@@ -1549,18 +1551,11 @@ out:
 //100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003D9088);
 #ifdef SKIP_ASM
-struct S_9088 {
-    char pad[4];
-    signed char n;
-    char pad2[3];
-    unsigned char a[8];
-    unsigned char b[8];
-};
 extern int func_003DB3B8(unsigned char a, unsigned char b, unsigned char *p);
 extern int func_003D6D50(unsigned short arg0);
 extern int func_003D6DB8(unsigned short arg0, unsigned short arg1);
 extern int func_003D6CF8(int arg0, unsigned int arg1);
-extern int func_003D88C8(struct sSelSet *, unsigned char *, struct sSel *, struct S_9088 *, struct sTblEnt *);
+extern int func_003D88C8(struct sSelSet *, unsigned char *, struct sSel *, struct sCond *, struct sTblEnt *);
 
 
 static __inline__ int modeOk_9088(void *arg0, int arg1) {
@@ -1582,7 +1577,7 @@ static __inline__ void clear_9088(unsigned char *arg0) {
     }
 }
 
-static __inline__ int check_9088(unsigned char *h, struct S_9088 *s) {
+static __inline__ int check_9088(unsigned char *h, struct sCond *s) {
     int ok = 1;
     int i;
     int *tab;
@@ -1606,10 +1601,10 @@ static __inline__ int check_9088(unsigned char *h, struct S_9088 *s) {
     return ok;
 }
 
-static __inline__ int resolve_9088(unsigned char *p, struct sTblEnt *tbl, struct sSel *out) {
-    unsigned short v = *(unsigned short *)p;
-    unsigned int mode = p[3];
-    unsigned int idx = p[2];
+static __inline__ int resolve_9088(struct sCond *p, struct sTblEnt *tbl, struct sSel *out) {
+    unsigned short v = p->id;
+    unsigned int mode = p->mode;
+    unsigned int idx = p->idx;
     int r;
     out->y = -1;
     out->x = -1;
@@ -1664,13 +1659,13 @@ int func_003D9088(struct sSelSet *self, unsigned char *hdr, struct sTblEnt *tbl,
                 lp = hdr + 8;
                 do {
                     struct sSel *slot = &self->ent[i];
-                    struct S_9088 *e = (struct S_9088 *)(hdr + lp[i] * 4);
+                    struct sCond *e = (struct sCond *)(hdr + lp[i] * 4);
                     if (!check_9088(hdr, e)) {
                         all = 0;
                     } else if (slot->flag == 0) {
                         int r;
                         slot->start = self->ntbl;
-                        if (!resolve_9088((unsigned char *)e, tbl, slot)) {
+                        if (!resolve_9088(e, tbl, slot)) {
                             ret = 0;
                             goto out;
                         }
@@ -1788,7 +1783,6 @@ INCLUDE_ASM("ealib/seg_2D7498", func_003D95B8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 struct L_95B8 { char pad[4]; unsigned char cnt; unsigned char n5; char pad2[2]; unsigned char list[1]; };
-struct C_95B8 { char pad[4]; signed char n; char pad2[3]; unsigned char a[8]; unsigned char b[8]; };
 extern int func_003D83B8_95B8(void *, unsigned char **) __asm__("func_003D83B8");
 extern int func_003D93C0_95B8(struct L_95B8 *, struct sSelSet *, int) __asm__("func_003D93C0");
 extern int func_003DB5C0(int, int);
@@ -1820,13 +1814,13 @@ static __inline__ void apply_95B8(void *a0, struct sSelSet *h, struct L_95B8 *l)
     int n;
     int i;
     int j;
-    struct C_95B8 *c;
+    struct sCond *c;
 
     if (func_003D83B8_95B8(a0, &out) != 0) {
         i = 0;
         n = l->cnt >> 2;
         for (; i < n; i++) {
-            c = (struct C_95B8 *)((int *)l + l->list[i]);
+            c = (struct sCond *)((int *)l + l->list[i]);
             for (j = 0; j < c->n; j++) {
                 if (c->a[j] == 0xFE && !(c->b[j] & 0x80)) {
                     if (func_003DB838(D_004A4824[h->ent[i].x], h->tbl[h->ent[i].cur], &o)) {
@@ -2108,18 +2102,12 @@ void func_003DA4E0(unsigned char *a, unsigned char *b, unsigned char *c) {
 //100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003DA578);
 #ifdef SKIP_ASM
-struct S_A578 {
-    char pad[4];
-    signed char n;
-    char pad2[3];
-    unsigned char arr[1];
-};
-int func_003DA578(struct S_A578 *p) {
+int func_003DA578(struct sCond *p) {
     int i;
     int r = 0;
     int n = p->n;
     for (i = 0; i < n; i++) {
-        if (p->arr[i] == 0xFE) {
+        if (p->a[i] == 0xFE) {
             r = 1;
             break;
         }
@@ -2133,10 +2121,10 @@ INCLUDE_ASM("ealib/seg_2D7498", func_003DA5C8);
 #ifdef SKIP_ASM
 static __inline__ int gt_A5C8(int a, int b) { return a > b; }
 
-int func_003DA5C8(unsigned char *p, struct sTblEnt *tbl, struct sSel *out) {
-    unsigned int idx = p[2];
-    unsigned int mode = p[3];
-    unsigned short v = *(unsigned short *)p;
+int func_003DA5C8(struct sCond *p, struct sTblEnt *tbl, struct sSel *out) {
+    unsigned int idx = p->idx;
+    unsigned int mode = p->mode;
+    unsigned short v = p->id;
     int r;
     out->y = -1;
     out->x = -1;
@@ -2239,11 +2227,7 @@ int func_003DA810(struct sSelSet *s, int c) {
 //100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003DA848);
 #ifdef SKIP_ASM
-struct S_A848 {
-    char pad[8];
-    unsigned char arr[1];
-};
-int func_003DA848(struct S_A848 *arg0, unsigned char *arg1, int *arg2) {
+int func_003DA848(struct sCond *arg0, unsigned char *arg1, int *arg2) {
     int *q;
     int n;
     int ok;
@@ -2256,7 +2240,7 @@ int func_003DA848(struct S_A848 *arg0, unsigned char *arg1, int *arg2) {
     q = (int *)(arg1 + ((arg1[5] * (n + 2) + 0xF) & 0x3FFC));
     if (n != 0) {
         do {
-            c = arg0->arr[i];
+            c = arg0->a[i];
             if (c != 0 && c != 0xFF && c != 0xFE) {
                 if (!(q[i] & arg2[c])) {
                     ok = 0;
@@ -2357,14 +2341,7 @@ void func_003DAA50(unsigned char *arg0) {
 //100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003DAAB0);
 #ifdef SKIP_ASM
-struct S_AAB0 {
-    char pad[4];
-    signed char n;
-    char pad2[3];
-    unsigned char a[8];
-    unsigned char b[8];
-};
-int func_003DAAB0(unsigned char *h, struct S_AAB0 *s) {
+int func_003DAAB0(unsigned char *h, struct sCond *s) {
     int ok = 1;
     int i;
     int *tab;
@@ -2461,7 +2438,6 @@ INCLUDE_ASM("ealib/seg_2D7498", func_003DACE8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 struct L_ACE8 { char pad[4]; unsigned char cnt; char pad2[3]; unsigned char list[1]; };
-struct C_ACE8 { char pad[4]; signed char n; char pad2[3]; unsigned char a[8]; unsigned char b[8]; };
 extern int func_003D83B8_ACE8(void *, unsigned char **) __asm__("func_003D83B8");
 
 void func_003DACE8(void *a0, struct sSelSet *h, struct L_ACE8 *l) {
@@ -2470,13 +2446,13 @@ void func_003DACE8(void *a0, struct sSelSet *h, struct L_ACE8 *l) {
     int n;
     int i;
     int j;
-    struct C_ACE8 *c;
+    struct sCond *c;
 
     if (func_003D83B8_ACE8(a0, &out) != 0) {
         i = 0;
         n = l->cnt >> 2;
         for (; i < n; i++) {
-            c = (struct C_ACE8 *)((int *)l + l->list[i]);
+            c = (struct sCond *)((int *)l + l->list[i]);
             for (j = 0; j < c->n; j++) {
                 if (c->a[j] == 0xFE && !(c->b[j] & 0x80)) {
                     if (func_003DB838(D_004A4824[h->ent[i].x], h->tbl[h->ent[i].cur], &o)) {
