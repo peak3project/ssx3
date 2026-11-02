@@ -179,6 +179,7 @@ extern struct sA8E8Cfg D_0050A908;      /* D_0050A8E8.setup.cfg */
 extern struct sA8E8Tail D_0050A9A8;     /* D_0050A8E8.setup.tail */
 extern void (*D_0050A9B0)(void);        /* D_0050A8E8.setup.tail.f08 */
 extern unsigned char D_0050A92E;        /* D_0050A8E8.setup.cfg.f26 */
+extern unsigned int D_0050A94C[];       /* &D_0050A8E8.setup.cfg.f44 (an array, so reads are in-struct memory like the member's) */
 extern signed char D_0050AA5C;          /* D_0050A8E8.f174 */
 extern struct sA8E8Chan *D_0050AAD8;    /* D_0050A8E8.f1F0 */
 extern struct sA8E8Bus D_0050AAE0[];    /* D_0050A8E8.f1F8 */
@@ -6730,7 +6731,6 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003C09B8);
 #ifdef SKIP_ASM
 struct D_09B8 { char pad[0x1AAE]; unsigned short s1AAE; char pad2[0x1B1C - 0x1AB0]; int r[7]; int f1B38; };
 extern struct D_09B8 D_0050AD00_09B8 __asm__("D_0050AD00");
-extern int D_0050A94C_09B8[] __asm__("D_0050A94C");
 extern void func_003C4A38_09B8(int, int, int, int) __asm__("func_003C4A38");
 
 void func_003C09B8(void) {
@@ -6741,7 +6741,7 @@ void func_003C09B8(void) {
     D_0050AD00_09B8.r[4] = *(volatile int *)0x1000D430;
     D_0050AD00_09B8.r[5] = *(volatile int *)0x1000D480;
     D_0050AD00_09B8.r[6] = *(volatile int *)0x1000D420;
-    func_003C4A38_09B8(D_0050A94C_09B8[0], D_0050AD00_09B8.f1B38, D_0050AD00_09B8.s1AAE >> 4, 0x10000);
+    func_003C4A38_09B8(D_0050A94C[0], D_0050AD00_09B8.f1B38, D_0050AD00_09B8.s1AAE >> 4, 0x10000);
 }
 #endif
 
@@ -6750,11 +6750,10 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003C0A60);
 #ifdef SKIP_ASM
 struct D_0A60 { char pad[0x1AAE]; unsigned short s1AAE; char pad2[0x1B1C - 0x1AB0]; int r[7]; int f1B38; };
 extern struct D_0A60 D_0050AD00_0A60 __asm__("D_0050AD00");
-extern int D_0050A94C_0A60[] __asm__("D_0050A94C");
 extern void func_003C4978(int, int, int, int);
 
 void func_003C0A60(void) {
-    func_003C4978(D_0050AD00_0A60.f1B38, D_0050A94C_0A60[0], D_0050AD00_0A60.s1AAE >> 4, 0x10000);
+    func_003C4978(D_0050AD00_0A60.f1B38, D_0050A94C[0], D_0050AD00_0A60.s1AAE >> 4, 0x10000);
     *(volatile int *)0x1000D010 = D_0050AD00_0A60.r[0];
     *(volatile int *)0x1000D080 = D_0050AD00_0A60.r[1];
     *(volatile int *)0x1000D020 = D_0050AD00_0A60.r[2];
