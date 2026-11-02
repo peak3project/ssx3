@@ -6,6 +6,95 @@
 #define SYNCP_2B45() __asm__ volatile("sync.p")
 #define MFC0_STATUS_2B45(v) __asm__ volatile("mfc0 %0, $12" : "=r"(v))
 
+/* D_0050A8E8: the sound driver's state block (layout worked out from every use in this unit; field names are
+   their offsets). Some fields are also reached through their own splat symbols (declared below), which the
+   functions that address them directly must keep using. */
+struct sA8E8Cfg {                   /* 0xA0: the current setup (+0x20, D_0050A908) and a saved copy (+0xD4) */
+    char pad00[0x8];
+    unsigned short f08;             /* number of slots (f1F4) */
+    unsigned short f0A;
+    unsigned short f0C;
+    unsigned char f0E;
+    unsigned char f0F;
+    unsigned char f10;
+    char pad11[0x14 - 0x11];
+    float f14;
+    char pad18[0x1C - 0x18];
+    unsigned char f1C;
+    char pad1D[0x20 - 0x1D];
+    unsigned char f20;
+    unsigned char f21;
+    unsigned char f22;
+    char pad23[0x26 - 0x23];
+    unsigned char f26;
+    unsigned char f27;
+    unsigned char f28;
+    unsigned char f29;
+    unsigned char f2A;
+    char f2B;
+    char pad2C[0x44 - 0x2C];
+    unsigned int f44;
+    int f48;
+    char pad4C[0xA0 - 0x4C];
+};
+struct sA8E8Tail { int w[5]; };     /* +0xC0 (D_0050A9A8) */
+struct sA8E8Setup {                 /* 0xD4: what func_003B4DD8 hands out */
+    char pad00[0x4];
+    unsigned char f04;
+    unsigned char f05;
+    unsigned char f06;
+    unsigned char f07;
+    unsigned char f08;
+    char pad09[0x20 - 0x9];
+    struct sA8E8Cfg cfg;
+    struct sA8E8Tail tail;
+};
+struct sA8E8Pan { float l; float r; };
+struct sA8E8Bus {                   /* 0x14, at +0x1F8 / +0x20C / +0x220, indexed by id */
+    short f00;
+    char f02;
+    char pad03;
+    int f04;
+    int f08;
+    struct sA8E8Pan f0C;
+};
+struct sA8E8 {
+    struct sA8E8Setup setup;
+    struct sA8E8Cfg saved;
+    signed char f174;               /* also D_0050AA5C */
+    char f175;
+    unsigned char f176;             /* lock depth */
+    signed char f177;
+    signed char f178;
+    signed char f179;
+    char pad17A[0x17E - 0x17A];
+    short f17E;                     /* number of channels (f1F0) */
+    unsigned int f180;              /* tick */
+    int f184[6];                    /* f177 entries */
+    void (*f19C[6])(void);          /* f178 entries */
+    struct sA8E8Node *f1B4;
+    char pad1B8[0x1C0 - 0x1B8];
+    int f1C0;
+    char pad1C4[0x1C8 - 0x1C4];
+    void (*f1C8[4])(void *);        /* f179 entries */
+    void (*f1D8)(void);
+    void (*f1DC)(void);
+    void (*f1E0)(void);
+    void (*f1E4)(int);
+    void (*f1E8)(void);
+    void (*f1EC)(void);
+    struct sA8E8Chan *f1F0;
+    struct sA8E8Slot *f1F4;
+    struct sA8E8Bus f1F8[1];        /* kind 4 */
+    struct sA8E8Bus f20C[1];        /* kind 0x100 */
+    struct sA8E8Bus f220[1];        /* kind 8 */
+    struct sA8E8Heap *f234;
+    char pad238[0x330 - 0x238];
+    volatile unsigned int f330;
+    volatile unsigned short f334;
+};
+extern struct sA8E8 D_0050A8E8;
+
 INCLUDE_ASM("ealib/seg_2B4578", SHAPE_unpack);
 
 //100%
@@ -552,44 +641,23 @@ int func_003B4D00(unsigned char *p, int *out) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003B4DD8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct Sub_4DD8 {
-    char pad00[0x8];
-    short f08;
-    char pad0A[0x14 - 0xA];
-    float f14;
-    char pad18[0x1C - 0x18];
-    char f1C;
-    char pad1D[0x2B - 0x1D];
-    char f2B;
-    char pad2C[0xA0 - 0x2C];
-};
-struct Cfg_4DD8 {
-    char pad00[0x20];
-    struct Sub_4DD8 sub;
-    char padC0[0xD4 - 0xC0];
-};
-struct G_4DD8 {
-    struct Cfg_4DD8 cfg;
-    struct Sub_4DD8 saved;
-};
-extern struct G_4DD8 D_0050A8E8_4DD8 __asm__("D_0050A8E8");
 extern int D_0044C45C;
 extern int D_0044C460;
 extern int func_003C0C90_4DD8() __asm__("func_003C0C90");
 
-int func_003B4DD8_4DD8(struct Cfg_4DD8 *out) __asm__("func_003B4DD8");
+int func_003B4DD8_4DD8(struct sA8E8Setup *out) __asm__("func_003B4DD8");
 
-int func_003B4DD8_4DD8(struct Cfg_4DD8 *out) {
+int func_003B4DD8_4DD8(struct sA8E8Setup *out) {
     if (D_0044C45C == 0) {
         D_0044C460 = func_003C0C90_4DD8();
         D_0044C45C = 1;
-        D_0050A8E8_4DD8.cfg.sub.f08 = 0x10;
-        D_0050A8E8_4DD8.cfg.sub.f2B = 0x5A;
-        D_0050A8E8_4DD8.cfg.sub.f1C = 1;
-        D_0050A8E8_4DD8.cfg.sub.f14 = -1.0f;
-        D_0050A8E8_4DD8.saved = D_0050A8E8_4DD8.cfg.sub;
+        D_0050A8E8.setup.cfg.f08 = 0x10;
+        D_0050A8E8.setup.cfg.f2B = 0x5A;
+        D_0050A8E8.setup.cfg.f1C = 1;
+        D_0050A8E8.setup.cfg.f14 = -1.0f;
+        D_0050A8E8.saved = D_0050A8E8.setup.cfg;
     }
-    *out = D_0050A8E8_4DD8.cfg;
+    *out = D_0050A8E8.setup;
     return D_0044C460;
 }
 #endif
