@@ -6078,8 +6078,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00305F40);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern char **D_004A47B8_5F40 __asm__("D_004A47B8");
-struct V3_5F40 { float x, y, z; };
-extern V3_5F40 D_004C9098_5F40 __asm__("D_004C9098");
 struct Rec_5F40 {
     int a; int b; float c; float d; float e;
     float m[28];
@@ -6095,7 +6093,7 @@ extern "C" void func_002D9538_5F40(char*, Rec_5F40*) __asm__("func_002D9538");
 static inline char *refToPtr_5F40(unsigned i) { return (char*)(i << 2); }
 static inline char *conv_5F40(unsigned i) { if (i == 0) return 0; return refToPtr_5F40(i); }
 struct Ent_5F40 { int idx; int val; int pad; int type; };
-extern "C" V3_5F40 func_00305F40(int n, Ent_5F40 *e) {
+extern "C" cLunoValue func_00305F40(int n, Ent_5F40 *e) {
     if (D_587C_5F40 == 0) {
         Rec_5F40 &r = D_4FBE58_5F40;
         r.a = 1;
@@ -6148,7 +6146,7 @@ extern "C" V3_5F40 func_00305F40(int n, Ent_5F40 *e) {
             obj = conv_5F40(((unsigned*)*(char**)(s + 0x1C))[id >> 8] >> 8);
         func_002D9538_5F40(obj, buf);
     }
-    return D_004C9098_5F40;
+    return D_004C9098;
 }
 #endif
 
