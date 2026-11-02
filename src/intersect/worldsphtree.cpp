@@ -1,4 +1,9 @@
 #include "common.h"
+#include "bx/math3d.h"
+
+// ---- Shared declarations: one type per real thing, used by the functions below ----
+
+// ---- end of shared declarations ----
 
 //100%
 INCLUDE_ASM("intersect/worldsphtree", cWorldSphTree_cWorldSphTree);
@@ -9,7 +14,6 @@ extern "C" void* func_0032C508(void* p);
 extern "C" float func_0032C590(void* self);
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 
-struct sSphV4 { float x, y, z, w; } __attribute__((aligned(16)));
 
 extern "C" void* cWorldSphTree_cWorldSphTree(void* self, void* a1, int a2)
 {
@@ -23,20 +27,20 @@ extern "C" void* cWorldSphTree_cWorldSphTree(void* self, void* a1, int a2)
     }
     *(void**)((char*)self + 0x64) = a1;
     *(void**)((char*)self + 0x60) = a1;
-    sSphV4 c = *(sSphV4*)((char*)a1 + 0x80);
+    t4Vector c = *(t4Vector*)((char*)a1 + 0x80);
     float r = func_0032C590(a1);
-    sSphV4 t;
-    *(sSphV4*)((char*)self + 0x40) = c;
+    t4Vector t;
+    *(t4Vector*)((char*)self + 0x40) = c;
     t.x = c.x + r;
     t.y = c.y + r;
     t.z = c.z + r;
     t.w = 1.0f;
-    *(sSphV4*)((char*)self + 0x20) = t;
+    *(t4Vector*)((char*)self + 0x20) = t;
     t.x = c.x - r;
     t.y = c.y - r;
     t.z = c.z - r;
     t.w = 1.0f;
-    *(sSphV4*)((char*)self + 0x30) = t;
+    *(t4Vector*)((char*)self + 0x30) = t;
     void* p = cMemMan_alloc(0x140, D_0048E550, 0, 0);
     func_0032C508(p);
     *(void**)((char*)self + 0x68) = p;
@@ -63,14 +67,11 @@ extern "C" void func_003304E8(void* self, int flags)
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_00330540);
 #ifdef SKIP_ASM
-struct sV4_330540 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
 
 // PORT: PS2-only VU0 inline asm (vector add).
-static inline sV4_330540 add_330540(const sV4_330540& a, const sV4_330540& b)
+static inline t4Vector add_330540(const t4Vector& a, const t4Vector& b)
 {
-    sV4_330540 r;
+    t4Vector r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -83,9 +84,9 @@ static inline sV4_330540 add_330540(const sV4_330540& a, const sV4_330540& b)
 }
 
 // PORT: PS2-only VU0 inline asm (vector subtract).
-static inline sV4_330540 sub_330540(const sV4_330540& a, const sV4_330540& b)
+static inline t4Vector sub_330540(const t4Vector& a, const t4Vector& b)
 {
-    sV4_330540 r;
+    t4Vector r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "lqc2      $vf4, %2\n"
@@ -101,7 +102,7 @@ extern "C" float func_0032C590(void* self);
 
 extern "C" int func_00330540(void* self, float* lo, float* hi)
 {
-    sV4_330540 ext;
+    t4Vector ext;
     float rx = func_0032C590(*(void**)((char*)self + 0x60));
     float ry = func_0032C590(*(void**)((char*)self + 0x60));
     float rz = func_0032C590(*(void**)((char*)self + 0x60));
@@ -109,8 +110,8 @@ extern "C" int func_00330540(void* self, float* lo, float* hi)
     ext.y = ry;
     ext.z = rz;
     ext.w = 0.0f;
-    sV4_330540 mx = add_330540(*(sV4_330540*)(*(char**)((char*)self + 0x60) + 0x80), ext);
-    sV4_330540 mn = sub_330540(*(sV4_330540*)(*(char**)((char*)self + 0x60) + 0x80), ext);
+    t4Vector mx = add_330540(*(t4Vector*)(*(char**)((char*)self + 0x60) + 0x80), ext);
+    t4Vector mn = sub_330540(*(t4Vector*)(*(char**)((char*)self + 0x60) + 0x80), ext);
     float lx = lo[0];
     float tx = mx.x;
     if (tx < lx && mn.x < lx) return 0;
@@ -174,12 +175,9 @@ int func_00330778(void* self)
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_00330788);
 #ifdef SKIP_ASM
-struct sWsVec4 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
 
 // PORT: PS2-only VU0 inline asm (4-component vector length).
-static inline float wsLength_330788(const sWsVec4& v)
+static inline float wsLength_330788(const t4Vector& v)
 {
     float r;
     __asm__(
@@ -198,9 +196,9 @@ static inline float wsLength_330788(const sWsVec4& v)
 }
 
 // PORT: PS2-only VU0 inline asm (v / s).
-static inline sWsVec4 wsDiv_330788(const sWsVec4& v, float s)
+static inline t4Vector wsDiv_330788(const t4Vector& v, float s)
 {
-    sWsVec4 r;
+    t4Vector r;
     int t;
     __asm__(
         ".set push\n"
@@ -219,11 +217,11 @@ static inline sWsVec4 wsDiv_330788(const sWsVec4& v, float s)
     return r;
 }
 
-extern "C" int func_0032CA78(void* tree, int a1, int a2, int a3, int a4, sWsVec4* out, int a6);
+extern "C" int func_0032CA78(void* tree, int a1, int a2, int a3, int a4, t4Vector* out, int a6);
 
-extern "C" int func_00330788(void* self, int a1, int a2, int a3, int a4, int a5, sWsVec4* outDir, float* outLen)
+extern "C" int func_00330788(void* self, int a1, int a2, int a3, int a4, int a5, t4Vector* outDir, float* outLen)
 {
-    sWsVec4 v;
+    t4Vector v;
     int r = func_0032CA78(*(void**)((char*)self + 0x60), a1, a2, a3, a4, &v, a5);
     if (r != 0) {
         float len = wsLength_330788(v);
@@ -238,7 +236,7 @@ extern "C" int func_00330788(void* self, int a1, int a2, int a3, int a4, int a5,
 INCLUDE_ASM("intersect/worldsphtree", func_00330828);
 #ifdef SKIP_ASM
 // PORT: PS2-only VU0 inline asm (4-component vector length).
-static inline float wsLength_330828(const sWsVec4& v)
+static inline float wsLength_330828(const t4Vector& v)
 {
     float r;
     __asm__(
@@ -257,9 +255,9 @@ static inline float wsLength_330828(const sWsVec4& v)
 }
 
 // PORT: PS2-only VU0 inline asm (v / s).
-static inline sWsVec4 wsDiv_330828(const sWsVec4& v, float s)
+static inline t4Vector wsDiv_330828(const t4Vector& v, float s)
 {
-    sWsVec4 r;
+    t4Vector r;
     int t;
     __asm__(
         ".set push\n"
@@ -278,11 +276,11 @@ static inline sWsVec4 wsDiv_330828(const sWsVec4& v, float s)
     return r;
 }
 
-extern "C" int func_00328030(void* tree, int a1, int a2, int a3, int a4, sWsVec4* out, int a6);
+extern "C" int func_00328030(void* tree, int a1, int a2, int a3, int a4, t4Vector* out, int a6);
 
-extern "C" int func_00330828(void* self, int a1, int a2, int a3, int a4, int a5, sWsVec4* outDir, float* outLen)
+extern "C" int func_00330828(void* self, int a1, int a2, int a3, int a4, int a5, t4Vector* outDir, float* outLen)
 {
-    sWsVec4 v;
+    t4Vector v;
     int r = func_00328030(*(void**)((char*)self + 0x60), a1, a2, a3, a4, &v, a5);
     if (r != 0) {
         float len = wsLength_330828(v);
@@ -297,7 +295,7 @@ extern "C" int func_00330828(void* self, int a1, int a2, int a3, int a4, int a5,
 INCLUDE_ASM("intersect/worldsphtree", func_003308C8);
 #ifdef SKIP_ASM
 // PORT: PS2-only VU0 inline asm (4-component vector length).
-static inline float wsLength_3308C8(const sWsVec4& v)
+static inline float wsLength_3308C8(const t4Vector& v)
 {
     float r;
     int t;
@@ -318,7 +316,7 @@ static inline float wsLength_3308C8(const sWsVec4& v)
 }
 
 // PORT: PS2-only VU0 inline asm (in-place vector divided by scalar).
-static inline void wsDivEq_3308C8(sWsVec4& v, float s)
+static inline void wsDivEq_3308C8(t4Vector& v, float s)
 {
     int t;
     __asm__(
@@ -336,7 +334,7 @@ static inline void wsDivEq_3308C8(sWsVec4& v, float s)
 
 struct sWsHit_3308C8 {
     char pad_0x00[0x10];
-    sWsVec4 dir;      // 0x10
+    t4Vector dir;      // 0x10
     char pad_0x20[0x20];
     float len;            // 0x40
 };
@@ -359,7 +357,7 @@ extern "C" int func_003308C8(void* self, void* a1, sWsHit_3308C8* hit)
 INCLUDE_ASM("intersect/worldsphtree", func_00330950);
 #ifdef SKIP_ASM
 // PORT: PS2-only VU0 inline asm (4-component vector length).
-static inline float wsLength_330950(const sWsVec4& v)
+static inline float wsLength_330950(const t4Vector& v)
 {
     float r;
     int t;
@@ -380,7 +378,7 @@ static inline float wsLength_330950(const sWsVec4& v)
 }
 
 // PORT: PS2-only VU0 inline asm (in-place vector divided by scalar).
-static inline void wsDivEq_330950(sWsVec4& v, float s)
+static inline void wsDivEq_330950(t4Vector& v, float s)
 {
     int t;
     __asm__(
@@ -398,7 +396,7 @@ static inline void wsDivEq_330950(sWsVec4& v, float s)
 
 struct sWsHit_330950 {
     char pad_0x00[0x10];
-    sWsVec4 dir;      // 0x10
+    t4Vector dir;      // 0x10
     char pad_0x20[0x20];
     float len;            // 0x40
 };
@@ -911,11 +909,8 @@ extern "C" void func_00332DB8(sSelf_2DB8* self, void* box)
 INCLUDE_ASM("intersect/worldsphtree", func_00333EF8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct sVec4_333EF8 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
 
-extern sVec4_333EF8 D_004FF120_333EF8[] __asm__("D_004FF120");
+extern t4Vector D_004FF120_333EF8[] __asm__("D_004FF120");
 
 struct sQuery_333EF8 {
     char pad00[0x20];
@@ -933,10 +928,10 @@ struct sTriObj_333EF8 {
 };
 
 struct sHit_333EF8 {
-    sVec4_333EF8 pos;   // 0x00
-    sVec4_333EF8 nrm;   // 0x10
-    sVec4_333EF8 v20;   // 0x20
-    sVec4_333EF8 v30;   // 0x30
+    t4Vector pos;   // 0x00
+    t4Vector nrm;   // 0x10
+    t4Vector v20;   // 0x20
+    t4Vector v30;   // 0x30
     float dist;         // 0x40
     int type;           // 0x44
     int pad48;
@@ -995,9 +990,9 @@ struct sTree_333EF8 {
 };
 
 extern "C" void func_003279D0(void* cache, void* src, void** out);
-struct sVec4_335960;
+struct t4Vector;
 struct sHit_003342D0;
-extern "C" int func_0032B6E0(void* q, void* obj, void* node, sVec4_335960* pos, sVec4_335960* nrm, float* dist, sVec4_335960* uv, int arg);
+extern "C" int func_0032B6E0(void* q, void* obj, void* node, t4Vector* pos, t4Vector* nrm, float* dist, t4Vector* uv, int arg);
 extern "C" int func_00334888(void* q, void* node, void* buf, int cap, int mode);
 
 static inline int overlapTri_333EF8(const sQuery_333EF8* q, const sTriObj_333EF8* n)
@@ -1064,13 +1059,13 @@ extern "C" int func_00333EF8(void* vself, void* vq, sHit_003342D0* vhits, int ca
         if (!overlapTri_333EF8(q, obj)) {
             continue;
         }
-        sVec4_333EF8 uv;
-        sVec4_333EF8 pos;
-        sVec4_333EF8 nrm;
+        t4Vector uv;
+        t4Vector pos;
+        t4Vector nrm;
         void* node;
         float dist;
         func_003279D0(self->owner->cache, obj, &node);
-        if (!func_0032B6E0(q, obj, node, (sVec4_335960*)&pos, (sVec4_335960*)&nrm, &dist, (sVec4_335960*)&uv, arg)) {
+        if (!func_0032B6E0(q, obj, node, (t4Vector*)&pos, (t4Vector*)&nrm, &dist, (t4Vector*)&uv, arg)) {
             continue;
         }
         reset_333EF8(&hits[n]);
@@ -1271,15 +1266,15 @@ extern "C" int func_00334458(sList_334458* self, sQuery_334458* q, char* buf, in
 INCLUDE_ASM("intersect/worldsphtree", func_00334680);
 #ifdef SKIP_ASM
 struct sBox_00334680 {
-    sWsVec4 min;
-    sWsVec4 max;
+    t4Vector min;
+    t4Vector max;
 };
-extern "C" void func_0035C698(void* a0, sBox_00334680* box, sBox_00334680* box2, sWsVec4* pos, int mask, int* cnt, float* dist, int a7);
-extern "C" void func_00348290(void* a0, sBox_00334680* box, sBox_00334680* box2, sWsVec4* pos, int mask, int* cnt, float* dist, int a7);
-extern "C" void func_00335128(void* obj, sBox_00334680* box, sWsVec4* pos, int* cnt, float* dist, int a5);
+extern "C" void func_0035C698(void* a0, sBox_00334680* box, sBox_00334680* box2, t4Vector* pos, int mask, int* cnt, float* dist, int a7);
+extern "C" void func_00348290(void* a0, sBox_00334680* box, sBox_00334680* box2, t4Vector* pos, int mask, int* cnt, float* dist, int a7);
+extern "C" void func_00335128(void* obj, sBox_00334680* box, t4Vector* pos, int* cnt, float* dist, int a5);
 
 // PORT: PS2-only VU0 inline asm (in-place vector subtract).
-static inline void wsSubEq_334680(sWsVec4& a, const sWsVec4& b)
+static inline void wsSubEq_334680(t4Vector& a, const t4Vector& b)
 {
     __asm__(
         "lqc2      $vf3, %0\n"
@@ -1292,7 +1287,7 @@ static inline void wsSubEq_334680(sWsVec4& a, const sWsVec4& b)
 }
 
 // PORT: PS2-only VU0 inline asm (in-place vector add).
-static inline void wsAddEq_334680(sWsVec4& a, const sWsVec4& b)
+static inline void wsAddEq_334680(t4Vector& a, const t4Vector& b)
 {
     __asm__(
         "lqc2      $vf3, %0\n"
@@ -1304,10 +1299,10 @@ static inline void wsAddEq_334680(sWsVec4& a, const sWsVec4& b)
         : "memory");
 }
 
-extern "C" int func_00334680(char* self, sWsVec4* pos, int a2, int mask, float r)
+extern "C" int func_00334680(char* self, t4Vector* pos, int a2, int mask, float r)
 {
     sBox_00334680 box;
-    sWsVec4 ext;
+    t4Vector ext;
     int cnt;
     float dist;
     cnt = 0;
@@ -1375,11 +1370,8 @@ INCLUDE_ASM("intersect/worldsphtree", func_00335128);
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_00335960);
 #ifdef SKIP_ASM
-struct sVec4_335960 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
 
-extern sVec4_335960 D_004FF120[];
+extern t4Vector D_004FF120[];
 
 struct sQuery_335960 {
     char pad00[0x20];
@@ -1397,10 +1389,10 @@ struct sTriObj_335960 {
 };
 
 struct sHit_335960 {
-    sVec4_335960 pos;   // 0x00
-    sVec4_335960 nrm;   // 0x10
-    sVec4_335960 v20;   // 0x20
-    sVec4_335960 v30;   // 0x30
+    t4Vector pos;   // 0x00
+    t4Vector nrm;   // 0x10
+    t4Vector v20;   // 0x20
+    t4Vector v30;   // 0x30
     float dist;         // 0x40
     int type;           // 0x44
     int pad48;
@@ -1427,7 +1419,7 @@ struct sCtx_335960 {
 };
 
 extern "C" void func_003279D0(void* cache, void* src, void** out);
-extern "C" int func_0032B6E0(void* q, void* obj, void* node, sVec4_335960* pos, sVec4_335960* nrm, float* dist, sVec4_335960* uv, int arg);
+extern "C" int func_0032B6E0(void* q, void* obj, void* node, t4Vector* pos, t4Vector* nrm, float* dist, t4Vector* uv, int arg);
 
 static inline int overlap_335960(const sQuery_335960* q, const sTriObj_335960* n)
 {
@@ -1461,9 +1453,9 @@ extern "C" void func_00335960(void* vctx, void* vobj)
 {
     sCtx_335960* ctx = (sCtx_335960*)vctx;
     sTriObj_335960* obj = (sTriObj_335960*)vobj;
-    sVec4_335960 pos;
-    sVec4_335960 nrm;
-    sVec4_335960 uv;
+    t4Vector pos;
+    t4Vector nrm;
+    t4Vector uv;
     void* node;
     float dist;
     if ((obj->flags & 0x41) != 0x41) return;
@@ -1600,12 +1592,9 @@ struct sCb_5D78 {
     int f14;
 };
 
-struct sQuad_5D78 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
 
 struct sBox_5D78 {
-    sQuad_5D78 a, b;
+    t4Vector a, b;
 } __attribute__((aligned(16)));
 
 struct sSelf_5D78 {
@@ -1669,8 +1658,8 @@ extern "C" int query_5D78(sSelf_5D78* self, char* q, int p3, int p4, int p5)
     cb.result = &result;
     cb.f10 = p5;
     cb.f14 = self->fA4;
-    box.a = *(sQuad_5D78*)(q + 0x30);
-    box.b = *(sQuad_5D78*)(q + 0x20);
+    box.a = *(t4Vector*)(q + 0x30);
+    box.b = *(t4Vector*)(q + 0x20);
     result = 0;
     visit_5D78(self, 0, pcb, &box);
     visit_5D78(self, 1, pcb, &box);
@@ -1752,13 +1741,10 @@ extern "C" float func_00336850(void* self, char* q, sHit_00336850* out, int a3)
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_003369D8);
 #ifdef SKIP_ASM
-struct sQuad_369D8 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
 
 struct sHit_003369D8 {
-    sQuad_369D8 p;          // 0x00
-    sQuad_369D8 n;          // 0x10
+    t4Vector p;          // 0x00
+    t4Vector n;          // 0x10
     float pad20[8];         // 0x20
     float dist;             // 0x40
     int pad44[3];
@@ -1782,7 +1768,7 @@ struct sCell_369D8 {
     void* node;             // 0x10
 };
 
-extern "C" void* func_0032E100(void* seg, const sQuad_369D8& a, const sQuad_369D8& b, int n, float r);
+extern "C" void* func_0032E100(void* seg, const t4Vector& a, const t4Vector& b, int n, float r);
 struct sCtx_369D8 {
     float* pos;             // 0x0
     char flags[8];          // 0x4
@@ -1829,19 +1815,19 @@ static inline void visit_003369D8(sCell_369D8* c, char* flag, sQuery_369D8* q, s
     func_0033DBE8(flag, q, q, p, c->node, c);
 }
 
-extern "C" int func_003369D8(sCell_369D8* self, float* pos, sQuad_369D8* outP, sQuad_369D8* outN)
+extern "C" int func_003369D8(sCell_369D8* self, float* pos, t4Vector* outP, t4Vector* outN)
 {
     char seg[0xB0];
     float lo = pos[2] - 100000.0f;
     float hi = pos[2] + 100000.0f;
     float t = clamp_003369D8((pos[2] + 20.0f - lo) / (hi - lo), 0.0f, 1.0f);
     {
-        sQuad_369D8 a;
+        t4Vector a;
         a.x = pos[0];
         a.y = pos[1];
         a.z = lo;
         a.w = 1.0f;
-        sQuad_369D8 b;
+        t4Vector b;
         b.x = pos[0];
         b.y = pos[1];
         b.z = hi;
@@ -2015,12 +2001,9 @@ struct sCb_6F30 {
     int f10;
 };
 
-struct sQuad_6F30 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
 
 struct sBox_6F30 {
-    sQuad_6F30 a, b;
+    t4Vector a, b;
 } __attribute__((aligned(16)));
 
 struct sSelf_6F30 {
@@ -2077,8 +2060,8 @@ extern "C" int query_6F30(sSelf_6F30* self, char* q, int p3, int p4, int p5)
     cb.f08 = p4;
     cb.result = &result;
     cb.f10 = p5;
-    box.a = *(sQuad_6F30*)(q + 0x30);
-    box.b = *(sQuad_6F30*)(q + 0x20);
+    box.a = *(t4Vector*)(q + 0x30);
+    box.b = *(t4Vector*)(q + 0x20);
     result = 0;
     visit_6F30(self, 0, pcb, &box);
     visit_6F30(self, 1, pcb, &box);
@@ -2167,7 +2150,7 @@ struct sOct_7A48 {
 };
 
 struct sCb_7A48 {
-    sWsVec4* pos;                   // 0x00
+    t4Vector* pos;                   // 0x00
     int a2;
     int mask;
     int* cnt;
@@ -2220,10 +2203,10 @@ static inline void visit_7A48(sSelf_6F30* t, int k, sCb_7A48* cb, sBox_00334680*
     }
 }
 
-extern "C" int func_00337A48(sSelf_6F30* self, sWsVec4* pos, int a2, int mask, float r)
+extern "C" int func_00337A48(sSelf_6F30* self, t4Vector* pos, int a2, int mask, float r)
 {
     sBox_00334680 box;
-    sWsVec4 ext;
+    t4Vector ext;
     int cnt;
     float dist;
     sCb_7A48 cb;
@@ -3346,7 +3329,7 @@ struct sOct_ED60 {
 };
 
 struct sQ_ED60 {
-    sWsVec4* pos;                   // 0x00
+    t4Vector* pos;                   // 0x00
     int a7;                         // 0x04
     int mask;                       // 0x08
     int* cnt;                       // 0x0C
@@ -4078,7 +4061,7 @@ extern "C" void* func_003400D8(int, int);
 INCLUDE_ASM("intersect/worldsphtree", func_003411B8);
 #ifdef SKIP_ASM
 struct sQuery_3411B8 {
-    sWsVec4* pos;               // 0x00
+    t4Vector* pos;               // 0x00
     int a7;                     // 0x04
     int mask;                   // 0x08
     int* cnt;                   // 0x0C
@@ -4359,14 +4342,11 @@ extern "C" void func_003415D0(sNode_003415D0* self)
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_00341770);
 #ifdef SKIP_ASM
-struct sVec4_341770 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
 
 // PORT: PS2-only VU0 inline asm (vector times scalar).
-static inline sVec4_341770 vu0Scale_341770(const sVec4_341770& v, float s)
+static inline t4Vector vu0Scale_341770(const t4Vector& v, float s)
 {
-    sVec4_341770 r;
+    t4Vector r;
     int t;
     __asm__(
         "mfc1      %1, %3\n"
@@ -4383,16 +4363,16 @@ static inline sVec4_341770 vu0Scale_341770(const sVec4_341770& v, float s)
 class cMover_341770 {
 public:
     virtual void v01();
-    virtual sVec4_341770* getVelocity();
+    virtual t4Vector* getVelocity();
     virtual void v03();
-    virtual void setVelocity(sVec4_341770* v);
+    virtual void setVelocity(t4Vector* v);
 };
 
 extern "C" float func_002D1C70();
 
 extern "C" void func_00341770(void* self, cMover_341770* obj)
 {
-    sVec4_341770 u = vu0Scale_341770(vu0Scale_341770(*obj->getVelocity(), *(float*)((char*)self + 0x34) + 1.0f), func_002D1C70());
+    t4Vector u = vu0Scale_341770(vu0Scale_341770(*obj->getVelocity(), *(float*)((char*)self + 0x34) + 1.0f), func_002D1C70());
     obj->setVelocity(&u);
 }
 #endif
@@ -4400,14 +4380,11 @@ extern "C" void func_00341770(void* self, cMover_341770* obj)
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_00341818);
 #ifdef SKIP_ASM
-struct sVec4_341818 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
 
 // PORT: PS2-only VU0 inline asm (v / |v|).
-static inline sVec4_341818 vu0Normalize_341818(const sVec4_341818& v)
+static inline t4Vector vu0Normalize_341818(const t4Vector& v)
 {
-    sVec4_341818 r;
+    t4Vector r;
     __asm__(
         "lqc2      $vf3, %1\n"
         "vaddw.x   $vf6, $vf0, $vf0w\n"
@@ -4426,7 +4403,7 @@ static inline sVec4_341818 vu0Normalize_341818(const sVec4_341818& v)
 }
 
 // PORT: PS2-only VU0 inline asm (4-component dot product).
-static inline float vu0Dot_341818(const sVec4_341818& a, const sVec4_341818& b)
+static inline float vu0Dot_341818(const t4Vector& a, const t4Vector& b)
 {
     float r;
     int t;
@@ -4446,9 +4423,9 @@ static inline float vu0Dot_341818(const sVec4_341818& a, const sVec4_341818& b)
 }
 
 // PORT: PS2-only VU0 inline asm (vector times scalar).
-static inline sVec4_341818 vu0Scale_341818(const sVec4_341818& v, float s)
+static inline t4Vector vu0Scale_341818(const t4Vector& v, float s)
 {
-    sVec4_341818 r;
+    t4Vector r;
     int t;
     __asm__(
         "mfc1      %1, %3\n"
@@ -4465,15 +4442,15 @@ static inline sVec4_341818 vu0Scale_341818(const sVec4_341818& v, float s)
 class cMover_341818 {
 public:
     virtual void v01();
-    virtual sVec4_341818* getVelocity();
+    virtual t4Vector* getVelocity();
     virtual void v03();
-    virtual void setVelocity(sVec4_341818* v);
+    virtual void setVelocity(t4Vector* v);
 };
 
 extern "C" float func_002D1C70();
 
 struct sParams_341818 {
-    sVec4_341818 dir;
+    t4Vector dir;
     float speed;
     float scale;
 };
@@ -4484,16 +4461,16 @@ struct sSph_341818 {
     int type;
 };
 
-static inline void push_341818(sParams_341818* p, cMover_341818* obj, const sVec4_341818& dir, float amount)
+static inline void push_341818(sParams_341818* p, cMover_341818* obj, const t4Vector& dir, float amount)
 {
-    sVec4_341818 u = vu0Scale_341818(vu0Scale_341818(vu0Scale_341818(dir, amount), p->scale), func_002D1C70());
+    t4Vector u = vu0Scale_341818(vu0Scale_341818(vu0Scale_341818(dir, amount), p->scale), func_002D1C70());
     obj->setVelocity(&u);
 }
 
 extern "C" void func_00341818(sSph_341818* self, cMover_341818* obj)
 {
-    sVec4_341818 vel = *obj->getVelocity();
-    sVec4_341818 dir = self->params.dir;
+    t4Vector vel = *obj->getVelocity();
+    t4Vector dir = self->params.dir;
     if (dir.x == 0.0f && dir.y == 0.0f && dir.z == 0.0f) {
         dir = vu0Normalize_341818(vel);
     }
@@ -4502,11 +4479,11 @@ extern "C" void func_00341818(sSph_341818* self, cMover_341818* obj)
     sParams_341818* p = &self->params;
     if (self->type == 2) {
         if (d >= 0.0f) {
-            sVec4_341818 u = vu0Scale_341818(vu0Scale_341818(vu0Scale_341818(dir, p->speed), p->scale), func_002D1C70());
+            t4Vector u = vu0Scale_341818(vu0Scale_341818(vu0Scale_341818(dir, p->speed), p->scale), func_002D1C70());
             obj->setVelocity(&u);
         }
     } else if (diff > 0.0f) {
-        sVec4_341818 u = vu0Scale_341818(vu0Scale_341818(vu0Scale_341818(dir, diff), p->scale), func_002D1C70());
+        t4Vector u = vu0Scale_341818(vu0Scale_341818(vu0Scale_341818(dir, diff), p->scale), func_002D1C70());
         obj->setVelocity(&u);
     }
 }
@@ -5343,9 +5320,6 @@ extern "C" void func_00342718(void* self, void* stream)
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_00342768);
 #ifdef SKIP_ASM
-struct sVec4_342768 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
 struct sSphDef_342768 {
     int f00;
     short type;
@@ -5359,7 +5333,7 @@ struct sSph_342768 {
     int refs;
     void** vt;
     int pad08[2];
-    sVec4_342768 pos;
+    t4Vector pos;
     float f20;
     float f24;
     int t28;
@@ -5380,7 +5354,7 @@ extern "C" void* func_00342768(sSph_342768* self, sSphDef_342768* def, int a2)
     self->type = type;
     int t = (int)(def->time * (float)*(int*)(D_004A5B64 + 0x10));
     self->t28 = t;
-    sVec4_342768 v;
+    t4Vector v;
     v.x = def->x;
     v.y = def->y;
     v.z = def->z;
@@ -5468,14 +5442,11 @@ extern "C" void func_00342880(sSph_342768* self)
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_003429E0);
 #ifdef SKIP_ASM
-struct sVec4_3429E0 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
 
 // PORT: PS2-only VU0 inline asm (vector times scalar).
-static inline sVec4_3429E0 vu0Scale_3429E0(const sVec4_3429E0& v, float s)
+static inline t4Vector vu0Scale_3429E0(const t4Vector& v, float s)
 {
-    sVec4_3429E0 r;
+    t4Vector r;
     int t;
     __asm__(
         "mfc1      %1, %3\n"
@@ -5492,16 +5463,16 @@ static inline sVec4_3429E0 vu0Scale_3429E0(const sVec4_3429E0& v, float s)
 class cMover_3429E0 {
 public:
     virtual void v01();
-    virtual sVec4_3429E0* getVelocity();
+    virtual t4Vector* getVelocity();
     virtual void v03();
-    virtual void setVelocity(sVec4_3429E0* v);
+    virtual void setVelocity(t4Vector* v);
 };
 
 extern "C" float func_002D1C70();
 
 extern "C" void func_003429E0(void* self, cMover_3429E0* obj)
 {
-    sVec4_3429E0 u = vu0Scale_3429E0(vu0Scale_3429E0(*obj->getVelocity(), *(float*)((char*)self + 0x24) + 1.0f), func_002D1C70());
+    t4Vector u = vu0Scale_3429E0(vu0Scale_3429E0(*obj->getVelocity(), *(float*)((char*)self + 0x24) + 1.0f), func_002D1C70());
     obj->setVelocity(&u);
 }
 #endif
@@ -5509,14 +5480,11 @@ extern "C" void func_003429E0(void* self, cMover_3429E0* obj)
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_00342A88);
 #ifdef SKIP_ASM
-struct sVec4_342A88 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
 
 // PORT: PS2-only VU0 inline asm (vector times scalar).
-static inline sVec4_342A88 vu0Scale_342A88(const sVec4_342A88& v, float s)
+static inline t4Vector vu0Scale_342A88(const t4Vector& v, float s)
 {
-    sVec4_342A88 r;
+    t4Vector r;
     int t;
     __asm__(
         "mfc1      %1, %3\n"
@@ -5531,7 +5499,7 @@ static inline sVec4_342A88 vu0Scale_342A88(const sVec4_342A88& v, float s)
 }
 
 // PORT: PS2-only VU0 inline asm (4-component dot product).
-static inline float vu0Dot_342A88(const sVec4_342A88& a, const sVec4_342A88& b)
+static inline float vu0Dot_342A88(const t4Vector& a, const t4Vector& b)
 {
     float r;
     int t;
@@ -5553,20 +5521,20 @@ static inline float vu0Dot_342A88(const sVec4_342A88& a, const sVec4_342A88& b)
 class cMover_342A88 {
 public:
     virtual void v01();
-    virtual sVec4_342A88* getVelocity();
+    virtual t4Vector* getVelocity();
     virtual void v03();
-    virtual void setVelocity(sVec4_342A88* v);
+    virtual void setVelocity(t4Vector* v);
 };
 
 extern "C" float func_002D1C70();
 
-static inline void setVel_342A88(cMover_342A88* o, sVec4_342A88* v)
+static inline void setVel_342A88(cMover_342A88* o, t4Vector* v)
 {
     o->setVelocity(v);
 }
 
 struct sPlane_342A88 {
-    sVec4_342A88 n;
+    t4Vector n;
     float d;
     float k;
 };
