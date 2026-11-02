@@ -4471,7 +4471,6 @@ extern int D_004A57A8_2EF8 __asm__("D_004A57A8");
 extern sBindEnd_1FBE38 D_004A57AC_2EF8 __asm__("D_004A57AC");
 extern int D_004A57B0_2EF8 __asm__("D_004A57B0");
 extern int D_004A3D10_2EF8[2] __asm__("D_004A3D10");
-extern int* D_004A3DD8_2EF8 __asm__("D_004A3DD8");
 extern char* D_004A28A8_2EF8 __asm__("D_004A28A8");
 extern "C" int func_00122EE8(char* rider, int which);
 
@@ -4488,7 +4487,7 @@ extern "C" void* func_00302EF8(void* self, int n, sBindArg_1FBE38 *e)
     int *vp;
     BIND_UNPACK_ARGS_1FBE38(vp, v, &D_004A57A8_2EF8, 8, D_004A3D10_2EF8, n, e);
     char* lvl = *(char**)(*(char**)(D_004A28A8_2EF8 + 0x84) + 0xC);
-    char* q = *(char**)(lvl + (*D_004A3DD8_2EF8 << 2) + 0x28);
+    char* q = *(char**)(lvl + (D_004A3DD8->being << 2) + 0x28);
     char* a = q ? q + 0x6C0 : 0;
     char* r = a ? a - 0x6C0 : 0;
     int res;
