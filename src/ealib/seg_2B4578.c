@@ -16207,11 +16207,8 @@ ok:
 INCLUDE_ASM("ealib/seg_2B4578", func_003D31E8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct S_31E8 { char p0[0xC]; int f0c; int f10; char p1[0x1C]; unsigned int f30; int f34; char p2[0x928 - 0x38]; };
-extern struct S_31E8 D_00517610_31E8[] __asm__("D_00517610");
 extern unsigned char D_0044F42C;
 extern int D_0044F430_31E8[] __asm__("D_0044F430");
-extern int D_0044F420_31E8[] __asm__("D_0044F420");
 
 void func_003D31E8(unsigned int a, int b, int c) {
     int i;
@@ -16219,13 +16216,13 @@ void func_003D31E8(unsigned int a, int b, int c) {
         if (func_003D5450(-1)) {
             a &= 0x0F000000;
             for (i = 0; i < 4; i++) {
-                if (D_00517610_31E8[i].f34 != 0 && (D_00517610_31E8[i].f30 & a) != 0) {
-                    D_00517610_31E8[i].f0c = b;
-                    D_00517610_31E8[i].f10 = c;
+                if (D_00517610[i].f34 != 0 && (D_00517610[i].f30 & a) != 0) {
+                    D_00517610[i].f0C = b;
+                    D_00517610[i].f10 = c;
                 }
             }
             D_0044F430_31E8[0] = 0;
-            D_0044F420_31E8[0] = 0;
+            D_0044F420 = 0;
         }
     }
 }
