@@ -349,6 +349,170 @@ extern t4Vector D_004FF160;
 
 INCLUDE_ASM("seg/seg_1218", func_00100218);
 
+// Callees and globals shared by the functions below.
+extern "C" float func_0031C228(float);
+extern "C" float func_00100348_0348(char* self, t4Vector* target) __asm__("func_00100348");
+// PORT: the unit later declares func_00100610 with the out-pointer spelled out; same symbol, by-value return here
+t4Vector func_00100610_0610(char* self) __asm__("func_00100610");
+extern "C" void func_00100610(t4Vector*, void*);
+extern "C" float func_00100348(void*, t4Vector*);
+extern "C" int func_0010BB18_0680(void*, float*, int*) __asm__("func_0010BB18");
+extern "C" int func_0010BBF8_0680(void*, int*) __asm__("func_0010BBF8");
+extern "C" void func_0010C140_0680(void*, void*) __asm__("func_0010C140");
+extern "C" void func_0010C0A8(void*, void*);
+extern "C" int func_0010B980_0680(char* self, float* speed, int* below, int* o3, int* o4, int* o5, int* o6) __asm__("func_0010B980");
+extern "C" int func_0010BD10(char* self, int* out);
+extern "C" int func_0010B980(char* self, float* speed, int* below, int* o3, int* o4, int* o5, int* o6);
+extern "C" void func_0010BFA8_c(char*, int, int, int, int) __asm__("func_0010BFA8");
+extern "C" void func_00100680(void*, void*);
+extern "C" void func_0010C140(void*, void*);
+extern "C" void func_00112A50(void*, int);
+extern "C" void func_00101688(void* self);
+int func_001441A0(void*, void*);
+extern int D_004A3DD8;
+extern "C" char* cAIAnimEventMap_getBlendInTime(int id);
+// PORT: the handlers are defined later in the unit with mixed parameter/return types; bind uniform views by asm label
+extern "C" int func_001048C0(void* self, void* x, void* anim, float dt);
+extern "C" int func_00104940(void* self, void* x, void* anim, float dt);
+extern "C" int func_001049C0(void* self, void* x, void* anim, float dt);
+extern "C" int f_00104110_36A0(void* self, void* x, void* anim, float dt) __asm__("func_00104110");
+extern "C" int f_00104178_36A0(void* self, void* x, void* anim, float dt) __asm__("func_00104178");
+extern "C" int f_00104238_36A0(void* self, void* x, void* anim, float dt) __asm__("func_00104238");
+extern "C" int f_001042A8_36A0(void* self, void* x, void* anim, float dt) __asm__("func_001042A8");
+extern "C" int f_00104358_36A0(void* self, void* x, void* anim, float dt) __asm__("func_00104358");
+extern "C" int f_001045D8_36A0(void* self, void* x, void* anim, float dt) __asm__("func_001045D8");
+extern "C" int f_00104660_36A0(void* self, void* x, void* anim, float dt) __asm__("func_00104660");
+extern "C" int f_001042E0_36A0(void* self, void* x, void* anim, float dt) __asm__("func_001042E0");
+extern "C" int f_001043F8_36A0(void* self, void* x, void* anim, float dt) __asm__("func_001043F8");
+extern "C" int f_001045B8_36A0(void* self, void* x, void* anim, float dt) __asm__("func_001045B8");
+extern "C" int f_001047F0_36A0(void* self, void* x, void* anim, float dt) __asm__("func_001047F0");
+extern "C" int f_00104728_36A0(void* self, void* x, void* anim, float dt) __asm__("func_00104728");
+extern "C" int f_001046B0_36A0(void* self, void* x, void* anim, float dt) __asm__("func_001046B0");
+extern "C" void func_00103AA0_36A0(void* self, void* anim) __asm__("func_00103AA0");
+extern "C" int func_00104CA0_3918(void* self, void* ev, void* data) __asm__("func_00104CA0");
+extern "C" int func_00104A40_3918(void* self, void* ev, void* data) __asm__("func_00104A40");
+extern "C" int func_00104A60_3918(void* self, void* ev, void* data) __asm__("func_00104A60");
+extern "C" int func_00104B78_3918(void* self, void* ev, void* data) __asm__("func_00104B78");
+extern "C" int func_00104C18_3918(void* self, void* ev, void* data) __asm__("func_00104C18");
+extern "C" int func_00104B48_3918(void* self, void* ev, void* data) __asm__("func_00104B48");
+extern "C" int func_00104C38_3918(void* self, void* ev, void* data) __asm__("func_00104C38");
+extern "C" int func_00104B98_3918(void* self, void* ev, void* data) __asm__("func_00104B98");
+extern "C" int func_00104BB8_3918(void* self, void* ev, void* data) __asm__("func_00104BB8");
+extern "C" int func_00104BD8_3918(void* self, void* ev, void* data) __asm__("func_00104BD8");
+extern "C" int func_00104C80_3918(void* self, void* ev, void* data) __asm__("func_00104C80");
+extern "C" bool func_001446A0(void*, int);
+extern "C" bool func_001446B8(void*, int);
+extern "C" void func_00144670(void*, int);
+extern "C" void func_00104CC8(void*, int);
+extern char* D_004A3E7C;
+extern "C" void func_00313C50(void*, int, int);
+extern "C" void func_00313CF0(void*, int, float);
+extern "C" int func_00313800(void*, float);
+extern "C" void func_003145F8(void*, void*);
+extern "C" void func_00313D40(void*, int, int);
+extern "C" int func_003135B0(void*, int, float);
+extern "C" void func_00313D28(void*, int, float);
+extern "C" int func_00103CC8_a(void*, void*, int*, int, int, int, float, float) __asm__("func_00103CC8");
+extern "C" int func_00103E28(void* self, void* x, char* anim, int i0, int i1, int i2, int i3, int i4, float dt, float v);
+extern "C" int func_00103CC8_42A8(void*, void*, char*, int, int, int, float, float) __asm__("func_00103CC8");
+extern "C" int func_00103BE0_a(void *, void *, int *, int, int, float, float) __asm__("func_00103BE0");
+extern "C" int func_00103FF8_45B8(int, int, int, int, int) __asm__("func_00103FF8");
+extern "C" int func_00103CC8(void* self, void* x, char* anim, int a, int b, float dt, float w, int c);
+extern "C" int func_00312B18(int, int, int*, int);
+extern "C" int func_00312B18_4A60(void*, void*, int*, int) __asm__("func_00312B18");
+extern "C" int func_00312BD0(void*, void*, int, int);
+extern "C" int func_00312BD0_4C38(void*, void*, int*, int) __asm__("func_00312BD0");
+extern "C" void func_00289B18_4CC8(void*, int, int) __asm__("func_00289B18");
+extern char* D_004A3500;
+extern "C" void func_00311710_4CF8(int, int, int) __asm__("func_00311710");
+extern int D_004A3DFC;
+extern "C" void func_003147F0(void*, cStream*);
+extern "C" void func_00314668(void*);
+extern "C" void func_00314880(void*, cStream*);
+extern sVec4 D_004FF120_4E70 __asm__("D_004FF120");
+int func_0011FEE8(void*);
+int func_0011FE98(void*);
+extern "C" void func_00106F78(void*);
+extern "C" int func_001231A8(void*);
+extern "C" void func_0016D320(void*, void*);
+extern "C" void func_0032F708(void* self, int flags);
+extern char D_004C5830_5398[] __asm__("D_004C5830");
+// PORT: the project names this func_0011FEC8__FPv (one param); callers pass a state too.
+void func_0011FEC8_2(void* self, int v) __asm__("func_0011FEC8__FPv");
+int func_00312AA0(void* anim, int ch);
+extern "C" float func_00312AB0(void* anim, int ch);
+extern "C" int func_00311AE8(void*, int);
+extern "C" int cRiderAnimBase_play(void*, int, int, float);
+extern "C" void cRider_updateOrientationImplicit(cRider* self);
+extern "C" void cAirPredictor_startLaunchIntoAir_57B8(void*, const t4Vector*, const t4Vector*, float) __asm__("cAirPredictor_startLaunchIntoAir");
+extern "C" void func_00108388(char* self, char* info, int flag);
+extern "C" void func_00105D98(void* rider, void* info, int id);
+extern "C" void func_00106538_m2537(void* rider, const t4Vector& v) __asm__("func_00106538");
+extern "C" void func_001065B0(void* rider, void* hit);
+extern "C" void func_0010E910(void* rider, int a, int b, int c, void* hit, float speed);
+extern "C" void func_00119E38(void* metrix, int a, int b);
+extern "C" void func_00329B40(void* p, const t4Vector* d);
+extern "C" void func_00329AE0(int);
+// PORT: the project names these __FPv (one param); callers pass a state too.
+void func_0011FE78_6848(void* self, int v) __asm__("func_0011FE78__FPv");
+extern "C" void func_0031BE50(float* s, float* c, float angle);
+extern "C" void cRiderAnimBase_changeHeadingOffset(void* anim, float a);
+extern "C" void func_0011DFE0(cRider* self, const t4Vector& axis, float angle);
+extern "C" float func_00119D40(void* metrix, int a, int b, int c, int d);
+extern "C" void func_0010E098(cRider* self, int a, float f);
+extern "C" void func_00115358(cRider* self);
+extern "C" void func_001326C8(void*, int);
+extern "C" void func_0013ADC0(void* p, t4Vector* n);
+int AIrand();
+extern "C" void cAirPredictor_startLaunchIntoAir(void*, const t4Vector*, const t4Vector*, float);
+extern "C" void func_0010EB30_7E70(char*, int, int, int, sInfo*) __asm__("func_0010EB30");
+extern "C" void func_00108388_7E70(char*, sInfo*, int) __asm__("func_00108388");
+extern "C" void func_0010E468(void*, void*);
+extern "C" void func_0010E2E8(void*, void*);
+extern "C" void func_0010E3A8(void*, void*);
+extern "C" void func_0010E228(void*, void*);
+extern float D_004A4C84_7E70 __asm__("D_004A4C84");
+extern int D_005308D0_7E70[] __asm__("D_005308D0");
+extern "C" void func_00131348(void*);
+extern "C" void* func_0028B180();
+extern "C" void func_002A0E70(void*, void*, int);
+extern "C" int func_00334680_86B8(void*, sVec4*, sVec4*, int, float) __asm__("func_00334680");
+extern "C" int func_001086B8_86B8(char* self, sVec4* tgt, sVec4* dir) __asm__("func_001086B8");
+extern "C" int func_00334680(void*, t4Vector*, t4Vector*, int, float);
+extern "C" char* func_00311B20(void*, int);
+extern "C" int func_001086B8(void*, t4Vector*, t4Vector*);
+void operator_delete(int* p);
+// PORT: func_00108E88 takes the rider; declared elsewhere in this file without parameters
+void func_00108E88_self(void* self) __asm__("func_00108E88");
+extern "C" void func_0010CAB8(void* self);
+extern "C" void func_0010D170(void* self);
+extern "C" void* func_003E6448(void* dst, int value, int size);
+extern "C" void func_00108E88();
+extern "C" float func_0010DEF0(void* self);
+extern "C" void func_00120090(void* self, float v);
+extern "C" void func_0010A960_A768(void* self, void* pad) __asm__("func_0010A960");
+extern "C" void func_0010AA70_A768(void* self, void* pad) __asm__("func_0010AA70");
+extern "C" void func_0010B790_A768(void* self, void* pad) __asm__("func_0010B790");
+extern "C" void func_0010B590_A768(void* self, void* pad) __asm__("func_0010B590");
+extern "C" void func_0010AED8_A768(void* self, void* pad) __asm__("func_0010AED8");
+extern "C" void func_0010B250_A768(void* self, void* pad) __asm__("func_0010B250");
+extern "C" void func_0010B750_A768(void* self, void* pad) __asm__("func_0010B750");
+extern "C" void func_0010AD78_A768(void* self, void* pad) __asm__("func_0010AD78");
+extern "C" void func_00111AC0(char*, void*);
+extern "C" void func_00111D98(void* self, void* src);
+extern "C" int func_0010D1A0(void*);
+extern "C" int func_0010DA10(void*);
+extern "C" int func_0010DBF0(void*, int*);
+extern "C" int func_0010BBF8(void*, int*);
+extern "C" int func_0010BB18(void*, float*, int*);
+extern "C" void func_00135CB0(void*, float*, float*);
+extern "C" void func_00135DB0(void*, float*, float*);
+extern "C" int func_001298C8();
+extern "C" int func_0010C1D0(void*);
+extern "C" void* cBE_getBE();
+void* cBE_getInterface_C258(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" int func_00144BE0(void* iface);
+
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00100250);
 #ifdef SKIP_ASM
@@ -369,8 +533,6 @@ extern "C" float func_00100250(void* self, const t4Vector* v)
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00100348);
 #ifdef SKIP_ASM
-extern "C" float func_0031C228(float);
-
 // PORT: PS2-only VU0 inline asm (cross product, w = 0).
 static inline t4Vector Cross_0348(const t4Vector& a, const t4Vector& b)
 {
@@ -409,7 +571,6 @@ static inline float Atan2_0348(float y, float x)
 
 static inline cBeing* Obj_0348(char* self) { return (cBeing*)(*(char**)(self + 0x18) + 0x6C0); }
 
-extern "C" float func_00100348_0348(char* self, t4Vector* target) __asm__("func_00100348");
 extern "C" float func_00100348_0348(char* self, t4Vector* target)
 {
     t4Vector up = *(t4Vector*)(*(char**)(self + 0x18) + 0x1C0);
@@ -449,9 +610,6 @@ struct sCam_0610 {
     t4Vector base;      // 0x4B0
 };
 
-// PORT: the unit later declares func_00100610 with the out-pointer spelled out; same symbol, by-value return here
-t4Vector func_00100610_0610(char* self) __asm__("func_00100610");
-
 t4Vector func_00100610_0610(char* self)
 {
     t4Vector d = Sub((*(sCam_0610**)(self + 0x18))->target, (*(sCam_0610**)(self + 0x18))->pos);
@@ -473,14 +631,6 @@ struct sPad_0680 {
     int w6 : 6;
 };
 
-extern "C" void func_00100610(t4Vector*, void*);
-extern "C" float func_00100348(void*, t4Vector*);
-extern "C" int func_0010BB18_0680(void*, float*, int*) __asm__("func_0010BB18");
-extern "C" int func_0010BBF8_0680(void*, int*) __asm__("func_0010BBF8");
-extern "C" void func_0010C140_0680(void*, void*) __asm__("func_0010C140");
-extern "C" void func_0010C0A8(void*, void*);
-extern "C" int func_0010B980_0680(char* self, float* speed, int* below, int* o3, int* o4, int* o5, int* o6) __asm__("func_0010B980");
-extern "C" int func_0010BD10(char* self, int* out);
 extern "C" void func_00100680_0680(char* self, sPad_0680* pad) __asm__("func_00100680");
 
 extern "C" void func_00100680_0680(char* self, sPad_0680* pad)
@@ -557,11 +707,6 @@ struct sPad_09E0 {
     int w0 : 6;
 };
 
-extern "C" int func_0010B980(char* self, float* speed, int* below, int* o3, int* o4, int* o5, int* o6);
-extern "C" void func_0010BFA8_c(char*, int, int, int, int) __asm__("func_0010BFA8");
-extern "C" void func_00100680(void*, void*);
-extern "C" void func_0010C140(void*, void*);
-
 extern "C" void func_001009E0(char* self, sPad_09E0* pad)
 {
     int below, o3, o4, o5, o6;
@@ -607,9 +752,6 @@ struct sCtl_0F88 {
     char pad4[0x80 - 4];
     int target;
 };
-
-extern "C" float func_0031C228(float);
-extern "C" void func_00112A50(void*, int);
 
 // PORT: PS2-only FPU asm (float -> int -> float truncation).
 static inline float Trunc_0F88(float x)
@@ -690,8 +832,6 @@ extern "C" void func_00100F88(char* self, sPad_0F88* pad)
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00101310);
 #ifdef SKIP_ASM
-extern "C" void func_00101688(void* self);
-
 struct sSlotA_101310 {
     char pad[0x18];
     unsigned int id;
@@ -892,8 +1032,6 @@ extern "C" void func_00101728(sMgr_1728* self, unsigned int* idp, float x, float
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00101888);
 #ifdef SKIP_ASM
-int func_001441A0(void*, void*);
-
 extern "C" void func_00101888(sMgr_1728* self, unsigned int* idp)
 {
     int n = self->count;
@@ -999,7 +1137,6 @@ struct sList_1A28 {
     sLink_1A28* items[1];
 };
 
-extern int D_004A3DD8;
 extern "C" int func_0030A310(int, sLink_1A28*);
 
 extern "C" void func_00101A28(sList_1A28* list, sNode_1A28* node, int recurse)
@@ -1208,26 +1345,6 @@ extern "C" void func_00103578(sObj_3578* self, cStream* s)
 //100%
 INCLUDE_ASM("seg/seg_1218", func_001036A0);
 #ifdef SKIP_ASM
-extern "C" char* cAIAnimEventMap_getBlendInTime(int id);
-// PORT: the handlers are defined later in the unit with mixed parameter/return types; bind uniform views by asm label
-extern "C" int func_001048C0(void* self, void* x, void* anim, float dt);
-extern "C" int func_00104940(void* self, void* x, void* anim, float dt);
-extern "C" int func_001049C0(void* self, void* x, void* anim, float dt);
-extern "C" int f_00104110_36A0(void* self, void* x, void* anim, float dt) __asm__("func_00104110");
-extern "C" int f_00104178_36A0(void* self, void* x, void* anim, float dt) __asm__("func_00104178");
-extern "C" int f_00104238_36A0(void* self, void* x, void* anim, float dt) __asm__("func_00104238");
-extern "C" int f_001042A8_36A0(void* self, void* x, void* anim, float dt) __asm__("func_001042A8");
-extern "C" int f_00104358_36A0(void* self, void* x, void* anim, float dt) __asm__("func_00104358");
-extern "C" int f_001045D8_36A0(void* self, void* x, void* anim, float dt) __asm__("func_001045D8");
-extern "C" int f_00104660_36A0(void* self, void* x, void* anim, float dt) __asm__("func_00104660");
-extern "C" int f_001042E0_36A0(void* self, void* x, void* anim, float dt) __asm__("func_001042E0");
-extern "C" int f_001043F8_36A0(void* self, void* x, void* anim, float dt) __asm__("func_001043F8");
-extern "C" int f_001045B8_36A0(void* self, void* x, void* anim, float dt) __asm__("func_001045B8");
-extern "C" int f_001047F0_36A0(void* self, void* x, void* anim, float dt) __asm__("func_001047F0");
-extern "C" int f_00104728_36A0(void* self, void* x, void* anim, float dt) __asm__("func_00104728");
-extern "C" int f_001046B0_36A0(void* self, void* x, void* anim, float dt) __asm__("func_001046B0");
-extern "C" void func_00103AA0_36A0(void* self, void* anim) __asm__("func_00103AA0");
-
 extern "C" void func_001036A0(char* self, void* x, int* anim, float dt)
 {
     int done = 0;
@@ -1299,19 +1416,6 @@ extern "C" void func_001036A0(char* self, void* x, int* anim, float dt)
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00103918);
 #ifdef SKIP_ASM
-extern "C" char* cAIAnimEventMap_getBlendInTime(int id);
-extern "C" int func_00104CA0_3918(void* self, void* ev, void* data) __asm__("func_00104CA0");
-extern "C" int func_00104A40_3918(void* self, void* ev, void* data) __asm__("func_00104A40");
-extern "C" int func_00104A60_3918(void* self, void* ev, void* data) __asm__("func_00104A60");
-extern "C" int func_00104B78_3918(void* self, void* ev, void* data) __asm__("func_00104B78");
-extern "C" int func_00104C18_3918(void* self, void* ev, void* data) __asm__("func_00104C18");
-extern "C" int func_00104B48_3918(void* self, void* ev, void* data) __asm__("func_00104B48");
-extern "C" int func_00104C38_3918(void* self, void* ev, void* data) __asm__("func_00104C38");
-extern "C" int func_00104B98_3918(void* self, void* ev, void* data) __asm__("func_00104B98");
-extern "C" int func_00104BB8_3918(void* self, void* ev, void* data) __asm__("func_00104BB8");
-extern "C" int func_00104BD8_3918(void* self, void* ev, void* data) __asm__("func_00104BD8");
-extern "C" int func_00104C80_3918(void* self, void* ev, void* data) __asm__("func_00104C80");
-
 struct sEvent3918 { int a; int b; };
 
 struct sEventOwner3918 {
@@ -1395,10 +1499,6 @@ struct sBankTab_3AA0 {
 };
 
 extern sBankTab_3AA0* D_004A3DF8;
-extern "C" bool func_001446A0(void*, int);
-extern "C" bool func_001446B8(void*, int);
-extern "C" void func_00144670(void*, int);
-extern "C" void func_00104CC8(void*, int);
 
 extern "C" void func_00103AA0(void* self, sObj_3AA0* o)
 {
@@ -1422,11 +1522,6 @@ extern "C" void func_00103AA0(void* self, sObj_3AA0* o)
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00103BE0);
 #ifdef SKIP_ASM
-extern char* D_004A3E7C;
-extern "C" void func_00313C50(void*, int, int);
-extern "C" void func_00313CF0(void*, int, float);
-extern "C" int func_00313800(void*, float);
-extern "C" void func_003145F8(void*, void*);
 extern "C" int func_00103BE0(void* self, void* x, char* anim, int a, int b, float dt, float v)
 {
     if (v < 0.0f) {
@@ -1447,15 +1542,6 @@ extern "C" int func_00103BE0(void* self, void* x, char* anim, int a, int b, floa
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00103CC8);
 #ifdef SKIP_ASM
-extern char* D_004A3E7C;
-extern "C" void func_00313D40(void*, int, int);
-extern "C" int func_003135B0(void*, int, float);
-extern "C" void func_00313C50(void*, int, int);
-extern "C" void func_00313CF0(void*, int, float);
-extern "C" void func_00313D28(void*, int, float);
-extern "C" int func_00313800(void*, float);
-extern "C" void func_003145F8(void*, void*);
-
 extern "C" int func_00103CC8(void* self, void* x, char* anim, int a, int b, float dt, float w, int c)
 {
     func_00313C50(anim, 0, *(int*)(D_004A3E7C + b * 4 + 0x1030));
@@ -1482,15 +1568,6 @@ extern "C" int func_00103CC8(void* self, void* x, char* anim, int a, int b, floa
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00103E28);
 #ifdef SKIP_ASM
-extern char* D_004A3E7C;
-extern "C" void func_00313D40(void*, int, int);
-extern "C" int func_003135B0(void*, int, float);
-extern "C" void func_00313C50(void*, int, int);
-extern "C" void func_00313CF0(void*, int, float);
-extern "C" void func_00313D28(void*, int, float);
-extern "C" int func_00313800(void*, float);
-extern "C" void func_003145F8(void*, void*);
-
 extern "C" int func_00103E28(void* self, void* x, char* anim, int i0, int i1, int i2, int i3, int i4, float dt, float v)
 {
     int from, to;
@@ -1535,14 +1612,6 @@ extern "C" int func_00103E28(void* self, void* x, char* anim, int i0, int i1, in
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00103FF8);
 #ifdef SKIP_ASM
-extern char* D_004A3E7C;
-extern "C" void func_00313D40(void*, int, int);
-extern "C" int func_003135B0(void*, int, float);
-extern "C" void func_00313C50(void*, int, int);
-extern "C" void func_00313CF0(void*, int, float);
-extern "C" int func_00313800(void*, float);
-extern "C" void func_003145F8(void*, void*);
-
 extern "C" int func_00103FF8(void* self, void* x, char* anim, int a, float dt, int b)
 {
     if (*(int*)(anim + 4) == *(int*)(D_004A3E7C + a * 4 + 0x1030)) {
@@ -1567,9 +1636,6 @@ extern "C" int func_00103FF8(void* self, void* x, char* anim, int a, float dt, i
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00104110);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" int func_00103CC8_a(void*, void*, int*, int, int, int, float, float) __asm__("func_00103CC8");
-
 extern "C" int func_00104110(void *arg0, void *a1, int *arg2, float f12) {
     float var_f13;
     void *temp_3;
@@ -1592,7 +1658,6 @@ extern "C" int func_00104110(void *arg0, void *a1, int *arg2, float f12) {
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00104178);
 #ifdef SKIP_ASM
-extern "C" int func_00103E28(void* self, void* x, char* anim, int i0, int i1, int i2, int i3, int i4, float dt, float v);
 extern "C" int func_00104178(char* self, void* x, int* anim, float dt)
 {
     char* p = *(char**)(self + 0x60);
@@ -1619,8 +1684,6 @@ extern "C" int func_00104178(char* self, void* x, int* anim, float dt)
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00104238);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-
 extern "C" int func_00104238(void *arg0, void *a1, int *arg2, float f12) {
     int var_7;
     int var_8;
@@ -1657,9 +1720,6 @@ extern "C" int func_00104238(void *arg0, void *a1, int *arg2, float f12) {
 //100%
 INCLUDE_ASM("seg/seg_1218", func_001042A8);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" int func_00103CC8_42A8(void*, void*, char*, int, int, int, float, float) __asm__("func_00103CC8");
-
 extern "C" int func_001042A8(void *arg0, void *a1, char *a2, float dt) {
     float var_f13;
     void *temp_3;
@@ -1676,9 +1736,6 @@ extern "C" int func_001042A8(void *arg0, void *a1, char *a2, float dt) {
 //100%
 INCLUDE_ASM("seg/seg_1218", func_001042E0);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" int func_00103BE0_a(void *, void *, int *, int, int, float, float) __asm__("func_00103BE0");
-
 extern "C" int func_001042E0(void *arg0, void *a1, int *arg2, float f12) {
     int x = *arg2;
     if (x == 0xDA) {
@@ -1751,9 +1808,6 @@ extern "C" int func_001043F8(char* self, void* x, char* anim, float dt)
 //100%
 INCLUDE_ASM("seg/seg_1218", func_001045B8);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" int func_00103FF8_45B8(int, int, int, int, int) __asm__("func_00103FF8");
-
 extern "C" int func_001045B8(int a, int b, int c) {
     return func_00103FF8_45B8(a, b, c, 0x89, 0x8A);
 }
@@ -1775,8 +1829,6 @@ extern "C" int func_001045D8(char* self, void* x, char* anim, float dt) {
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00104660);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-
 extern "C" int func_00104660(void *arg0, void *arg1, int *arg2, float f12) {
     float w = (*(float *)((char*)((*(void **)((char*)(arg0) + (0x60)))) + (0x244)));
 
@@ -1791,7 +1843,6 @@ extern "C" int func_00104660(void *arg0, void *arg1, int *arg2, float f12) {
 INCLUDE_ASM("seg/seg_1218", func_001046B0);
 #ifdef SKIP_ASM
 // PORT: g++ >?/<? (min/max) operator, removed in GCC 4.3.
-extern "C" int func_00103CC8(void* self, void* x, char* anim, int a, int b, float dt, float w, int c);
 extern "C" int func_001046B0(char* self, void* x, int* anim, float dt)
 {
     float v = *(float*)(*(char**)(self + 0x60) + 0x274);
@@ -1858,8 +1909,6 @@ extern "C" int func_001047F0(char* self, void* x, char* anim, float dt) {
 //100%
 INCLUDE_ASM("seg/seg_1218", func_001048C0);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" int func_003135B0(void*, int, float);
 extern "C" int func_001048C0(void* self, void* x, void* anim, float dt) {
     float t = dt * 0.01666666753590107f;
     int done;
@@ -1879,7 +1928,6 @@ extern "C" int func_001048C0(void* self, void* x, void* anim, float dt) {
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00104940);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" int func_00104940(void* self, void* x, void* anim, float dt) {
     float t = dt * 0.01666666753590107f;
     int done;
@@ -1899,7 +1947,6 @@ extern "C" int func_00104940(void* self, void* x, void* anim, float dt) {
 //100%
 INCLUDE_ASM("seg/seg_1218", func_001049C0);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" int func_001049C0(void* self, void* x, void* anim, float dt) {
     float t = dt * 0.01666666753590107f;
     int done;
@@ -1919,9 +1966,6 @@ extern "C" int func_001049C0(void* self, void* x, void* anim, float dt) {
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00104A40);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" int func_00312B18(int, int, int*, int);
-
 extern "C" int func_00104A40(int a, int b, int* c) {
     return func_00312B18(a, b, c, 0x11F);
 }
@@ -1930,8 +1974,6 @@ extern "C" int func_00104A40(int a, int b, int* c) {
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00104A60);
 #ifdef SKIP_ASM
-extern "C" int func_00312B18_4A60(void*, void*, int*, int) __asm__("func_00312B18");
-
 // Plays the landing animation that matches the current trick state.
 extern "C" int func_00104A60(void* a, void* b, int* c)
 {
@@ -1960,9 +2002,6 @@ extern "C" int func_00104A60(void* a, void* b, int* c)
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00104B48);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" int func_00312BD0(void*, void*, int, int);
-
 extern "C" int func_00104B48(void *arg0, void* b, int c) {
     if (*(int *)((char*)arg0 + 0x64) != 0) {
         return func_00312BD0(arg0, b, c, 0x1B4);
@@ -1974,8 +2013,6 @@ extern "C" int func_00104B48(void *arg0, void* b, int c) {
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00104B78);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-
 extern "C" int func_00104B78(int a, int b, int* c) {
     return func_00312B18(a, b, c, 5);
 }
@@ -1984,8 +2021,6 @@ extern "C" int func_00104B78(int a, int b, int* c) {
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00104B98);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-
 extern "C" int func_00104B98(int a, int b, int* c) {
     return func_00312B18(a, b, c, 3);
 }
@@ -1994,8 +2029,6 @@ extern "C" int func_00104B98(int a, int b, int* c) {
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00104BB8);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-
 extern "C" int func_00104BB8(int a, int b, int* c) {
     return func_00312B18(a, b, c, 0x13);
 }
@@ -2004,8 +2037,6 @@ extern "C" int func_00104BB8(int a, int b, int* c) {
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00104BD8);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-
 extern "C" int func_00104BD8(void *arg0, void* a1, int a2) {
     if ((*(int *)((char*)((*(void **)((char*)(arg0) + (0x60)))) + (0x330))) == 1) {
         return func_00312BD0(arg0, a1, a2, 0x1C);
@@ -2017,8 +2048,6 @@ extern "C" int func_00104BD8(void *arg0, void* a1, int a2) {
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00104C18);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-
 extern "C" int func_00104C18(void* a, void* b, int c) {
     return func_00312BD0(a, b, c, 5);
 }
@@ -2027,9 +2056,6 @@ extern "C" int func_00104C18(void* a, void* b, int c) {
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00104C38);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" int func_00312BD0_4C38(void*, void*, int*, int) __asm__("func_00312BD0");
-
 extern "C" int func_00104C38(void* a0, void* a1, int *arg2) {
     int var_7;
     switch (*arg2) {
@@ -2050,8 +2076,6 @@ extern "C" int func_00104C38(void* a0, void* a1, int *arg2) {
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00104C80);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-
 extern "C" int func_00104C80(void* a, void* b, int c) {
     return func_00312BD0(a, b, c, 0x1B2);
 }
@@ -2069,10 +2093,6 @@ extern "C" int func_00104CA0(int arg0, void* arg1, void* arg2) {
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00104CC8);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_00289B18_4CC8(void*, int, int) __asm__("func_00289B18");
-extern char* D_004A3500;
-
 extern "C" void func_00104CC8(void *arg0, int arg1) {
     int temp_2 = (*(int *)((char*)(arg0) + (0x60)));
     int s = arg1 & 0xFFFF;
@@ -2085,10 +2105,6 @@ extern "C" void func_00104CC8(void *arg0, int arg1) {
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00104CF8);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void func_00311710_4CF8(int, int, int) __asm__("func_00311710");
-extern int D_004A3DFC;
-
 extern "C" void func_00104CF8(void *arg0, int a1) {
     int var_6;
     void *temp_2;
@@ -2131,7 +2147,6 @@ extern "C" void func_00104D50(void *arg0, void *arg1) {
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00104D68);
 #ifdef SKIP_ASM
-extern "C" void func_003147F0(void*, cStream*);
 extern "C" void func_00104D68(char* self, cStream* s) {
     s->Write(self, 0x50);
     for (int i = 0; i < 6; i++) {
@@ -2143,8 +2158,6 @@ extern "C" void func_00104D68(char* self, cStream* s) {
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00104DE0);
 #ifdef SKIP_ASM
-extern "C" void func_00314668(void*);
-extern "C" void func_00314880(void*, cStream*);
 extern "C" void func_00104DE0(char* self, cStream* s) {
     s->Read(self, 0x50);
     for (int i = 0; i < 6; i++) {
@@ -2230,7 +2243,6 @@ struct sSelf_4E70 {
 };
 
 extern "C" int func_00334458_4E70(void*, cScope_4E70*, sContact_4E70*, int, int) __asm__("func_00334458");
-extern sVec4 D_004FF120_4E70 __asm__("D_004FF120");
 
 // PORT: PS2-only VU0 inline asm (vector add in place).
 static inline void AddTo_4E70(sVec4& a, const sVec4& b)
@@ -2382,16 +2394,9 @@ struct cScope_5398 {
     cScope_5398(void* tree, int flag) __asm__("func_0032F650");
 };
 
-int func_0011FEE8(void*);
-int func_0011FE98(void*);
-extern "C" void func_00106F78(void*);
 extern "C" float func_00104E70_5398(char*, cScope_5398*, sContact_5398*) __asm__("func_00104E70");
-extern "C" int func_001231A8(void*);
 extern "C" void func_001057B8_5398(char*, sSurf_5398*, sInfo*, sContact_5398*, float) __asm__("func_001057B8");
 extern "C" void func_00296088_5398(void*, char*, sSurf_5398*, int) __asm__("func_00296088");
-extern "C" void func_0016D320(void*, void*);
-extern "C" void func_0032F708(void* self, int flags);
-extern char D_004C5830_5398[] __asm__("D_004C5830");
 
 // PORT: PS2-only VU0 inline asm (vector divided by scalar).
 static inline t4Vector Div_5398(const t4Vector& v, float s)
@@ -2488,22 +2493,7 @@ extern "C" void func_00105398(char* self, t4Vector* norm)
 INCLUDE_ASM("seg/seg_1218", func_001057B8);
 #ifdef SKIP_ASM
 // Rider hits a surface: hit->n is the contact normal, hit->vel the surface velocity.
-int func_0011FE98(void*);
-// PORT: the project names this func_0011FEC8__FPv (one param); callers pass a state too.
-void func_0011FEC8_2(void* self, int v) __asm__("func_0011FEC8__FPv");
-int func_00312AA0(void* anim, int ch);
-extern "C" float func_00312AB0(void* anim, int ch);
-extern "C" int func_00311AE8(void*, int);
-extern "C" int cRiderAnimBase_play(void*, int, int, float);
-extern "C" void cRider_updateOrientationImplicit(cRider* self);
 // The unit declares this later with its own vector type; bind it by asm label.
-extern "C" void cAirPredictor_startLaunchIntoAir_57B8(void*, const t4Vector*, const t4Vector*, float) __asm__("cAirPredictor_startLaunchIntoAir");
-extern "C" void func_00108388(char* self, char* info, int flag);
-extern "C" void func_00105D98(void* rider, void* info, int id);
-extern "C" void func_00106538_m2537(void* rider, const t4Vector& v) __asm__("func_00106538");
-extern "C" void func_001065B0(void* rider, void* hit);
-extern "C" void func_0010E910(void* rider, int a, int b, int c, void* hit, float speed);
-extern "C" void func_00119E38(void* metrix, int a, int b);
 
 struct sHit_57B8 {
     char pad0[0x10];
@@ -2633,8 +2623,6 @@ INCLUDE_ASM("seg/seg_1218", func_00105D98);
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00106538);
 #ifdef SKIP_ASM
-extern "C" void func_00329B40(void* p, const t4Vector* d);
-
 extern "C" void func_00106538(char* self, const t4Vector* d)
 {
     AddEq(*(t4Vector*)(self + 0x110), *d);
@@ -2650,8 +2638,6 @@ INCLUDE_ASM("seg/seg_1218", func_001065B0);
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00106828);
 #ifdef SKIP_ASM
-extern "C" void func_00329AE0(int);
-
 extern "C" void func_00106828(void *arg0) {
     func_00329AE0((*(int *)((char*)(arg0) + (0xAA0))));
 }
@@ -2662,20 +2648,6 @@ INCLUDE_ASM("seg/seg_1218", func_00106848);
 #ifdef SKIP_ASM
 // Rider touches down: kill the velocity into the ground, classify the landing from the board's
 // orientation against the ground normal (state at 0x328), and start the landing reaction.
-int func_0011FE98(void*);
-// PORT: the project names these __FPv (one param); callers pass a state too.
-void func_0011FE78_6848(void* self, int v) __asm__("func_0011FE78__FPv");
-extern "C" float func_0031C228(float);
-extern "C" void func_0031BE50(float* s, float* c, float angle);
-extern "C" int cRiderAnimBase_play(void*, int, int, float);
-extern "C" void cRiderAnimBase_changeHeadingOffset(void* anim, float a);
-extern "C" void func_0011DFE0(cRider* self, const t4Vector& axis, float angle);
-extern "C" void func_0010E910(void* rider, int a, int b, int c, void* hit, float speed);
-extern "C" float func_00119D40(void* metrix, int a, int b, int c, int d);
-extern "C" void func_0010E098(cRider* self, int a, float f);
-extern "C" void func_00115358(cRider* self);
-extern "C" void func_001326C8(void*, int);
-extern "C" void func_0013ADC0(void* p, t4Vector* n);
 
 struct sLand_6848 {
     char pad0[0x10];
@@ -2688,7 +2660,6 @@ struct sLand_6848 {
 
 // The unit defines this later with its own vector type; bind it by asm label.
 extern "C" int func_00108A48_6848(cRider* self, sLand_6848* land) __asm__("func_00108A48");
-
 
 struct sQuat_6848 {
     float x, y, z, w;
@@ -2884,19 +2855,6 @@ INCLUDE_ASM("seg/seg_1218", func_00107888);
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00107E70);
 #ifdef SKIP_ASM
-int func_0011FE98(void*);
-int AIrand();
-extern "C" int func_001231A8(void*);
-extern "C" void cAirPredictor_startLaunchIntoAir(void*, const t4Vector*, const t4Vector*, float);
-extern "C" void func_0010EB30_7E70(char*, int, int, int, sInfo*) __asm__("func_0010EB30");
-extern "C" void func_00108388_7E70(char*, sInfo*, int) __asm__("func_00108388");
-extern "C" void func_0010E468(void*, void*);
-extern "C" void func_0010E2E8(void*, void*);
-extern "C" void func_0010E3A8(void*, void*);
-extern "C" void func_0010E228(void*, void*);
-extern float D_004A4C84_7E70 __asm__("D_004A4C84");
-extern int D_005308D0_7E70[] __asm__("D_005308D0");
-
 static inline t4Vector Get_7E70(char* p) { return *(t4Vector*)p; }
 
 static inline float ClampAbs_7E70(float v, const float& lim)
@@ -2988,13 +2946,6 @@ extern "C" void func_00107E70(char* self, char* other, t4Vector* n, int flag, fl
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00108388);
 #ifdef SKIP_ASM
-int func_0011FE98(void*);
-int AIrand();
-extern "C" void func_00131348(void*);
-extern "C" int cRiderAnimBase_play(void*, int, int, float);
-extern "C" void* func_0028B180();
-extern "C" void func_002A0E70(void*, void*, int);
-
 static inline t4Vector Get_8388(char* p) { return *(t4Vector*)p; }
 
 extern "C" void func_00108388(char* self, char* info, int flag)
@@ -3057,8 +3008,6 @@ struct sHit_86B8 {
     char pad[0x80 - 0x10];
 };
 
-extern "C" int func_00334680_86B8(void*, sVec4*, sVec4*, int, float) __asm__("func_00334680");
-
 // PORT: PS2-only VU0 inline asm (vector add).
 static inline sVec4 Add_86B8(const sVec4& a, const sVec4& b)
 {
@@ -3103,7 +3052,6 @@ static inline sVec4 Fwd_86B8(const sNode_86B8* n)
                     0.0f);
 }
 
-extern "C" int func_001086B8_86B8(char* self, sVec4* tgt, sVec4* dir) __asm__("func_001086B8");
 extern "C" int func_001086B8_86B8(char* self, sVec4* tgt, sVec4* dir)
 {
     sNode_86B8* n = &(*(sPath_86B8**)(self + 0x780))->nodes[*(int*)(self + 0x8A0)];
@@ -3149,13 +3097,6 @@ struct sPath_8A48 {
     char pad[0x2C];
     sNode_8A48* nodes;
 };
-
-int func_0011FE98(void*);
-extern "C" int func_00334680(void*, t4Vector*, t4Vector*, int, float);
-extern "C" int func_00311AE8(void*, int);
-extern "C" char* func_00311B20(void*, int);
-extern "C" bool func_001446A0(void*, int);
-extern "C" int func_001086B8(void*, t4Vector*, t4Vector*);
 
 extern "C" int func_00108A48(char* self, t4Vector* tgt)
 {
@@ -3232,7 +3173,6 @@ public:
     cRiderVb_s12();
     virtual ~cRiderVb_s12();
 };
-void operator_delete(int* p);
 #endif
 
 //100%
@@ -3303,8 +3243,6 @@ public:
     cComp_s12();
     virtual void v01();
 };
-// PORT: func_00108E88 takes the rider; declared elsewhere in this file without parameters
-void func_00108E88_self(void* self) __asm__("func_00108E88");
 
 class cRiderE_108C80 : public cComp_s12 {
 public:
@@ -3327,13 +3265,8 @@ __asm__(".globl func_00108C80\n.type func_00108C80,@function\nfunc_00108C80 = __
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00108E88);
 #ifdef SKIP_ASM
-extern "C" void func_0010CAB8(void* self);
-extern "C" void func_0010D170(void* self);
-extern "C" void* func_003E6448(void* dst, int value, int size);
 // Release build: the assert compiles to nothing (gcc still emits its loop notes).
 #define ASSERT_8E88(cond) do { } while (0)
-
-// PORT: the unit later declares func_00108E88 without parameters; it takes the rider.
 void func_00108E88_self(char* self) __asm__("func_00108E88");
 
 void func_00108E88_self(char* self)
@@ -3376,8 +3309,6 @@ void func_00108E88_self(char* self)
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00108F88);
 #ifdef SKIP_ASM
-extern "C" void func_00108E88();
-
 extern "C" void func_00108F88(void) {
     func_00108E88();
 }
@@ -3388,18 +3319,6 @@ INCLUDE_ASM("seg/seg_1218", func_00108FA8);
 //100%
 INCLUDE_ASM("seg/seg_1218", func_0010A768);
 #ifdef SKIP_ASM
-extern "C" void* func_003E6448(void* dst, int value, int size);
-extern "C" float func_0010DEF0(void* self);
-extern "C" void func_00120090(void* self, float v);
-extern "C" void func_0010A960_A768(void* self, void* pad) __asm__("func_0010A960");
-extern "C" void func_0010AA70_A768(void* self, void* pad) __asm__("func_0010AA70");
-extern "C" void func_0010B790_A768(void* self, void* pad) __asm__("func_0010B790");
-extern "C" void func_0010B590_A768(void* self, void* pad) __asm__("func_0010B590");
-extern "C" void func_0010AED8_A768(void* self, void* pad) __asm__("func_0010AED8");
-extern "C" void func_0010B250_A768(void* self, void* pad) __asm__("func_0010B250");
-extern "C" void func_0010B750_A768(void* self, void* pad) __asm__("func_0010B750");
-extern "C" void func_0010AD78_A768(void* self, void* pad) __asm__("func_0010AD78");
-
 // Clears the pad input, updates the rider, then runs the input handler for the rider state.
 extern "C" void func_0010A768(char* self, void* pad)
 {
@@ -3443,8 +3362,6 @@ extern "C" void func_0010A768(char* self, void* pad)
 //100%
 INCLUDE_ASM("seg/seg_1218", func_0010A898);
 #ifdef SKIP_ASM
-extern "C" void func_00111AC0(char*, void*);
-
 struct C_A898 {
     virtual void m0(char*, int);
 };
@@ -3458,8 +3375,6 @@ extern "C" void func_0010A898(char *arg0, C_A898 *arg1) {
 //100%
 INCLUDE_ASM("seg/seg_1218", func_0010A8E8);
 #ifdef SKIP_ASM
-extern "C" void func_00111D98(void* self, void* src);
-
 extern "C" void func_0010A8E8(char* self, cStream* in)
 {
     func_00111D98(self, in);
@@ -3493,10 +3408,6 @@ public:
     Fn_A960 state;
 };
 
-extern "C" int func_0010D1A0(void*);
-extern "C" int func_0010DA10(void*);
-extern "C" int func_0010DBF0(void*, int*);
-
 extern "C" void func_0010A960(cObj_A960* self, sFlags_A960* f)
 {
     int t;
@@ -3527,7 +3438,6 @@ struct sPad_AA70 {
     unsigned int pad27 : 5;
     int w0 : 6;
 };
-
 
 extern "C" void func_0010AA70(char* self, sPad_AA70* pad)
 {
@@ -3577,10 +3487,6 @@ struct sPad_AD78 {
     int w0 : 6;
 };
 
-extern "C" int func_0010BBF8(void*, int*);
-extern "C" void func_00100610(t4Vector*, void*);
-extern "C" float func_00100348(void*, t4Vector*);
-
 extern "C" void func_0010AD78(char* self, sPad_AD78* pad)
 {
     int flag;
@@ -3616,10 +3522,6 @@ struct sPad_AED8 {
     int w0 : 6;
 };
 
-extern "C" int func_0010B980(char* self, float* speed, int* below, int* o3, int* o4, int* o5, int* o6);
-extern "C" int func_00311AE8(void*, int);
-extern "C" int func_0010BB18(void*, float*, int*);
-
 extern "C" void func_0010AED8(char* self, sPad_AED8* pad)
 {
     int below, o3, o4, o5, o6, ok;
@@ -3652,9 +3554,6 @@ extern "C" void func_0010AED8(char* self, sPad_AED8* pad)
 //100%
 INCLUDE_ASM("seg/seg_1218", func_0010B0E8);
 #ifdef SKIP_ASM
-extern "C" void func_00135CB0(void*, float*, float*);
-extern "C" void func_00135DB0(void*, float*, float*);
-
 extern "C" void func_0010B0E8(char* self, float t)
 {
     float a, b, c, d;
@@ -3695,7 +3594,6 @@ INCLUDE_ASM("seg/seg_1218", func_0010B250);
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("seg/seg_1218", func_0010B590);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
 struct sPad_B590 {
     unsigned char b0;
     unsigned char b1;
@@ -3707,8 +3605,6 @@ struct sPadBits_B590 {
     unsigned int pad0 : 24;
     int b24 : 6;
 };
-
-int AIrand();
 
 extern "C" void func_0010B590(char* self, sPad_B590* pad)
 {
@@ -3769,9 +3665,6 @@ struct sPad_B790 {
     int b12 : 6;
 };
 
-int AIrand();
-extern "C" int func_001298C8();
-
 extern "C" void func_0010B790(char* self, sPad_B790* pad)
 {
     float t = 180.0f - (float)func_001298C8();
@@ -3799,7 +3692,6 @@ extern "C" void func_0010B790(char* self, sPad_B790* pad)
 //100%
 INCLUDE_ASM("seg/seg_1218", func_0010B980);
 #ifdef SKIP_ASM
-
 extern "C" int func_0010B980(char* self, float* speed, int* below, int* o3, int* o4, int* o5, int* o6)
 {
     sTrackRec buf[12];
@@ -3890,9 +3782,6 @@ INCLUDE_ASM("seg/seg_1218", func_0010BD10);
 //100%
 INCLUDE_ASM("seg/seg_1218", func_0010BFA8);
 #ifdef SKIP_ASM
-int AIrand();
-extern "C" int func_0010C1D0(void*);
-
 struct sObj_BFA8 {
     char pad[0xE0C];
     int fE0C;
@@ -3971,10 +3860,6 @@ extern "C" int func_0010C1D0(void* self) {
 //100%
 INCLUDE_ASM("seg/seg_1218", func_0010C258);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_C258(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" int func_00144BE0(void* iface);
 extern "C" int func_0010C258(void* self) {
     if (*(unsigned int*)(*(char**)((char*)self + 0x18) + 0xB2C) & 1) {
         if (func_00144BE0(cBE_getInterface_C258(cBE_getBE(), 0)) != 0xE) {
