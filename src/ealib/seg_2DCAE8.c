@@ -2440,29 +2440,25 @@ void func_003DF570(void) {
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DF690);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern char D_00519BF8_F690[] __asm__("D_00519BF8");
-extern int *f_EED8_F690(char *) __asm__("func_003DEED8");
-extern void f_EF40_F690(void *) __asm__("func_003DEF40");
 extern int f_D4E8_F690(int, int, int, void *) __asm__("func_003DD4E8");
 extern char f_F2C0_F690[] __asm__("func_003DF2C0");
-struct O_F690 { int w0, w4, w8, wC, w10, w14, w18; volatile int w1C; int w20, w24, w28, w2C; };
 
 int func_003DF690(int arg0, int arg1) {
-    struct O_F690 *t = (struct O_F690 *)f_EED8_F690(D_00519BF8_F690);
+    struct sReq *t = func_003DEED8(&D_00519BF8);
     if (t != 0) {
-        f_EF40_F690(t);
-        t->w28 = arg1;
-        t->w8 = 0;
-        t->wC = 0;
-        t->w10 = 0;
-        t->w18 = 0;
-        t->w24 = 0;
-        t->w2C = 0;
-        t->w14 = 1;
-        t->w1C = f_D4E8_F690(arg0, 1, 0x64, t);
-        if (t->w1C != 0) {
-            func_003DCF70(t->w1C, f_F2C0_F690);
-            return t->w0;
+        func_003DEF40(t);
+        t->f28 = arg1;
+        t->f08 = 0;
+        t->f0C = 0;
+        t->f10 = 0;
+        t->f18 = 0;
+        t->f24 = 0;
+        t->f2C = 0;
+        t->f14 = 1;
+        t->f1C = f_D4E8_F690(arg0, 1, 0x64, t);
+        if (t->f1C != 0) {
+            func_003DCF70(t->f1C, f_F2C0_F690);
+            return t->f00;
         }
         return 0;
     }
