@@ -142,6 +142,12 @@ struct sFlagVec4c {
     void* operator new[](unsigned int, void* p) { return p; }
 };
 
+// A 64-byte slot with an empty ctor (allocated as a new[] array per node).
+struct sFlagSlot {
+    int v[16];
+    sFlagSlot() {}
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -1213,18 +1219,14 @@ void* operator new[](unsigned int size, const char* tag, unsigned int flags, int
 extern void* D_00490CC8[];
 extern char D_0048E758[];
 
-struct sFlagSlot_34D9B0 {
-    int v[16];
-    sFlagSlot_34D9B0() {}
-};
 
 extern "C" void* func_0034D9B0(char* self, void* a1, int a2, void* a3, int force)
 {
     char* node = self + 0x14;
     func_00355280(node, a1, a2, a3);
     *(void***)(self + 0x20) = D_00490CC8;
-    sFlagSlot_34D9B0** slot = (sFlagSlot_34D9B0**)(self + 0x44);
-    *slot = new (D_0048E758, 0x20000000, 0) sFlagSlot_34D9B0[*(int*)(*(char**)(*(char**)(node + 0x18) + 0x80) + 4)];
+    sFlagSlot** slot = (sFlagSlot**)(self + 0x44);
+    *slot = new (D_0048E758, 0x20000000, 0) sFlagSlot[*(int*)(*(char**)(*(char**)(node + 0x18) + 0x80) + 4)];
     cAnimNode_setAnimMeshCache(self);
     float f = 0.0f;
     if (*(void**)(self + 0x48) != 0) {
@@ -1252,19 +1254,15 @@ extern "C" void* cMoveNode_cMoveNode(void* self, void* a1, void* stream);
 
 
 // Element type with an empty constructor; the array new leaves only its loop counters.
-struct sFlagSlot_34DAC8 {
-    int v[16];
-    sFlagSlot_34DAC8() {}
-};
 
 extern "C" void* func_0034DAC8(char* self, void* a1, void* stream)
 {
     int unusedFlag;
     char* node = self + 0x14;
-    sFlagSlot_34DAC8** slot = (sFlagSlot_34DAC8**)(self + 0x44);
+    sFlagSlot** slot = (sFlagSlot**)(self + 0x44);
     cMoveNode_cMoveNode(node, a1, stream);
     *(void***)(self + 0x20) = D_00490CC8;
-    *slot = new (D_0048E758, 0x20000000, 0) sFlagSlot_34DAC8[*(int*)(*(char**)(*(char**)(node + 0x18) + 0x80) + 4)];
+    *slot = new (D_0048E758, 0x20000000, 0) sFlagSlot[*(int*)(*(char**)(*(char**)(node + 0x18) + 0x80) + 4)];
     cAnimNode_setAnimMeshCache(self);
     sVEntry<void(void*, void*, int)>* vt = *(sVEntry<void(void*, void*, int)>**)stream;
     vt[2].fn((char*)stream + vt[2].delta, self, 0x14);
