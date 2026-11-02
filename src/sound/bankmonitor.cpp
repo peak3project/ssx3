@@ -161,16 +161,70 @@ struct sBankMonSlot28 {
 extern sBankMonSlot28 D_004D3EF8[];
 
 extern void* D_004D3E98[];
+extern "C" void func_003B58D8(void);
+extern "C" void func_003B58A0(void);
+extern char* D_004A37B4;
+extern "C" int sprintf(char* buf, const char* fmt, ...);
+void operator_delete(int* ptr);
+extern "C" void func_002AEFA8(int a0);
+extern "C" int func_002B2488(void* self);
+extern void*** D_004A37EC;
+extern char D_004A36E0[];
+extern "C" void func_002ABB38(void*);
+void cMemMan_free(void*);
+extern "C" void func_002ADEE8(void* self, int flags);
+extern "C" int func_002ABB80(void*);
+extern void* D_004A377C;
+extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
+extern "C" void func_002AD940(void*);
+extern "C" int func_003B7FB8(int h, int v);
+extern "C" int func_002AE230(int a, int b);
+void func_002AD970(void* self, int a1);
+extern void* (*D_004A3794)(void*);
+extern void* (*D_004A378C)(void*, int, int);
+extern void (*D_004A3798)();
+extern int D_004A37BC;
+extern int D_004A37B8;
+extern int D_004A379C;
+extern char D_004A3590[];
+extern "C" void* func_00416210(void* dst, int c, int n);
+extern "C" void* func_003D7EC8(void* p);
+extern "C" void* func_002ADE88(void* self, int a);
+extern "C" void* func_002AD550(void* self, int idx, int a2);
+extern "C" void* func_00252FA0(void* a0, int a1, int a2);
+extern "C" void* func_002523A8(void* self);
+extern "C" void func_003D1038(int cmd, int v);
+extern "C" void func_003B5948(int id);
+extern "C" void func_002B21E0(void*, int);
+extern "C" void func_002B20C8(void* mon, int a1, int a2);
+extern "C" void func_002B1F78(void* self, int flags);
+extern "C" void func_002ACB80(void* voice, int a, int b, float v);
+extern "C" void func_002AA648(void* self, int flags);
+extern "C" void func_0028BB10(void* self, int flags);
+extern "C" void func_0028A728(void* self, int i);
+extern "C" void bxLogPrint(const char* fmt, ...);
+extern "C" unsigned int strlen(const char* s);
+extern "C" int func_003E4E98();
+extern "C" int func_003B7E70(int h, int v);
+// PORT: declared as (int, int); the second argument is an out-pointer
+extern "C" int func_003B7C40(int h, int v);
+extern "C" int func_003B7B48(int h, void* out);
+extern "C" int func_003B65D0(int);
+extern "C" int func_002B9F88(void*, int);
+extern "C" int func_002B0290(void* p);
+extern "C" int func_002AF8A8(int a);
+extern "C" int func_002AB150(void* self, int i);
+extern "C" int func_002AB028(void* self, int i);
+extern "C" int func_002AAE08(void* self, int i);
+extern "C" float func_002AAE78(void* self, int i);
 
 //100%
 INCLUDE_ASM("sound/bankmonitor", cBankMonitor_cBankMonitor);
 #ifdef SKIP_ASM
 extern "C" sSndPlayer* func_002AD9C8(sSndPlayer* self, int inchrg, int heap);
-extern "C" void* func_002ADE88(void* self, int a);
 // PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
 void* operator new[](unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
 extern const char D_00483238[];
-
 
 extern "C" cBankMonitor* cBankMonitor_cBankMonitor(cBankMonitor* self, int inchrg, int heap)
 {
@@ -201,12 +255,8 @@ extern "C" cBankMonitor* cBankMonitor_cBankMonitor(cBankMonitor* self, int inchr
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002ACE40);
 #ifdef SKIP_ASM
-void cMemMan_free(void*);
-void operator_delete(int* ptr);
 extern "C" void func_002ABA18(void* self, int flags);
 extern "C" void func_002ADAC8(sSndPlayer* self, int flags);
-extern "C" void func_002ADEE8(void* self, int flags);
-
 
 extern "C" void func_002ACE40(cBankMonitor* self, int flags)
 {
@@ -241,8 +291,6 @@ extern "C" void func_002ACE40(cBankMonitor* self, int flags)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002ACF60);
 #ifdef SKIP_ASM
-extern "C" int func_002ABB80(void*);
-
 extern "C" int func_002ACF60(void* self, int n)
 {
     for (int i = 0; i < 64; i++) {
@@ -260,9 +308,7 @@ extern "C" int func_002ACF60(void* self, int n)
 INCLUDE_ASM("sound/bankmonitor", cBankMonitor_BANKMONITOR_Create);
 #ifdef SKIP_ASM
 extern "C" int func_002ACF60(void* self, int n);
-extern "C" void func_002ABB38(void*);
 extern "C" void func_002ABD48(void* voice, void* mon);
-extern "C" void bxLogPrint(const char* fmt, ...);
 extern "C" void func_003B89E0(int h);
 extern "C" int func_003B9920(int h);
 extern char D_00483250[];
@@ -358,9 +404,6 @@ extern "C" void func_002AD300(void* self)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002AD358);
 #ifdef SKIP_ASM
-extern "C" void* func_002AD550(void* self, int idx, int a2);
-extern "C" void func_002ACB80(void* voice, int a, int b, float v);
-
 extern "C" void func_002AD358(void* self, int idx, int key, float v)
 {
     void* voice = func_002AD550(self, idx, key);
@@ -373,8 +416,6 @@ extern "C" void func_002AD358(void* self, int idx, int key, float v)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002AD398);
 #ifdef SKIP_ASM
-extern "C" void func_002ABB38(void*);
-
 extern "C" void func_002AD398(void* self, int i)
 {
     func_002ABB38((char*)*(void**)((char*)self + 0x8EC) + i * 0xC0);
@@ -398,8 +439,6 @@ extern "C" void func_002AD3C0(void* self)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002AD410);
 #ifdef SKIP_ASM
-extern "C" void func_002ABB38(void*);
-
 static inline int func_002AD410_match(sBmVoice* v, sSndCallback k)
 {
     return k == v->callback;
@@ -448,10 +487,6 @@ extern "C" void* func_002AD550(void* self, int idx, int key)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/bankmonitor", func_002AD5F0);
 #ifdef SKIP_ASM
-extern "C" void* func_002AD550(void* self, int idx, int a2);
-extern "C" void func_002ABB38(void*);
-extern "C" void func_002ACB80(void* voice, int a, int b, float v);
-
 extern "C" void func_002AD5F0(void* self, int idx, int a2, float v)
 {
     void* voice = func_002AD550(self, idx, a2);
@@ -468,8 +503,6 @@ extern "C" void func_002AD5F0(void* self, int idx, int a2, float v)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002AD650);
 #ifdef SKIP_ASM
-extern "C" int func_002ABB80(void*);
-extern "C" void func_002ABB38(void*);
 // PORT: same ABI as the unit's func_002ACB80(void*, int, int, float); the float is
 // the 2nd parameter in the original, which orders the argument moves.
 void func_002ACB80_f(void* voice, float v, int a, int b) __asm__("func_002ACB80");
@@ -495,8 +528,6 @@ extern "C" void func_002AD650(void* self, int id, float v)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002AD730);
 #ifdef SKIP_ASM
-extern "C" int func_002ABB80(void*);
-
 extern "C" int func_002AD730(void* self)
 {
     int count = 0;
@@ -515,8 +546,6 @@ extern "C" int func_002AD730(void* self)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002AD7A8);
 #ifdef SKIP_ASM
-extern "C" int func_002ABB80(void*);
-
 extern "C" int func_002AD7A8(void* self)
 {
     int count = 0;
@@ -554,8 +583,6 @@ void* func_002AD848(void* self)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002AD860);
 #ifdef SKIP_ASM
-void operator_delete(int* ptr);
-
 extern "C" void func_002AD860(int* self, int flags)
 {
     if (flags & 1) {
@@ -567,8 +594,6 @@ extern "C" void func_002AD860(int* self, int flags)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002AD888);
 #ifdef SKIP_ASM
-extern "C" void func_002AD940(void*);
-void func_002AD970(void* self, int a1);
 void func_002AD980(void* self);
 
 extern "C" void func_002AD888(sBmSlot* self, int a1, sSndCallback key, int b, int c, int d, int e, int f)
@@ -598,7 +623,6 @@ extern "C" int func_002AD930(void* self)
 INCLUDE_ASM("sound/bankmonitor", func_002AD940);
 #ifdef SKIP_ASM
 void func_002AD990(void* self);
-void func_002AD970(void* self, int a1);
 
 extern "C" void func_002AD940(void* self)
 {
@@ -657,10 +681,8 @@ INCLUDE_ASM("sound/bankmonitor", func_002AD9C8);
 #ifdef SKIP_ASM
 // w1 round 2: all 120 permutations of {f88,f8C,vtbl,f90,p=slots} statement order scored 96.83-96.88, none 100.
 // 96.88%: player base ctor (vbase at 0x8DC, vtable fix-up like cBankMonitor ctor). Only diff: target schedules `lui $2,%hi(D_00483BA8)` AFTER the first `sw $0,0x88`, ours before it. Store order permutations and a 5-min permuter run did not change it.
-extern "C" void* func_002ADE88(void* self, int a);
 extern "C" void* cSndPlayOpts_cSndPlayOpts(void* self, int inchrg, int heap);
 void* func_002AD848(void* self);
-
 
 // Release-build assert: compiles to an empty do { } while (0) (its loop notes still shape the code)
 #define ASSERT_D9C8(cond) do { } while (0)
@@ -700,11 +722,7 @@ extern "C" sSndPlayer* func_002AD9C8(sSndPlayer* self, int inchrg, int heap)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002ADAC8);
 #ifdef SKIP_ASM
-void operator_delete(int* ptr);
-extern "C" void func_003B5948(int id);
 extern "C" void func_002A97C0(void* self, int flags);
-extern "C" void func_002ADEE8(void* self, int flags);
-
 
 extern "C" void func_002ADAC8(sSndPlayer* self, int flags)
 {
@@ -783,7 +801,6 @@ INCLUDE_ASM("sound/bankmonitor", func_002ADCA0);
 #ifdef SKIP_ASM
 extern "C" int func_002ADC30(void* self, int n);
 
-
 void func_002AD888_cb(void* self, int a1, sSndCallback cb, int b, int c, int d, int e, int f) __asm__("func_002AD888");
 
 extern "C" int func_002ADCA0(sSndPlayer* self, int a1, sSndCallback cb, int b, int c, int d, int e, int f)
@@ -811,8 +828,6 @@ extern "C" void func_002ADD78(char* self, int idx)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002ADDA0);
 #ifdef SKIP_ASM
-extern "C" void func_002AD940(void*);
-
 extern "C" void func_002ADDA0(void* self)
 {
     char* p = (char*)self + 0x98;
@@ -827,8 +842,6 @@ extern "C" void func_002ADDA0(void* self)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002ADDE0);
 #ifdef SKIP_ASM
-extern "C" void func_002AD940(void*);
-
 static inline int func_002ADDE0_match(sBmSlot* e, sSndCallback k)
 {
     return k == e->callback;
@@ -854,7 +867,6 @@ public:
 };
 
 extern "C" func_002ADE88_cObj* func_002A8FA0();
-extern void* D_004A377C;
 
 extern "C" void* func_002ADE88(void* self, int a)
 {
@@ -876,9 +888,6 @@ public:
     virtual void v02();
     virtual void v03(int a);
 };
-
-void operator_delete(int* ptr);
-extern void* D_004A377C;
 
 extern "C" void func_002ADEE8(void* self, int flags)
 {
@@ -931,7 +940,6 @@ extern "C" int func_002ADF80(func_002ADF80_sHolder* self, int a)
 }
 #endif
 
-
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002ADFB0__Fi);
 #ifdef SKIP_ASM
@@ -941,12 +949,9 @@ int func_002ADFB0(int self)
 }
 #endif
 
-extern "C" void* func_002523A8(void* self);
-
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002ADFC8);
 #ifdef SKIP_ASM
-extern void* (*D_004A378C)(void*, int, int);
 extern char D_00483288[];
 
 extern "C" void* func_002ADFC8(int a)
@@ -971,8 +976,6 @@ void* func_002AE000(void* self)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002AE020);
 #ifdef SKIP_ASM
-extern void (*D_004A3798)();
-
 extern "C" int func_002AE020()
 {
     if (D_004A3798 != 0) {
@@ -987,15 +990,11 @@ INCLUDE_ASM("sound/bankmonitor", func_002AE048);
 #ifdef SKIP_ASM
 extern "C" void REAL_abortmessage();
 extern "C" void func_004175C8();
-extern "C" void* func_00252FA0(void* a0, int a1, int a2);
 extern "C" void* func_002526B8(void* block, int size);
 extern "C" void SYNCTASK_add(int (*fn)(), int a, int b);
-extern int D_004A379C;
 extern void (*D_004A3780)();
 extern void (*D_004A3784)();
-extern void* (*D_004A378C)(void*, int, int);
 extern void* (*D_004A3790)(void*, int);
-extern void* (*D_004A3794)(void*);
 
 extern "C" void func_002AE048(void (*cb)(), int id)
 {
@@ -1023,9 +1022,6 @@ INCLUDE_ASM("sound/bankmonitor", func_002AE100);
 #ifdef SKIP_ASM
 extern "C" int func_002AE020();
 extern "C" void SYNCTASK_del(int (*fn)());
-extern "C" void func_003B5948(int id);
-extern void (*D_004A3798)();
-extern int D_004A379C;
 
 extern "C" void func_002AE100()
 {
@@ -1041,8 +1037,6 @@ extern "C" void func_002AE100()
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002AE138);
 #ifdef SKIP_ASM
-extern "C" void* func_00416210(void* dst, int c, int n);
-
 extern "C" void func_002AE138(void* self)
 {
     func_00416210(self, 0, 0x70);
@@ -1085,8 +1079,6 @@ extern "C" int func_002AE1B8(void)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002AE1F0);
 #ifdef SKIP_ASM
-extern "C" void* func_00416210(void* dst, int c, int n);
-
 extern "C" void func_002AE1F0(int* self)
 {
     func_00416210(self, 0, 0x28);
@@ -1131,8 +1123,6 @@ extern "C" int func_002AE290(void) {
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/bankmonitor", func_002AE298);
 #ifdef SKIP_ASM
-extern "C" int func_002AE230(int a, int b);
-
 extern "C" int func_002AE298(int a, int unused, int b, int c)
 {
     int i = func_002AE230(a, b);
@@ -1151,7 +1141,6 @@ extern "C" int func_002AE298(int a, int unused, int b, int c)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/bankmonitor", func_002AE328);
 #ifdef SKIP_ASM
-extern "C" int func_002AE230(int a, int b);
 extern "C" int func_003B6300(int id);
 
 extern "C" int func_002AE328(int a, int b)
@@ -1178,7 +1167,6 @@ extern "C" int func_002AE328(int a, int b)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/bankmonitor", func_002AE3A8);
 #ifdef SKIP_ASM
-extern "C" int func_002AE230(int a, int b);
 extern "C" int func_002AE328(int a, int b);
 
 extern "C" int func_002AE3A8(int a)
@@ -1228,7 +1216,6 @@ extern "C" void func_002AE138(void* self);
 extern "C" int func_003B7818(void* desc, int n, int m, void* mem, int size);
 extern "C" int func_003BA020(void* desc);
 extern char D_004A37A8[];
-extern "C" int sprintf(char* buf, const char* fmt, ...);
 
 extern "C" int func_002AE4C0(char* name, sBankDesc_2AE4C0* desc, int count, int m, char* mem, int size)
 {
@@ -1269,7 +1256,6 @@ extern "C" int func_002AE4C0(char* name, sBankDesc_2AE4C0* desc, int count, int 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/bankmonitor", func_002AE690);
 #ifdef SKIP_ASM
-extern void* (*D_004A3794)(void*);
 extern "C" int func_003B7838(int id);
 
 extern "C" void func_002AE690(int idx)
@@ -1326,8 +1312,6 @@ extern "C" void func_002AE9F8(int i, int arg1)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002AEA38);
 #ifdef SKIP_ASM
-extern "C" void func_002AEFA8(int a0);
-
 extern "C" int func_002AEA38(int idx)
 {
     void* p = D_004D3E98[idx];
@@ -1343,8 +1327,6 @@ extern "C" int func_002AEA38(int idx)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002AEAA8);
 #ifdef SKIP_ASM
-extern "C" void func_002AEFA8(int a0);
-
 struct sMonEntC { int f0; int f4; int f8; };
 
 extern "C" int func_002AEAA8(int idx, int sub)
@@ -1369,8 +1351,6 @@ extern "C" int func_002AEAA8(int idx, int sub)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002AEB40);
 #ifdef SKIP_ASM
-extern "C" void func_002AEFA8(int a0);
-
 struct sEntryEB40 { int pad0; int key; int value; };
 
 extern "C" int func_002AEB40(int idx, int key)
@@ -1392,8 +1372,6 @@ extern "C" int func_002AEB40(int idx, int key)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002AEBD0);
 #ifdef SKIP_ASM
-extern "C" void func_002AEFA8(int a0);
-
 extern "C" int func_002AEBD0(int idx)
 {
     if (D_004D3E98[idx] != 0) {
@@ -1423,14 +1401,9 @@ extern "C" int func_002AEC28(int idx)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002AEC58);
 #ifdef SKIP_ASM
-extern "C" void func_003B58A0(void);
-extern "C" void func_003B58D8(void);
 extern "C" int func_003B6670(int h, int sub, void* hdr, void* buf, unsigned int* pos);
 extern "C" int func_003B8AD8(int h);
 extern "C" int func_003B86C0(int h);
-extern "C" int func_003B7B48(int h, void* out);
-// PORT: the unit declares func_003B7C40(int, int); the second argument is an out-pointer
-extern "C" int func_003B7C40(int h, int v);
 extern "C" int func_003B7F18(int h);
 
 struct sMonSub {
@@ -1674,8 +1647,6 @@ extern "C" void func_002AEFA8(int reset)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002AF2F0);
 #ifdef SKIP_ASM
-extern "C" void func_002AEFA8(int a0);
-
 extern "C" int func_002AF2F0(int idx, int* a, int* b)
 {
     void* m = D_004D3E98[idx];
@@ -1697,7 +1668,6 @@ extern "C" int func_002AF2F0(int idx, int* a, int* b)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002AF370);
 #ifdef SKIP_ASM
-extern "C" int func_003E4E98();
 extern "C" int func_004139F8(float);
 extern int D_00450DC8[];
 
@@ -1737,8 +1707,6 @@ extern "C" int func_002AF3F0(int arg0) {
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002AF428);
 #ifdef SKIP_ASM
-extern "C" void func_002AEFA8(int a0);
-
 extern "C" int func_002AF428(int idx)
 {
     if (D_004D3E98[idx] != 0) {
@@ -1780,8 +1748,6 @@ extern "C" int func_002AF4B0(int idx)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002AF4E0);
 #ifdef SKIP_ASM
-extern "C" void func_003B58A0(void);
-extern "C" void func_003B58D8(void);
 extern "C" int func_003B8050(void* h, int a, int b);
 extern "C" int func_003B88C8(void* h, int a, int b);
 
@@ -1806,8 +1772,6 @@ extern "C" int func_002AF4E0(int idx, int a, int b)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002AF580);
 #ifdef SKIP_ASM
-extern "C" void func_003B58A0(void);
-extern "C" void func_003B58D8(void);
 extern "C" int func_003B8010(void* h, int a);
 extern "C" int func_003B8700(void* h, int a);
 
@@ -1832,8 +1796,6 @@ extern "C" int func_002AF580(int idx, int a)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002AF608);
 #ifdef SKIP_ASM
-extern "C" void func_003B58A0(void);
-extern "C" void func_003B58D8(void);
 extern "C" int func_003B8530(int h, int v, int c);
 // PORT: the unit declares func_003B7EB0 as void; this caller uses its result.
 int func_003B7EB0_r(int h, int v, int c) __asm__("func_003B7EB0");
@@ -1860,11 +1822,7 @@ extern "C" int func_002AF608(int idx, int c, int v, char busy)
 INCLUDE_ASM("sound/bankmonitor", func_002AF6C0);
 #ifdef SKIP_ASM
 extern "C" void* func_0028B180();
-extern "C" void func_002AEFA8(int a0);
-extern "C" void func_003B58A0(void);
-extern "C" void func_003B58D8(void);
 extern "C" int func_003B85F0(int h, int v);
-extern "C" int func_003B7E70(int h, int v);
 
 extern "C" int func_002AF6C0(int idx, int v)
 {
@@ -1897,9 +1855,6 @@ extern "C" int func_002AF6C0(int idx, int v)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002AF7A0);
 #ifdef SKIP_ASM
-extern "C" void func_003B58A0(void);
-extern "C" void func_003B58D8(void);
-extern "C" int func_003B7FB8(int h, int v);
 extern "C" int func_003B8790(int h, int v);
 
 extern "C" int func_002AF7A0(int idx, int reset)
@@ -1927,8 +1882,6 @@ extern "C" int func_002AF7A0(int idx, int reset)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002AF838);
 #ifdef SKIP_ASM
-extern "C" void func_003B58A0(void);
-extern "C" void func_003B58D8(void);
 extern "C" int func_003B78F8(int);
 extern "C" void func_003B89E0(int);
 
@@ -1951,10 +1904,7 @@ extern "C" int func_002AF838(int idx)
 INCLUDE_ASM("sound/bankmonitor", func_002AF8A8);
 #ifdef SKIP_ASM
 extern "C" int func_002B0F48(void* self, int a1);
-extern char* D_004A37B4;
-extern int D_004A37BC;
 
-extern "C" int func_002AF8A8(int a);
 extern "C" int func_002AF8A8(int a)
 {
     if (D_004A37BC != 0) {
@@ -2005,8 +1955,6 @@ extern "C" char* func_0041ACC0(const char* s, int c);
 void* func_002AF8E0(void* self);
 extern char D_004A37C0[];
 extern char D_004832B0[];
-extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
-extern "C" int sprintf(char* buf, const char* fmt, ...);
 
 // PORT: callers declare func_002AF960 as int(int, int, int); the body is (name, unused, data) returning an object pointer.
 void* func_002AF960_impl(const char* name, int unused, void* data) __asm__("func_002AF960");
@@ -2049,7 +1997,6 @@ extern "C" int func_002AFA58(void* self, int a1)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002AFA68);
 #ifdef SKIP_ASM
-extern char* D_004A37B4;
 extern "C" void func_002AA910(void* sys, int id, int a, int b, int c);
 extern "C" void func_002B0088(void* self, int a, int b, int c);
 
@@ -2108,8 +2055,6 @@ INCLUDE_ASM("sound/bankmonitor", func_002AFB38);
 #ifdef SKIP_ASM
 extern "C" void func_002AABD0(void* self, int i);
 extern "C" void func_002AF900(int* self, int flags);
-extern char* D_004A37B4;
-extern int D_004A37B8;
 
 struct sBmVoiceFB38 {
     void* handle;           // 0x0
@@ -2163,10 +2108,7 @@ extern "C" void func_002AFB38(void* selfp, int flags)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002AFC88);
 #ifdef SKIP_ASM
-extern "C" int func_002B0290(void* p);
-extern "C" void* func_003D7EC8(void* p);
 extern "C" void* func_003D8040(void* p);
-extern char* D_004A37B4;
 
 class func_002AFC88_cObj {
 public:
@@ -2199,8 +2141,6 @@ extern "C" void func_002AFC88(void* self, int i)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002AFD10);
 #ifdef SKIP_ASM
-extern "C" void* func_003D7EC8(void* p);
-
 // PORT: real arity is (self, p); the unit later declares func_002AFD10(int)
 void* func_002AFD10_impl(void* self, void* p) __asm__("func_002AFD10");
 
@@ -2217,17 +2157,13 @@ void* func_002AFD10_impl(void* self, void* p)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002AFD40);
 #ifdef SKIP_ASM
-extern "C" int sprintf(char* buf, const char* fmt, ...);
-extern "C" unsigned int strlen(const char* s);
 extern "C" char* strncpy(char* dst, const char* src, unsigned int n);
 extern "C" void* func_003E1908(const char* name, int flags);
 extern "C" void* func_003E2DF0(void* big, char* name);
 extern "C" int func_003E2EE0(void* big);
 extern "C" void func_003D66C0(void* h, int a);
 char* BIG_locateentryz_2AFD40(void* big, char* name, int index, int* offset, int* size) __asm__("BIG_locateentryz");
-extern "C" void* func_002523A8(void* self);
 extern char D_004832C0[];
-extern char D_004A36E0[];
 struct sBankList_0348;
 extern "C" void func_002B0348(sBankList_0348* self, int a, int b, int c);
 
@@ -2298,7 +2234,6 @@ extern "C" int func_002AFD40(void* selfp, int a, char* name, int b, int c)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/bankmonitor", func_002B0088);
 #ifdef SKIP_ASM
-extern "C" int sprintf(char* buf, const char* fmt, ...);
 extern "C" void* func_002A77F8(void* parser, void* src, int n);
 extern "C" void func_002A7890(void* parser, int flags);
 extern "C" void func_002A7A20(void* parser);
@@ -2310,13 +2245,11 @@ void func_002AAB98_2B0088(void* self, int i, char* val) __asm__("func_002AAB98")
 extern "C" int func_002AFD40(void* self, int a, char* name, int b, int c);
 extern "C" int func_0041AA88(const char* a, const char* b);
 extern void* D_004A37B0;
-extern char* D_004A37B4;
 extern char D_004A37C8[];
 extern char D_004828C0[];
 extern char D_004A37D0[];
 extern char D_004832D8[];
 extern char D_004832E8[];
-extern char D_004A36E0[];
 struct sBankList_0348;
 extern "C" void func_002B0348(sBankList_0348* self, int a, int b, int c);
 
@@ -2368,11 +2301,6 @@ extern "C" void func_002B0088(void* p, int a1, int a2, int a3)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002B0290);
 #ifdef SKIP_ASM
-extern "C" int func_002AAE08(void* self, int i);
-extern "C" float func_002AAE78(void* self, int i);
-extern "C" int func_002AB028(void* self, int i);
-extern char* D_004A37B4;
-
 extern "C" int func_002B0290(void* p)
 {
     int state = func_002AAE08(*(void**)D_004A37B4, *(int*)((char*)p + 0x4));
@@ -2398,7 +2326,6 @@ extern "C" int func_002B0290(void* p)
 INCLUDE_ASM("sound/bankmonitor", func_002B0320);
 #ifdef SKIP_ASM
 extern "C" void func_002AAE40(void* self, int i);
-extern char* D_004A37B4;
 
 extern "C" void func_002B0320(void* p)
 {
@@ -2410,7 +2337,6 @@ extern "C" void func_002B0320(void* p)
 INCLUDE_ASM("sound/bankmonitor", func_002B0348);
 #ifdef SKIP_ASM
 extern "C" int func_002AF960(int a, int b, int c);
-extern int D_004A37B8;
 
 struct sBankList_0348 {
     char pad[0xF0];
@@ -2431,8 +2357,6 @@ extern "C" void func_002B0348(sBankList_0348* self, int a, int b, int c)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002B03B8);
 #ifdef SKIP_ASM
-extern "C" unsigned int strlen(const char* s);
-
 extern "C" int func_002B03B8(const char* name)
 {
     int lang = 0;
@@ -2455,16 +2379,10 @@ extern "C" int func_002B03B8(const char* name)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002B04D8);
 #ifdef SKIP_ASM
-extern char* D_004A37B4;
 extern char D_004832F8[];
-extern char D_004A3590[];
-extern "C" int sprintf(char* buf, const char* fmt, ...);
 extern "C" int func_002AFA58(void* self, int a1);
 extern "C" int func_002B1520(void* sys, int a, int b);
 extern "C" int func_002B03B8(const char* name);
-extern "C" int func_002AAE08(void* self, int i);
-extern "C" float func_002AAE78(void* self, int i);
-extern "C" int func_002AB028(void* self, int i);
 extern "C" void func_002AB0D0(void* self, int i, int w);
 
 typedef int (*Fn1_04D8)(void*, int, char*, int, int, int, int, float, int, int);
@@ -2588,7 +2506,6 @@ extern "C" void* cBankManager_cBankManager(void* self, int embedded, int count, 
 extern "C" void* cStreamSys_cStreamSys(void* self, int inchrg, int banks, int count, int heap);
 struct sBankSlots;
 extern "C" void func_002B1428(sBankSlots* self);
-extern char* D_004A37B4;
 extern const char D_00483308[];
 
 struct sName17_07F8 { char s[17]; };
@@ -2598,7 +2515,6 @@ extern const sName18_07F8 D_00483330;
 extern const sName17_07F8 D_00483348;
 extern const sName17_07F8 D_00483360;
 extern const sName18_07F8 D_00483378;
-
 
 // PORT: g++ 2.95 constructor of a class with virtual bases (stack vtable this-adjust fix-ups written out by hand).
 extern "C" char* func_002B07F8(char* self, int inchrg, int a2, int a3, int heap)
@@ -2649,13 +2565,6 @@ extern "C" char* func_002B07F8(char* self, int inchrg, int a2, int a3, int heap)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002B0AE8);
 #ifdef SKIP_ASM
-void cMemMan_free(void*);
-void operator_delete(int* ptr);
-extern "C" void func_0028BB10(void* self, int flags);
-extern "C" void func_002AA648(void* self, int flags);
-extern "C" void func_002ADEE8(void* self, int flags);
-extern char* D_004A37B4;
-
 
 // PORT: g++ 2.95 virtual-base destruction with stack vtable this-adjust fix-ups, written out by hand.
 extern "C" void func_002B0AE8(char* self, int flags)
@@ -2716,14 +2625,10 @@ INCLUDE_ASM("sound/bankmonitor", SPCH_Init);
 extern "C" int func_003D6778(int a, int b, int c);
 // PORT: the unit defines func_002ADF60() with no args; this caller passes one.
 int func_002ADF60_a(void* seed) __asm__("func_002ADF60");
-extern "C" void bxLogPrint(const char* fmt, ...);
 extern "C" int func_003D6840(void* fn, int seed, int buf);
 extern "C" int func_003D6C58(int n);
-extern "C" void* func_00252FA0(void* a0, int a1, int a2);
 extern "C" void func_003D6C60(int n, void* p);
 extern "C" void* func_003D6768();
-extern "C" int func_002AF8A8(int a);
-extern "C" int func_003E4E98();
 extern char D_00483390[];
 extern char D_004833A8[];
 
@@ -2765,8 +2670,6 @@ extern "C" void func_002B0DA0(void* self)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002B0E28);
 #ifdef SKIP_ASM
-extern "C" int func_002B0290(void* p);
-
 extern "C" int func_002B0E28(void* self, int i)
 {
     void* p = (*(void***)((char*)self + 0x4))[i];
@@ -2780,7 +2683,6 @@ extern "C" int func_002B0E28(void* self, int i)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/bankmonitor", func_002B0E60);
 #ifdef SKIP_ASM
-extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void* func_002AFA68(void* mem, int i, int a, int b, int c, int d, int e);
 extern const char D_004833B8[];
 
@@ -2882,7 +2784,6 @@ extern "C" void func_002B1058(void* self, int idx, int a2, int a3, int a4, float
 INCLUDE_ASM("sound/bankmonitor", func_002B1128);
 #ifdef SKIP_ASM
 extern "C" void func_002B1058(void* self, int idx, int a2, int a3, int a4, float v);
-extern int D_004A37BC;
 
 extern "C" void func_002B1128(void* self, int idx)
 {
@@ -2952,7 +2853,6 @@ extern "C" int func_002B1248(int *arg0, void* arg1) {
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/bankmonitor", func_002B1268);
 #ifdef SKIP_ASM
-extern "C" int func_002AB150(void* self, int i);
 extern "C" void func_002AB0D0(void* self, int i, int val);
 extern "C" int func_002B1248_pp(void* self, void* msg) __asm__("func_002B1248");
 struct sVE1268 { short delta; short index; int (*fn)(void*, int, int, int); };
@@ -2978,7 +2878,6 @@ extern "C" int func_002B1268(void* self, void* msg)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/bankmonitor", func_002B1348);
 #ifdef SKIP_ASM
-extern "C" int func_002AB150(void* self, int i);
 extern "C" int func_002B1268(void* self, void* msg);
 
 extern "C" int func_002B1348(void* self, void* msg)
@@ -3134,8 +3033,6 @@ INCLUDE_ASM("sound/bankmonitor", func_002B1780);
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002B1A70);
 #ifdef SKIP_ASM
-extern void*** D_004A37EC;
-
 extern "C" void func_002B1A70(void) {
     func_002AAE40(*D_004A37EC, 2);
 }
@@ -3197,7 +3094,6 @@ extern "C" void func_002B1B68(int* self, int flags)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002B1B98);
 #ifdef SKIP_ASM
-extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void* func_002B1C50(void* mem, int a0, int a1, int a2, int a3, char a4, int a5, int a6, int a7);
 extern const char D_004833E0[];
 
@@ -3213,16 +3109,11 @@ INCLUDE_ASM("sound/bankmonitor", func_002B1C50);
 extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 extern "C" int func_003D3058(int a, int b);
 extern "C" void func_002B4A20(void* self, void* name, int sync);
-extern "C" void func_002B21E0(void*, int);
-extern "C" int sprintf(char* buf, const char* fmt, ...);
 extern char D_004833F0[];
 extern char D_00483408[];
 extern char D_00483420[];
 extern char D_00483430[];
 extern char D_004A3588[];
-extern char D_004A3590[];
-extern char D_004A36E0[];
-extern void*** D_004A37EC;
 
 struct sBankEntry_1C50 {
     unsigned char vol;      // 0x0
@@ -3318,11 +3209,7 @@ extern "C" void* func_002B1C50_body(sBankMon_1C50* self, int a0, int a1, int a2,
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002B1F78);
 #ifdef SKIP_ASM
-extern "C" void func_0028A728(void* self, int i);
 extern "C" int func_003D2A68(int id);
-void cMemMan_free(void*);
-void operator_delete(int* ptr);
-extern void*** D_004A37EC;
 
 extern "C" void func_002B1F78(void* self, int flags)
 {
@@ -3346,12 +3233,6 @@ extern "C" void func_002B1F78(void* self, int flags)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002B2018);
 #ifdef SKIP_ASM
-extern "C" int func_002B2488(void* self);
-extern "C" void func_003B58A0(void);
-extern "C" void func_003B58D8(void);
-extern "C" int func_003B7FB8(int h, int v);
-extern "C" void func_003D1038(int cmd, int v);
-
 extern "C" void func_002B2018(void* self)
 {
     func_003B58A0();
@@ -3367,12 +3248,6 @@ extern "C" void func_002B2018(void* self)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002B2070);
 #ifdef SKIP_ASM
-extern "C" int func_002B2488(void* self);
-extern "C" void func_003B58A0(void);
-extern "C" void func_003B58D8(void);
-extern "C" int func_003B7FB8(int h, int v);
-extern "C" void func_003D1038(int cmd, int v);
-
 extern "C" void func_002B2070(void* self)
 {
     func_003B58A0();
@@ -3427,9 +3302,6 @@ extern "C" void func_002B2140(int a0) {
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002B2160);
 #ifdef SKIP_ASM
-extern "C" int func_002B2488(void* self);
-extern "C" void func_003B58A0(void);
-extern "C" void func_003B58D8(void);
 extern "C" int func_003B80A0(int h, int v);
 
 extern "C" void func_002B2160(void* self, int v)
@@ -3455,19 +3327,11 @@ extern "C" void func_002B2160(void* self, int v)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002B21E0);
 #ifdef SKIP_ASM
-extern "C" int sprintf(char* buf, const char* fmt, ...);
-extern "C" void func_002B20C8(void* mon, int a1, int a2);
 extern "C" void func_002B2160(void* self, int v);
-extern "C" int func_002B2488(void* self);
 extern "C" int func_002B4AA0(void* self, int force);
 int func_002B4AE8(void* self);
-extern "C" void func_003B58A0(void);
-extern "C" void func_003B58D8(void);
-extern "C" int func_003B7E70(int h, int v);
 extern "C" void func_003D2350(int a);
 extern "C" int func_003D25F0(int id, char* name, int a2, void* a3, int a4, int a5, void* buf, int size);
-extern void*** D_004A37EC;
-extern char D_004A36E0[];
 extern float D_004A3508;
 
 struct sBmStrm_2B21E0 { char pad[0x2C]; int f2C; };
@@ -3536,9 +3400,6 @@ extern "C" void func_002B23E8(void* self, signed char v)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002B2418);
 #ifdef SKIP_ASM
-extern "C" int func_002B2488(void* self);
-extern "C" void func_003B58A0(void);
-extern "C" void func_003B58D8(void);
 extern "C" void func_003B7EB0(int h, int v, int c);
 
 extern "C" void func_002B2418(void* self, float t)
@@ -3574,7 +3435,6 @@ INCLUDE_ASM("sound/bankmonitor", func_002B24C0);
 #ifdef SKIP_ASM
 // PORT: func_002ADF60 is defined () but this caller passes the monitor.
 unsigned int func_002ADF60_p(void* p) __asm__("func_002ADF60");
-extern void* D_004A377C;
 
 extern "C" int func_002B24C0(void* p)
 {
@@ -3609,9 +3469,6 @@ extern "C" int func_002B2550(int a0)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002B2578);
 #ifdef SKIP_ASM
-extern "C" int func_002B2488(void* self);
-extern "C" int func_003B7B48(int h, void* out);
-
 // PORT: returns int; a later caller in this unit declares it void(void*, void*)
 int func_002B2578_impl(void* self, void* out) __asm__("func_002B2578");
 
@@ -3625,7 +3482,6 @@ int func_002B2578_impl(void* self, void* out)
 INCLUDE_ASM("sound/bankmonitor", func_002B25C8);
 #ifdef SKIP_ASM
 extern "C" int func_002B2578(void* self, void* out);
-extern "C" int func_003B7C40(int h, int v);
 
 struct sBmInfo {
     int a;
@@ -3746,9 +3602,6 @@ extern "C" int func_002B2778(void* self)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002B27C0);
 #ifdef SKIP_ASM
-extern "C" int func_002B9F88(void*, int);
-extern "C" int func_003B65D0(int);
-
 extern "C" int func_002B27C0(void* self, void* other)
 {
     if (*(int*)((char*)self + 0x4C) == 0) {
@@ -3805,14 +3658,6 @@ INCLUDE_ASM("sound/bankmonitor", func_002B28C0);
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002B3398);
 #ifdef SKIP_ASM
-void cMemMan_free(void*);
-void operator_delete(int* ptr);
-extern "C" void func_0028BB10(void* self, int flags);
-extern "C" void func_002AA648(void* self, int flags);
-extern "C" void func_002ADEE8(void* self, int flags);
-extern "C" void func_002B1F78(void* self, int flags);
-extern void*** D_004A37EC;
-
 
 struct sBmonVcall3398 { short delta; short index; void (*fn)(void*, int); };
 
@@ -4058,10 +3903,8 @@ extern "C" void func_002B3A98(void* self)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002B3AC0);
 #ifdef SKIP_ASM
-extern "C" void func_0028A728(void* self, int i);
 extern "C" void func_0028BCE8(void* self, int i);
 extern "C" void func_002B3A98(void* self);
-extern "C" void func_002B1F78(void* self, int flags);
 
 extern "C" void func_002B3AC0(void* self)
 {
@@ -4085,8 +3928,6 @@ extern "C" void func_002B3AC0(void* self)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/bankmonitor", func_002B3B88);
 #ifdef SKIP_ASM
-extern "C" void func_002B20C8(void* mon, int a1, int a2);
-
 extern "C" void func_002B3B88(void* self, int a1)
 {
     if (*(int*)((char*)self + 0x418) != 0) {
@@ -4229,7 +4070,6 @@ extern "C" void func_002B3D48(void* self, float v)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/bankmonitor", func_002B3D80);
 #ifdef SKIP_ASM
-
 extern "C" void func_002B3D80(void* self, signed char target, float duration)
 {
     signed char cur;
@@ -4521,7 +4361,6 @@ extern "C" void func_002B42B8(func_002B42B8_sMon* self, int filter, int kind)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002B4388);
 #ifdef SKIP_ASM
-extern "C" void func_002B21E0(void*, int);
 extern "C" int func_002B4620(void*);
 
 extern "C" void func_002B4388(void* self)
@@ -4539,10 +4378,8 @@ extern "C" void func_002B4388(void* self)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/bankmonitor", func_002B43D8);
 #ifdef SKIP_ASM
-extern "C" int sprintf(char* buf, const char* fmt, ...);
 extern "C" int func_002B24C0(void* p);
 extern "C" void func_0028BD10(void* self, int i, void* id, int a3);
-extern char D_004A36E0[];
 
 struct sBankMonHdr { char pad[0x40]; int f40; char names[1][0x20]; };
 
@@ -4566,7 +4403,6 @@ extern "C" void func_002B43D8(void* self)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/bankmonitor", func_002B4470);
 #ifdef SKIP_ASM
-
 extern "C" void func_002B4470(void* self)
 {
     void* p = *(void**)((char*)self + 0x408);
@@ -4739,9 +4575,6 @@ extern "C" int func_002B4740(void* self)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002B47C0);
 #ifdef SKIP_ASM
-extern "C" int func_002B9F88(void*, int);
-extern "C" int func_003B65D0(int);
-
 extern "C" int func_002B47C0(void* self)
 {
     int ok = 0;
@@ -4820,8 +4653,6 @@ int func_002B4908(void* self)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/bankmonitor", func_002B4920);
 #ifdef SKIP_ASM
-extern "C" void func_003B58A0(void);
-extern "C" void func_003B58D8(void);
 extern "C" float func_002B2718(void* self);
 
 extern "C" float func_002B4920(void* self)
