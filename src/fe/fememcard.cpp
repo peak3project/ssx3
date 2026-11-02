@@ -8,100 +8,28 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
-//100%
-INCLUDE_ASM("fe/fememcard", cFEStateMemCard_onCreateScreen);
-#ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern char D_0045DC70[];
-extern char D_0045DC80[];
-extern void* D_004A28A8;
-extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
-extern "C" void* cUIScreen_getObjectByHashName(void* screen, int hash);
-extern "C" void* func_00227F80(void* p);
-
-class cUIObjK186B50 {
+// A UI widget as cUIScreen_getObjectByHashName returns it: vptr at 0x8. Slot names from the prototype's
+// _vt$8cUIThing (as in fe/feasyncfile).
+class cUIThing {
 public:
-    char pad_0x00[0x8];
+    char pad[0x8];
     virtual void v01();
     virtual void v02();
     virtual void v03();
     virtual void v04();
     virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual void v09(int);
+    virtual void setEnabled(int on);
+    virtual void setFocus(int on);
+    virtual void setStatic(int on);
+    virtual void setVisible(int on);
 };
 
-extern "C" void cFEStateMemCard_onCreateScreen(void* self)
-{
-    void* engine = *(void**)((char*)self + 0x10);
-    void* screen = cUIEngine_addScreenByHashName(engine, self, GetHashValue32(D_0045DC70), 0);
-    *(void**)((char*)self + 0x40) = screen;
-    if (screen != 0) {
-        cUIScreen_playFrame(screen, 0, 0);
-    }
-    func_00227F80(D_004A28A8);
-    ((cUIObjK186B50*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_0045DC80)))->v09(0);
-}
-#endif
-
-//100%
-INCLUDE_ASM("fe/fememcard", func_00186BF0);
-#ifdef SKIP_ASM
-extern char D_004A14C0[];
-extern "C" void func_001D8DE0(void* self);
-extern "C" int func_0023C898(void* mp);
-extern "C" void func_0039FD38(void* obj);
-
-class cUIObjK186BF0 {
+// A UI state as these functions see it: vptr at 0x8 (cUIState in fe/feasyncfile). onPopupEvent (17) and
+// onWidgetCreate (18) are named after the prototype's _vt$8cUIState; the FE states' own slots past it are known only
+// by position.
+class cUIState {
 public:
-    char pad_0x000[0x8];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual void v09(int);
-};
-
-extern "C" void func_00186BF0(void* self)
-{
-    func_001D8DE0(self);
-    if (func_0023C898(func_00227F80(D_004A28A8)) != 0 || *(int*)((char*)self + 0x1C0) == 6) {
-        void* obj = cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_004A14C0));
-        if (obj != 0) {
-            func_0039FD38(obj);
-        }
-        ((cUIObjK186BF0*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_0045DC80)))->v09(0);
-    }
-}
-#endif
-
-//100%
-INCLUDE_ASM("fe/fememcard", func_00186C98);
-#ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern char D_0045DC90[];
-extern "C" void func_00241DC8(void* mp, void* out, int a2);
-extern "C" void func_002C26D0(unsigned short* dst, const unsigned short* fmt, ...);
-
-class cUIObjK186C98 {
-public:
-    char pad_0x000[0x4];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual int v04(int hash);
-};
-
-class cFEMemCardStateK186C98 {
-public:
-    char pad_0x000[0x8];
+    char pad[0x8];
     virtual void v01();
     virtual void v02();
     virtual void v03();
@@ -118,8 +46,8 @@ public:
     virtual void v14();
     virtual void v15();
     virtual void v16();
-    virtual void v17();
-    virtual void v18();
+    virtual void onPopupEvent(void* popup, int msg);
+    virtual void onWidgetCreate(void* widget);
     virtual void v19();
     virtual void v20();
     virtual void v21();
@@ -138,26 +66,124 @@ public:
     virtual void v34();
     virtual void v35();
     virtual void v36(void* buf, int a, int b, int c, int d, int e);
+    virtual void v37();
+    virtual void v38();
+    virtual void v39();
+    virtual void v40();
+    virtual void v41();
 };
-extern cFEMemCardStateK186C98* D_004A14B8_K186C98 __asm__("D_004A14B8");
 
+// Card-check result bits (cFEStateMemCard + 0x22C, saved copy at + 0x238): func_00187A38 clears one per check.
+struct sMemCardBits {
+    unsigned b0 : 1;
+    unsigned b1 : 1;
+    unsigned b2 : 1;
+    unsigned rest : 29;
+};
+union uMemCardFlags {
+    int all;
+    sMemCardBits bits;
+};
 
-struct sLocalK186C98 {
+// The memory-card FE state (class name from the RTTI vtable list; the singleton is D_004A14B8).
+class cFEStateMemCard : public cUIState {
+public:
+    char pad_0x00C[0x10 - 0xC];
+    void* engine;                  // 0x10
+    char pad_0x014[0x40 - 0x14];
+    void* screen;                  // 0x40
+    char pad_0x044[0x9C - 0x44];
+    char f09C[0x11C - 0x9C];       // 0x9C
+    unsigned short text[0x40];     // 0x11C
+    int f19C;                      // 0x19C
+    char pad_0x1A0[0x1A8 - 0x1A0];
+    int f1A8;                      // 0x1A8
+    int f1AC;                      // 0x1AC
+    char pad_0x1B0[0x1BC - 0x1B0];
+    int state;                     // 0x1BC
+    int f1C0;                      // 0x1C0
+    int f1C4;                      // 0x1C4
+    char pad_0x1C8[0x218 - 0x1C8];
+    char* box;                     // 0x218
+    char pad_0x21C[0x22C - 0x21C];
+    uMemCardFlags flags;           // 0x22C
+    int needed;                    // 0x230
+    int f234;                      // 0x234
+    uMemCardFlags saved;           // 0x238
+};
+extern cFEStateMemCard* D_004A14B8;
+
+// 32-byte text block func_00241DC8 fills for the card in a slot (passed on to the string formatter).
+struct sCardText {
     int v[8];
 };
+
+//100%
+INCLUDE_ASM("fe/fememcard", cFEStateMemCard_onCreateScreen);
+#ifdef SKIP_ASM
+int GetHashValue32(char* str);
+extern char D_0045DC70[];
+extern char D_0045DC80[];
+extern void* D_004A28A8;
+extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
+extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
+extern "C" void* cUIScreen_getObjectByHashName(void* screen, int hash);
+extern "C" void* func_00227F80(void* p);
+
+extern "C" void cFEStateMemCard_onCreateScreen(cFEStateMemCard* self)
+{
+    void* engine = self->engine;
+    void* screen = cUIEngine_addScreenByHashName(engine, self, GetHashValue32(D_0045DC70), 0);
+    self->screen = screen;
+    if (screen != 0) {
+        cUIScreen_playFrame(screen, 0, 0);
+    }
+    func_00227F80(D_004A28A8);
+    ((cUIThing*)cUIScreen_getObjectByHashName(self->screen, GetHashValue32(D_0045DC80)))->setVisible(0);
+}
+#endif
+
+//100%
+INCLUDE_ASM("fe/fememcard", func_00186BF0);
+#ifdef SKIP_ASM
+extern char D_004A14C0[];
+extern "C" void func_001D8DE0(void* self);
+extern "C" int func_0023C898(void* mp);
+extern "C" void func_0039FD38(void* obj);
+
+extern "C" void func_00186BF0(cFEStateMemCard* self)
+{
+    func_001D8DE0(self);
+    if (func_0023C898(func_00227F80(D_004A28A8)) != 0 || self->f1C0 == 6) {
+        void* obj = cUIScreen_getObjectByHashName(self->screen, GetHashValue32(D_004A14C0));
+        if (obj != 0) {
+            func_0039FD38(obj);
+        }
+        ((cUIThing*)cUIScreen_getObjectByHashName(self->screen, GetHashValue32(D_0045DC80)))->setVisible(0);
+    }
+}
+#endif
+
+//100%
+INCLUDE_ASM("fe/fememcard", func_00186C98);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+extern char D_0045DC90[];
+extern "C" void func_00241DC8(void* mp, void* out, int a2);
+extern "C" void func_002C26D0(unsigned short* dst, const unsigned short* fmt, ...);
 
 extern "C" void func_00186C98(void)
 {
     unsigned short buf[0x320];
-    sLocalK186C98 loc;
+    sCardText loc;
     void* mp = func_00227F80(D_004A28A8);
     func_00241DC8(mp, &loc, *(int*)((char*)mp + 0x428));
     char* o = *(char**)((char*)D_004A28A8 + 0x8C);
     sVEntry<unsigned short*(void*, int)>* vt = *(sVEntry<unsigned short*(void*, int)>**)(o + 4);
     unsigned short* r = vt[4].fn(o + vt[4].delta, GetHashValue32(D_0045DC90));
     func_002C26D0(buf, r, &loc);
-    cFEMemCardStateK186C98* st = D_004A14B8_K186C98;
-    *(int*)((char*)st + 0x19C) = 4;
+    cFEStateMemCard* st = D_004A14B8;
+    st->f19C = 4;
     st->v36(buf, 1, 1, 0, 0, 0);
 }
 #endif
@@ -174,14 +200,10 @@ extern char D_0045DCC8[];
 extern char D_0045DCD8[];
 extern "C" void func_00241DC8(void* mp, void* out, int a2);
 extern "C" void func_002C26D0(unsigned short* dst, const unsigned short* fmt, ...);
-// Typed view of D_004A14B8 (other functions in this unit declare it as void*).
-extern char* D_004A14B8_86D60 __asm__("D_004A14B8");
-
-struct sLocal_86D60 { int v[8]; };
 
 extern "C" void func_00186D60(void)
 {
-    sLocal_86D60 loc;
+    sCardText loc;
     unsigned short buf[0x320];
     void* mp = func_00227F80(D_004A28A8);
     func_00241DC8(mp, &loc, *(int*)((char*)mp + 0x428));
@@ -196,13 +218,13 @@ extern "C" void func_00186D60(void)
     lo += lvt[4].delta;
     unsigned short* fmt = lvt[4].fn(lo, GetHashValue32(D_0045DCA8));
     func_002C26D0(b, fmt, &loc, need);
-    char* st = D_004A14B8_86D60;
-    *(int*)(st + 0x19C) = 9;
-    sVEntry<void(void*, void*, int, int, int, int, int)>* svt = *(sVEntry<void(void*, void*, int, int, int, int, int)>**)(st + 8);
-    svt[36].fn(st + svt[36].delta, b, 0, 0, 0, 0, 0);
+    cFEStateMemCard* st = D_004A14B8;
+    st->f19C = 9;
+    sVEntry<void(void*, void*, int, int, int, int, int)>* svt = *(sVEntry<void(void*, void*, int, int, int, int, int)>**)((char*)st + 8);
+    svt[36].fn((char*)st + svt[36].delta, b, 0, 0, 0, 0, 0);
 
     {
-        char* w = *(char**)(D_004A14B8_86D60 + 0x218);
+        char* w = D_004A14B8->box;
         char* lo2 = *(char**)((char*)D_004A28A8 + 0x8C);
         sVEntry<void(void*, unsigned short*, int)>* wvt = *(sVEntry<void(void*, unsigned short*, int)>**)(w + 8);
         sVEntry<unsigned short*(void*, int)>* lvt2 = *(sVEntry<unsigned short*(void*, int)>**)(lo2 + 4);
@@ -211,7 +233,7 @@ extern "C" void func_00186D60(void)
         wvt[26].fn(w, lvt2[4].fn(lo2, GetHashValue32(D_0045DCC8)), 0);
     }
     {
-        char* w = *(char**)(D_004A14B8_86D60 + 0x218);
+        char* w = D_004A14B8->box;
         char* lo2 = *(char**)((char*)D_004A28A8 + 0x8C);
         sVEntry<void(void*, unsigned short*, int)>* wvt = *(sVEntry<void(void*, unsigned short*, int)>**)(w + 8);
         sVEntry<unsigned short*(void*, int)>* lvt2 = *(sVEntry<unsigned short*(void*, int)>**)(lo2 + 4);
@@ -219,7 +241,7 @@ extern "C" void func_00186D60(void)
         lo2 += lvt2[4].delta;
         wvt[26].fn(w, lvt2[4].fn(lo2, GetHashValue32(D_0045DCD8)), 1);
     }
-    char* w2 = *(char**)(D_004A14B8_86D60 + 0x218);
+    char* w2 = D_004A14B8->box;
     sVEntry<void(void*, int)>* vvt = *(sVEntry<void(void*, int)>**)(w2 + 8);
     vvt[25].fn(w2 + vvt[25].delta, 1);
 }
@@ -252,26 +274,22 @@ extern "C" void* cBE_getBE();
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int func_00152BA8();
-struct sFEMemCardK187270;
-extern "C" void func_00187270(sFEMemCardK187270* self);
+extern "C" void func_00187270(cFEStateMemCard* self);
 extern "C" void* func_00227F80(void* p);
 extern "C" int func_0023C8D0(void* mp);
 extern "C" int func_002419D8(void* mp, int card);
 extern void* D_004A28A8;
-// Typed view of D_004A14B8 (other functions in this unit declare it as void*).
-extern char* D_004A14B8_86F90 __asm__("D_004A14B8");
 extern int D_004A14BC;
-
 
 extern "C" void func_00186F90(void)
 {
-    if (*(int*)(D_004A14B8_86F90 + 0x234) != 0) {
+    if (D_004A14B8->f234 != 0) {
         if (D_004A14BC < 4)
             return;
         char* mp = (char*)func_00227F80(D_004A28A8);
         char* o = *(char**)(mp + 0x434);
         sVEntry<void(void*, int, void*)>* vt = *(sVEntry<void(void*, int, void*)>**)o;
-        vt[14].fn(o + vt[14].delta, *(int*)(mp + 0xF8), D_004A14B8_86F90 + 0x9C);
+        vt[14].fn(o + vt[14].delta, *(int*)(mp + 0xF8), D_004A14B8->f09C);
         return;
     }
     char* mp = (char*)func_00227F80(D_004A28A8);
@@ -280,30 +298,30 @@ extern "C" void func_00186F90(void)
         cBE_getInterface_Fv(cBE_getBE(), 5);
         int extra = 0;
         int avail = func_002419D8(mp, *(int*)(mp + 0x428));
-        char* st = D_004A14B8_86F90;
-        int flags = *(int*)(st + 0x22C);
-        *(int*)(st + 0x230) = 0;
+        cFEStateMemCard* st = D_004A14B8;
+        int flags = st->flags.all;
+        st->needed = 0;
         if (flags & 1) {
             extra = 1;
             char* o = *(char**)(mp + 0x434);
             sVEntry<int(void*, int)>* vt = *(sVEntry<int(void*, int)>**)o;
             char* thisp = o + vt[22].delta;
             int r = vt[22].fn(thisp, func_00152BA8());
-            *(int*)(D_004A14B8_86F90 + 0x230) += r;
+            D_004A14B8->needed += r;
         }
         char* o;
-        if (avail < *(int*)(D_004A14B8_86F90 + 0x230)
+        if (avail < D_004A14B8->needed
             || ((o = *(char**)(mp + 0x434), (*(sVEntry<int(void*)>**)o)[25].fn(o + (*(sVEntry<int(void*)>**)o)[25].delta) != -1)
                 && (o = *(char**)(mp + 0x434), (*(sVEntry<int(void*)>**)o)[25].fn(o + (*(sVEntry<int(void*)>**)o)[25].delta) < extra)))
             fail = 1;
         if (fail) {
-            *(int*)(D_004A14B8_86F90 + 0x234) = 1;
+            D_004A14B8->f234 = 1;
             sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(mp + 0x748);
             vt[1].fn(mp + vt[1].delta, 0x17);
             return;
         }
     }
-    func_00187270((sFEMemCardK187270*)D_004A14B8_86F90);
+    func_00187270(D_004A14B8);
 }
 #endif
 
@@ -311,67 +329,19 @@ extern "C" void func_00186F90(void)
 INCLUDE_ASM("fe/fememcard", func_00187148);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-class cFEMemCardStateK187148 {
-public:
-    char pad_0x000[0x8];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual void v09();
-    virtual void v10();
-    virtual void v11();
-    virtual void v12();
-    virtual void v13();
-    virtual void v14();
-    virtual void v15();
-    virtual void v16();
-    virtual void v17();
-    virtual void v18();
-    virtual void v19();
-    virtual void v20();
-    virtual void v21();
-    virtual void v22();
-    virtual void v23();
-    virtual void v24();
-    virtual void v25();
-    virtual void v26();
-    virtual void v27();
-    virtual void v28();
-    virtual void v29();
-    virtual void v30();
-    virtual void v31();
-    virtual void v32();
-    virtual void v33();
-    virtual void v34();
-    virtual void v35();
-    virtual void v36();
-    virtual void v37();
-    virtual void v38();
-    virtual void v39();
-    virtual void v40();
-    virtual void v41();
-};
-// Typed view of D_004A14B8 (other functions in this unit declare it as void*).
-extern cFEMemCardStateK187148* D_004A14B8_K187148 __asm__("D_004A14B8");
 
 extern "C" void func_00187148(void)
 {
-    D_004A14B8_K187148->v41();
-    *(int*)((char*)D_004A14B8_K187148 + 0x1C0) = 6;
+    D_004A14B8->v41();
+    D_004A14B8->f1C0 = 6;
 }
 #endif
 
 //100%
 INCLUDE_ASM("fe/fememcard", func_00187180);
 #ifdef SKIP_ASM
-extern void* D_004A14B8;
 extern "C" void func_001D83A8(void);
-extern "C" void func_00187A38(void* self);
+extern "C" void func_00187A38(cFEStateMemCard* self);
 
 extern "C" void func_00187180(void)
 {
@@ -385,16 +355,6 @@ INCLUDE_ASM("fe/fememcard", func_001871A8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern void* D_004A28A8;
-struct sFEMemCardK1871A8 {
-    char pad_0x000[0x1BC];
-    int state;     // 0x1BC
-    char pad_0x1C0[0x22C - 0x1C0];
-    int f22C;      // 0x22C
-    int pad_0x230;
-    int f234;      // 0x234
-};
-// Typed view of D_004A14B8 (other functions in this unit declare it as void*).
-extern sFEMemCardK1871A8* D_004A14B8_K1871A8 __asm__("D_004A14B8");
 extern int D_004A14BC;
 extern "C" void* func_00227F80(void* p);
 void func_0023FB18(void* mp, int a);
@@ -414,10 +374,10 @@ extern "C" void func_001871A8(void)
     func_0023FAE0(mp);
     mp->v01(0x36);
     D_004A14BC = 0;
-    D_004A14B8_K1871A8->f22C = -1;
-    D_004A14B8_K1871A8->f234 = 0;
+    D_004A14B8->flags.all = -1;
+    D_004A14B8->f234 = 0;
     func_0023C8F0(mp, 2);
-    D_004A14B8_K1871A8->state = 2;
+    D_004A14B8->state = 2;
 }
 #endif
 
@@ -427,14 +387,6 @@ INCLUDE_ASM("fe/fememcard", func_00187230);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern void* D_004A28A8;
 extern int D_004A14BC;
-struct sFEMemCardK187230 {
-    char pad_0x000[0x22C];
-    int f22C;      // 0x22C
-    int pad_0x230;
-    int f234;      // 0x234
-};
-// Typed view of D_004A14B8 (other functions in this unit declare it as void*).
-extern sFEMemCardK187230* D_004A14B8_K187230 __asm__("D_004A14B8");
 extern "C" void* func_00227F80(void* p);
 extern "C" void func_0023C8F0(void* mp, int mode);
 
@@ -442,8 +394,8 @@ extern "C" void func_00187230(void)
 {
     void* mp = func_00227F80(D_004A28A8);
     D_004A14BC = 0;
-    D_004A14B8_K187230->f22C = -1;
-    D_004A14B8_K187230->f234 = 0;
+    D_004A14B8->flags.all = -1;
+    D_004A14B8->f234 = 0;
     func_0023C8F0(mp, 2);
 }
 #endif
@@ -451,21 +403,15 @@ extern "C" void func_00187230(void)
 //100%
 INCLUDE_ASM("fe/fememcard", func_00187270);
 #ifdef SKIP_ASM
-extern "C" void func_00187318(void* self);
+extern "C" void func_00187318(cFEStateMemCard* self);
 extern "C" void func_001877B0(void);
 extern "C" void func_00187920(void);
 
-struct sFEMemCardK187270 {
-    char pad_0x000[0x234];
-    int f234;      // 0x234
-    int flags;     // 0x238
-};
-
-extern "C" void func_00187270(sFEMemCardK187270* self)
+extern "C" void func_00187270(cFEStateMemCard* self)
 {
     self->f234 = 1;
     void* mp = func_00227F80(D_004A28A8);
-    int flags = self->flags;
+    int flags = self->saved.all;
     if (!(flags & 2)) {
         func_0023FB18(mp, 0);
         func_0023FAE0(mp);
@@ -486,12 +432,12 @@ INCLUDE_ASM("fe/fememcard", func_00187318);
 extern void* D_004A28A8;
 extern "C" void func_00228238(void* p);
 
-extern "C" void func_00187318(void* self)
+extern "C" void func_00187318(cFEStateMemCard* self)
 {
-    *(int*)((char*)self + 0x1C0) = 6;
-    if (*(int*)((char*)self + 0x1AC) == 0)
+    self->f1C0 = 6;
+    if (self->f1AC == 0)
         func_00228238(D_004A28A8);
-    *(int*)((char*)self + 0x1AC) = 1;
+    self->f1AC = 1;
 }
 #endif
 
@@ -499,7 +445,6 @@ extern "C" void func_00187318(void* self)
 INCLUDE_ASM("fe/fememcard", func_00187360);
 #ifdef SKIP_ASM
 extern void* D_004A28A8;
-extern void* D_004A14B8;
 extern char D_0045DCE8[];
 extern char D_0045DCD8[];
 extern "C" void* cBE_getBE();
@@ -510,21 +455,13 @@ extern "C" void* func_00227F80(void* p);
 extern "C" void func_00241DC8(void* mp, void* out, int a2);
 extern "C" void func_002C26D0(unsigned short* dst, const unsigned short* fmt, ...);
 
-
-
-
-
-struct sLocal_00187360 {
-    int v[8];
-};
-
 extern "C" void func_00187360(void)
 {
     unsigned short buf[0x320];
-    sLocal_00187360 loc;
+    sCardText loc;
     void* mp = func_00227F80(D_004A28A8);
     cBE_getInterface_Fv(cBE_getBE(), 5);
-    *(int*)((char*)D_004A14B8 + 0x19C) = 0x14;
+    D_004A14B8->f19C = 0x14;
     char* sf = *(char**)((char*)mp + 0x434);
     sVEntry<int(void*, int)>* sfvt = *(sVEntry<int(void*, int)>**)sf;
     int size = sfvt[22].fn(sf + sfvt[22].delta, func_00152BA8());
@@ -533,8 +470,8 @@ extern "C" void func_00187360(void)
     sVEntry<unsigned short*(void*, int)>* vt = *(sVEntry<unsigned short*(void*, int)>**)(o + 4);
     unsigned short* fmt = vt[4].fn(o + vt[4].delta, GetHashValue32(D_0045DCE8));
     func_002C26D0(buf, fmt, &loc, size);
-    D_004A14B8_K186C98->v36(buf, 0, 0, 0, 0, 0);
-    char* box = *(char**)((char*)D_004A14B8 + 0x218);
+    D_004A14B8->v36(buf, 0, 0, 0, 0, 0);
+    char* box = D_004A14B8->box;
     sVEntry<void(void*, int, int)>* bvt = *(sVEntry<void(void*, int, int)>**)(box + 8);
     char* bthis = box + bvt[26].delta;
     char* o2 = *(char**)((char*)D_004A28A8 + 0x8C);
@@ -542,7 +479,7 @@ extern "C" void func_00187360(void)
     char* o2this = o2 + vt2[4].delta;
     int id = vt2[4].fn(o2this, GetHashValue32(D_0045DCD8));
     bvt[26].fn(bthis, id, 1);
-    char* box2 = *(char**)((char*)D_004A14B8 + 0x218);
+    char* box2 = D_004A14B8->box;
     sVEntry<void(void*, int)>* bvt2 = *(sVEntry<void(void*, int)>**)(box2 + 8);
     bvt2[25].fn(box2 + bvt2[25].delta, 1);
 }
@@ -556,7 +493,7 @@ extern int D_004A14BC;
 extern "C" void* func_00227F80(void* p);
 extern "C" void* func_0023FB58(void* mp);
 extern "C" void func_001877B0(void);
-extern "C" void func_00187318(void* self);
+extern "C" void func_00187318(cFEStateMemCard* self);
 
 static inline int moviePlaying_K1874E8(void* mp)
 {
@@ -566,14 +503,14 @@ static inline int moviePlaying_K1874E8(void* mp)
     return r;
 }
 
-extern "C" void func_001874E8(void* self)
+extern "C" void func_001874E8(cFEStateMemCard* self)
 {
-    if (*(int*)((char*)self + 0x1AC) != 0)
+    if (self->f1AC != 0)
         return;
     void* mp = func_00227F80(D_004A28A8);
     if (moviePlaying_K1874E8(mp))
         return;
-    if (D_004A14BC == 4 && ((*(int*)((char*)self + 0x238) ^ 1) & 1)) {
+    if (D_004A14BC == 4 && ((self->saved.all ^ 1) & 1)) {
         func_0023FB58(mp);
         func_001877B0();
         return;
@@ -587,15 +524,13 @@ INCLUDE_ASM("fe/fememcard", func_00187580);
 //100%
 INCLUDE_ASM("fe/fememcard", func_001876A8);
 #ifdef SKIP_ASM
-extern void* D_004A14B8;
 extern "C" void func_00241E18(void*, unsigned short*, int);
 extern "C" void func_003A0D00(void* self, unsigned short* str);
 
-
 extern "C" void func_001876A8(void)
 {
-    void* st = D_004A14B8;
-    void* obj = cUIScreen_getObjectByHashName(*(void**)((char*)st + 0x40), GetHashValue32(D_0045DC80));
+    cFEStateMemCard* st = D_004A14B8;
+    void* obj = cUIScreen_getObjectByHashName(st->screen, GetHashValue32(D_0045DC80));
     void* mp = func_00227F80(D_004A28A8);
     int e = *(int*)((char*)mp + 0x130);
     if (e == 0x1F || e == 0x21 || e == 0x20 || e == 0x22 || e == 0x31 || e == 0x32 || e == 0x33
@@ -616,7 +551,6 @@ extern "C" void func_001876A8(void)
 INCLUDE_ASM("fe/fememcard", func_001877B0);
 #ifdef SKIP_ASM
 extern void* D_004A28A8;
-extern void* D_004A14B8;
 extern int D_004A14BC;
 extern int D_004A14B4;
 extern char D_004A14C0[];
@@ -639,37 +573,36 @@ extern "C" void* cUIAnimationBank_getAnimationByHashName(void* bank, int hash);
 extern "C" void func_0039FCC8(void* obj, void* anim, int a, int b, int c);
 extern "C" void func_001D9308(void*, int);
 
-
 extern "C" void func_001877B0(void)
 {
     unsigned short name[0x14];
     unsigned short desc[0x10];
     unsigned short fmt[8];
     D_004A14BC = 5;
-    *(int*)((char*)D_004A14B8 + 0x1C0) = 5;
+    D_004A14B8->f1C0 = 5;
     cBE_getInterface_Fv(cBE_getBE(), 5);
     void* mp = func_00227F80(D_004A28A8);
-    *(int*)((char*)D_004A14B8 + 0x1BC) = 0;
+    D_004A14B8->state = 0;
     D_004A14BC = 5;
     func_0023CAA0(mp, func_00152BA8());
     func_0023C8F0(mp, 1);
-    void* s1 = D_004A14B8;
+    cFEStateMemCard* s1 = D_004A14B8;
     int t = D_004A14B4;
     *(int*)((char*)mp + 0xF8) = t;
-    *(int*)((char*)s1 + 0x1C4) = t;
-    *(int*)((char*)s1 + 0x1BC) = 0;
+    s1->f1C4 = t;
+    s1->state = 0;
     sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)((char*)mp + 0x748);
     vt[1].fn((char*)mp + vt[1].delta, 0x35);
     func_00241D40(mp, 1, name, 0x14);
     func_002C2540(fmt, D_004A14C8);
     func_00241AA0(desc, 0x10);
-    func_002C26D0((unsigned short*)((char*)D_004A14B8 + 0x11C), fmt, desc, name);
+    func_002C26D0(D_004A14B8->text, fmt, desc, name);
     func_001D9308(D_004A14B8, 1);
-    void* st = D_004A14B8;
-    *(int*)((char*)st + 0x1A8) = 1;
-    void* obj = cUIScreen_getObjectByHashName(*(void**)((char*)st + 0x40), GetHashValue32(D_004A14C0));
+    cFEStateMemCard* st = D_004A14B8;
+    st->f1A8 = 1;
+    void* obj = cUIScreen_getObjectByHashName(st->screen, GetHashValue32(D_004A14C0));
     if (obj) {
-        void* bank = (char*)*(void**)((char*)D_004A14B8 + 0x10) + 0x50;
+        void* bank = (char*)D_004A14B8->engine + 0x50;
         void* anim = cUIAnimationBank_getAnimationByHashName(bank, GetHashValue32(D_0045DD00));
         if (anim)
             func_0039FCC8(obj, anim, 9, 0, 0);
@@ -690,31 +623,30 @@ extern "C" void* cUIAnimationBank_getAnimationByHashName(void* bank, int hash);
 extern "C" void func_0039FCC8(void* obj, void* anim, int a, int b, int c);
 extern "C" void func_001D9308(void*, int);
 
-
 extern "C" void func_00187920(void)
 {
     D_004A14BC = 4;
-    *(int*)((char*)D_004A14B8 + 0x1C0) = 5;
+    D_004A14B8->f1C0 = 5;
     cBE_getInterface_Fv(cBE_getBE(), 5);
     void* mp = func_00227F80(D_004A28A8);
-    void* s1 = D_004A14B8;
-    *(int*)((char*)s1 + 0x1BC) = 2;
-    *(int*)((char*)s1 + 0x1C4) = 0;
+    cFEStateMemCard* s1 = D_004A14B8;
+    s1->state = 2;
+    s1->f1C4 = 0;
     func_0023CAA0(mp, func_00152948_K187920());
     func_0023C8F0(mp, 2);
     sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)((char*)mp + 0x748);
     vt[1].fn((char*)mp + vt[1].delta, 0x35);
-    void* st = D_004A14B8;
-    *(int*)((char*)st + 0x1BC) = 2;
-    void* obj = cUIScreen_getObjectByHashName(*(void**)((char*)st + 0x40), GetHashValue32(D_004A14C0));
+    cFEStateMemCard* st = D_004A14B8;
+    st->state = 2;
+    void* obj = cUIScreen_getObjectByHashName(st->screen, GetHashValue32(D_004A14C0));
     if (obj) {
-        void* bank = (char*)*(void**)((char*)D_004A14B8 + 0x10) + 0x50;
+        void* bank = (char*)D_004A14B8->engine + 0x50;
         void* anim = cUIAnimationBank_getAnimationByHashName(bank, GetHashValue32(D_0045DD00));
         if (anim)
             func_0039FCC8(obj, anim, 9, 0, 0);
     }
     func_001D9308(D_004A14B8, 1);
-    *(int*)((char*)D_004A14B8 + 0x1A8) = 1;
+    D_004A14B8->f1A8 = 1;
 }
 #endif
 
@@ -728,17 +660,6 @@ extern void* D_004A28A8;
 extern int D_004A14BC;
 extern int D_004A14B4;
 
-struct sMcFlags_87A38 { unsigned b0 : 1; unsigned b1 : 1; unsigned b2 : 1; unsigned rest : 29; };
-struct sMemCard_87A38 {
-    char pad0[0x1BC];
-    int f1BC;                   // 0x1BC
-    char pad1C0[0x22C - 0x1C0];
-    sMcFlags_87A38 flags;       // 0x22C
-    int f230;
-    int f234;                   // 0x234
-    sMcFlags_87A38 saved;       // 0x238
-};
-
 static inline int cardCall_87A38(char* o, int slot)
 {
     sVEntry<int(void*)>* vt = *(sVEntry<int(void*)>**)o;
@@ -751,9 +672,8 @@ static inline void mpNotify_87A38(char* mp, int msg)
     vt[1].fn(mp + vt[1].delta, msg);
 }
 
-extern "C" void func_00187A38(void* p)
+extern "C" void func_00187A38(cFEStateMemCard* self)
 {
-    sMemCard_87A38* self = (sMemCard_87A38*)p;
     char* mp = (char*)func_00227F80(D_004A28A8);
     char* card = *(char**)(mp + 0x434);
     if (func_0023C8D0(mp))
@@ -761,15 +681,15 @@ extern "C" void func_00187A38(void* p)
     switch (D_004A14BC) {
     case 0:
         if (cardCall_87A38(card, 13))
-            self->flags.b1 = 0;
+            self->flags.bits.b1 = 0;
         func_0023C8F0(mp, 1);
         mpNotify_87A38(mp, 0x33);
         D_004A14BC++;
-        self->f1BC = 0;
+        self->state = 0;
         break;
     case 1:
         if (cardCall_87A38(card, 13))
-            self->flags.b0 = 0;
+            self->flags.bits.b0 = 0;
         if (*(int*)(mp + 0x428) == 0) {
             int r = cardCall_87A38(*(char**)(mp + 0x434), 17);
             D_004A14B4 = r;
@@ -779,11 +699,11 @@ extern "C" void func_00187A38(void* p)
         func_0023C8F0(mp, 0);
         mpNotify_87A38(mp, 0x33);
         D_004A14BC++;
-        self->f1BC = 1;
+        self->state = 1;
         break;
     case 2:
         if (cardCall_87A38(card, 13))
-            self->flags.b2 = 0;
+            self->flags.bits.b2 = 0;
         D_004A14BC++;
     case 3:
         if (*(int*)(mp + 0x428) == 0)
