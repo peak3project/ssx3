@@ -5080,36 +5080,14 @@ void func_003BD220(unsigned int a0, int a1, unsigned int a2) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003BD5B8);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct Blk_D5B8 {
-    int *data;
-    unsigned char sf[24];
-};
-struct S_D5B8 {
-    unsigned char mode;
-    unsigned char n;
-    char pad2[6];
-    unsigned char *out;
-    float fC[24];
-    int a6C[6];
-    struct Blk_D5B8 *ptrs[5];
-};
-struct C_D5B8 {
-    char pad0[0xA00];
-    unsigned short q[16];
-    char padA20[0xA20 - 0xA20];
-    float *pA20;
-};
-extern struct S_D5B8 *D_0050AC68_D5B8 __asm__("D_0050AC68");
-extern struct C_D5B8 *D_0050AC6C_D5B8 __asm__("D_0050AC6C");
 extern int D_0044C760_D5B8[] __asm__("D_0044C760");
 extern signed char D_0044DD38_D5B8[] __asm__("D_0044DD38");
-extern void f03E0_D5B8(struct C_D5B8 *, float *) __asm__("func_003C03E0");
+extern void f03E0_D5B8(struct sAC6C *, float *) __asm__("func_003C03E0");
 extern void func_003C0564(void *, void *, float);
 extern void func_003C05E0(void *, void *, float);
 
 void func_003BD5B8(int ch) {
-    struct Blk_D5B8 *blk;
+    struct sAC68Blk *blk;
     unsigned char *sf;
     unsigned char *out;
     unsigned short *q;
@@ -5119,11 +5097,11 @@ void func_003BD5B8(int ch) {
     int n;
     int idx;
 
-    blk = D_0050AC68_D5B8->ptrs[ch];
-    f03E0_D5B8(D_0050AC6C_D5B8, D_0050AC6C_D5B8->pA20);
-    sf = blk->sf;
+    blk = D_0050AC68->f84[ch];
+    f03E0_D5B8(D_0050AC6C, D_0050AC6C->fA20);
+    sf = blk->f04;
     for (i = 0; i < 24; i++) {
-        x = D_0050AC6C_D5B8->pA20[i] * D_0050AC68_D5B8->fC[i];
+        x = D_0050AC6C->fA20[i] * D_0050AC68->f0C[i];
         if (x < 4.0f) {
             idx = D_0044DD38_D5B8[(int)x];
         } else {
@@ -5133,12 +5111,12 @@ void func_003BD5B8(int ch) {
                 idx = n;
             }
         }
-        blk->sf[i] = idx;
+        blk->f04[i] = idx;
     }
-    out = D_0050AC68_D5B8->out + (ch * 0xDC + 0xEA);
-    q = D_0050AC6C_D5B8->q;
+    out = D_0050AC68->f08 + (ch * 0xDC + 0xEA);
+    q = D_0050AC6C->fA00;
     for (i = 0; i < 14; i++) {
-        func_003C0564((char *)D_0050AC6C_D5B8 + i * 0x40, q, 1.0f / (float)D_0044C760_D5B8[sf[i]]);
+        func_003C0564(D_0050AC6C->f000[i], q, 1.0f / (float)D_0044C760_D5B8[sf[i]]);
         out[1] = q[0] >> 2;
         out[0] = (q[0] << 6) | (q[1] >> 4);
         out[3] = (q[1] << 4) | (q[2] >> 6);
@@ -5162,7 +5140,7 @@ void func_003BD5B8(int ch) {
         out += 10;
     }
     for (; i < 24; i++) {
-        func_003C05E0((char *)D_0050AC6C_D5B8 + i * 0x40, q, 1.0f / (float)D_0044C760_D5B8[sf[i]]);
+        func_003C05E0(D_0050AC6C->f000[i], q, 1.0f / (float)D_0044C760_D5B8[sf[i]]);
         b = (unsigned char *)q;
         out[1] = b[0];
         out[0] = b[1];
@@ -5249,7 +5227,6 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003BDE08);
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003BE6E0);
 #ifdef SKIP_ASM
-extern struct S_D5B8 *D_0050AC68_E6E0 __asm__("D_0050AC68");
 extern void func_003BD078(int a0, signed char *out, signed char *out8);
 
 void func_003BE6E0(char *arg0) {
@@ -5259,9 +5236,9 @@ void func_003BE6E0(char *arg0) {
     unsigned char *s;
     int i;
 
-    p = D_0050AC68_E6E0->out + 0xAA;
-    for (i = 0; i < D_0050AC68_E6E0->n; i++) {
-        s = D_0050AC68_E6E0->ptrs[i]->sf;
+    p = D_0050AC68->f08 + 0xAA;
+    for (i = 0; i < D_0050AC68->f01; i++) {
+        s = D_0050AC68->f84[i]->f04;
         if (i & 1) {
             p[-1] = p[-1] & 0xf8 | s[0] >> 4;
             p[2] = s[0] << 4 | s[1] >> 3;
@@ -5311,7 +5288,7 @@ void func_003BE6E0(char *arg0) {
         }
         p += 0x15;
     }
-    p = D_0050AC68_E6E0->out + 0x113;
+    p = D_0050AC68->f08 + 0x113;
     func_003BD078(*(int *)(arg0 + 0x14), &idx, q);
     p[-1] = (p[-1] & 0xF8) | (q[0] >> 5);
     p[2] = (q[0] << 5) | (q[1] >> 5);
