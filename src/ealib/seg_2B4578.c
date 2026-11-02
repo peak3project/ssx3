@@ -17008,8 +17008,6 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003D3140);
 extern int func_002AE328(int, int);
 extern char *func_003D5290_3140(int) __asm__("func_003D5290");
 extern int func_003D5450_3140(int) __asm__("func_003D5450");
-extern unsigned char D_0044F42C;
-extern int D_0044F430_3140[] __asm__("D_0044F430");
 int func_003D3140_3140(int arg0, int arg1) __asm__("func_003D3140");
 
 int func_003D3140_3140(int arg0, int arg1) {
@@ -17017,7 +17015,7 @@ int func_003D3140_3140(int arg0, int arg1) {
     char *t;
     r = 0;
     if (D_0044F42C != 0) {
-        if (D_0044F430_3140[0] != 0) {
+        if (D_0044F430 != 0) {
             return -0x12;
         }
         if (func_003D5450_3140(-1) != 0) {
@@ -17030,7 +17028,7 @@ ok:
     if (t != 0) {
         r = func_002AE328(*(int *)(t + 0x54), arg1);
     }
-    D_0044F430_3140[0] = 0;
+    D_0044F430 = 0;
     D_0044F420 = 0;
     return r;
 }
