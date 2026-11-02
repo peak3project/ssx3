@@ -453,6 +453,20 @@ static inline char* sndTbl6080(void* self)
     return (char*)self + 0x6080;
 }
 
+// Globals declared by several functions below.
+extern char D_004837F8[];
+extern char D_00483A48[];
+extern char D_00483B48[];
+extern void* D_004A28A4;
+extern char* D_004A28A8;
+extern int D_004A2A50;
+extern float D_004A36D8;
+extern char D_004A3740[];
+extern void* D_004A52D4;
+extern signed char D_00535C10[];
+extern signed char D_00535C11[];
+extern signed char D_00535C12[];
+
 // ---- end of shared declarations ----
 
 //100%
@@ -462,8 +476,6 @@ INCLUDE_ASM("sound/soundsys", cBankSys_cBankSys);
 void* operator new[](unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
 
 
-extern char D_00483A48[];
-extern char D_00483B48[];
 extern const char D_004A3668[];
 extern const char D_004A3670[];
 
@@ -507,8 +519,6 @@ void cMemMan_free(void*);
 void operator_delete(int*);
 
 
-extern char D_00483A48[];
-extern char D_00483B48[];
 
 // PORT: hand-expanded g++ 2.95 virtual-base dtor (vtable upcast-offset fixup on stack copies).
 extern "C" void func_0028FEA0(char* self, int flags)
@@ -992,7 +1002,6 @@ INCLUDE_ASM("sound/soundsys", func_002917D0);
 #ifdef SKIP_ASM
 extern "C" void* cBE_getBE();
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern signed char D_00535C11[];
 
 
 
@@ -1192,7 +1201,6 @@ INCLUDE_ASM("sound/soundsys", func_00292508);
 #ifdef SKIP_ASM
 extern "C" void* cBE_getBE();
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern signed char D_00535C11[];
 
 
 
@@ -1377,7 +1385,6 @@ extern "C" void func_00292B48(void* vself)
 INCLUDE_ASM("sound/soundsys", func_00292CB8);
 #ifdef SKIP_ASM
 extern "C" void func_00293168(void*, void*, int*, int*);
-extern int D_004A2A50;
 
 extern "C" void func_00292CB8(void* self, void* obj) {
     int a;
@@ -1410,7 +1417,6 @@ extern "C" void func_00292CB8(void* self, void* obj) {
 INCLUDE_ASM("sound/soundsys", func_00292DA0);
 #ifdef SKIP_ASM
 extern "C" void func_00293290(void* self, int id, void* rider, int* out, int* size);
-extern int D_004A2A50;
 
 // PORT: the rider pointer is passed to func_00291710/func_00291C88 as an int (the unit declares them that way).
 extern "C" void func_00292DA0(void* self, void* obj) {
@@ -1455,7 +1461,6 @@ extern "C" void func_00292DA0(void* self, void* obj) {
 INCLUDE_ASM("sound/soundsys", func_00292EF8);
 #ifdef SKIP_ASM
 extern "C" void func_00293350(void* self, int id, void* rider, int* out, int* size);
-extern int D_004A2A50;
 
 // PORT: the rider pointer is passed to func_00291710/func_00291C88 as an int (the unit declares them that way).
 extern "C" void func_00292EF8(void* self, void* obj) {
@@ -1492,7 +1497,6 @@ extern "C" void func_00292EF8(void* self, void* obj) {
 INCLUDE_ASM("sound/soundsys", func_00293018);
 #ifdef SKIP_ASM
 extern "C" void func_00293410(void* self, int id, void* rider, int* out, int* size);
-extern int D_004A2A50;
 
 // PORT: the rider pointer is passed to func_00291710/func_00292508 as an int (the unit declares them that way).
 extern "C" void func_00293018(void* self, void* obj) {
@@ -1988,7 +1992,6 @@ extern "C" void func_003B58D8();
 extern "C" unsigned int func_003B8AB8(int id);
 extern "C" void* cBE_getBE();
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern signed char D_00535C11[];
 
 
 extern "C" void func_002A7438(void* self, int id);
@@ -2323,7 +2326,6 @@ extern "C" int func_00288B40(void* self, int which, float f);
 // func_00295028 takes the event pointer here (the unit declares (void*, int, int) later).
 int func_00295028_p(void* self, void* evt, int idx) __asm__("func_00295028");
 extern "C" int func_002B5F60(void* mgr, void* evt, int id, void* rider, int vol);
-extern void* D_004A52D4;
 
 
 extern "C" void func_00296088(void* self, char* rider, char* evt, int idx)
@@ -2414,7 +2416,6 @@ int func_00288B40(void* self, int which, float f);
 unsigned int func_002ADF60(void* rng);
 void* cBE_getBE(void);
 void* cBE_getInterface__Fv(void* be, int kind);
-extern signed char D_00535C11[];
 
 }
 
@@ -2528,7 +2529,6 @@ extern "C" int func_00288B40(void* self, int which, float f);
 extern "C" unsigned int func_002ADF60(void* rng);
 extern "C" void* cBE_getBE();
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern signed char D_00535C11[];
 
 
 
@@ -2645,7 +2645,6 @@ extern "C" int func_00288B40(void* self, int which, float f);
 extern "C" unsigned int func_002ADF60(void* rng);
 extern "C" void* cBE_getBE();
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern signed char D_00535C11[];
 
 
 
@@ -3520,7 +3519,6 @@ static inline int snd97B8AddVoice(void* vself, int a, int b, int type)
     return func_002906B8(self);
 }
 
-extern int D_004A2A50;
 
 extern "C" void func_002997B8(void* self, void* obj)
 {
@@ -3570,7 +3568,6 @@ INCLUDE_ASM("sound/soundsys", func_00299E28);
 extern "C" void* cBE_getBE();
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern signed char D_00535C10[];
 extern "C" int func_002A4290(void* self);
 // func_00285D98 returns a rider pointer here (the unit declares it int).
 void* func_00285D98_p(void* self, int which) __asm__("func_00285D98");
@@ -4193,8 +4190,6 @@ extern "C" void func_002A3170(void* self);
 extern "C" void func_002A3400(void* self);
 extern "C" int func_002A40E8(void* self);
 extern "C" void func_00295950(void* self, int a, int b, int c);
-extern signed char D_00535C11[];
-extern char* D_004A28A8;
 
 struct sSs7B0PreC { char pad[0xC]; };
 class sSs7B0Self : public sSs7B0PreC {
@@ -4310,7 +4305,6 @@ INCLUDE_ASM("sound/soundsys", func_0029CCA8);
 extern "C" int func_002ADCA0_CCA8(void*, int, sSndCallback, int, int, int, int, int) __asm__("func_002ADCA0");
 // PORT: func_004139F8 is libgcc's float -> unsigned conversion (__fixunssfsi).
 extern "C" int func_004139F8(float f);
-extern char* D_004A28A8;
 extern int D_005308D0[];
 
 extern "C" void func_0029CCA8(char* self)
@@ -4365,7 +4359,6 @@ INCLUDE_ASM("sound/soundsys", func_0029CE70);
 extern "C" void func_002AD300(void* self);
 extern "C" void func_002AD810(void* self);
 extern "C" void func_002B6A68(void* self);
-extern void* D_004A52D4;
 
 extern "C" void func_0029CE70(void* self)
 {
@@ -5455,7 +5448,6 @@ extern "C" int* func_00144BC0(void*);
 extern "C" int func_00288B40(void* self, int which, float f);
 // func_00285D98 returns a rider pointer here (the unit declares it int).
 void* func_00285D98_p(void* self, int which) __asm__("func_00285D98");
-extern float D_004A36D8;
 
 
 extern "C" void func_0029FCC8(void* self, void* vrider)
@@ -5502,7 +5494,6 @@ extern "C" int func_00288B40(void* self, int which, float f);
 // PORT: the unit defines func_0029F330 as void; it returns its tail call's result.
 // func_00285D98 returns a rider pointer here (the unit declares it int).
 void* func_00285D98_p(void* self, int which) __asm__("func_00285D98");
-extern float D_004A36D8;
 
 
 extern "C" void func_0029FF80(void* self, sSndRider* rider, int alt)
@@ -5559,7 +5550,6 @@ extern "C" int func_00288B40(void* self, int which, float f);
 // PORT: the unit defines func_0029F330 as void; it returns its tail call's result.
 // func_00285D98 returns a rider pointer here (the unit declares it int).
 void* func_00285D98_p(void* self, int which) __asm__("func_00285D98");
-extern float D_004A36D8;
 
 
 extern "C" void func_002A02D8(void* self, sSndRider* rider)
@@ -5606,8 +5596,6 @@ int func_002B1458_f(void* self, int a, int b, int c, int d, float f, int e, int 
 void* func_00285D98_p(void* self, int which) __asm__("func_00285D98");
 unsigned func_002A1820_0560(void* self, void* a, void* b) __asm__("func_002A1820");
 void func_0031BE50_0560(float a, float* x, float* y) __asm__("func_0031BE50");
-extern float D_004A36D8;
-extern void* D_004A28A4;
 static inline int sndA30Mode0560(int m)
 {
     return *(int*)((char*)D_004A28A4 + 0x550) == m;
@@ -5706,8 +5694,6 @@ extern "C" int func_00288B40(void* self, int which, float f);
 int func_002B1458_f(void* self, int a, int b, int c, int d, float f, int e, int refresh) __asm__("func_002B1458");
 // PORT: the unit defines func_0029F330 as void; it returns its tail call's result.
 void* func_00285D98_p(void* self, int which) __asm__("func_00285D98");
-extern float D_004A36D8;
-extern void* D_004A28A4;
 static inline int sndA30Mode(int m)
 {
     return *(int*)((char*)D_004A28A4 + 0x550) == m;
@@ -5774,7 +5760,6 @@ INCLUDE_ASM("sound/soundsys", func_002A0E70);
 extern "C" int func_00288B40(void* self, int which, float f);
 // PORT: the unit defines func_0029F330 as void; it returns its tail call's result.
 void* func_00285D98_p(void* self, int which) __asm__("func_00285D98");
-extern float D_004A36D8;
 
 
 extern "C" void func_002A0E70(void* self, sSndRider* rider, int play)
@@ -5845,7 +5830,6 @@ INCLUDE_ASM("sound/soundsys", func_002A1138);
 #ifdef SKIP_ASM
 extern "C" int func_00288B40(void* self, int which, float f);
 // PORT: the unit defines func_0029F330/func_002A1D48 as void; they return their tail call's result.
-extern float D_004A36D8;
 
 
 // PORT: callers declare func_002A1138 as (void*, int, int); the body takes (self, rider, obj).
@@ -5873,7 +5857,6 @@ INCLUDE_ASM("sound/soundsys", func_002A1280);
 #ifdef SKIP_ASM
 extern "C" int func_00288B40(void* self, int which, float f);
 // PORT: the unit defines func_0029F330/func_002A1D48 as void; they return their tail call's result.
-extern float D_004A36D8;
 
 
 // PORT: callers declare func_002A1280 as (void*, int, int); the body takes (self, rider, obj).
@@ -5916,7 +5899,6 @@ INCLUDE_ASM("sound/soundsys", func_002A1400);
 #ifdef SKIP_ASM
 // PORT: callers pass self to func_002A4248 (the unit's later definition takes no args).
 int func_002A4248_s(void* self) __asm__("func_002A4248");
-extern signed char D_00535C11[];
 
 // PORT: callers declare func_002A1400 as (void*, int); the body takes (self, rider).
 void func_002A1400_impl(void* self, char* rider) __asm__("func_002A1400");
@@ -5979,7 +5961,6 @@ extern "C" void* cBE_getBE();
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 // func_0029F2B0 returns a value (the unit's earlier declaration says void).
-extern signed char D_00535C11[];
 
 extern "C" void func_002A16B0(void* self, int a1)
 {
@@ -6763,8 +6744,6 @@ INCLUDE_ASM("sound/soundsys", func_002A31C0);
 extern "C" void* cBE_getBE();
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern signed char D_00535C11[];
-extern char* D_004A28A8;
 
 extern "C" void func_002A31C0(void* self)
 {
@@ -7117,7 +7096,6 @@ INCLUDE_ASM("sound/soundsys", func_002A4040);
 extern "C" void* cBE_getBE();
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern signed char D_00535C10[];
 
 extern "C" int func_002A4040(void* self)
 {
@@ -7133,7 +7111,6 @@ extern "C" void* cBE_getBE();
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int* func_00144BC0(void*);
-extern signed char D_00535C10[];
 
 extern "C" int func_002A4078(void* self)
 {
@@ -7163,7 +7140,6 @@ extern "C" void* cBE_getBE();
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int* func_00144BC0(void*);
-extern signed char D_00535C10[];
 
 extern "C" int func_002A40E8(void* self)
 {
@@ -7198,7 +7174,6 @@ extern "C" void* cBE_getBE();
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int* func_00144BC0(void*);
 extern "C" int func_002A41C8(void* self, unsigned int a1);
-extern signed char D_00535C10[];
 
 extern "C" int func_002A4168(void* self)
 {
@@ -7225,7 +7200,6 @@ extern "C" void* cBE_getBE();
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int* func_00144BC0(void*);
-extern signed char D_00535C10[];
 
 extern "C" int func_002A41D8(void* self)
 {
@@ -7251,7 +7225,6 @@ INCLUDE_ASM("sound/soundsys", func_002A4248);
 extern "C" void* cBE_getBE();
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern signed char D_00535C12[];
 
 extern "C" int func_002A4248(void)
 {
@@ -7273,7 +7246,6 @@ INCLUDE_ASM("sound/soundsys", func_002A4290);
 extern "C" void* cBE_getBE();
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern signed char D_00535C12[];
 
 extern "C" int func_002A4290(void* self)
 {
@@ -7288,7 +7260,6 @@ INCLUDE_ASM("sound/soundsys", func_002A42C8);
 extern "C" void* cBE_getBE();
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern signed char D_00535C12[];
 
 extern "C" int func_002A42C8(void)
 {
@@ -7308,7 +7279,6 @@ INCLUDE_ASM("sound/soundsys", func_002A4318);
 extern "C" void* cBE_getBE();
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern signed char D_00535C12[];
 
 extern "C" int func_002A4318(void* self)
 {
@@ -7328,7 +7298,6 @@ INCLUDE_ASM("sound/soundsys", func_002A4368);
 extern "C" void* cBE_getBE();
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern signed char D_00535C12[];
 
 extern "C" int func_002A4368(void* self)
 {
@@ -7446,7 +7415,6 @@ INCLUDE_ASM("sound/soundsys", func_002A45C0);
 #ifdef SKIP_ASM
 extern "C" void func_002A4590(void* self, int flag);
 extern "C" void func_002A4660(void* self, int id, int a, int b, int c);
-extern char* D_004A28A8;
 extern int D_00536730[];
 
 extern "C" void func_002A45C0(void* self)
@@ -7469,7 +7437,6 @@ extern "C" void func_002A45C0(void* self)
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A4660);
 #ifdef SKIP_ASM
-extern char* D_004A28A8;
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int* func_00144BC0(void*);
@@ -8224,8 +8191,6 @@ extern "C" char* func_002A8140(char* self, int embedded, int count, int heap);
 
 
 
-extern char D_004837F8[];
-extern char D_00483B48[];
 
 
 // PORT: hand-expanded g++ 2.95 virtual-base ctor (vtable upcast-offset fixup on stack copies).
@@ -8273,8 +8238,6 @@ extern "C" void func_002A6F38(sSsMgr6F38* self);
 extern "C" void func_002A82D8(char* self, int flags);
 
 
-extern char D_004837F8[];
-extern char D_00483B48[];
 
 // PORT: hand-expanded g++ 2.95 virtual-base dtor (vtable upcast-offset fixup on stack copies).
 extern "C" void func_002A6B50(char* self, int flags)
@@ -9026,7 +8989,6 @@ INCLUDE_ASM("sound/soundsys", func_002A7FF8);
 #ifdef SKIP_ASM
 extern "C" char* func_002A7CF0(void* self);
 extern "C" char* strcpy(char* dst, const char* src);
-extern char D_004A3740[];
 
 extern "C" int func_002A7FF8(void* self, const char* name, char* out)
 {
@@ -9049,7 +9011,6 @@ extern "C" int func_002A7FF8(void* self, const char* name, char* out)
 INCLUDE_ASM("sound/soundsys", func_002A8070);
 #ifdef SKIP_ASM
 extern "C" float func_002A7E60(void* self);
-extern char D_004A3740[];
 
 extern "C" int func_002A8070(void* self, const char* name, float* out)
 {
@@ -9068,7 +9029,6 @@ extern "C" int func_002A8070(void* self, const char* name, float* out)
 INCLUDE_ASM("sound/soundsys", func_002A80D8);
 #ifdef SKIP_ASM
 extern "C" int func_002A7EA8(void* self);
-extern char D_004A3740[];
 
 extern "C" int func_002A80D8(void* self, const char* name, int* out)
 {
@@ -9092,8 +9052,6 @@ extern "C" int func_003B97D8();
 void* operator new[](unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
 
 
-extern char D_00483A48[];
-extern char D_00483B48[];
 extern const char D_00483148[];
 
 // PORT: hand-expanded g++ 2.95 virtual-base ctor (vtable upcast-offset fixup on stack copies).
@@ -9139,8 +9097,6 @@ extern "C" void func_0028FEA0(char* self, int flags);
 extern "C" int func_003B9880();
 
 
-extern char D_00483A48[];
-extern char D_00483B48[];
 
 // PORT: hand-expanded g++ 2.95 virtual-base dtor (vtable upcast-offset fixup on stack copies).
 extern "C" void func_002A82D8(char* self, int flags)
