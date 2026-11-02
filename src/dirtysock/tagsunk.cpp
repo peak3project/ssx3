@@ -7019,14 +7019,14 @@ extern "C" void* func_003E6448(void* dst, int value, int size);
 extern "C" int func_003FA1D0(int code, void* out);
 extern "C" void func_002C6810(void* obj, void* a1);
 
-struct sDsErr265FB8 {
+struct sDsErr {
     char a;
     char b;
 };
 
 extern "C" void func_00265FB8(void* arg, int code)
 {
-    sDsErr265FB8 err;
+    sDsErr err;
     func_003FA1D0(code, &err);
     func_003E6448(D_00537190, 0, 0x40);
     func_002C6810(D_004A33D8, arg);
@@ -7040,14 +7040,9 @@ INCLUDE_ASM("dirtysock/tagsunk", func_00266010);
 extern int D_004A33D4;
 extern "C" int func_003FA1D0(int code, void* out);
 
-struct sDsErr266010 {
-    char a;
-    char b;
-};
-
 extern "C" void func_00266010(int code)
 {
-    sDsErr266010 err;
+    sDsErr err;
     func_003FA1D0(code, &err);
     D_004A33D4 = 9;
 }
@@ -7059,14 +7054,9 @@ INCLUDE_ASM("dirtysock/tagsunk", func_00266038);
 extern int D_004A33D4;
 extern "C" int func_003FA1D0(int code, void* out);
 
-struct sDsErr266038 {
-    char a;
-    char b;
-};
-
 extern "C" void func_00266038(int code)
 {
-    sDsErr266038 err;
+    sDsErr err;
     func_003FA1D0(code, &err);
     D_004A33D4 = 0xA;
 }
@@ -7104,14 +7094,9 @@ INCLUDE_ASM("dirtysock/tagsunk", func_002660A0);
 extern int D_004A33D4;
 extern "C" int func_003FA1D0(int code, void* out);
 
-struct sDsErr2660A0 {
-    char a;
-    char b;
-};
-
 extern "C" void func_002660A0(int code)
 {
-    sDsErr2660A0 err;
+    sDsErr err;
     func_003FA1D0(code, &err);
     D_004A33D4 = 0x3;
 }
