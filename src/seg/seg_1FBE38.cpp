@@ -5299,9 +5299,7 @@ static inline char *curProcess_4320() { return D_004A3DD8_4320; }
 static inline char *refToPtr_4320(unsigned i) { return (char*)(i << 2); }
 static inline char *conv_4320(unsigned i) { if (i == 0) return 0; return refToPtr_4320(i); }
 void func_0030B508(void*, int, void*);
-struct R12_4320 { int a; int b; int c; };
-extern R12_4320 D_004C9098_4320 __asm__("D_004C9098");
-extern "C" R12_4320 func_00304320(int n, sBindArg_1FBE38* e) {
+extern "C" cLunoValue func_00304320(int n, sBindArg_1FBE38* e) {
     if (D_004A57F8_4320 == 0) {
         D_004A57F0_4320 = 0xFFFFFFFF;
         D_004A57F8_4320 = 1;
@@ -5342,7 +5340,7 @@ extern "C" R12_4320 func_00304320(int n, sBindArg_1FBE38* e) {
     }
     if (obj)
         func_0030B508(curProcess_4320(), gv, obj);
-    return D_004C9098_4320;
+    return D_004C9098;
 }
 #endif
 
