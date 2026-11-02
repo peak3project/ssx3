@@ -8,10 +8,12 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
+// Declarations shared by the functions of this unit.
+int GetHashValue32(char* str);
+
 //100%
 INCLUDE_ASM("fe/festatebonusmaterial", cFEStateBonusMaterial_onCreateScreen);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
 extern char D_00460168[];
 extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
 extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
@@ -30,7 +32,6 @@ extern "C" void cFEStateBonusMaterial_onCreateScreen(void* self)
 //100%
 INCLUDE_ASM("fe/festatebonusmaterial", func_00195540);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
 extern char D_004A14F8[];
 extern char D_004A1500[];
 extern char D_004A1508[];
@@ -91,7 +92,6 @@ extern "C" void func_0039F290(void* list, void* item);
 extern "C" void func_0039F400(void* list, void* item);
 extern char D_004601D8[];
 extern const char* D_00441128[];
-
 
 extern "C" void func_00195600(void* self, void* item, unsigned int event)
 {
