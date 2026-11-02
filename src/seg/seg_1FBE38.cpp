@@ -96,6 +96,8 @@ struct cInstanceNode_1FBE38 {
     virtual void v36(int, float);
     virtual void v37();
 };
+// A plain (not 16-byte aligned) 4-float vector built in place for the node calls that take a vector pointer.
+struct sVec4_1FBE38 { float x, y, z, w; sVec4_1FBE38(float a, float b, float c, float d) : x(a), y(b), z(c), w(d) {} };
 // A rider as these bindings see it (include/ai/rider.h has the flat layout): its cBeing base sits at 0x6C0, after the
 // rider's own data, so converting between cRider_1FBE38* and cBeing* adds/subtracts 0x6C0 with a null check.
 struct cRiderData_1FBE38 {
@@ -1640,8 +1642,7 @@ extern "C" cLunoValue func_002FD758(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FD9F8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct V4_D9F8 { float x, y, z, w; V4_D9F8(float a, float b, float c, float d) : x(a), y(b), z(c), w(d) {} };
-extern "C" void func_00355978_D9F8(void*, int, int, V4_D9F8*) __asm__("func_00355978");
+extern "C" void func_00355978(void*, int, int, sVec4_1FBE38*);
 static inline char *refToPtr_D9F8(unsigned i) { return (char*)(i << 2); }
 static inline char *conv_D9F8(unsigned i) { if (i == 0) return 0; return refToPtr_D9F8(i); }
 extern unsigned D_D9F8[] __asm__("D_004FB738");
@@ -1704,8 +1705,8 @@ extern "C" cLunoValue func_002FD9F8(int n, sBindArg_1FBE38 *e) {
             cInstanceNode_1FBE38 *p = *(cInstanceNode_1FBE38**)(obj + 0xC);
             if (p && p->isMoveNode()) {
                 int k = *(int*)((char*)q + 0x18);
-                V4_D9F8 v(*(float*)&buf[3], *(float*)&buf[4], *(float*)&buf[5], 0.0f);
-                func_00355978_D9F8(p, k, buf[2], &v);
+                sVec4_1FBE38 v(*(float*)&buf[3], *(float*)&buf[4], *(float*)&buf[5], 0.0f);
+                func_00355978(p, k, buf[2], &v);
             }
         }
     }
@@ -1717,8 +1718,7 @@ extern "C" cLunoValue func_002FD9F8(int n, sBindArg_1FBE38 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_002FDC60);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct V4_DC60 { float x, y, z, w; V4_DC60(float a, float b, float c, float d) : x(a), y(b), z(c), w(d) {} };
-extern "C" void func_00355978_DC60(void*, int, int, V4_DC60*) __asm__("func_00355978");
+extern "C" void func_00355978(void*, int, int, sVec4_1FBE38*);
 static inline char *refToPtr_DC60(unsigned i) { return (char*)(i << 2); }
 static inline char *conv_DC60(unsigned i) { if (i == 0) return 0; return refToPtr_DC60(i); }
 extern unsigned D_DC60[] __asm__("D_004FB758");
@@ -1781,8 +1781,8 @@ extern "C" cLunoValue func_002FDC60(int n, sBindArg_1FBE38 *e) {
             cInstanceNode_1FBE38 *p = o2 ? *(cInstanceNode_1FBE38**)(o2 + 0xC) : 0;
             if (p && p->isMoveNode()) {
                 int k = *(int*)((char*)q + 0x18);
-                V4_DC60 v(*(float*)&buf[3], *(float*)&buf[4], *(float*)&buf[5], 0.0f);
-                func_00355978_DC60(p, k, buf[2], &v);
+                sVec4_1FBE38 v(*(float*)&buf[3], *(float*)&buf[4], *(float*)&buf[5], 0.0f);
+                func_00355978(p, k, buf[2], &v);
             }
         }
     }
@@ -2251,8 +2251,7 @@ static inline char *refToPtr_EE98(unsigned i) { return (char*)(i << 2); }
 static inline char *conv_EE98(unsigned i) { if (i == 0) return 0; return refToPtr_EE98(i); }
 extern "C" int checkActiveNode(void*, int, void*);
 extern "C" void* cMemMan_alloc(int, void*, int, int);
-struct V4_EE98 { float x, y, z, w; V4_EE98(float a, float b, float c, float d) : x(a), y(b), z(c), w(d) {} };
-extern "C" void cMoveNode_addDynamicParticle_EE98(void*, void*, int, V4_EE98*) __asm__("cMoveNode_addDynamicParticle");
+extern "C" void cMoveNode_addDynamicParticle_EE98(void*, void*, int, sVec4_1FBE38*) __asm__("cMoveNode_addDynamicParticle");
 void operator_delete(int*);
 extern char D_00489750_EE98[] __asm__("D_00489750");
 extern unsigned D_EE98[] __asm__("D_004FB938");
@@ -2319,7 +2318,7 @@ extern "C" cLunoValue func_002FEE98(int n, sBindArg_1FBE38 *e) {
     cInstanceNode_1FBE38 *p = *(cInstanceNode_1FBE38**)(obj + 0xC);
     if (p && p->isMoveNode()) {
         float one = 1.0f;
-        V4_EE98 v(*(float*)&buf[56], *(float*)&buf[57], *(float*)&buf[58], one);
+        sVec4_1FBE38 v(*(float*)&buf[56], *(float*)&buf[57], *(float*)&buf[58], one);
         cMoveNode_addDynamicParticle_EE98(p, buf, buf[55], &v);
         return D_004C9098;
     }
