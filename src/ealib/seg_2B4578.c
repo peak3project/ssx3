@@ -7780,26 +7780,6 @@ int func_003C2440(int arg0) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003C25E0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct A8_25E0 {
-    int a;
-    short v;
-    short b;
-};
-struct B16_25E0 {
-    int a;
-    short v;
-    char pad[10];
-};
-struct T_25E0 {
-    char pad[0x20];
-    struct A8_25E0 a[48];
-    struct B16_25E0 b[1];
-};
-struct H_25E0 {
-    char pad[0xCB0];
-    struct T_25E0 *tbl;
-};
-extern struct H_25E0 D_0050AD00_25E0 __asm__("D_0050AD00");
 extern void func_003C8A88_25E0(int a, unsigned int v) __asm__("func_003C8A88");
 
 int func_003C25E0(int idx) {
@@ -7813,15 +7793,15 @@ int func_003C25E0(int idx) {
             v = 0x3FFF;
         }
         for (i = 0; i < e->f23; i++) {
-            D_0050AD00_25E0.tbl->a[e->f04[i]].v = v;
+            D_0050AD00.fCB0->f20[e->f04[i]].pitch = v;
             if (D_0050A8E8.setup.cfg.f29 == 2) {
-                D_0050AD00_25E0.tbl->a[e->f04[i] + 0x18].v = v;
+                D_0050AD00.fCB0->f20[e->f04[i] + 0x18].pitch = v;
             }
         }
     } else if (e->f24 & 0x100) {
         v = (unsigned int)((e->f20 << 12) / D_0050A8E8.setup.cfg.f0C * e->f8A) >> 12;
         for (i = 0; i < e->f23; i++) {
-            D_0050AD00_25E0.tbl->b[e->f04[i] - D_0050A8E8.setup.cfg.f10].v = v;
+            D_0050AD00.fCB0->f1A0[e->f04[i] - D_0050A8E8.setup.cfg.f10].pitch = v;
         }
     } else {
         v = (unsigned int)((e->f20 << 12) / D_0050A8E8.setup.cfg.f0A * e->f8A) >> 8;
