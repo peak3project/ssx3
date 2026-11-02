@@ -8188,15 +8188,11 @@ int func_003C36A8(int a, int b) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003C36C8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct O_36C8 { char pad[0x14]; short x; short y; };
-struct G_36C8 { char pad[0xCB0]; struct O_36C8 *o; };
-extern struct G_36C8 D_0050AD00_36C8[] __asm__("D_0050AD00");
 
 void func_003C36C8(int arg0, int flags) {
-    struct G_36C8 *g = &D_0050AD00_36C8[0];
-    if (g->o != 0 && (flags & 8)) {
-        g->o->x = (int)(D_0050AB08[0].f0C.l * 32767.0f);
-        g->o->y = (int)(D_0050AB08[0].f0C.r * 32767.0f);
+    if (D_0050AD00.fCB0 != 0 && (flags & 8)) {
+        D_0050AD00.fCB0->f14 = (int)(D_0050AB08[0].f0C.l * 32767.0f);
+        D_0050AD00.fCB0->f16 = (int)(D_0050AB08[0].f0C.r * 32767.0f);
     }
 }
 #endif
