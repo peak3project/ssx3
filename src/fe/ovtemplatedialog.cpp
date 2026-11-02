@@ -1,5 +1,13 @@
 #include "common.h"
 
+// g++ 2.95 vtable slot: this-pointer adjustment, index, function (F is the slot's function type;
+// sVEntry<void> is a raw slot). Virtual calls in this unit go through these by hand.
+template <class F> struct sVEntry {
+    short delta;
+    short index;
+    F* fn;
+};
+
 //100%
 INCLUDE_ASM("fe/ovtemplatedialog", cPDATemplate_onCreateScreen);
 #ifdef SKIP_ASM
@@ -15,16 +23,11 @@ extern char D_00471A10[];
 extern char D_004A2718[];
 extern char D_00471A20[];
 
-struct sVEntry_PDA {
-    short delta;
-    short index;
-    int (*fn)(void*, int);
-};
 
 static inline int Loc_PDA(int hash)
 {
     char* obj = *(char**)((char*)D_004A28A8 + 0x8C);
-    sVEntry_PDA* vt = *(sVEntry_PDA**)(obj + 4);
+    sVEntry<int(void*, int)>* vt = *(sVEntry<int(void*, int)>**)(obj + 4);
     return vt[4].fn(obj + vt[4].delta, hash);
 }
 
@@ -1173,15 +1176,10 @@ extern char D_0046EF08[];
 extern char D_00471B30[];
 extern char D_0046F648[];
 
-struct sVE_DlgCreate {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 struct sObj_DlgCreate {
     int pad[2];
-    sVE_DlgCreate* vt;
+    sVEntry<void(void*, int)>* vt;
 };
 
 // Builds the generic dialog overlay: title/body texts depend on the dialog kind at 0x9C.
@@ -1322,7 +1320,6 @@ extern char D_00471BD0[];
 extern char D_00471BE0[];
 extern char D_00471BF0[];
 
-struct sVE_20DC68 { short delta; short index; void (*fn)(void*, int); };
 
 extern "C" void func_0020DC68(char* self)
 {
@@ -1361,9 +1358,9 @@ extern "C" void func_0020DC68(char* self)
         if (obj != 0) cUIMenu_setSelectedByIndex(obj, 2);
         char* o = (char*)cUIScreen_getObjectByHashName(*(void**)(self + 0x40), GetHashValue32(D_00471BF0));
         if (o != 0) {
-            sVE_20DC68* e = &(*(sVE_20DC68**)(o + 8))[9];
+            sVEntry<void(void*, int)>* e = &(*(sVEntry<void(void*, int)>**)(o + 8))[9];
             e->fn(o + e->delta, 0);
-            e = &(*(sVE_20DC68**)(o + 8))[8];
+            e = &(*(sVEntry<void(void*, int)>**)(o + 8))[8];
             e->fn(o + e->delta, 0);
         }
     }
