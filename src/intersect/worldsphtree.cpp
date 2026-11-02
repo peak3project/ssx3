@@ -179,7 +179,7 @@ struct sWsSphQuery {
 
 // A world-list node (next, flags, object, bounds at 0x60, active flag).
 struct sWsListNode {
-    void* next;
+    sWsListNode* next;
     int pad04;
     int flags;
     sWsVObj* obj;
@@ -602,24 +602,15 @@ typedef int (*Test_3309D8)(void*);
 struct sWsBox;
 typedef sWsBox* (*GetBox_3309D8)(void*);
 
-struct sNode_3309D8 {
-    sNode_3309D8* next;
-    int pad04;
-    int flags;
-    sWsVObj* obj;
-    int pad10[20];
-    float bmin[3];
-    float bmax[3];
-};
 
 struct sCtx_3309D8 {
-    sNode_3309D8** list;
+    sWsListNode** list;
     int* count;
     int pad08;
     sWsBox* box;
 };
 
-static inline int overlapNode_3309D8(const sWsBox* b, const sNode_3309D8* n)
+static inline int overlapNode_3309D8(const sWsBox* b, const sWsListNode* n)
 {
     int r = 0;
     if (b->min[0] <= n->bmax[0] && b->max[0] >= n->bmin[0] &&
@@ -643,7 +634,7 @@ static inline int overlapBox_3309D8(const sWsBox* b, const sWsBox* o)
 
 extern "C" void func_003309D8(sCtx_3309D8* ctx, void* tree)
 {
-    for (sNode_3309D8* p = *(sNode_3309D8**)((char*)tree + 0x20); p != 0; p = p->next) {
+    for (sWsListNode* p = *(sWsListNode**)((char*)tree + 0x20); p != 0; p = p->next) {
         int flags = p->flags;
         if (flags & 0x20) {
             if (overlapNode_3309D8(ctx->box, p)) {
@@ -725,7 +716,7 @@ extern "C" void func_00330BA8(sSelf_330BA8* self, void* box)
     sCtx_3309D8* c = &ctx;
     sRoot_330BA8* t = self->root;
     self->f04 = t->fA0;
-    ctx.list = (sNode_3309D8**)self->list;
+    ctx.list = (sWsListNode**)self->list;
     ctx.count = &self->count;
     *(int*)&ctx.pad08 = 0x40;
     ctx.box = (sWsBox*)box;
@@ -773,7 +764,7 @@ static inline void descend_1450(void** n, sCtx_3309D8* ctx)
     for (p = ((sOct_1450*)n)->all; p != 0; p = (void**)*p) {
         int* cnt = ctx->count;
         int idx = *cnt;
-        ctx->list[idx] = (sNode_3309D8*)p;
+        ctx->list[idx] = (sWsListNode*)p;
         *cnt = idx + 1;
     }
     if (n[0] != 0) descRec_1450(n[0], ctx);
@@ -814,7 +805,7 @@ extern "C" void func_00331450(sSelf_1450* self, void* box)
     sCtx_3309D8* c = &ctx;
     sRoot_330BA8* t = self->root;
     self->f04 = t->fA0;
-    ctx.list = (sNode_3309D8**)self->arr;
+    ctx.list = (sWsListNode**)self->arr;
     ctx.count = &self->count;
     *(int*)&ctx.pad08 = 0x200;
     ctx.box = (sWsBox*)box;
@@ -870,7 +861,7 @@ static inline void addPatches_1E90(sCtx_3309D8* cb, sWsBoundObj* first)
         if (overlapPatch_1E90(cb->box, p)) {
             int* cnt = cb->count;
             int idx = *cnt;
-            cb->list[idx] = (sNode_3309D8*)p;
+            cb->list[idx] = (sWsListNode*)p;
             *cnt = idx + 1;
         }
     }
@@ -912,9 +903,9 @@ extern "C" void func_00331E90(sSelf_1E90* self, void* box)
     sCtx2_1E90 ctx;
     sCtx2_1E90* c = &ctx;
     self->f04 = self->root->fA0;
-    ctx.a.list = (sNode_3309D8**)self->list;
+    ctx.a.list = (sWsListNode**)self->list;
     ctx.a.count = &self->count;
-    ctx.b.list = (sNode_3309D8**)self->list2;
+    ctx.b.list = (sWsListNode**)self->list2;
     ctx.b.count = &self->count2;
     *(int*)&ctx.a.pad08 = 0x40;
     *(int*)&ctx.b.pad08 = 0x40;
@@ -977,7 +968,7 @@ static inline void addPatches_2DB8(sCtx_3309D8* cb, sWsBoundObj* first)
         if (overlapPatch_2DB8(cb->box, p)) {
             int* cnt = cb->count;
             int idx = *cnt;
-            cb->list[idx] = (sNode_3309D8*)p;
+            cb->list[idx] = (sWsListNode*)p;
             *cnt = idx + 1;
         }
     }
@@ -988,7 +979,7 @@ static inline void addAll_2DB8(sCtx_3309D8* cb, sWsBoundObj* first)
     for (sWsBoundObj* p = first; p != 0; p = p->next) {
         int* cnt = cb->count;
         int idx = *cnt;
-        cb->list[idx] = (sNode_3309D8*)p;
+        cb->list[idx] = (sWsListNode*)p;
         *cnt = idx + 1;
     }
 }
@@ -1030,9 +1021,9 @@ extern "C" void func_00332DB8(sSelf_2DB8* self, void* box)
     sCtx2_2DB8 ctx;
     sCtx2_2DB8* c = &ctx;
     self->f04 = self->root->fA0;
-    ctx.a.list = (sNode_3309D8**)self->list;
+    ctx.a.list = (sWsListNode**)self->list;
     ctx.a.count = &self->count;
-    ctx.b.list = (sNode_3309D8**)self->list2;
+    ctx.b.list = (sWsListNode**)self->list2;
     ctx.b.count = &self->count2;
     *(int*)&ctx.a.pad08 = 0x40;
     *(int*)&ctx.b.pad08 = 0x40;
@@ -1041,7 +1032,7 @@ extern "C" void func_00332DB8(sSelf_2DB8* self, void* box)
     self->count = 0;
     sCtx_3309D8* c2 = &ctx.b;
     *c2->count = 0;
-    ctx.c.list = (sNode_3309D8**)self->list3;
+    ctx.c.list = (sWsListNode**)self->list3;
     ctx.c.count = &self->count3;
     *(int*)&ctx.c.pad08 = 0x200;
     ctx.c.box = (sWsBox*)box;
@@ -2109,12 +2100,6 @@ struct sCb_7A48 {
     sWsBoxV* box;
 };
 
-struct sNodeEnt_7A48 {
-    sNodeEnt_7A48* next;            // 0x00
-    int pad04;
-    int type;                       // 0x08
-    void* obj;                      // 0x0C
-};
 
 extern "C" void descendRec_7A48(void* self, sCb_7A48* cb) __asm__("func_003411B8");
 extern "C" void helpX_7A48(char* flag, sCb_7A48* cb, sCb_7A48* cb2, sWsBoxV* box, void** node, sCell_330BA8* cell) __asm__("func_0033ED60");
@@ -2128,8 +2113,8 @@ static inline void visit_7A48(sSelf_6F30* t, int k, sCb_7A48* cb, sWsBoxV* box)
         char* f = (char*)&h;
         int r = func_00328360(c, box);
         if (r == 0) {
-            for (sNodeEnt_7A48* o = *(sNodeEnt_7A48**)((char*)n + 0x28); o != 0; o = o->next) {
-                int type = o->type;
+            for (sWsListNode* o = *(sWsListNode**)((char*)n + 0x28); o != 0; o = o->next) {
+                int type = o->flags;
                 if (type == 2) {
                     func_0035C698(o->obj, cb->box, cb->box, cb->pos, cb->mask, cb->cnt, cb->dist, cb->a2);
                 } else if (type == 3) {
@@ -2498,7 +2483,7 @@ static inline void gather_A3D8(sWsBoundObj* p, sCb_A3D8* cb)
         if (hit) {
             int* cnt = q->count;
             int n = *cnt;
-            q->list[n] = (sNode_3309D8*)p;
+            q->list[n] = (sWsListNode*)p;
             *cnt = n + 1;
         }
     }
@@ -2665,7 +2650,7 @@ static inline void gather_B748(sWsBoundObj* p, sCb_B748* cb)
         if (hit) {
             int* cnt = q->count;
             int n = *cnt;
-            q->list[n] = (sNode_3309D8*)p;
+            q->list[n] = (sWsListNode*)p;
             *cnt = n + 1;
         }
     }
@@ -3798,7 +3783,7 @@ extern "C" void func_00340C20(sTree_340C20* tree, sCtx_3309D8* ctx)
         if (overlapObj_340C20(q->box, p)) {
             int* cnt = q->count;
             int n = *cnt;
-            q->list[n] = (sNode_3309D8*)p;
+            q->list[n] = (sWsListNode*)p;
             *cnt = n + 1;
         }
     }
