@@ -1,4 +1,5 @@
 #include "common.h"
+#include "bx/math3d.h"
 
 // ---- Shared declarations: one type per real thing, used by the functions below ----
 
@@ -87,19 +88,16 @@ extern "C" void func_00370CF8(void* self, int reset)
 //100%
 INCLUDE_ASM("render/particle", cBaseClass_DynamicEmitter_reset);
 #ifdef SKIP_ASM
-struct sVec4A {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
 
-extern sVec4A D_004FF120;
+extern t4Vector D_004FF120;
 
 extern "C" void cBaseClass_DynamicEmitter_reset(void* self)
 {
     int i;
     *(int*)((char*)self + 0x17C) = 0;
     for (i = 0; i < *(int*)((char*)self + 0x178); i++) {
-        (*(sVec4A**)((char*)self + 0x1A0))[i] = D_004FF120;
-        (*(sVec4A**)((char*)self + 0x1A4))[i] = D_004FF120;
+        (*(t4Vector**)((char*)self + 0x1A0))[i] = D_004FF120;
+        (*(t4Vector**)((char*)self + 0x1A4))[i] = D_004FF120;
         *(int*)((char*)self + 0x17C) = 0;
         *(int*)((char*)self + 0x1E0) = 0;
     }
@@ -111,7 +109,7 @@ INCLUDE_ASM("render/particle", func_00370DC8);
 #ifdef SKIP_ASM
 int BXrand();
 
-extern "C" void func_0036CBF8(void* sys, int count, int a2, sVec4A* v, float a, float b, float c);
+extern "C" void func_0036CBF8(void* sys, int count, int a2, t4Vector* v, float a, float b, float c);
 extern "C" void func_00370058(void* sys, void* a1, void* def, void* a3, float f);
 extern char D_004FF1A0[];
 
@@ -220,11 +218,11 @@ extern "C" void func_00370DC8(cEmitter_00370DC8* self, char* def, float f)
         self->count = (int)fceil_00370DC8(frames);
         changed = 1;
     }
-    *(sVec4A*)self->v1B0 = D_004FF120;
-    *(sVec4A*)self->v1C0 = D_004FF120;
-    *(sVec4A*)self->v1D0 = D_004FF120;
+    *(t4Vector*)self->v1B0 = D_004FF120;
+    *(t4Vector*)self->v1C0 = D_004FF120;
+    *(t4Vector*)self->v1D0 = D_004FF120;
     float l = life_00370DC8(def);
-    sVec4A v;
+    t4Vector v;
     v.x = *(float*)(def + 0x78);
     v.y = *(float*)(def + 0x7C);
     v.z = *(float*)(def + 0x80);
@@ -249,9 +247,6 @@ extern "C" void func_00370DC8(cEmitter_00370DC8* self, char* def, float f)
 //100%
 INCLUDE_ASM("render/particle", func_003710D0);
 #ifdef SKIP_ASM
-struct sPtQ10D0 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
 
 static inline float randUnit10D0()
 {
@@ -261,13 +256,13 @@ static inline float randUnit10D0()
 }
 
 // PORT: the unit's callers use a 4-arg declaration; bind the real 5-arg body by asm label.
-extern "C" void func_003710D0_impl(char* self, sPtQ10D0* pos, sPtQ10D0* vel, int rnd, float dt) __asm__("func_003710D0");
-extern "C" void func_003710D0_impl(char* self, sPtQ10D0* pos, sPtQ10D0* vel, int rnd, float dt)
+extern "C" void func_003710D0_impl(char* self, t4Vector* pos, t4Vector* vel, int rnd, float dt) __asm__("func_003710D0");
+extern "C" void func_003710D0_impl(char* self, t4Vector* pos, t4Vector* vel, int rnd, float dt)
 {
     if (*(int*)(self + 0x174) == 0) {
         return;
     }
-    int alive = (*(sPtQ10D0**)(self + 0x1A4))[*(int*)(self + 0x17C)].w > 0.0f;
+    int alive = (*(t4Vector**)(self + 0x1A4))[*(int*)(self + 0x17C)].w > 0.0f;
     if (alive) {
         if (rnd == 0) {
             *(int*)(self + 0x1E0) = *(int*)(self + 0x1E0) - 1;
@@ -276,20 +271,20 @@ extern "C" void func_003710D0_impl(char* self, sPtQ10D0* pos, sPtQ10D0* vel, int
         *(int*)(self + 0x1E0) = *(int*)(self + 0x1E0) + 1;
     }
     if (pos) {
-        *(sPtQ10D0*)(self + 0x1B0) = *pos;
+        *(t4Vector*)(self + 0x1B0) = *pos;
     } else {
-        pos = (sPtQ10D0*)(self + 0x1B0);
+        pos = (t4Vector*)(self + 0x1B0);
     }
     if (vel) {
-        *(sPtQ10D0*)(self + 0x1C0) = *vel;
+        *(t4Vector*)(self + 0x1C0) = *vel;
     } else {
-        vel = (sPtQ10D0*)(self + 0x1C0);
+        vel = (t4Vector*)(self + 0x1C0);
     }
-    (*(sPtQ10D0**)(self + 0x1A0))[*(int*)(self + 0x17C)] = *pos;
-    (*(sPtQ10D0**)(self + 0x1A0))[*(int*)(self + 0x17C)].w = 0.0f;
-    (*(sPtQ10D0**)(self + 0x1A4))[*(int*)(self + 0x17C)] = *vel;
+    (*(t4Vector**)(self + 0x1A0))[*(int*)(self + 0x17C)] = *pos;
+    (*(t4Vector**)(self + 0x1A0))[*(int*)(self + 0x17C)].w = 0.0f;
+    (*(t4Vector**)(self + 0x1A4))[*(int*)(self + 0x17C)] = *vel;
     // PORT: pointer held in int (index-first addu)
-    sPtQ10D0* v = (sPtQ10D0*)((*(int*)(self + 0x17C) << 4) + *(int*)(self + 0x1A4));
+    t4Vector* v = (t4Vector*)((*(int*)(self + 0x17C) << 4) + *(int*)(self + 0x1A4));
     if (rnd) {
         v->w = randUnit10D0() + 1.0f;
     } else {
@@ -1422,9 +1417,6 @@ extern "C" void func_00373EA8(void* self, sPtVec4_3EA8* p, sPtMtx_3EA8* mt, floa
 //100%
 INCLUDE_ASM("render/particle", func_00374180);
 #ifdef SKIP_ASM
-struct sPatchVec {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
 
 struct sPatchOut {
     float x, y, z;
@@ -1432,7 +1424,7 @@ struct sPatchOut {
 
 struct sPatchSet {
     char pad_0x00[0x190];
-    sPatchVec* basis[3];    // 0x190
+    t4Vector* basis[3];    // 0x190
     int count[3];           // 0x19C
 };
 
@@ -1441,7 +1433,7 @@ struct sPatchSet {
 extern "C" void func_00374180(sPatchSet* self, char* mat, sPatchOut* out, int idx)
 {
     int n = self->count[idx];
-    sPatchVec* basis = self->basis[idx];
+    t4Vector* basis = self->basis[idx];
     int i;
     int j;
     __asm__ __volatile__(
@@ -1485,7 +1477,7 @@ extern "C" void func_00374180(sPatchSet* self, char* mat, sPatchOut* out, int id
             :
             : "r"(&basis[i]));
         for (j = 0; j < n; j++) {
-            sPatchVec t;
+            t4Vector t;
             __asm__(
                 "lqc2      $vf22, 0x0(%1)\n"
                 "vmulax.xyzw ACC, $vf18, $vf22x\n"
@@ -1583,9 +1575,6 @@ extern "C" void func_00374440(char* self, sPtRect* rect, sPtVec2* out, int idx)
 //100%
 INCLUDE_ASM("render/particle", func_00374518);
 #ifdef SKIP_ASM
-struct sPatchVec4518 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
 
 struct sPatchOut4518 {
     float x, y, z;
@@ -1614,10 +1603,10 @@ static inline sPatchOut4518 Normalize4518(const sPatchOut4518& v)
 
 struct sPatchSet4518 {
     char pad_0x00[0x190];
-    sPatchVec4518* basis[3];    // 0x190
+    t4Vector* basis[3];    // 0x190
     int count[3];               // 0x19C
     char pad_0x1A8[0x310 - 0x1A8];
-    sPatchVec4518* dbasis[3];   // 0x310
+    t4Vector* dbasis[3];   // 0x310
 };
 
 // PORT: PS2-only VU0 inline asm (tensor-product patch evaluation, then normals
@@ -1625,8 +1614,8 @@ struct sPatchSet4518 {
 extern "C" void func_00374518(sPatchSet4518* self, char* mat, sPatchOut4518* out, int idx)
 {
     int n = self->count[idx];
-    sPatchVec4518* basis = self->basis[idx];
-    sPatchVec4518* dbasis = self->dbasis[idx];
+    t4Vector* basis = self->basis[idx];
+    t4Vector* dbasis = self->dbasis[idx];
     sPatchOut4518* o = out;
     int i;
     __asm__ __volatile__(
@@ -1670,7 +1659,7 @@ extern "C" void func_00374518(sPatchSet4518* self, char* mat, sPatchOut4518* out
             :
             : "r"(&dbasis[i]));
         for (int j = 0; j < n; j++) {
-            sPatchVec4518 t;
+            t4Vector t;
             __asm__(
                 "lqc2      $vf22, 0x0(%1)\n"
                 "vmulax.xyzw ACC, $vf18, $vf22x\n"
@@ -1706,7 +1695,7 @@ extern "C" void func_00374518(sPatchSet4518* self, char* mat, sPatchOut4518* out
             :
             : "r"(&basis[i]));
         for (int j = 0; j < n; j++) {
-            sPatchVec4518 t;
+            t4Vector t;
             __asm__(
                 "lqc2      $vf22, 0x0(%1)\n"
                 "vmulax.xyzw ACC, $vf18, $vf22x\n"
@@ -4754,12 +4743,9 @@ extern "C" void func_0037D968(void* selfp)
 //100%
 INCLUDE_ASM("render/particle", func_0037DBE8);
 #ifdef SKIP_ASM
-struct sPtVecDBE8 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
 
 struct sPtMtxDBE8 {
-    sPtVecDBE8 r[4];
+    t4Vector r[4];
 };
 
 struct sPtGfxDBE8 {
@@ -4779,9 +4765,9 @@ struct sPtGfxDBE8 {
 extern "C" void func_0037D968(void* self);
 
 // PORT: PS2-only VU0 inline asm (matrix * vector).
-static inline sPtVecDBE8 mtxApplyDBE8(sPtMtxDBE8* m, const sPtVecDBE8& v)
+static inline t4Vector mtxApplyDBE8(sPtMtxDBE8* m, const t4Vector& v)
 {
-    sPtVecDBE8 out;
+    t4Vector out;
     __asm__(
         ".set push\n"
         ".set noreorder\n"
@@ -4802,12 +4788,12 @@ static inline sPtVecDBE8 mtxApplyDBE8(sPtMtxDBE8* m, const sPtVecDBE8& v)
     return out;
 }
 
-extern "C" int func_0037DBE8(sPtGfxDBE8* self, const sPtVecDBE8* p)
+extern "C" int func_0037DBE8(sPtGfxDBE8* self, const t4Vector* p)
 {
     if (self->clipValid == 0) {
         func_0037D968(self);
     }
-    sPtVecDBE8 v = mtxApplyDBE8(&self->clipMtx, *p);
+    t4Vector v = mtxApplyDBE8(&self->clipMtx, *p);
     int code = 0;
     float w = 1.0f / v.w;
     v.x *= w;
@@ -4929,16 +4915,13 @@ extern "C" int func_0037DE88(void* self, void* a, void* b, void* m)
 //100%
 INCLUDE_ASM("render/particle", func_0037DEE0);
 #ifdef SKIP_ASM
-struct sPartQVec {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
 
 // Transforms v by the 4x4 matrix at self+0x58A0, divides by w, then scales by the
 // vector at self+0x58E0 and adds the one at self+0x58F0.
 // PORT: PS2-only VU0 macro-mode asm; the PC port needs a C version.
-extern "C" sPartQVec func_0037DEE0(void* self, sPartQVec* v)
+extern "C" t4Vector func_0037DEE0(void* self, t4Vector* v)
 {
-    sPartQVec r;
+    t4Vector r;
     __asm__ __volatile__(
         "lqc2      $vf10, 0x0(%1)\n"
         "lqc2      $vf1, 0x0(%2)\n"
@@ -4959,8 +4942,8 @@ extern "C" sPartQVec func_0037DEE0(void* self, sPartQVec* v)
         "sqc2      $vf13, %0\n"
         : "=m"(r)
         : "r"(v), "r"((char*)self + 0x58A0),
-          "m"(*(sPartQVec*)((char*)self + 0x58E0)),
-          "m"(*(sPartQVec*)((char*)self + 0x58F0)));
+          "m"(*(t4Vector*)((char*)self + 0x58E0)),
+          "m"(*(t4Vector*)((char*)self + 0x58F0)));
     return r;
 }
 #endif
@@ -4968,15 +4951,12 @@ extern "C" sPartQVec func_0037DEE0(void* self, sPartQVec* v)
 //100%
 INCLUDE_ASM("render/particle", func_0037DF40);
 #ifdef SKIP_ASM
-struct sPartVec4_DF40 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
 
 // PORT: PS2-only VU0 inline asm; the PC port needs a C fallback (4x4 matrix * vector).
-extern "C" sPartVec4_DF40 func_0037DF40(void* self, sPartVec4_DF40* v)
+extern "C" t4Vector func_0037DF40(void* self, t4Vector* v)
 {
     char* m = (char*)self + 0x58A0;
-    sPartVec4_DF40 r;
+    t4Vector r;
     __asm__ __volatile__(
         ".set push\n"
         ".set noreorder\n"
@@ -5634,9 +5614,6 @@ struct sMat_1310 {
     }
 } __attribute__((aligned(16)));
 
-struct sVec4_1310 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
 
 struct sPtGfx_1310 {
     char pad_0x0[0xE84];
@@ -5730,12 +5707,12 @@ extern "C" void func_00381310(sPtGfx_1310* self, sPtObj_1310* obj)
     p[2] = 0;
     p[3] = (unsigned long)0xD817 << 47;
     p += 4;
-    sVec4_1310 v0;
+    t4Vector v0;
     v0.x = 0.0f;
     v0.y = 0.0f;
     v0.z = 0.0f;
     v0.w = 0.0f;
-    sVec4_1310 v1;
+    t4Vector v1;
     v1.x = 1.0f;
     v1.y = 1.0f;
     v1.z = 0.0f;
@@ -5800,9 +5777,6 @@ struct sMat_16F0 {
     }
 } __attribute__((aligned(16)));
 
-struct sVec4_16F0 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
 
 struct sPtGfx_16F0 {
     char pad_0x0[0xE84];
@@ -5896,12 +5870,12 @@ extern "C" void func_003816F0(sPtGfx_16F0* self, sPtObj_16F0* obj)
     p[2] = 0;
     p[3] = (unsigned long)0xD817 << 47;
     p += 4;
-    sVec4_16F0 v0;
+    t4Vector v0;
     v0.x = 0.0f;
     v0.y = 0.0f;
     v0.z = 0.0f;
     v0.w = 0.0f;
-    sVec4_16F0 v1;
+    t4Vector v1;
     v1.x = 1.0f;
     v1.y = 1.0f;
     v1.z = 0.0f;
@@ -6982,9 +6956,6 @@ struct sMat_5C10 {
     }
 } __attribute__((aligned(16)));
 
-struct sVec4_5C10 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
 
 struct sBez_5C10 {
     char pad_0x0[0x194];
@@ -6999,7 +6970,7 @@ struct sBez_5C10 {
 };
 
 // PORT: PS2-only VU0 inline asm (scale the rows of a 4x4 matrix by a vector).
-static inline sMat_5C10 ScaleMat_5C10(const sMat_5C10& m, const sVec4_5C10& v)
+static inline sMat_5C10 ScaleMat_5C10(const sMat_5C10& m, const t4Vector& v)
 {
     sMat_5C10 d;
     __asm__ __volatile__(
@@ -7026,7 +6997,7 @@ extern int D_004A4474;
 extern "C" unsigned long* func_0038F460(int dma, unsigned int buf, int a2, int a3);
 extern "C" unsigned int func_0038F668(int dma, unsigned long* p, int a2);
 extern "C" void func_0037D968(void* self);
-extern "C" void func_0037E120_5C10(sPtGfx_5C10* gfx, sMat_5C10* m, sMat_5C10* hdr, sVec4_5C10* scale, int flag, int a5, int prim, char** pp) __asm__("func_0037E120");
+extern "C" void func_0037E120_5C10(sPtGfx_5C10* gfx, sMat_5C10* m, sMat_5C10* hdr, t4Vector* scale, int flag, int a5, int prim, char** pp) __asm__("func_0037E120");
 
 // PORT: uncached (0x30000000) pointers held in int; 64-bit GS words are `ulong`.
 extern "C" void func_00385C10(sBez_5C10* self, sMat_5C10* mat, int tex, int flag)
@@ -7044,7 +7015,7 @@ extern "C" void func_00385C10(sBez_5C10* self, sMat_5C10* mat, int tex, int flag
     unsigned int addr = self->gfx->bufAddr;
     sMat_5C10 m = *mat;
     float s = self->scale;
-    sVec4_5C10 sc;
+    t4Vector sc;
     sc.x = s;
     sc.y = s;
     sc.z = s;
@@ -7629,11 +7600,8 @@ extern "C" void *func_00389160(void *arg0, float fparg0, float fparg1, float fpa
 //100%
 INCLUDE_ASM("render/particle", func_00389260);
 #ifdef SKIP_ASM
-struct sPartVec4 {
-    float x, y, z, w;
-} __attribute__((aligned(16)));
 
-extern "C" void func_00389260(sPartVec4* v)
+extern "C" void func_00389260(t4Vector* v)
 {
     for (int i = 0; i < 10; i++) {
         v[i].x = v[i].y = v[i].z = v[i].w = 0.0f;
@@ -7690,7 +7658,7 @@ extern "C" void func_00389558(float* a, float* b)
 //100%
 INCLUDE_ASM("render/particle", func_00389590);
 #ifdef SKIP_ASM
-extern "C" void func_00389590(sPartVec4* a, sPartVec4* b, sPartVec4* c, float s)
+extern "C" void func_00389590(t4Vector* a, t4Vector* b, t4Vector* c, float s)
 {
     float kx = s * c->x;
     float ky = s * c->y;
@@ -7760,13 +7728,13 @@ extern "C" void func_003896C0(sV4_96C0* v, float* q, float s)
 INCLUDE_ASM("render/particle", func_00389730);
 #ifdef SKIP_ASM
 struct sPartVec4x10 {
-    sPartVec4 v[10];
+    t4Vector v[10];
 };
 
 // PORT: VU0 macro-mode vector add; the PC port needs plain C.
-static inline sPartVec4 sPartVec4_add(const sPartVec4& a, const sPartVec4& b)
+static inline t4Vector sPartVec4_add(const t4Vector& a, const t4Vector& b)
 {
-    sPartVec4 r;
+    t4Vector r;
     __asm__(
         "lqc2       $vf3, 0x0(%1)\n"
         "lqc2       $vf4, 0x0(%2)\n"
@@ -7791,9 +7759,9 @@ extern "C" sPartVec4x10 func_00389730(sPartVec4x10* a, sPartVec4x10* b)
 INCLUDE_ASM("render/particle", func_003897A0);
 #ifdef SKIP_ASM
 // PORT: VU0 macro-mode vector scale; the PC port needs plain C.
-static inline sPartVec4 sPartVec4_scale(const sPartVec4& a, float s)
+static inline t4Vector sPartVec4_scale(const t4Vector& a, float s)
 {
-    sPartVec4 r;
+    t4Vector r;
     __asm__(
         "mfc1       $2, %2\n"
         "lqc2       $vf4, 0x0(%1)\n"
@@ -7820,7 +7788,7 @@ extern "C" sPartVec4x10 func_003897A0(sPartVec4x10* a, float s)
 INCLUDE_ASM("render/particle", func_00389810);
 #ifdef SKIP_ASM
 // PORT: VU0 macro-mode vector scale (vec4 *= s); the PC port needs plain C.
-extern "C" sPartVec4* func_00389810(sPartVec4* v, float s)
+extern "C" t4Vector* func_00389810(t4Vector* v, float s)
 {
     for (int i = 0; i < 10; i++) {
         __asm__ __volatile__(
@@ -7844,7 +7812,7 @@ INCLUDE_ASM("render/particle", func_00389C38);
 #ifdef SKIP_ASM
 struct sParticleEntryA0;
 extern "C" sParticleEntryA0* func_0038ABF8(void* self, int i);
-extern "C" void func_00389CB8(sPartVec4* self, void* p, float s);
+extern "C" void func_00389CB8(t4Vector* self, void* p, float s);
 extern int D_004A43C4;
 
 struct sPartLib_9C38 {
@@ -7853,14 +7821,14 @@ struct sPartLib_9C38 {
     void* items;    // 0x8
 };
 extern sPartLib_9C38 D_005047F8;
-extern sPartVec4 D_00504810;
+extern t4Vector D_00504810;
 
-extern "C" void func_00389C38(sPartVec4* self, void* p)
+extern "C" void func_00389C38(t4Vector* self, void* p)
 {
     func_00389260(self);
     sPartLib_9C38* lib = &D_005047F8;
     if (lib->count > 0) {
-        func_00389590(self, (sPartVec4*)func_0038ABF8(lib, D_004A43C4), &D_00504810, 1.0f);
+        func_00389590(self, (t4Vector*)func_0038ABF8(lib, D_004A43C4), &D_00504810, 1.0f);
     }
     if (p != 0) {
         func_00389CB8(self, p, 1.0f);
