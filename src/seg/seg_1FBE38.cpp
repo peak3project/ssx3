@@ -6611,7 +6611,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00307308);
 extern "C" void* cBE_getBE();
 // PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern char* D_004A28A8_7308 __asm__("D_004A28A8");
 extern "C" int func_00153D78(void* missions, int id);
 extern "C" void func_00154160(void* missions, int id, int done);
 extern "C" int func_00153FA0(void* missions, int id);
@@ -6629,11 +6628,6 @@ extern "C" void func_00309B00(int script, void* self);
 extern "C" void func_0026F228(void* replay);
 extern "C" void func_0026F7B8(void* replay);
 
-struct sGame_7308 {
-    char pad_0x0[0x28];
-    void* riders[8];        // 0x28
-};
-
 // Mission completed: pays the reward the first time, unlocks the follow-up mission and resets the script.
 extern "C" void func_00307308(char* self)
 {
@@ -6645,7 +6639,7 @@ extern "C" void func_00307308(char* self)
         money = func_001511B0(cBE_getInterface_Fv(cBE_getBE(), 0xB), reward);
     }
     int pl = func_00144C98(cBE_getInterface_Fv(cBE_getBE(), 0));
-    sGame_7308* game = *(sGame_7308**)(*(char**)(D_004A28A8_7308 + 0x84) + 0xC);
+    sRace* game = D_004A28A8->game->race;
     func_0010F2D8(game->riders[**(int**)(self + 0x10)], pl, money);
     unsigned int next = func_00153FD8(missions, *(int*)(self + 0x20));
     if (next != 0xFFFFFFFF) {
@@ -6663,8 +6657,8 @@ extern "C" void func_00307308(char* self)
     }
     func_00308DB8(*(int*)(self + 0x10));
     func_00309B00(*(int*)(self + 0x10), self);
-    func_0026F228(*(void**)(*(char**)(D_004A28A8_7308 + 0x84) + 0x28));
-    func_0026F7B8(*(void**)(*(char**)(D_004A28A8_7308 + 0x84) + 0x28));
+    func_0026F228(D_004A28A8->game->f28);
+    func_0026F7B8(D_004A28A8->game->f28);
 }
 #endif
 
