@@ -8115,13 +8115,6 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003C3500);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern int D_0044DD48_3500[] __asm__("D_0044DD48");
-struct A_3500 {
-    char pad0[0xCB0];
-    char *p;
-    char pad1[0x1A9E - 0xCB4];
-    short s;
-};
-extern struct A_3500 D_0050AD00_3500 __asm__("D_0050AD00");
 
 void func_003C3500(unsigned a) {
     unsigned v = a;
@@ -8146,10 +8139,10 @@ void func_003C3500(unsigned a) {
     } else if (a == 120) {
         v = 7;
     }
-    D_0050AD00_3500.s = (0x200000 - D_0044DD48_3500[v]) >> 6;
-    D_0050AD00_3500.p[0x10] = v;
-    D_0050AD00_3500.p[0x11] = D_0050A8E8.f220[0].f04;
-    D_0050AD00_3500.p[0x12] = D_0050A8E8.f220[0].f08;
+    D_0050AD00.f1A9E = (0x200000 - D_0044DD48_3500[v]) >> 6;
+    D_0050AD00.fCB0->f10 = v;
+    D_0050AD00.fCB0->f11 = D_0050A8E8.f220[0].f04;
+    D_0050AD00.fCB0->f12 = D_0050A8E8.f220[0].f08;
 }
 #endif
 
