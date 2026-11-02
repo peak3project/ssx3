@@ -915,12 +915,10 @@ int func_003DCF10(T_CF10 arg0) {
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DCF40);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern int D_00519AD8_CF40[] __asm__("D_00519AD8");
 typedef struct { unsigned char a, b, c, d; } T_CF40;
 
 int func_003DCF40(T_CF40 arg0) {
-    return *(int *)((char*)(D_00519AD8_CF40[0]) + arg0.d * 0x30 + 0x14);
+    return D_00519AD8[arg0.d].f14;
 }
 #endif
 
