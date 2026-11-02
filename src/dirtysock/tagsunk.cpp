@@ -416,7 +416,192 @@ extern "C" void func_00259A60(char* self, int unused)
 }
 #endif
 
+//100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00259B10);
+#ifdef SKIP_ASM
+extern char D_004A2F38[];
+extern char D_004A2F40[];
+extern char D_004A2F48[];
+extern char D_004A2F50[];
+extern char D_004A2EF8[];
+extern char D_004A2F00[];
+extern char D_00480610[];
+extern char D_00480620[];
+extern char D_00480660[];
+extern char D_00480670[];
+extern char D_00480680[];
+extern char D_004807E8[];
+extern void* D_004807F8[];
+extern char D_00480808[];
+extern void* D_004A3328;
+extern void* D_004A3028;
+extern void* D_004A2EB8;
+extern "C" const char* cDirtysock_tag_TagFieldFind(const char* record, const char* name);
+extern "C" int func_004178B0(const char* s, const char* fmt, ...);
+extern "C" int func_004165A8(void*, void*);
+char* cCommSystem_getSignature_9B10(void* comm) __asm__("cCommSystem_getSignature");
+extern "C" void func_00260F80(void);
+extern "C" int func_00261460(void* p);
+extern "C" void func_002613C8(void* p);
+extern "C" int func_002623B0_9B10(void* self, char* name) __asm__("func_002623B0");
+extern "C" int func_00263128(char* self, char* name);
+extern "C" void func_00263018(void* self, void* name);
+extern "C" void func_00262AF0(char* self, char* name, int a2, int a3, int a4, int a5, int a6, int a7,
+                              int s0, int s1, char* s2, int s3, int s4, int s5, int s6);
+extern "C" void func_0025F628(void* selfp, int notify, int flag);
+extern "C" void func_0025F858(void* self);
+extern "C" void func_0025FA48(void* self, const char* name);
+extern "C" void func_0025FAD0(void* self, const char* name);
+void* func_0025FB80_9B10(void* self, const char* name, const void* reason) __asm__("func_0025FB80");
+extern "C" void func_0025AB40(char* self, const char* a, const char* b);
+
+
+struct sMsgListNode9B10 {
+    sMsgListNode9B10* next;
+    sMsgListNode9B10* prev;
+    void* data;
+};
+
+struct sMsgListIter9B10 {
+    sMsgListNode9B10* node;
+    sMsgListIter9B10(sMsgListNode9B10* x) : node(x) {}
+    sMsgListIter9B10(const sMsgListIter9B10& x) : node(x.node) {}
+};
+
+static inline sMsgListIter9B10 sMsgList9B10_insert(sMsgListIter9B10 pos, void* const& x)
+{
+    sMsgListNode9B10* tmp = (sMsgListNode9B10*)operator new(0xC, D_004804A8, 0x20000000, 0);
+    void** data = &tmp->data;
+    if (data != 0)
+        *data = x;
+    tmp->next = pos.node;
+    tmp->prev = pos.node->prev;
+    pos.node->prev->next = tmp;
+    pos.node->prev = tmp;
+    return tmp;
+}
+
+// Simple tag message: kind word, then the vtable pointer.
+struct sTagMsg9B10 {
+    int kind;
+    void** vt;
+    sTagMsg9B10(int k) { kind = k; vt = D_004812B0; }
+};
+
+static inline void post_9B10(char* g, void* msg)
+{
+    void* mp = msg;
+    sMsgList9B10_insert(*(sMsgListNode9B10**)(g + 0xF0), mp);
+}
+
+static inline void* Mgr_9B10()
+{
+    if (D_004A3328 == 0)
+        func_00260F80();
+    if (func_00261460(D_004A3328) == 0)
+        func_002613C8(D_004A3328);
+    if (D_004A3328 == 0)
+        func_0025B800(D_004A3028);
+    return D_004A3328;
+}
+
+// cBXString (one pointer): ctor/dtor are the out-of-line cBXString functions.
+struct cBXStr9B10 {
+    char* str;
+    cBXStr9B10(const char* s) __asm__("cBXString_cBXString2");
+    cBXStr9B10(const cBXStr9B10& o) : str(o.str) {}
+    ~cBXStr9B10() { cBXString__cBXString(this, 2); }
+};
+
+// operator+(const cBXString&, const char*), returned by value.
+cBXStr9B10 func_00318630_9B10(const cBXStr9B10& a, const char* b) __asm__("func_00318630");
+
+struct sTagEvt9B10 {
+    int f0;
+    int kind;       // 0x4
+    unsigned int flags; // 0x8
+    char* record;   // 0xC
+};
+
+extern "C" void func_00259B10(char* self, sTagEvt9B10* msg)
+{
+    char name[0x100];
+    char text[0x100];
+    cDirtysock_tag_TagFieldGetString(cDirtysock_tag_TagFieldFind(msg->record, D_004A2F38), name, 0x100, D_004A2F40);
+    cDirtysock_tag_TagFieldGetUnk(cDirtysock_tag_TagFieldFind(msg->record, D_004A2F48), text, 0x100, D_004A2F40);
+    switch (msg->kind) {
+    case 0x70726976: // 'priv'
+        if ((msg->flags & 0x200000) == 0) {
+        if ((msg->flags & 0x40000000) != 0) {
+            char cmd[0x100];
+            char sig[0x40];
+            int a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11;
+            func_004178B0(text, D_00480620, cmd, &a0, &a1, &a2, &a3, &a4, &a5, &a6, &a7, sig, &a8, &a9, &a10, &a11);
+            if (func_004165A8(cmd, D_00480610) == 0) {
+                if (func_004165A8(sig, cCommSystem_getSignature_9B10(D_004A2EB8)) != 0) {
+                    func_0025FB80_9B10(self, name, D_004807E8);
+                } else if (func_002623B0_9B10(Mgr_9B10(), name) != 0) {
+                    func_0025FB80_9B10(self, name, D_004A2F50);
+                } else if (*(int*)self == 0x16 && func_004165A8(*(char**)(self + 0x98), name) == 0) {
+                    func_0025F628(self, 1, 1);
+                } else {
+                    func_00262AF0((char*)Mgr_9B10(), name, a0, a1, a2, a3 != 0, a4 != 0, a5 != 0, a6, a7 != 0, text, a8, a9, a10, a11);
+                }
+            } else if (func_004165A8(cmd, D_00480670) == 0) {
+                if (*(int*)self == 0x16 && func_004165A8(*(char**)(self + 0x98), name) == 0)
+                    func_0025FA48(self, name);
+                else if (*(int*)self == 0x17)
+                    func_0025FAD0(self, name);
+                else
+                    func_0025FB80_9B10(self, name, D_004807F8);
+            } else if (func_004165A8(cmd, D_004A2EF8) == 0) {
+                if (*(int*)self == 0x16)
+                    *(int*)self = 1;
+                post_9B10(self, new (D_00480488, 0x20000000, 0) sTagMsg9B10(0xED));
+            } else if (func_004165A8(cmd, D_00480660) == 0) {
+                if (func_00263128((char*)Mgr_9B10(), name) != 0)
+                    func_00263018(Mgr_9B10(), name);
+                int same = func_0041AA88(*(void**)(self + 0x98), name) == 0;
+                int ok = 0;
+                if (*(int*)self == 0x18) {
+                    if (same) {
+                        func_0025F858(self);
+                        ok = 1;
+                    }
+                } else if (*(int*)self == 0x16 || *(int*)self == 0x17) {
+                    if (same) {
+                        *(int*)self = 1;
+                        ok = 1;
+                    }
+                } else {
+                    ok = 1;
+                }
+                if (ok)
+                    post_9B10(self, new (D_00480488, 0x20000000, 0) sTagMsg9B10(0xEE));
+            } else if (func_004165A8(cmd, D_004A2F00) == 0) {
+                if (*(int*)self == 0x16)
+                    *(int*)self = 1;
+                post_9B10(self, new (D_00480488, 0x20000000, 0) sTagMsg9B10(0xF0));
+            } else if (func_004165A8(cmd, D_00480680) == 0) {
+                if (*(int*)self == 0x16)
+                    *(int*)self = 1;
+                post_9B10(self, new (D_00480488, 0x20000000, 0) sTagMsg9B10(0xF2));
+            }
+        }
+        }
+        break;
+    case 0x63686174: // 'chat'
+        if (func_002623B0_9B10(Mgr_9B10(), name) == 0)
+            func_0025AB40(self, name, text);
+        break;
+    case 0x63617374: { // 'cast'
+        cBXStr9B10 line = func_00318630_9B10(cBXStr9B10(D_00480808), text);
+        func_0025AB40(self, name, line.str);
+        break;
+    }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025A1D0);
