@@ -118,6 +118,49 @@ struct sHit {
     char pad74[0xC];
 } __attribute__((aligned(16)));
 
+struct sGsState {
+    unsigned int w0;
+    unsigned int f4_0 : 2;
+    unsigned int f4_2 : 5;
+    unsigned int f4_7 : 5;
+    unsigned int f4_12 : 8;
+    unsigned int f4_20 : 2;
+    unsigned int f4_22 : 1;
+    unsigned int f4_23 : 2;
+    unsigned int f4_25 : 7;
+    unsigned int f8_0 : 5;
+    unsigned int f8_5 : 5;
+    unsigned int f8_10 : 19;
+    unsigned int f8_29 : 3;
+    unsigned int wC;
+    int f10 : 16;
+    unsigned int f10hi : 16;
+};
+
+// The graphics manager (EA name cGraphicsMan, from the prototype); D_004A289C is the instance.
+class cGraphicsMan {
+public:
+    char pad[0xE84];
+    sGsState* stateTop;
+    char padE88[0x10D8 - 0xE88];
+    virtual void v0(); virtual void v1(); virtual void v2(); virtual void v3();
+    virtual void v4(); virtual void v5(); virtual void v6(); virtual void v7();
+    virtual void v8(); virtual void v9(); virtual void v10(); virtual void v11();
+    virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15();
+    virtual void v16(); virtual void v17(); virtual void v18(); virtual void v19();
+    virtual void BeginScene();
+    virtual void EndScene();
+    virtual void v22(); virtual void v23(); virtual void v24();
+    virtual void SetViewport(float, float, float, float, int, int, float, float);
+    virtual void v26(); virtual void v27(); virtual void v28(); virtual void v29();
+    virtual void Begin2D();
+    virtual void End2D();
+    virtual void v32();
+    virtual void SetTexture(void*);
+};
+
+extern cGraphicsMan* D_004A289C;
+
 // Constant vectors (in .bss, set up at startup); named by use: D_004FF120 zero, D_004FF130 origin (w = 1),
 // D_004FF140 / D_004FF150 / D_004FF160 the x / y / z axes, D_004FF220 the identity rotation.
 extern t4Vector D_004FF120;
@@ -403,7 +446,6 @@ extern "C" void func_0011BE88(cRider* self, void** list, int n)
 //100%
 INCLUDE_ASM("ai/rider", func_0011C0E0);
 #ifdef SKIP_ASM
-extern void* D_004A289C;
 
 extern "C" int func_0011C0E0(cRider* self)
 {
@@ -2623,7 +2665,6 @@ have_axis:
 //100%
 INCLUDE_ASM("ai/rider", func_00121F30);
 #ifdef SKIP_ASM
-extern void* D_004A289C;
 extern "C" void func_0031BE50(float* s, float* c, float angle);
 
 
@@ -2685,7 +2726,6 @@ extern "C" void func_00121F30(cRider* self)
 INCLUDE_ASM("ai/rider", func_00122048);
 #ifdef SKIP_ASM
 extern "C" void func_00389C38(void* p, int a);
-extern void* D_004A289C;
 
 
 extern "C" void func_00122048()
@@ -2781,7 +2821,6 @@ extern "C" void func_001220D8(cRider* self)
 INCLUDE_ASM("ai/rider", func_00122278);
 #ifdef SKIP_ASM
 // PORT: PS2-only VU0 microprogram call (lqc2/ctc2/vcallmsr/cfc2); the PC port needs a C version.
-extern void* D_004A289C;
 extern void* D_004A28A8;
 extern char D_828[];
 
@@ -2858,7 +2897,6 @@ extern "C" int func_00122278(cRider* self)
 INCLUDE_ASM("ai/rider", func_00122448);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern void* D_004A289C;
 extern void* D_004A28A8;
 extern "C" void func_00121F30(cRider* self);
 extern "C" void func_00310640(void* model, int lod, int a, int b);
@@ -2972,53 +3010,12 @@ struct sV2_2680 {
     sV2_2680(const float& ax, const float& ay) : x(ax), y(ay) {}
 };
 
-struct sGsState_2680 {
-    unsigned int w0;
-    unsigned int f4_0 : 2;
-    unsigned int f4_2 : 5;
-    unsigned int f4_7 : 5;
-    unsigned int f4_12 : 8;
-    unsigned int f4_20 : 2;
-    unsigned int f4_22 : 1;
-    unsigned int f4_23 : 2;
-    unsigned int f4_25 : 7;
-    unsigned int f8_0 : 5;
-    unsigned int f8_5 : 5;
-    unsigned int f8_10 : 19;
-    unsigned int f8_29 : 3;
-    unsigned int wC;
-    int f10 : 16;
-    unsigned int f10hi : 16;
-};
-
-extern sGsState_2680 D_00501420_2680 __asm__("D_00501420");
+extern sGsState D_00501420;
 extern char D_004FF1A0[];
 extern int D_004A4540;
 // Release build: the assert compiles to nothing (gcc still emits its loop notes).
 #define ASSERT_2680(cond) do { } while (0)
 
-class cGfx_2680 {
-public:
-    char pad[0xE84];
-    sGsState_2680* stateTop;
-    char padE88[0x10D8 - 0xE88];
-    virtual void v0(); virtual void v1(); virtual void v2(); virtual void v3();
-    virtual void v4(); virtual void v5(); virtual void v6(); virtual void v7();
-    virtual void v8(); virtual void v9(); virtual void v10(); virtual void v11();
-    virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15();
-    virtual void v16(); virtual void v17(); virtual void v18(); virtual void v19();
-    virtual void BeginScene();
-    virtual void EndScene();
-    virtual void v22(); virtual void v23(); virtual void v24();
-    virtual void SetViewport(float, float, float, float, int, int, float, float);
-    virtual void v26(); virtual void v27(); virtual void v28(); virtual void v29();
-    virtual void Begin2D();
-    virtual void End2D();
-    virtual void v32();
-    virtual void SetTexture(void*);
-};
-
-extern cGfx_2680* D_004A289C_2680 __asm__("D_004A289C");
 
 // PORT: second vec2 temp is built by a by-value ctor.
 struct sV2v_2680 {
@@ -3039,22 +3036,22 @@ extern "C" void func_00122680(void)
     if (D_004A4540 == 0) {
         sOverlay_2680* o = *(sOverlay_2680**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x24);
         o->f38 = o->f30;
-        D_004A289C_2680->BeginScene();
-        D_004A289C_2680->Begin2D();
-        cGfx_2680* g = D_004A289C_2680;
+        D_004A289C->BeginScene();
+        D_004A289C->Begin2D();
+        cGraphicsMan* g = D_004A289C;
         g->stateTop[1] = g->stateTop[0];
         g->stateTop++;
-        *D_004A289C_2680->stateTop = D_00501420_2680;
-        *(short*)(*(char**)((char*)D_004A289C_2680 + 0xE84) + 0x10) = -1;
-        D_004A289C_2680->SetViewport(0.0f, 0.0f, 640.0f, 480.0f, 0, 0, 0.0f, 1.0f);
-        D_004A289C_2680->SetTexture(D_004FF1A0);
-        D_004A289C_2680->stateTop->f8_5 = 24;
-        D_004A289C_2680->stateTop->f4_2 = 5;
+        *D_004A289C->stateTop = D_00501420;
+        *(short*)(*(char**)((char*)D_004A289C + 0xE84) + 0x10) = -1;
+        D_004A289C->SetViewport(0.0f, 0.0f, 640.0f, 480.0f, 0, 0, 0.0f, 1.0f);
+        D_004A289C->SetTexture(D_004FF1A0);
+        D_004A289C->stateTop->f8_5 = 24;
+        D_004A289C->stateTop->f4_2 = 5;
         o->f28 = sV2_2680(2.0f, 2.0f);
         *(sV2v_2680*)&o->f28 = sV2v_2680(0.0f, 0.0f);
-        D_004A289C_2680->End2D();
-        D_004A289C_2680->EndScene();
-        D_004A289C_2680->stateTop--;
+        D_004A289C->End2D();
+        D_004A289C->EndScene();
+        D_004A289C->stateTop--;
         int unused[4]; // PORT: stack padding (frame +16)
     }
 }
@@ -3085,7 +3082,6 @@ struct sObj_2898 {
 };
 
 
-extern void* D_004A289C;
 extern int D_004A4C00;
 extern t3Vector D_004A5E40;
 
