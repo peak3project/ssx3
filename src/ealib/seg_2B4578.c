@@ -17993,7 +17993,6 @@ b10:
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D5A98);
 #ifdef SKIP_ASM
-extern int D_0044F438_5A98 __asm__("D_0044F438");
 extern int func_002AF6C0(int, int);
 
 void func_003D5A98_impl(struct sPathVoice *v) __asm__("func_003D5A98");
@@ -18019,7 +18018,7 @@ void func_003D5A98_impl(struct sPathVoice *v) {
         pos = 0;
     }
     l.neg = pos;
-    t = (float)(unsigned)(D_0044F438_5A98 - v->f08) / (float)l.dur;
+    t = (float)(unsigned)(D_0044F438 - v->f08) / (float)l.dur;
     if (t >= 1.0f) {
         func_002AF6C0(v->f54, v->f34);
         none = -1;
