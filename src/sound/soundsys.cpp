@@ -467,6 +467,12 @@ extern signed char D_00535C10[];
 extern signed char D_00535C11[];
 extern signed char D_00535C12[];
 
+// True when the word at D_004A28A4 + 0x550 equals m.
+static inline int sndIsMode(int m)
+{
+    return *(int*)((char*)D_004A28A4 + 0x550) == m;
+}
+
 // ---- end of shared declarations ----
 
 //100%
@@ -5596,10 +5602,6 @@ int func_002B1458_f(void* self, int a, int b, int c, int d, float f, int e, int 
 void* func_00285D98_p(void* self, int which) __asm__("func_00285D98");
 unsigned func_002A1820_0560(void* self, void* a, void* b) __asm__("func_002A1820");
 void func_0031BE50_0560(float a, float* x, float* y) __asm__("func_0031BE50");
-static inline int sndA30Mode0560(int m)
-{
-    return *(int*)((char*)D_004A28A4 + 0x550) == m;
-}
 
 
 // PORT: PS2-only VU0 inline asm (4-component dot product).
@@ -5627,7 +5629,7 @@ void func_002A0560_0560(void* self, sSndRider* a, sSndRider* b) __asm__("func_00
 void func_002A0560_0560(void* self, sSndRider* a, sSndRider* b)
 {
     if (func_0029F0A0(self) == 0) return;
-    if (!sndA30Mode0560(2)) return;
+    if (!sndIsMode(2)) return;
     if (func_00288AE0(self) != 0) return;
     if (func_00123168(a) != 0) return;
     if (func_00123168(b) != 0) return;
@@ -5694,17 +5696,13 @@ extern "C" int func_00288B40(void* self, int which, float f);
 int func_002B1458_f(void* self, int a, int b, int c, int d, float f, int e, int refresh) __asm__("func_002B1458");
 // PORT: the unit defines func_0029F330 as void; it returns its tail call's result.
 void* func_00285D98_p(void* self, int which) __asm__("func_00285D98");
-static inline int sndA30Mode(int m)
-{
-    return *(int*)((char*)D_004A28A4 + 0x550) == m;
-}
 
 extern "C" int func_002A1820(void* self, sSndRider* a, sSndRider* b);
 
 extern "C" void func_002A0A30(void* self, sSndRider* a, sSndRider* b, int p7, int p8)
 {
     if (func_0029F0A0(self) == 0) return;
-    if (!sndA30Mode(2)) return;
+    if (!sndIsMode(2)) return;
     if (func_00288AE0(self) != 0) return;
     if (func_00123168(a) != 0) return;
     if (func_00123168(b) != 0) return;
