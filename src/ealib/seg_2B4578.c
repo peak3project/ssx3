@@ -693,32 +693,26 @@ extern void func_003B8A38();
 extern void func_003C2268_5320() __asm__("func_003C2268");
 extern int func_003B5C40();
 extern void func_003C3358();
-struct G_5320 {
-    char pad0[0x174]; char f174; char pad1[0x1D8 - 0x175];
-    void (*f1D8)(void); void (*f1DC)(void); void (*f1E0)(void); void (*f1E4)(int);
-    void (*f1E8)(void); void (*f1EC)(void); int f1F0; int f1F4;
-};
-extern struct G_5320 D_0050A8E8_5320 __asm__("D_0050A8E8");
 
 int func_003B5320(void) {
     int r;
     if (func_003B5440_5320() == 0) return -14;
     func_003B82B8(0, 0, 0, -1, -1);
-    if (D_0050A8E8_5320.f1D8) D_0050A8E8_5320.f1D8();
-    if (D_0050A8E8_5320.f1DC) D_0050A8E8_5320.f1DC();
-    if (D_0050A8E8_5320.f1E0) D_0050A8E8_5320.f1E0();
-    if (D_0050A8E8_5320.f1EC) D_0050A8E8_5320.f1EC();
-    if (D_0050A8E8_5320.f1E8) D_0050A8E8_5320.f1E8();
+    if (D_0050A8E8.f1D8) D_0050A8E8.f1D8();
+    if (D_0050A8E8.f1DC) D_0050A8E8.f1DC();
+    if (D_0050A8E8.f1E0) D_0050A8E8.f1E0();
+    if (D_0050A8E8.f1EC) D_0050A8E8.f1EC();
+    if (D_0050A8E8.f1E8) D_0050A8E8.f1E8();
     func_003BC530();
     func_003B8A38();
-    if (D_0050A8E8_5320.f1E4) D_0050A8E8_5320.f1E4(-1);
+    if (D_0050A8E8.f1E4) D_0050A8E8.f1E4(-1);
     func_003C2268_5320();
     func_003B58A0();
-    func_003B5E98(D_0050A8E8_5320.f1F0);
-    func_003B5E98(D_0050A8E8_5320.f1F4);
+    func_003B5E98(D_0050A8E8.f1F0);
+    func_003B5E98(D_0050A8E8.f1F4);
     func_003B58D8();
     r = func_003B5C40();
-    D_0050A8E8_5320.f174 = 0;
+    D_0050A8E8.f174 = 0;
     func_003C3358();
     return r;
 }
