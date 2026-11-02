@@ -5212,8 +5212,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00304100);
 extern "C" void func_003E6574(void*, void*, int);
 int* func_00226610(void*);
 struct Ent_4100 { int idx; int val; int pad; int kind; };
-struct R12_4100 { int a; int b; int c; };
-extern R12_4100 D_004C9098_4100 __asm__("D_004C9098");
 
 extern int D_004A3D48_4100[2] __asm__("D_004A3D48");
 void func_0030B4D8(void*, int, int);
@@ -5221,7 +5219,7 @@ extern void* D_004A3DD8_4100 __asm__("D_004A3DD8");
 extern int D_004A57E8_4100 __asm__("D_004A57E8");
 struct T12_4100 { int a; int b; sBindEnd_1FBE38 f; };
 extern T12_4100 D_004FBCA8_4100 __asm__("D_004FBCA8");
-extern "C" R12_4100 func_00304100(int n, Ent_4100* e) {
+extern "C" cLunoValue func_00304100(int n, Ent_4100* e) {
     if (D_004A57E8_4100 == 0) {
         D_004FBCA8_4100.a = 0;
         D_004A57E8_4100 = 1;
@@ -5242,7 +5240,7 @@ extern "C" R12_4100 func_00304100(int n, Ent_4100* e) {
             *d = p->val;
     }
     func_0030B4D8(D_004A3DD8_4100, vp[0], vp[1]);
-    return D_004C9098_4100;
+    return D_004C9098;
 }
 #endif
 
