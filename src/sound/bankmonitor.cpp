@@ -14,6 +14,23 @@ extern const sSndCallback D_004A3840[];
 extern const sSndCallback D_004A3848[];
 extern const sSndCallback D_004A3850[];
 
+// One of the 24 bank-slot records D_004D3EF8 (0x28 bytes): sound id, handle and bank index (-1 = free).
+struct sBankMonSlot28 {
+    int id;         // 0x00
+    int handle;     // 0x04
+    int bank;       // 0x08
+    int fC;         // 0x0C
+    int f10;        // 0x10
+    int f14;        // 0x14
+    int f18;        // 0x18
+    int f1C;        // 0x1C
+    int f20;        // 0x20
+    int f24;        // 0x24
+};
+extern sBankMonSlot28 D_004D3EF8[];
+
+extern void* D_004D3E98[];
+
 //100%
 INCLUDE_ASM("sound/bankmonitor", cBankMonitor_cBankMonitor);
 #ifdef SKIP_ASM
@@ -987,7 +1004,6 @@ extern "C" int func_002ADF80(func_002ADF80_sHolder* self, int a)
 }
 #endif
 
-extern void* D_004D3E98[];
 
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002ADFB0__Fi);
@@ -1054,29 +1070,14 @@ extern void* (*D_004A378C)(void*, int, int);
 extern void* (*D_004A3790)(void*, int);
 extern void* (*D_004A3794)(void*);
 
-struct sBankMonSlot28_E048 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-    int f10;
-    int f14;
-    int f18;
-    int f1C;
-    int f20;
-    int f24;
-};
-// D_004D3EF8's own type is defined later in the unit; bind a same-layout view.
-extern sBankMonSlot28_E048 D_004D3EF8_E048[] __asm__("D_004D3EF8");
-
 extern "C" void func_002AE048(void (*cb)(), int id)
 {
     for (int i = 0; i < 24; i++) {
         D_004D3E98[i] = 0;
-        D_004D3EF8_E048[i].f8 = -1;
-        D_004D3EF8_E048[i].f4 = -1;
-        D_004D3EF8_E048[i].f0 = -1;
-        D_004D3EF8_E048[i].f18 = 0;
+        D_004D3EF8[i].bank = -1;
+        D_004D3EF8[i].handle = -1;
+        D_004D3EF8[i].id = -1;
+        D_004D3EF8[i].f18 = 0;
     }
     D_004A3798 = cb;
     D_004A379C = id;
@@ -1171,19 +1172,10 @@ extern "C" void func_002AE1F0(int* self)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002AE230);
 #ifdef SKIP_ASM
-struct sBankSlot_2AE230 {
-    int id;         // 0x0
-    int pad4;
-    int bank;       // 0x8
-    char pad[0x28 - 0xC];
-};
-// D_004D3EF8's own type is defined later in the unit; bind a same-layout view.
-extern sBankSlot_2AE230 D_004D3EF8_2AE230[24] __asm__("D_004D3EF8");
-
 // Finds a slot: bank < 0 asks for a free slot, otherwise the slot holding bank (and id, unless id < 0).
 extern "C" int func_002AE230(int bank, int id)
 {
-    sBankSlot_2AE230* s = D_004D3EF8_2AE230;
+    sBankMonSlot28* s = D_004D3EF8;
     for (int i = 0; i < 24; i++, s++) {
         if (bank < 0) {
             if (s->bank < 0) {
@@ -1212,31 +1204,17 @@ extern "C" int func_002AE290(void) {
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/bankmonitor", func_002AE298);
 #ifdef SKIP_ASM
-struct sBankMonSlot28v {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-    int f10;
-    int f14;
-    int f18;
-    int f1C;
-    int f20;
-    int f24;
-};
-// sBankMonSlot28 / D_004D3EF8 are defined later in the unit; bind a same-layout view.
-extern sBankMonSlot28v D_004D3EF8_v[] __asm__("D_004D3EF8");
 extern "C" int func_002AE230(int a, int b);
 
 extern "C" int func_002AE298(int a, int unused, int b, int c)
 {
     int i = func_002AE230(a, b);
     if (i >= 0 || (i = func_002AE230(-1, -1)) >= 0) {
-        sBankMonSlot28v* e = &D_004D3EF8_v[i];
+        sBankMonSlot28* e = &D_004D3EF8[i];
         e->f1C = 1;
-        e->f8 = a;
-        e->f0 = b;
-        e->f4 = c;
+        e->bank = a;
+        e->id = b;
+        e->handle = c;
         return c;
     }
     return -13;
@@ -1246,19 +1224,6 @@ extern "C" int func_002AE298(int a, int unused, int b, int c)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/bankmonitor", func_002AE328);
 #ifdef SKIP_ASM
-struct sBankMonSlot28 {
-    int f0;
-    int f4;
-    int f8;
-    int fC;
-    int f10;
-    int f14;
-    int f18;
-    int f1C;
-    int f20;
-    int f24;
-};
-extern sBankMonSlot28 D_004D3EF8[];
 extern "C" int func_002AE230(int a, int b);
 extern "C" int func_003B6300(int id);
 
@@ -1270,12 +1235,12 @@ extern "C" int func_002AE328(int a, int b)
         return -1;
     }
     sBankMonSlot28* e = &D_004D3EF8[i];
-    if (e->f4 >= 0) {
+    if (e->handle >= 0) {
         func_003B6300(-1);
         e->f14 = 0;
-        e->f4 = none;
-        e->f8 = none;
-        e->f0 = none;
+        e->handle = none;
+        e->bank = none;
+        e->id = none;
         e->f1C = 0;
         e->f24 = none;
     }
@@ -1286,7 +1251,6 @@ extern "C" int func_002AE328(int a, int b)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("sound/bankmonitor", func_002AE3A8);
 #ifdef SKIP_ASM
-extern sBankMonSlot28 D_004D3EF8[];
 extern "C" int func_002AE230(int a, int b);
 extern "C" int func_002AE328(int a, int b);
 
@@ -1532,7 +1496,6 @@ extern "C" int func_002AEC28(int idx)
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002AEC58);
 #ifdef SKIP_ASM
-extern void* D_004D3E98[];
 extern "C" void func_003B58A0(void);
 extern "C" void func_003B58D8(void);
 extern "C" int func_003B6670(int h, int sub, void* hdr, void* buf, unsigned int* pos);
@@ -1686,7 +1649,6 @@ done:
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002AEFA8);
 #ifdef SKIP_ASM
-extern void* D_004D3E98[];
 extern "C" void func_003B58A0(void);
 extern "C" void func_003B58D8(void);
 extern "C" int func_003B6670(int h, int sub, void* hdr, void* buf, unsigned int* pos);
