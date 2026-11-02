@@ -135,6 +135,13 @@ struct sFlagMesh {
     sVEntry<void(void*, void*)>* vt;   // 0x4
 };
 
+// Four floats with an empty ctor and a placement operator new[] (arrays of 16 are built in place).
+struct sFlagVec4c {
+    float v[4];
+    sFlagVec4c() {}
+    void* operator new[](unsigned int, void* p) { return p; }
+};
+
 // ---- end of shared declarations ----
 
 //100%
@@ -672,11 +679,6 @@ struct sFlagBlock_CAB8 {
     unsigned int w[4];
 };
 
-struct sFlagElem_CAB8 {
-    float v[4];
-    sFlagElem_CAB8() {}
-    void* operator new[](unsigned int, void* p) { return p; }
-};
 
 struct sFlagSet_CAB8 {
     char pad0[0xC];
@@ -702,7 +704,7 @@ extern "C" sFlagSet_CAB8* func_0034CAB8_ctor(sFlagSet_CAB8* self, int a1, void* 
     func_0034FB00(self, a1, 9, obj);
     self->block.w[0] = 0xFFFFFFFF;
     self->vtable = D_0048FA00;
-    new ((char*)self + 0x40) sFlagElem_CAB8[16];
+    new ((char*)self + 0x40) sFlagVec4c[16];
     self->block = *desc;
     self->field_0x30 = 0;
     self->field_0x2c = 0;
@@ -746,18 +748,13 @@ extern "C" void func_0034D1E8(void* self);
 extern void* D_0048FA00[];
 
 
-struct sFlagElem_CBE8 {
-    float v[4];
-    sFlagElem_CBE8() {}
-    void* operator new[](unsigned int, void* p) { return p; }
-};
 
 extern "C" void* func_0034CBE8(void* self, void* a1, void* stream)
 {
     cInstanceNode_cInstanceNode(self, a1, stream);
     *(unsigned int*)((char*)self + 0x1C) = 0xFFFFFFFF;
     *(void***)((char*)self + 0xC) = D_0048FA00;
-    new ((char*)self + 0x40) sFlagElem_CBE8[16];
+    new ((char*)self + 0x40) sFlagVec4c[16];
     sVEntry<void(void*, void*, int)>* e = &(*(sVEntry<void(void*, void*, int)>**)stream)[2];
     e->fn((char*)stream + e->delta, (char*)self + 0x1C, 0x24);
     func_0034D1E8(self);
