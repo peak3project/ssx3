@@ -296,7 +296,7 @@ struct sPath {                      /* 0x928 */
     char buf[0x91C - 0x11C];
     int f91C;
     char pad920[0x924 - 0x920];
-    int f924;
+    int *f924;
 };
 extern struct sPath *D_0044F420;
 extern struct sPath D_00517610[4];
@@ -16430,17 +16430,14 @@ int func_003D1E80_impl(void) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D1F80);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct P_1F80 { char pad[0x30]; unsigned int m_a; int m_b; char pad2[0xDC - 0x38]; char *ptrs[16]; char pad3[0x91C - 0x11C]; int count; char pad4[0x928 - 0x920]; };
 extern int func_002AF370(void);
-extern struct P_1F80 D_7610_1F80[4] __asm__("D_00517610");
 
 int func_003D1F80(unsigned int a0, char *a1) {
     unsigned int m = a0 & 0xFF000000;
     int i, ret = -8;
     for (i = 0; i < 4; i++) {
-        if (D_7610_1F80[i].m_b != 0 && (D_7610_1F80[i].m_a & m) == m) {
-            int c = D_7610_1F80[i].count;
+        if (D_00517610[i].f34 != 0 && (D_00517610[i].f30 & m) == m) {
+            int c = D_00517610[i].f91C;
             if (c >= 0x10) return -0xD;
             ret = 0;
             {
@@ -16448,9 +16445,9 @@ int func_003D1F80(unsigned int a0, char *a1) {
                 *(int *)(a1 + 8) = t;
                 *(int *)a1 = t;
             }
-            D_7610_1F80[i].ptrs[c] = a1;
+            D_00517610[i].f0DC[c] = (struct sPathEvent *)a1;
             c++;
-            D_7610_1F80[i].count = c;
+            D_00517610[i].f91C = c;
         }
     }
     return ret;
