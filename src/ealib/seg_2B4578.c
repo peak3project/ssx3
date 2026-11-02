@@ -16495,9 +16495,8 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003D4050);
 extern void func_003D0B18_4050(void *, void *) __asm__("func_003D0B18");
 extern void func_003D1F80_4050(int, int) __asm__("func_003D1F80");
 extern int PATHI_copyevent_4050(void *) __asm__("PATHI_copyevent");
-extern void func_003D32B8_4050(int, void *) __asm__("func_003D32B8");
+extern void func_003D32B8_4050(struct sPathVoice *, void *) __asm__("func_003D32B8");
 extern void *func_00416210(void *, int, int);
-extern char *D_0044F420_4050[] __asm__("D_0044F420");
 struct M_4050 {
     int w0;
     int w4;
@@ -16508,25 +16507,23 @@ struct M_4050 {
     char be;
     char bf;
 };
-struct G_4050 { char pad[0x58]; int a[1]; };
 struct B_4050 { char pad[0x18]; int w18; char rest[4]; };
 
 int func_003D4050(int idx) {
     struct M_4050 m;
     struct M_4050 a;
     struct B_4050 buf;
-    char *g = D_0044F420_4050[0];
-    char *e = *(char **)(g + 0x34) + *(short *)(*(char **)(g + 0x38) + idx * 2) * 4;
+    char *e = (char *)(D_0044F420->f34 + D_0044F420->f38[idx]);
     int r = 0;
     int k, h;
     if (e != 0) {
         k = *(unsigned short *)(e + 2) & 0x1F;
-        if (((struct G_4050 *)g)->a[k] != 0) {
+        if (D_0044F420->f58[k] != 0) {
             h = (int)((1L << k) | 0x11000000);
             func_00416210(&a, 0, 0x10);
             func_00416210(&m, 0, 0x10);
-            if (*(int *)D_0044F420_4050[0] >= 0) {
-                func_003D32B8_4050(((struct G_4050 *)D_0044F420_4050[0])->a[*(int *)D_0044F420_4050[0]], &buf);
+            if (D_0044F420->f00 >= 0) {
+                func_003D32B8_4050(D_0044F420->f58[D_0044F420->f00], &buf);
                 m.b9 = 2;
                 m.w0 = h;
                 *(int *)&m.sc = buf.w18 - 0xA;
