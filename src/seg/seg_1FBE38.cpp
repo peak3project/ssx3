@@ -3370,8 +3370,7 @@ extern "C" void func_003E6574(void*, void*, int);
 int* func_00226610(void*);
 struct Ent_1120 { int idx; int val; int pad; int kind; };
 extern int D_004A3C68_1120[2] __asm__("D_004A3C68");
-extern "C" void func_0030B9A0(char*, int, unsigned, unsigned);
-extern char *D_004A3DD8_1120 __asm__("D_004A3DD8");
+extern "C" void func_0030B9A0(cWScriptMan*, int, unsigned, unsigned);
 extern char *D_004A28A8_1120 __asm__("D_004A28A8");
 extern int D_004A56B4_1120 __asm__("D_004A56B4");
 struct T12_1120 { unsigned a; unsigned b; sBindEnd_1FBE38 f; };
@@ -3390,7 +3389,7 @@ static inline bool isIdle_1120(int slot) {
     return false;
 }
 extern "C" void* func_00301120(void* self, int n, Ent_1120* e) {
-    int slot = *(int*)D_004A3DD8_1120;
+    int slot = D_004A3DD8->being;
     if (isIdle_1120(slot)) {
         if (D_004A56B4_1120 == 0) {
             D_004FBBD0_1120.a = 0xFFFFFFFF;
@@ -3415,10 +3414,10 @@ extern "C" void* func_00301120(void* self, int n, Ent_1120* e) {
         unsigned x = vp[0];
         if (x != 0xFFFFFFFFu) {
             if (~vp[1] == 0)
-                vp[1] = *(int*)(*(char**)(D_004A3DD8_1120 + 0x290) + 0x78);
+                vp[1] = *(int*)(D_004A3DD8->f290 + 0x78);
             unsigned b1 = vp[1];
             unsigned b0 = vp[0];
-            func_0030B9A0(D_004A3DD8_1120, slot, b0, b1);
+            func_0030B9A0(D_004A3DD8, slot, b0, b1);
             *(int*)((char*)self + 8) = 1;
             *func_00226610(self) = 1;
             return self;
