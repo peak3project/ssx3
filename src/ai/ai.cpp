@@ -17,6 +17,15 @@ struct sVec4
     sVec4(float ax, float ay, float az, float aw) { x = ax; y = ay; z = az; w = aw; }
 } __attribute__((aligned(16)));
 
+// Controller input record handed to the AI input handlers: word 0 holds buttons and per-handler packed fields
+// (read through each handler's own bit view), word 1 the 6-bit signed stick axes (x / 31, y / 31).
+struct sPadIn
+{
+    int f0;
+    int x : 6;
+    int y : 6;
+};
+
 //100%
 INCLUDE_ASM("ai/ai", cAI_cAI);
 #ifdef SKIP_ASM
@@ -4171,8 +4180,6 @@ extern void* D_004A3500;
 extern char D_0043D840[];
 extern char D_0043D788[];
 
-struct sAiBits0_12E9B8 { int v : 6; };
-struct sAiBits6_12E9B8 { int pad : 6; int v : 6; };
 struct sAiBits15_12E9B8 { int pad : 15; int v : 6; };
 struct sAiBits21_12E9B8 { int pad : 21; int v : 6; };
 
@@ -4239,8 +4246,8 @@ extern "C" void func_0012E9B8(void* self, void* in)
     }
     func_00114130(*(void**)self, (w >> 14) & 1, 0);
     func_00113F88(*(void**)self, 1.0f, 0.0f);
-    float sx = aiClamp_12E9B8(((sAiBits0_12E9B8*)((char*)in + 4))->v * 0.032258063554763794f, -0.5f, 0.5f);
-    float sy = aiClamp_12E9B8(((sAiBits6_12E9B8*)((char*)in + 4))->v * 0.032258063554763794f, -0.5f, 0.5f);
+    float sx = aiClamp_12E9B8(((sPadIn*)in)->x * 0.032258063554763794f, -0.5f, 0.5f);
+    float sy = aiClamp_12E9B8(((sPadIn*)in)->y * 0.032258063554763794f, -0.5f, 0.5f);
     if (func_00311AE8(*(void**)(*(char**)self + 0x784), 2) == 10)
     {
         char* r = *(char**)self;
@@ -4657,11 +4664,6 @@ struct sAiBitsX_12F730
     int v : 6;
 };
 
-struct sAiBitsY_12F730
-{
-    int v : 6;
-};
-
 // PORT: PS2-only inline asm (float absolute value).
 static inline float aiAbs_12F730(float x)
 {
@@ -4730,7 +4732,7 @@ extern "C" void func_0012F730(sAiObj12F730* self, void* in)
     }
     int w = *(int*)in;
     float x = ((sAiBitsX_12F730*)&w)->v * 0.032258063554763794f;
-    float y = ((sAiBitsY_12F730*)((char*)in + 4))->v * 0.032258063554763794f;
+    float y = ((sPadIn*)in)->x * 0.032258063554763794f;
     if (w & 0x2000)
     {
         if (func_00107578(self->mRider, y > 0.5f))
@@ -4864,11 +4866,9 @@ extern "C" void func_00113F38(void*, float);
 extern "C" void func_00113F88(void* rider, float a, float b);
 extern "C" void func_00115B58(void*);
 extern "C" void func_00115D48(void*);
-struct sPadIn_130228;
-extern "C" void func_00130228(void* self, sPadIn_130228* in);
+extern "C" void func_00130228(void* self, sPadIn* in);
 extern "C" void func_001303E0(void* self, void* a1);
-struct sPadIn_1304E0;
-extern "C" void func_001304E0(void* self, sPadIn_1304E0* in);
+extern "C" void func_001304E0(void* self, sPadIn* in);
 // PORT: func_001304D0 is defined with one param, but this caller passes the input in $a1.
 void func_001304D0_2(void* self, void* in) __asm__("func_001304D0__FPv");
 
@@ -4935,7 +4935,7 @@ extern "C" void func_0012FC80(void* self, void* in)
     switch (*(int*)self)
     {
     case 0:
-        func_00130228(self, (sPadIn_130228*)in);
+        func_00130228(self, (sPadIn*)in);
         break;
     case 1:
         func_001303E0(self, in);
@@ -4944,7 +4944,7 @@ extern "C" void func_0012FC80(void* self, void* in)
         func_001304D0_2(self, in);
         break;
     case 3:
-        func_001304E0(self, (sPadIn_1304E0*)in);
+        func_001304E0(self, (sPadIn*)in);
         break;
     }
 }
@@ -5106,14 +5106,7 @@ static inline float Abs_130228(float x)
     return r;
 }
 
-struct sPadIn_130228
-{
-    int f0;
-    int x : 6;
-    int y : 6;
-};
-
-extern "C" void func_00130228(void* self, sPadIn_130228* in)
+extern "C" void func_00130228(void* self, sPadIn* in)
 {
     float fx = in->x * 0.032258063554763794f;
     float fy = in->y * 0.032258063554763794f;
@@ -5223,14 +5216,7 @@ extern "C" void func_00115640(void* rider);
 extern "C" float func_00119A38(void*);
 extern "C" void func_001326C8(void*, int);
 
-struct sPadIn_1304E0
-{
-    int f0;
-    int x : 6;
-    int y : 6;
-};
-
-extern "C" void func_001304E0(void* self, sPadIn_1304E0* in)
+extern "C" void func_001304E0(void* self, sPadIn* in)
 {
     int anim = func_00312AA0(*(void**)(*(char**)((char*)self + 0x14) + 0x784), 2);
     char* r;
@@ -5369,12 +5355,6 @@ extern "C" void func_00131428(void*);
 int func_00312AA0(void* self, int i);
 extern "C" float func_0031C228(float x);
 
-struct sAiBits_08D8
-{
-    int lo : 6;
-    int hi : 6;
-};
-
 // PORT: PS2-only VU0 inline asm (4-component dot product).
 static inline float aiDot_08D8(const t4Vector& a, const t4Vector& b)
 {
@@ -5456,9 +5436,8 @@ struct sAiObj_08D8
 extern "C" int func_001308D8(void* vself, void* in)
 {
     sAiObj_08D8* self = (sAiObj_08D8*)vself;
-    sAiBits_08D8* bits = (sAiBits_08D8*)((char*)in + 4);
-    float b = bits->lo * 0.032258063554763794f;
-    float a = bits->hi * 0.032258063554763794f;
+    float b = ((sPadIn*)in)->x * 0.032258063554763794f;
+    float a = ((sPadIn*)in)->y * 0.032258063554763794f;
     float aa = aiAbs_08D8(a);
     float ab = aiAbs_08D8(b);
     float m = aa < ab ? ab : aa;
@@ -5544,17 +5523,6 @@ INCLUDE_ASM("ai/ai", func_00130DD0);
 extern "C" void* func_0028B180();
 extern "C" void func_002A1560(void* mgr, void* rider);
 extern "C" void func_0010EB30(void* rider, int id, int a, int b, void* info);
-
-struct sAiBitsA_130DD0
-{
-    int v : 6;
-};
-
-struct sAiBitsB_130DD0
-{
-    int pad : 6;
-    int v : 6;
-};
 
 struct sCurvePt_130DD0
 {
@@ -5652,7 +5620,7 @@ extern "C" int func_00130DD0(void* self, void* in)
         *(float*)((char*)self + 0x8) += k;
     else
         *(float*)((char*)self + 0x8) = 0.0f;
-    float a = ((sAiBitsA_130DD0*)((char*)in + 4))->v * 0.032258063554763794f;
+    float a = ((sPadIn*)in)->x * 0.032258063554763794f;
     if (*(int*)(*(char**)((char*)self + 0x14) + 0x330) == 2)
         a = -a >? 0.0f;
     else
@@ -5663,7 +5631,7 @@ extern "C" int func_00130DD0(void* self, void* in)
     }
     else
     {
-        float b = aiAbs_130DD0(((sAiBitsB_130DD0*)((char*)in + 4))->v * 0.032258063554763794f);
+        float b = aiAbs_130DD0(((sPadIn*)in)->y * 0.032258063554763794f);
         float m = (a <= b) ? b : a;
         a = 0.0f;
         if (m > 0.5f)
@@ -5907,17 +5875,6 @@ struct sAiBitsY_1620
     int v : 6;
 };
 
-struct sAiBitsC_1620
-{
-    int v : 6;
-};
-
-struct sAiBitsD_1620
-{
-    int pad : 6;
-    int v : 6;
-};
-
 // PORT: PS2-only VU0 inline asm (4-component dot product).
 static inline float aiDot_1620(const t4Vector& a, const t4Vector& b)
 {
@@ -5980,7 +5937,7 @@ extern "C" void func_00131620(void* self, void* in)
 {
     float x = ((sAiBitsX_1620*)in)->v * 0.032258063554763794f;
     float y = ((sAiBitsY_1620*)in)->v * 0.032258063554763794f;
-    float c = ((sAiBitsC_1620*)((char*)in + 4))->v * 0.032258063554763794f;
+    float c = ((sPadIn*)in)->x * 0.032258063554763794f;
     char* r = *(char**)self;
     if (aiDot_1620(*(t4Vector*)(r + 0x1E0), *(t4Vector*)(r + 0x3A0)) < 0.0f)
         c = 0.0f;
@@ -6011,7 +5968,7 @@ extern "C" void func_00131620(void* self, void* in)
         y = 1.0f;
         c = 0.0f;
     }
-    if (func_001161D0(*(void**)self, ((sAiBitsD_1620*)((char*)in + 4))->v * 0.032258063554763794f))
+    if (func_001161D0(*(void**)self, ((sPadIn*)in)->y * 0.032258063554763794f))
         return;
     int w2 = *(int*)in;
     if (func_001163B0(*(void**)self, (w2 >> 18) & 1, (w2 >> 19) & 1))
@@ -6476,11 +6433,6 @@ extern "C" char* func_00311B20(void*, int);
 extern "C" bool func_001446A0(void* self, int bit);
 extern "C" void func_00115640(void* rider);
 
-struct sAiBits00132770
-{
-    int v : 6;
-};
-
 extern "C" int func_00132770(void* self, void* a1)
 {
     if (func_0011FE98(*(void**)((char*)self + 0x8)) != 1)
@@ -6495,7 +6447,7 @@ extern "C" int func_00132770(void* self, void* a1)
         }
     }
     func_00115640(*(void**)((char*)self + 0x8));
-    if (((sAiBits00132770*)((char*)a1 + 4))->v * 0.032258063554763794f != 0.0f)
+    if (((sPadIn*)a1)->x * 0.032258063554763794f != 0.0f)
     {
         func_0011FEC8_impl(*(void**)((char*)self + 0x8), 5);
     }
