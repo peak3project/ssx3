@@ -1942,14 +1942,12 @@ extern char **D_004A47B8_E4A8 __asm__("D_004A47B8");
 extern char *D_004A28A8_E4A8 __asm__("D_004A28A8");
 extern "C" void func_00355BF0_E4A8(void*, void*) __asm__("func_00355BF0");
 struct O_E4A8 { int p0, p1, p2; virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15(); virtual int v16(); };
-struct V3_E4A8 { float x, y, z; };
-extern V3_E4A8 D_004C9098_E4A8 __asm__("D_004C9098");
 extern unsigned D_E4A8[] __asm__("D_004FB818");
 extern int D_004A5620;
 extern const int D_00446268[];
 extern "C" void func_003E6574(void*, void*, int);
 struct Ent_E4A8 { int idx; int val; int pad; int type; };
-extern "C" V3_E4A8 func_002FE4A8(int n, Ent_E4A8 *e) {
+extern "C" cLunoValue func_002FE4A8(int n, Ent_E4A8 *e) {
     if (D_004A5620 == 0) {
         D_E4A8[0] = 0xFFFFFFFF;
         ((int*)D_E4A8)[1] = 0;
@@ -1990,7 +1988,7 @@ extern "C" V3_E4A8 func_002FE4A8(int n, Ent_E4A8 *e) {
         if (p->v16())
             func_00355BF0_E4A8(p, buf);
     }
-    return D_004C9098_E4A8;
+    return D_004C9098;
 }
 #endif
 
