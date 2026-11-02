@@ -6382,7 +6382,6 @@ extern "C" cLunoValue func_00306A90(int n, Ent_6A90 *e) {
 INCLUDE_ASM("seg/seg_1FBE38", func_00306CB0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern char *D_004A28A8_6CB0 __asm__("D_004A28A8");
 extern void *D_004A4028_6CB0 __asm__("D_004A4028");
 void func_00357AE8(void*, int, int);
 void func_00357B10(void*, int, int);
