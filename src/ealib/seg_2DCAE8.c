@@ -2371,24 +2371,22 @@ void func_003DF3C0(int a, int b, struct Q_F3C0 *s) {
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DF488);
 #ifdef SKIP_ASM
-struct L_F488 { struct sReq *a; struct sReq *b; };
 extern char D_00495DB8_F488[] __asm__("D_00495DB8");
 extern int D_00519BF0;
-extern struct L_F488 D_00519BF8_F488 __asm__("D_00519BF8");
 extern void func_003E5698_F488(void *) __asm__("func_003E5698");
 
 void func_003DF488(int n, int arg1) {
     if (D_00450C34 == 0 && n < 0x101) {
         int size = n * 0x30;
         struct sReq *base;
-        struct L_F488 *l;
+        struct sReqQueue *l;
         int i;
         struct sReq *e;
         D_00519BF0 = n;
         base = D_00450C14(D_00495DB8_F488, size, arg1);
-        l = &D_00519BF8_F488;
-        l->b = &base[n - 1];
-        D_00519BF8_F488.a = base;
+        l = &D_00519BF8;
+        l->f04 = &base[n - 1];
+        D_00519BF8.f00 = base;
         D_00450C34 = base;
         func_003E5698_F488(D_00519C08);
         i = 0;
