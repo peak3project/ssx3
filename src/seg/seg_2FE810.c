@@ -46,6 +46,27 @@ typedef struct {
 } sMcCmd;
 extern sMcCmd D_00527240;
 
+/* libmc RPC command block for the calls that pass a file name (0x414 bytes) */
+typedef struct {
+    int port;
+    int slot;
+    int mode;
+    int count;
+    int buffer;
+    char name[0x400];
+} sMcFileCmd;
+/* libmc directory-table entry (0x40 bytes; the name starts at +0x20) */
+typedef struct {
+    char info[0x20];
+    char name[0x20];
+} sMcDirEntry;
+extern sMcFileCmd D_00527270;
+extern sMcDirEntry D_00527200;  /* entry sent with RPC 14 */
+extern char D_00527220[];       /* D_00527200.name (its own splat symbol) */
+extern int D_005276C0[];        /* uncached receive buffer for the read / getInfo callbacks */
+extern char D_00527780[];       /* receive buffer for RPC 12 (func_0040A7D0) */
+extern int D_00528780[];        /* RPC result buffer */
+
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FD810);
 #ifdef SKIP_ASM
@@ -6445,7 +6466,6 @@ void func_00409708(void) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00409940);
 #ifdef SKIP_ASM
-extern int Q_528780[] __asm__("D_00528780");
 extern char Q_4980F0[] __asm__("D_004980F0");
 extern char Q_498108[] __asm__("D_00498108");
 extern char Q_498130[] __asm__("D_00498130");
@@ -6492,23 +6512,23 @@ int func_00409940(void) {
             __asm__ volatile("nop");
         } while (i != 0);
     }
-    r = func_00426D18(&D_005271C0, 0xFE, 0, &D_00527240, 48, Q_528780, 12, 0, 0);
+    r = func_00426D18(&D_005271C0, 0xFE, 0, &D_00527240, 48, D_00528780, 12, 0, 0);
     Q_sig(D_004533C4);
     if (r < 0) {
         D_005271C0.server = 0;
         return r - 100;
     }
-    if (Q_528780[1] < 0x20A) {
+    if (D_00528780[1] < 0x20A) {
         Q_log(Q_498108);
         D_005271C0.server = 0;
         return -120;
     }
-    if (Q_528780[2] < 0x20E) {
+    if (D_00528780[2] < 0x20E) {
         Q_log(Q_498130);
         D_005271C0.server = 0;
         return -121;
     }
-    return Q_528780[0];
+    return D_00528780[0];
 }
 #endif
 
@@ -6529,7 +6549,6 @@ int func_00409B10(void) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00409B60);
 #ifdef SKIP_ASM
-extern int D_00528780[];
 sSifClient *func_00409B60(int *a, int *b) {
     *a = (int)D_00528780;
     *b = (int)&D_004533C0;
@@ -6541,7 +6560,6 @@ sSifClient *func_00409B60(int *a, int *b) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00409B90);
 #ifdef SKIP_ASM
-extern int D_00528780[];
 extern int func_00423DF0(int);
 extern void func_00423DC0(int);
 int func_00409B90(int a) {
@@ -6563,7 +6581,6 @@ int func_00409B90(int a) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00409C48);
 #ifdef SKIP_ASM
-extern int D_00528780[];
 extern int func_00423DF0(int);
 extern void func_00423DC0(int);
 int func_00409C48(int a) {
@@ -6586,8 +6603,6 @@ int func_00409C48(int a) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00409D10);
 #ifdef SKIP_ASM
-extern int A_527270[] __asm__("D_00527270");
-extern int A_528780[] __asm__("D_00528780");
 extern int func_00423DF0(int);
 extern void func_00423DC0(int);
 extern char *strncpy(char *, const char *, int);
@@ -6602,12 +6617,12 @@ int func_00409D10(int a, int b, int s_, int c) {
         func_00423DC0(D_004533C4);
         return -210;
     }
-    strncpy((char *)(A_527270 + 5), s, 0x3FF);
-    A_527270[0] = a;
-    A_527270[2] = c;
-    A_527270[1] = b;
-    ((char *)A_527270)[0x413] = 0;
-    r = func_00426D18(&D_005271C0, 2, 1, A_527270, 0x414, A_528780, 4, 0, 0);
+    strncpy(D_00527270.name, s, 0x3FF);
+    D_00527270.port = a;
+    D_00527270.mode = c;
+    D_00527270.slot = b;
+    D_00527270.name[0x3FF] = 0;
+    r = func_00426D18(&D_005271C0, 2, 1, &D_00527270, 0x414, D_00528780, 4, 0, 0);
     if (r == 0)
         D_004533C0 = 2;
     else
@@ -6632,7 +6647,6 @@ int func_00409E38(int a, int b, int c) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00409E70);
 #ifdef SKIP_ASM
-extern int D_00528780[];
 extern int func_00423DF0(int);
 extern void func_00423DC0(int);
 int func_00409E70(int a) {
@@ -6654,7 +6668,6 @@ int func_00409E70(int a) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00409F28);
 #ifdef SKIP_ASM
-extern int A_528780[] __asm__("D_00528780");
 extern int func_00423DF0(int);
 extern void func_00423DC0(int);
 int func_00409F28(int a, int b, int c) {
@@ -6666,7 +6679,7 @@ int func_00409F28(int a, int b, int c) {
     D_00527240.fd = a;
     D_00527240.offset = b;
     D_00527240.origin = c;
-    r = func_00426D18(&D_005271C0, 4, 1, &D_00527240, 48, A_528780, 4, 0, 0);
+    r = func_00426D18(&D_005271C0, 4, 1, &D_00527240, 48, D_00528780, 4, 0, 0);
     if (r == 0)
         D_004533C0 = 4;
     else
@@ -6699,8 +6712,6 @@ void func_0040A000(void *a) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040A090);
 #ifdef SKIP_ASM
-extern int A_5276C0[] __asm__("D_005276C0");
-extern int A_528780[] __asm__("D_00528780");
 extern int func_00423DF0(int);
 extern void func_00423DC0(int);
 extern void func_00426358(int, int);
@@ -6711,12 +6722,12 @@ int func_0040A090(int a, int b, int c) {
     if (func_00423DF0(D_004533C4) < 0)
         return -200;
     D_00527240.fd = a;
-    D_00527240.param = (int)A_5276C0;
+    D_00527240.param = (int)D_005276C0;
     D_00527240.buffer = b;
     D_00527240.size = c;
     func_00426358(b, c);
-    func_00426358((int)A_5276C0, 0xC0);
-    r = func_00426D18(&D_005271C0, 5, 1, &D_00527240, 48, A_528780, 4, func_0040A000, A_5276C0);
+    func_00426358((int)D_005276C0, 0xC0);
+    r = func_00426D18(&D_005271C0, 5, 1, &D_00527240, 48, D_00528780, 4, func_0040A000, D_005276C0);
     if (r == 0)
         D_004533C0 = 5;
     else
@@ -6728,7 +6739,6 @@ int func_0040A090(int a, int b, int c) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040A1A8);
 #ifdef SKIP_ASM
-extern int S1A8_528780[] __asm__("D_00528780");
 extern int func_00423DF0(int);
 extern void func_00423DC0(int);
 extern void func_00424020(int);
@@ -6753,7 +6763,7 @@ int func_0040A1A8(int a, unsigned char *p, int n) {
     for (i = 0; i < D_00527240.origin; i++)
         D_00527240.data[i] = p[i];
     func_00424020(0);
-    r = func_00426D18(&D_005271C0, 6, 1, &D_00527240, 48, S1A8_528780, 4, 0, 0);
+    r = func_00426D18(&D_005271C0, 6, 1, &D_00527240, 48, D_00528780, 4, 0, 0);
     if (r == 0)
         D_004533C0 = 6;
     else
@@ -6786,7 +6796,6 @@ void func_0040A328(unsigned short a) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040A360);
 #ifdef SKIP_ASM
-extern int A_528780[] __asm__("D_00528780");
 extern void func_00423DC0(int);
 extern void sleep_A328(int) __asm__("func_0040A328");
 int func_0040A360(int a, int *p, int *q) {
@@ -6805,7 +6814,7 @@ int func_0040A360(int a, int *p, int *q) {
     if (r) {
         D_004533C0 = 0;
         if (q)
-            *q = A_528780[0];
+            *q = D_00528780[0];
         func_00423DC0(D_004533C4);
     }
     return r;
@@ -6829,8 +6838,6 @@ void func_0040A440(void *a) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040A498);
 #ifdef SKIP_ASM
-extern int P498_5276C0[] __asm__("D_005276C0");
-extern int P498_528780[] __asm__("D_00528780");
 extern int func_00423DF0(int);
 extern void func_00423DC0(int);
 extern void func_00426358(int, int);
@@ -6842,7 +6849,7 @@ int func_0040A498(int a, int b, int *c, int *d, int *e) {
         return -200;
     D_00527240.port = a;
     D_00527240.slot = b;
-    D_00527240.param = (int)P498_5276C0;
+    D_00527240.param = (int)D_005276C0;
     if (c != 0)
         D_00527240.origin = 1;
     else
@@ -6858,8 +6865,8 @@ int func_0040A498(int a, int b, int *c, int *d, int *e) {
     D_005271E8 = c;
     D_005271EC = d;
     D_005271F0 = e;
-    func_00426358((int)P498_5276C0, 0xC0);
-    r = func_00426D18(&D_005271C0, 1, 1, &D_00527240, 48, P498_528780, 4, func_0040A440, P498_5276C0);
+    func_00426358((int)D_005276C0, 0xC0);
+    r = func_00426D18(&D_005271C0, 1, 1, &D_00527240, 48, D_00528780, 4, func_0040A440, D_005276C0);
     if (r == 0)
         D_004533C0 = 1;
     else
@@ -6871,7 +6878,6 @@ int func_0040A498(int a, int b, int *c, int *d, int *e) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040A618);
 #ifdef SKIP_ASM
-extern int D_00528780[];
 extern void func_0040A618_log(char *) __asm__("func_00425C60");
 extern char D_00498158[];
 int func_0040A618(void) {
@@ -6886,8 +6892,6 @@ int func_0040A618(void) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040A688);
 #ifdef SKIP_ASM
-extern int A_527270[] __asm__("D_00527270");
-extern int A_528780[] __asm__("D_00528780");
 extern int func_00423DF0(int);
 extern void func_00423DC0(int);
 extern char *strncpy(char *, const char *, int);
@@ -6902,16 +6906,16 @@ int func_0040A688(int a, int b, char *s, int c, int d, int e) {
         func_00423DC0(D_004533C4);
         return -210;
     }
-    A_527270[0] = a;
-    A_527270[1] = b;
-    A_527270[2] = c;
-    A_527270[3] = d;
-    A_527270[4] = e;
-    strncpy((char *)(A_527270 + 5), s, 0x3FF);
-    ((char *)A_527270)[0x413] = 0;
+    D_00527270.port = a;
+    D_00527270.slot = b;
+    D_00527270.mode = c;
+    D_00527270.count = d;
+    D_00527270.buffer = e;
+    strncpy(D_00527270.name, s, 0x3FF);
+    D_00527270.name[0x3FF] = 0;
     if (d >= 0)
         func_00426358(e, d << 6);
-    r = func_00426D18(&D_005271C0, 13, 1, A_527270, 0x414, A_528780, 4, 0, 0);
+    r = func_00426D18(&D_005271C0, 13, 1, &D_00527270, 0x414, D_00528780, 4, 0, 0);
     if (r == 0)
         D_004533C0 = 13;
     else
@@ -6923,7 +6927,6 @@ int func_0040A688(int a, int b, char *s, int c, int d, int e) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040A7D0);
 #ifdef SKIP_ASM
-extern char D_00527780[];
 extern unsigned strlen(char *);
 extern int func_0041605C(int, int, int);
 void func_0040A7D0(void *dst) {
@@ -6944,9 +6947,6 @@ void func_0040A7D0(void *dst) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040A858);
 #ifdef SKIP_ASM
-extern int A_527270[] __asm__("D_00527270");
-extern int A_527780[] __asm__("D_00527780");
-extern int A_528780[] __asm__("D_00528780");
 extern int func_00423DF0(int);
 extern void func_00423DC0(int);
 extern char *strncpy(char *, const char *, int);
@@ -6961,13 +6961,13 @@ int func_0040A858(int a, int b, char *s, void *u) {
         func_00423DC0(D_004533C4);
         return -210;
     }
-    A_527270[0] = a;
-    A_527270[4] = (int)A_527780;
-    A_527270[1] = b;
-    strncpy((char *)(A_527270 + 5), s, 0x3FF);
-    ((char *)A_527270)[0x413] = 0;
-    func_00426358((int)A_527780, 0x400);
-    r = func_00426D18(&D_005271C0, 12, 1, A_527270, 0x414, A_528780, 4, func_0040A7D0, u);
+    D_00527270.port = a;
+    D_00527270.buffer = (int)D_00527780;
+    D_00527270.slot = b;
+    strncpy(D_00527270.name, s, 0x3FF);
+    D_00527270.name[0x3FF] = 0;
+    func_00426358((int)D_00527780, 0x400);
+    r = func_00426D18(&D_005271C0, 12, 1, &D_00527270, 0x414, D_00528780, 4, func_0040A7D0, u);
     if (r == 0)
         D_004533C0 = 12;
     else
@@ -6979,7 +6979,6 @@ int func_0040A858(int a, int b, char *s, void *u) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040A998);
 #ifdef SKIP_ASM
-extern int A_528780[] __asm__("D_00528780");
 extern int func_00423DF0(int);
 extern void func_00423DC0(int);
 int func_0040A998(int a, int b) {
@@ -6990,7 +6989,7 @@ int func_0040A998(int a, int b) {
         return -200;
     D_00527240.port = a;
     D_00527240.slot = b;
-    r = func_00426D18(&D_005271C0, 16, 1, &D_00527240, 48, A_528780, 4, 0, 0);
+    r = func_00426D18(&D_005271C0, 16, 1, &D_00527240, 48, D_00528780, 4, 0, 0);
     if (r == 0)
         D_004533C0 = 16;
     else
@@ -7002,8 +7001,6 @@ int func_0040A998(int a, int b) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040AA68);
 #ifdef SKIP_ASM
-extern int A_527270[] __asm__("D_00527270");
-extern int A_528780[] __asm__("D_00528780");
 extern int func_00423DF0(int);
 extern void func_00423DC0(int);
 extern char *strncpy(char *, const char *, int);
@@ -7017,12 +7014,12 @@ int func_0040AA68(int a, int b, char *s) {
         func_00423DC0(D_004533C4);
         return -210;
     }
-    strncpy((char *)(A_527270 + 5), s, 0x3FF);
-    A_527270[0] = a;
-    A_527270[1] = b;
-    ((char *)A_527270)[0x413] = 0;
-    A_527270[2] = 0;
-    r = func_00426D18(&D_005271C0, 15, 1, A_527270, 0x414, A_528780, 4, 0, 0);
+    strncpy(D_00527270.name, s, 0x3FF);
+    D_00527270.port = a;
+    D_00527270.slot = b;
+    D_00527270.name[0x3FF] = 0;
+    D_00527270.mode = 0;
+    r = func_00426D18(&D_005271C0, 15, 1, &D_00527270, 0x414, D_00528780, 4, 0, 0);
     if (r == 0)
         D_004533C0 = 15;
     else
@@ -7034,7 +7031,6 @@ int func_0040AA68(int a, int b, char *s) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040AB80);
 #ifdef SKIP_ASM
-extern int D_00528780[];
 extern int func_00423DF0(int);
 extern void func_00423DC0(int);
 int func_0040AB80(int a) {
@@ -7056,15 +7052,11 @@ int func_0040AB80(int a) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040AC38);
 #ifdef SKIP_ASM
-struct S40_AC38 { char b[0x40]; };
-extern int R_527270[] __asm__("D_00527270");
-extern struct S40_AC38 R_527200 __asm__("D_00527200");
-extern int R_528780[] __asm__("D_00528780");
 extern int R_3DF0(int) __asm__("func_00423DF0");
 extern void R_3DC0(int) __asm__("func_00423DC0");
 extern void R_4020(int) __asm__("func_00424020");
 extern char *strncpy(char *, const char *, int);
-int func_0040AC38(int a, int b, char *s, struct S40_AC38 *c, int e) {
+int func_0040AC38(int a, int b, char *s, sMcDirEntry *c, int e) {
     int r;
     sSifClient *h = &D_005271C0;
     if (h->server == 0)
@@ -7076,15 +7068,15 @@ int func_0040AC38(int a, int b, char *s, struct S40_AC38 *c, int e) {
         return -210;
     }
     e &= 7;
-    R_527270[0] = a;
-    R_527270[1] = b;
-    R_527270[2] = e;
-    R_527200 = *c;
-    R_527270[4] = (int)&R_527200;
-    strncpy((char *)(R_527270 + 5), s, 0x3FF);
-    ((char *)R_527270)[0x413] = 0;
+    D_00527270.port = a;
+    D_00527270.slot = b;
+    D_00527270.mode = e;
+    D_00527200 = *c;
+    D_00527270.buffer = (int)&D_00527200;
+    strncpy(D_00527270.name, s, 0x3FF);
+    D_00527270.name[0x3FF] = 0;
     R_4020(0);
-    r = func_00426D18(h, 14, 1, R_527270, 0x414, R_528780, 4, 0, 0);
+    r = func_00426D18(h, 14, 1, &D_00527270, 0x414, D_00528780, 4, 0, 0);
     if (r == 0)
         D_004533C0 = 14;
     else
@@ -7096,9 +7088,6 @@ int func_0040AC38(int a, int b, char *s, struct S40_AC38 *c, int e) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040AE00);
 #ifdef SKIP_ASM
-extern int A_527270[] __asm__("D_00527270");
-extern char A_527220[] __asm__("D_00527220");
-extern int A_528780[] __asm__("D_00528780");
 extern int func_00423DF0(int);
 extern void func_00423DC0(int);
 extern char *strncpy(char *, const char *, int);
@@ -7114,17 +7103,17 @@ int func_0040AE00(int a, int b, char *s, char *t) {
         func_00423DC0(D_004533C4);
         return -210;
     }
-    A_527270[0] = a;
-    A_527270[1] = b;
-    A_527270[2] = 16;
-    strncpy((char *)(A_527270 + 5), s, 0x3FF);
-    ((char *)A_527270)[0x413] = 0;
-    strncpy(A_527220, t, 0x20);
-    p = A_527220 - 0x20;
+    D_00527270.port = a;
+    D_00527270.slot = b;
+    D_00527270.mode = 16;
+    strncpy(D_00527270.name, s, 0x3FF);
+    D_00527270.name[0x3FF] = 0;
+    strncpy(D_00527220, t, 0x20);
+    p = D_00527220 - 0x20;
     p[0x3F] = 0;
-    A_527270[4] = (int)p;
+    D_00527270.buffer = (int)p;
     func_00424020(0);
-    r = func_00426D18(&D_005271C0, 14, 1, A_527270, 0x414, A_528780, 4, 0, 0);
+    r = func_00426D18(&D_005271C0, 14, 1, &D_00527270, 0x414, D_00528780, 4, 0, 0);
     if (r == 0)
         D_004533C0 = 19;
     else
@@ -7136,7 +7125,6 @@ int func_0040AE00(int a, int b, char *s, char *t) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040AF58);
 #ifdef SKIP_ASM
-extern int A_528780[] __asm__("D_00528780");
 extern int func_00423DF0(int);
 extern void func_00423DC0(int);
 int func_0040AF58(int a, int b) {
@@ -7147,7 +7135,7 @@ int func_0040AF58(int a, int b) {
         return -200;
     D_00527240.port = a;
     D_00527240.slot = b;
-    r = func_00426D18(&D_005271C0, 17, 1, &D_00527240, 48, A_528780, 4, 0, 0);
+    r = func_00426D18(&D_005271C0, 17, 1, &D_00527240, 48, D_00528780, 4, 0, 0);
     if (r == 0)
         D_004533C0 = 17;
     else
@@ -7159,8 +7147,6 @@ int func_0040AF58(int a, int b) {
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040B028);
 #ifdef SKIP_ASM
-extern int A_527270[] __asm__("D_00527270");
-extern int A_528780[] __asm__("D_00528780");
 extern int func_00423DF0(int);
 extern void func_00423DC0(int);
 extern char *strncpy(char *, const char *, int);
@@ -7174,11 +7160,11 @@ int func_0040B028(int a, int b, char *s) {
         func_00423DC0(D_004533C4);
         return -210;
     }
-    A_527270[0] = a;
-    A_527270[1] = b;
-    strncpy((char *)(A_527270 + 5), s, 0x3FF);
-    ((char *)A_527270)[0x413] = 0;
-    r = func_00426D18(&D_005271C0, 18, 1, A_527270, 0x414, A_528780, 4, 0, 0);
+    D_00527270.port = a;
+    D_00527270.slot = b;
+    strncpy(D_00527270.name, s, 0x3FF);
+    D_00527270.name[0x3FF] = 0;
+    r = func_00426D18(&D_005271C0, 18, 1, &D_00527270, 0x414, D_00528780, 4, 0, 0);
     if (r == 0)
         D_004533C0 = 18;
     else
