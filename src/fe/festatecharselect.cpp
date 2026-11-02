@@ -8,19 +8,37 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
+// Declarations shared by the functions of this unit.
+struct cUIText;
+int GetHashValue32(char* str);
+extern void* D_004A28A8;
+extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
+extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
+extern "C" void* func_001A0548(void* self, int a1);
+extern "C" void func_0019E538(void* self, int a1);
+extern signed char D_00535C11[];
+extern "C" void* cBE_getBE();
+// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+int cBENewPlayerInterface_getPlayerCharID(void* self, int index);
+extern "C" void func_00181BD0(void* self, int index, signed char charID);
+extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
+extern "C" void func_001A0508(void* self, int idx, int a2, int a3);
+extern "C" void func_00181EF0(void* self);
+extern signed char D_00440F68[];
+void cUIText_setAsciiString(cUIText* text, const char* str);
+extern "C" void* func_0014EEC8(void* self, int player, int index);
+extern "C" void func_001474A8(void* iface, int rider, int id);
+extern "C" unsigned char func_001A1CD0(void* self, int a1);
+extern char D_004C66B8[];
+
 //100%
 INCLUDE_ASM("fe/festatecharselect", cFEStateCharSelect_onCreateScreen);
 #ifdef SKIP_ASM
 struct sVec4_181148 { float x, y, z, w; } __attribute__((aligned(16)));
 struct sCam_181148 { char pad[0x10]; float fov; };
-int GetHashValue32(char* str);
 extern char D_0045D600[];
-extern void* D_004A28A8;
-extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
 extern "C" void func_0015E050(void* cam, sVec4_181148* a, sVec4_181148* b);
-extern "C" void* func_001A0548(void* self, int a1);
-extern "C" void func_0019E538(void* self, int a1);
 
 extern "C" void cFEStateCharSelect_onCreateScreen(void* self)
 {
@@ -54,13 +72,6 @@ extern "C" void cFEStateCharSelect_onCreateScreen(void* self)
 //100%
 INCLUDE_ASM("fe/festatecharselect", func_00181238);
 #ifdef SKIP_ASM
-extern void* D_004A28A8;
-extern signed char D_00535C11[];
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* func_001A0548(void* self, int a1);
-extern "C" void func_0019E538(void* self, int a1);
 void func_0039E4A0(void* self);
 
 extern "C" void func_00181238(void* self)
@@ -77,12 +88,6 @@ extern "C" void func_00181238(void* self)
 //100%
 INCLUDE_ASM("fe/festatecharselect", func_001812A8);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-int cBENewPlayerInterface_getPlayerCharID(void* self, int index);
-extern "C" void func_00181BD0(void* self, int index, signed char charID);
-
 extern "C" int func_001812A8(void* self, int on)
 {
     if (on != 0) {
@@ -97,18 +102,8 @@ extern "C" int func_001812A8(void* self, int on)
 INCLUDE_ASM("fe/festatecharselect", func_00181308);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-int GetHashValue32(char* str);
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-int cBENewPlayerInterface_getPlayerCharID(void* self, int index);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
 extern "C" void cUIMenu_setSelectedByIndex(void* menu, unsigned char idx);
-extern "C" void func_001A0508(void* self, int idx, int a2, int a3);
-extern "C" void* func_001A0548(void* self, int a1);
-extern "C" void func_00181EF0(void* self);
 extern "C" void func_0039E4C0(void* self, int a1);
-extern void* D_004A28A8;
-extern signed char D_00440F68[];
 extern char D_004A1398[];
 
 extern "C" void func_00181308(void* self, int a1)
@@ -145,7 +140,6 @@ void func_00181400(void* self)
 //100%
 INCLUDE_ASM("fe/festatecharselect", func_00181420);
 #ifdef SKIP_ASM
-extern "C" void func_00181EF0(void* self);
 extern "C" void func_0039E510(void* self);
 
 extern "C" void func_00181420(void* self)
@@ -158,7 +152,6 @@ extern "C" void func_00181420(void* self)
 //100%
 INCLUDE_ASM("fe/festatecharselect", func_00181450);
 #ifdef SKIP_ASM
-
 static inline int padBtn_1450(char* pad, int slot)
 {
     sVEntry<int(void*)>* vt = *(sVEntry<int(void*)>**)(pad + 8);
@@ -231,16 +224,7 @@ extern "C" int func_00181450(char* self, char* pad)
 //100%
 INCLUDE_ASM("fe/festatecharselect", cFEStateCharSelect_onWidgetCreate);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-struct cUIText;
-void cUIText_setAsciiString(cUIText* text, const char* str);
 void cUIText_setUnicodeStringByID(cUIText* text, int id);
-extern "C" void* func_0014EEC8(void* self, int player, int index);
-extern signed char D_00535C11[];
-extern signed char D_00440F68[];
 extern char D_0045D610[];
 extern char D_0045D620[];
 extern char D_0045D638[];
@@ -313,22 +297,14 @@ extern "C" void cFEStateCharSelect_onWidgetCreate(char* self, sWidget_1620* w)
 //100%
 INCLUDE_ASM("fe/festatecharselect", func_001817E8);
 #ifdef SKIP_ASM
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void cUIStateStack_pushSpecial(void* stack, void* state, int a2, int a3);
 extern "C" void* func_001887A0(void* mem, void* owner, int a2);
 extern "C" void* func_0018ECA0(void* mem, void* owner, int a2, unsigned char a3);
-extern "C" void* func_001A0548(void* self, int a1);
-extern "C" void func_0019E538(void* self, int a1);
 extern "C" void func_001A1CB8(void* self, int rider, unsigned char mask);
-extern "C" void func_00181BD0(void* self, int index, signed char charID);
 extern "C" void func_001472C8(void* iface, int rider, int idx);
 extern "C" void func_00147448(void* iface, int rider, int id);
-extern "C" void func_001474A8(void* iface, int rider, int id);
 extern "C" void func_0039F400(void* stack, void* state);
-extern void* D_004A28A8;
-extern signed char D_00440F68[];
 extern char D_0045D698[];
 extern char D_0045D6A8[];
 
@@ -481,13 +457,6 @@ extern "C" void func_001817E8(sCharSel_17E8* self, sObj_17E8* widget, int event)
 //100%
 INCLUDE_ASM("fe/festatecharselect", func_00181BD0);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-struct cUIText;
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-void cUIText_setAsciiString(cUIText* text, const char* str);
 extern "C" int func_00148B78(void* iface, int a, int b);
 extern "C" int func_00148BC8(void* iface, int a, int b);
 extern "C" int func_00148C18(void* iface, int a, int b);
@@ -495,12 +464,10 @@ extern "C" int func_00148C68(void* iface, int a, int b);
 extern "C" int func_00148CB8(void* iface, int a, int b);
 extern "C" int func_00148D08(void* iface, int a, int b);
 extern "C" int func_00148D58(void* iface, int a, int b);
-extern "C" void func_001A0508(void* self, int idx, int a2, int a3);
 extern "C" void func_0039C428(void* bar, int v);
 extern "C" double func_00413AF8(float f);
 extern "C" void* func_00416210(void* dst, int c, int n);
 extern "C" int sprintf(char* buf, const char* fmt, ...);
-extern void* D_004A28A8;
 extern char D_004A13B0;
 extern char D_0045D6F0[];
 extern char D_004A13B8[];
@@ -577,16 +544,10 @@ INCLUDE_ASM("fe/festatecharselect", func_00181EF0);
 //100%
 INCLUDE_ASM("fe/festatecharselect", func_00182220);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void* func_0014EEC8(void* self, int player, int index);
 extern "C" int func_00157EE0(void* iface, int a1, int a2, int a3);
 extern "C" void* func_0015A478();
 extern "C" int func_00398380(void* self, int id);
 extern "C" void* func_0039E318(void* self, void* engine, void* owner);
-extern "C" unsigned char func_001A1CD0(void* self, int a1);
 extern void* D_0046CF30[];
 extern char* D_00440F78[];
 
@@ -651,10 +612,7 @@ extern "C" sCharSel_2220* func_00182220(sCharSel_2220* self, void* engine, void*
 //100%
 INCLUDE_ASM("fe/festatecharselect", func_00182420);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
 extern char D_0045D780[];
-extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
 
 extern "C" void func_00182420(void* self)
 {
@@ -670,17 +628,14 @@ extern "C" void func_00182420(void* self)
 //100%
 INCLUDE_ASM("fe/festatecharselect", cFEStateCheatCharSelect_onWidgetCreate);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
 extern char D_004A1400[];
 extern char D_0045D790[];
 extern char D_0045D7A0[];
 extern char D_0045D7B0[];
 extern char D_004A1408[];
-extern char D_004C66B8[];
 extern char* D_00440FA0[];
 extern "C" void func_0039B760_u(void* self, unsigned char a1) __asm__("func_0039B760");
 void cUIText_setAsciiString(void* text, const char* str) __asm__("cUIText_setAsciiString__FP7cUITextPCc");
-
 
 struct sWidget_CCW {
     char pad_0x0[0x8];
@@ -765,16 +720,8 @@ extern "C" void cFEStateCheatCharSelect_onWidgetCreate(sCharSelect_CCW* self, sW
 //100%
 INCLUDE_ASM("fe/festatecharselect", func_00182690);
 #ifdef SKIP_ASM
-struct cUIText;
-void cUIText_setAsciiString(cUIText* text, const char* str);
-extern "C" void* cBE_getBE();
-// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void func_001474A8(void* iface, int rider, int id);
 extern "C" void* func_0039F190(void*, int);
 extern char D_004C66A8[];
-extern char D_004C66B8[];
-
 
 extern "C" void func_00182690(void* self, void* menu, unsigned int msg)
 {
@@ -859,7 +806,6 @@ extern "C" void func_00182870(void* self)
 INCLUDE_ASM("fe/festatecharselect", func_001828C0);
 #ifdef SKIP_ASM
 extern "C" void* func_0039E2A0(void* self, void* engine);
-extern "C" unsigned char func_001A1CD0(void* self, int a1);
 extern void* D_0046CE60[];
 
 extern "C" void* func_001828C0(void* self, void* engine, signed char idx)
