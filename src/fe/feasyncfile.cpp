@@ -44,6 +44,49 @@ public:
     virtual void v25(int on);
 };
 
+// A UI state (FE screen or popup) as these functions see it: vptr at 0x8. onPopupEvent (17) and onWidgetCreate (18)
+// are named after the prototype's _vt$8cUIState (it takes (cUIState*, unsigned) and cUIThing*); the FE states' own
+// slots from 24 on are known only by position.
+class cUIState {
+public:
+    char pad[0x8];
+    virtual void v01();
+    virtual void v02();
+    virtual void v03();
+    virtual void v04();
+    virtual void v05();
+    virtual void v06();
+    virtual void v07();
+    virtual void v08();
+    virtual void v09();
+    virtual void v10();
+    virtual void v11();
+    virtual void v12();
+    virtual void v13();
+    virtual void v14();
+    virtual void v15();
+    virtual void v16();
+    virtual void onPopupEvent(void* popup, int msg);
+    virtual void onWidgetCreate(void* widget);
+    virtual void v19();
+    virtual void v20();
+    virtual void v21();
+    virtual void v22();
+    virtual void v23();
+    virtual int v24(int, int);
+    virtual void v25(void* popup);
+    virtual void* v26(void* obj);
+    virtual void v27();
+    virtual void v28();
+    virtual int v29();
+    virtual int v30();
+    virtual int v31(int msg, void* data);
+    virtual void v32();
+    virtual void v33(void* a1, int a2);
+    virtual void v34(void* a1, int a2);
+    virtual void v35(void* a1, int a2);
+};
+
 //100%
 INCLUDE_ASM("fe/feasyncfile", cFEAsyncManager_Load3PeakPic);
 #ifdef SKIP_ASM
@@ -1021,50 +1064,10 @@ extern "C" void func_001A4B20(void* self, void* a1, unsigned int kind)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001A4C58);
 #ifdef SKIP_ASM
-class cFEVObj_001A4C58 {
-public:
-    int field_0x0;
-    int field_0x4;
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual void v09();
-    virtual void v10();
-    virtual void v11();
-    virtual void v12();
-    virtual void v13();
-    virtual void v14();
-    virtual void v15();
-    virtual void v16();
-    virtual void v17();
-    virtual void v18();
-    virtual void v19();
-    virtual void v20();
-    virtual void v21();
-    virtual void v22();
-    virtual void v23();
-    virtual void v24();
-    virtual void v25();
-    virtual void v26();
-    virtual void v27();
-    virtual void v28();
-    virtual void v29();
-    virtual void v30();
-    virtual void v31();
-    virtual void v32();
-    virtual void v33(void* a1, int a2);
-    virtual void v34(void* a1, int a2);
-    virtual void v35(void* a1, int a2);
-};
 
 extern "C" int func_001A97B8(void* self, void* a1, int a2);
 
-extern "C" void func_001A4C58(cFEVObj_001A4C58* self, void* a1, int a2)
+extern "C" void func_001A4C58(cUIState* self, void* a1, int a2)
 {
     switch (*(unsigned int*)((char*)a1 + 0x18)) {
     case 0x809:
@@ -2607,33 +2610,11 @@ extern void* D_004A3328;
 extern void* D_004A3028;
 extern char D_004A1408[];
 
-struct cFEObj_001A7BB8 {
-    int f0;
-    int f4;
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual void v09();
-    virtual void v10();
-    virtual void v11();
-    virtual void v12();
-    virtual void v13();
-    virtual void v14();
-    virtual void v15();
-    virtual void v16();
-    virtual void v17(void* a1, int a2);
-};
-
 extern "C" void func_001A7BB8(void* self, int a1, unsigned int msg)
 {
     switch (msg) {
     case 6:
-        (*(cFEObj_001A7BB8**)((char*)self + 0x20))->v17(self, 0x14);
+        (*(cUIState**)((char*)self + 0x20))->onPopupEvent(self, 0x14);
         break;
     case 5:
         func_001A9090(self, 0, *(int*)((char*)self + 0x6D0), (int)D_004A1408, 0, 0, 0x3F);
@@ -2701,48 +2682,11 @@ extern "C" void* func_001A7D40(void* self, int msg)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001A7D90);
 #ifdef SKIP_ASM
-class cFEVObj_001A7D90 {
-public:
-    int field_0x0;
-    int field_0x4;
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual void v09();
-    virtual void v10();
-    virtual void v11();
-    virtual void v12();
-    virtual void v13();
-    virtual void v14();
-    virtual void v15();
-    virtual void v16();
-    virtual void v17();
-    virtual void v18();
-    virtual void v19();
-    virtual void v20();
-    virtual void v21();
-    virtual void v22();
-    virtual void v23();
-    virtual void v24();
-    virtual void v25();
-    virtual void v26();
-    virtual void v27();
-    virtual void v28();
-    virtual void v29();
-    virtual void v30();
-    virtual void v31();
-    virtual void v32();
-};
 
 extern "C" void func_001A7F78(void* self);
 extern "C" void func_001A81F0(void* self);
 
-extern "C" int func_001A7D90(cFEVObj_001A7D90* self)
+extern "C" int func_001A7D90(cUIState* self)
 {
     self->v32();
     func_001A7F78(self);
@@ -3195,47 +3139,14 @@ void func_001A8768(void* self)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001A8770);
 #ifdef SKIP_ASM
-class cFEAsync1A8770 {
-public:
-    char pad[0x8];
-    // vptr at 0x8; slot N at vtable offset N*8
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual void v09();
-    virtual void v10();
-    virtual void v11();
-    virtual void v12();
-    virtual void v13();
-    virtual void v14();
-    virtual void v15();
-    virtual void v16();
-    virtual void v17();
-    virtual void v18();
-    virtual void v19();
-    virtual void v20();
-    virtual void v21();
-    virtual void v22();
-    virtual void v23();
-    virtual void v24();
-    virtual void v25();
-    virtual void v26();
-    virtual void v27();
-    virtual void v28();
-};
 
 extern "C" void func_0039E510(void*);
 extern "C" void* func_001A8B88(void* self, int size, int a2);
 
 extern "C" void* func_001A8770(void* self)
 {
-    ((cFEAsync1A8770*)self)->v27();
-    ((cFEAsync1A8770*)self)->v28();
+    ((cUIState*)self)->v27();
+    ((cUIState*)self)->v28();
     func_0039E510(self);
     return func_001A8B88(self, 0x114, 0);
 }
@@ -3276,41 +3187,6 @@ extern "C" void func_00262768(void* self, int a1, int a2, int a3, int a4, int a5
 extern void* D_004A3328;
 extern void* D_004A3028;
 
-class cFEVObj_001A8830 {
-public:
-    int field_0x0;
-    int field_0x4;
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual void v09();
-    virtual void v10();
-    virtual void v11();
-    virtual void v12();
-    virtual void v13();
-    virtual void v14();
-    virtual void v15();
-    virtual void v16();
-    virtual void v17();
-    virtual void v18();
-    virtual void v19();
-    virtual void v20();
-    virtual void v21();
-    virtual void v22();
-    virtual void v23();
-    virtual void v24();
-    virtual void v25();
-    virtual void v26();
-    virtual void v27();
-    virtual void v28();
-    virtual int v29();
-};
-
 static inline void* GetSession_001A8830()
 {
     if (D_004A3328 == 0) {
@@ -3325,7 +3201,7 @@ static inline void* GetSession_001A8830()
     return D_004A3328;
 }
 
-extern "C" void func_001A8830(cFEVObj_001A8830* self)
+extern "C" void func_001A8830(cUIState* self)
 {
     if (self->v29() != 0) {
         func_00262768(GetSession_001A8830(), 1, 0, 0, 0, 0);
@@ -3338,35 +3214,6 @@ extern "C" void func_001A8830(cFEVObj_001A8830* self)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001A8918);
 #ifdef SKIP_ASM
-class cFEVObj_001A8918 {
-public:
-    char pad[0x8];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual void v09();
-    virtual void v10();
-    virtual void v11();
-    virtual void v12();
-    virtual void v13();
-    virtual void v14();
-    virtual void v15();
-    virtual void v16();
-    virtual void v17();
-    virtual void v18();
-    virtual void v19();
-    virtual void v20();
-    virtual void v21();
-    virtual void v22();
-    virtual void v23();
-    virtual void v24();
-    virtual void v25(void* popup);
-};
 
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void* func_001D9D48(void* mem, void* a1, void* owner);
@@ -3378,7 +3225,7 @@ extern "C" void func_001A8918(void* self, int a1, int msg)
     if (a1 != 0 && msg == 7) {
         void* p = func_001D9D48(cMemMan_alloc(0x140, D_00461A70, 0x100, 0), *(void**)((char*)self + 0x10), self);
         *(int*)((char*)p + 0x50) = 1;
-        ((cFEVObj_001A8918*)self)->v25(p);
+        ((cUIState*)self)->v25(p);
         func_0039F290(*(char**)((char*)self + 0x10) + 0x18, p);
     }
 }
@@ -3564,43 +3411,6 @@ struct sList1A8B88 {
 };
 
 
-class cFEState1A8B88 {
-public:
-    char pad[0x8];
-    // vptr at 0x8; slot N at vtable offset N*8
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual void v09();
-    virtual void v10();
-    virtual void v11();
-    virtual void v12();
-    virtual void v13();
-    virtual void v14();
-    virtual void v15();
-    virtual void v16();
-    virtual void v17();
-    virtual void v18();
-    virtual void v19();
-    virtual void v20();
-    virtual void v21();
-    virtual void v22();
-    virtual void v23();
-    virtual void v24();
-    virtual void v25();
-    virtual void v26();
-    virtual void v27();
-    virtual void v28();
-    virtual void v29();
-    virtual int v30();
-    virtual int v31(int msg, void* data);
-};
-
 class cMsg1A8B88 {
 public:
     int type;
@@ -3608,9 +3418,9 @@ public:
 };
 
 // PORT: the unit declares func_001A8B88 as (void*, int, int) returning void*.
-extern "C" int func_001A8B88_impl(cFEState1A8B88* st, int msg, int* data) __asm__("func_001A8B88");
+extern "C" int func_001A8B88_impl(cUIState* st, int msg, int* data) __asm__("func_001A8B88");
 
-extern "C" int func_001A8B88_impl(cFEState1A8B88* st, int msg, int* data)
+extern "C" int func_001A8B88_impl(cUIState* st, int msg, int* data)
 {
     if ((unsigned int)(msg - 0xC8) < 0x4F) {
         if ((unsigned int)(msg - 0x115) < 2 || *(int*)((char*)st + 0x6B4) != 0) {
@@ -3947,42 +3757,6 @@ extern "C" void func_001A93D0_impl(void* self, int id, int event)
 INCLUDE_ASM("fe/feasyncfile", func_001A9438);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-class cFEVObj_001A9438 {
-public:
-    char pad[0x8];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual void v09();
-    virtual void v10();
-    virtual void v11();
-    virtual void v12();
-    virtual void v13();
-    virtual void v14();
-    virtual void v15();
-    virtual void v16();
-    virtual void v17();
-    virtual void v18();
-    virtual void v19();
-    virtual void v20();
-    virtual void v21();
-    virtual void v22();
-    virtual void v23();
-    virtual void v24();
-    virtual void v25();
-    virtual void v26();
-    virtual void v27();
-    virtual void v28();
-    virtual void v29();
-    virtual void v30();
-    virtual void v31();
-    virtual void v32();
-};
 
 // func_001A93D0 really takes (self, a1, a2); the unit declares it with a 4th arg
 void func_001A93D0_3(void* self, int a1, int a2) __asm__("func_001A93D0");
@@ -3994,7 +3768,7 @@ extern const char D_00461CA0[];
 extern "C" void func_001A9438(void* self, int a1, int a2)
 {
     if (a2 == 0x16) {
-        ((cFEVObj_001A9438*)self)->v32();
+        ((cUIState*)self)->v32();
         func_001A8A40(self, func_001BEE30(cMemMan_alloc(0x6D4, D_00461CA0, 0, 0), *(int*)((char*)self + 0x10)));
         func_001A93D0_3(self, a1, 0x16);
     } else {
@@ -4015,42 +3789,6 @@ void func_001A94D8(void* self)
 INCLUDE_ASM("fe/feasyncfile", func_001A94E0);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-class cFEVObj_001A94E0 {
-public:
-    char pad[0x8];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual void v09();
-    virtual void v10();
-    virtual void v11();
-    virtual void v12();
-    virtual void v13();
-    virtual void v14();
-    virtual void v15();
-    virtual void v16();
-    virtual void v17();
-    virtual void v18();
-    virtual void v19();
-    virtual void v20();
-    virtual void v21();
-    virtual void v22();
-    virtual void v23();
-    virtual void v24();
-    virtual void v25();
-    virtual void v26();
-    virtual void v27();
-    virtual void v28();
-    virtual void v29();
-    virtual void v30();
-    virtual void v31();
-    virtual void v32();
-};
 // func_001A93D0 really takes (self, a1, a2); the unit declares it with a 4th arg
 void func_001A93D0_3(void* self, int a1, int a2) __asm__("func_001A93D0");
 
@@ -4061,7 +3799,7 @@ extern "C" void func_001A94E0(void* self, int a1, int a2)
         func_001A93D0_3(self, a1, 0x15);
         break;
     case 0x16:
-        ((cFEVObj_001A94E0*)self)->v32();
+        ((cUIState*)self)->v32();
         *(int*)((char*)self + 0x69C) = 0;
         func_001A93D0_3(self, a1, 0x16);
         break;
@@ -4506,41 +4244,6 @@ static inline void* GetSession_001AAB68()
     return D_004A3328;
 }
 
-class cFEVObj_001AAB68 {
-public:
-    char pad[0x8];
-    // vptr at 0x8; slot N at vtable offset N*8
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual void setVisible(int on);
-    virtual void v10();
-    virtual void v11();
-    virtual void v12();
-    virtual void v13();
-    virtual void v14();
-    virtual void v15();
-    virtual void v16();
-    virtual void v17();
-    virtual void v18();
-    virtual void v19();
-    virtual void v20();
-    virtual void v21();
-    virtual void v22();
-    virtual void v23();
-    virtual void v24();
-    virtual void v25();
-    virtual void v26();
-    virtual void v27();
-    virtual void v28();
-    virtual int v29();
-};
-
 struct sSelf1AAB68 {
     char pad[0x4C];
     unsigned int last;
@@ -4554,7 +4257,7 @@ extern "C" void func_001AAB68(void* self)
     if (*(void**)((char*)self + 0x40) == 0) {
         return;
     }
-    if (((cFEVObj_001AAB68*)self)->v29() == 0) {
+    if (((cUIState*)self)->v29() == 0) {
         return;
     }
     unsigned int now = *(unsigned int*)((char*)D_004A5B64 + 0x18);
@@ -4583,7 +4286,7 @@ extern "C" void func_001AAB68(void* self)
             ((sSelf1AAB68*)self)->t54 = now;
         }
     }
-    cFEVObj_001AAB68* text = (cFEVObj_001AAB68*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_00462650));
+    cUIThing* text = (cUIThing*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_00462650));
     if (text == 0) {
         return;
     }
@@ -6179,49 +5882,11 @@ extern "C" void func_001AD5E8(void* selfp, void* a1, int a2)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001AD8C0);
 #ifdef SKIP_ASM
-class cFEVObj_001AD8C0 {
-public:
-    int field_0x0;
-    int field_0x4;
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual void v09();
-    virtual void v10();
-    virtual void v11();
-    virtual void v12();
-    virtual void v13();
-    virtual void v14();
-    virtual void v15();
-    virtual void v16();
-    virtual void v17();
-    virtual void v18();
-    virtual void v19();
-    virtual void v20();
-    virtual void v21();
-    virtual void v22();
-    virtual void v23();
-    virtual void v24();
-    virtual void v25();
-    virtual void v26();
-    virtual void v27();
-    virtual void v28();
-    virtual void v29();
-    virtual void v30();
-    virtual void v31();
-    virtual void v32();
-    virtual void v33(void* a1, int a2);
-};
 
 extern "C" int func_001A97B8(void* self, void* a1, int a2);
 extern "C" void func_001AD930(void* self, void* a1, int a2);
 
-extern "C" void func_001AD8C0(cFEVObj_001AD8C0* self, void* a1, int a2)
+extern "C" void func_001AD8C0(cUIState* self, void* a1, int a2)
 {
     switch (*(int*)((char*)a1 + 0x18)) {
     case 0x816:
@@ -6530,44 +6195,8 @@ extern "C" void func_001ADE88(void* self)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001ADFB8);
 #ifdef SKIP_ASM
-class func_001ADFB8_cObj {
-public:
-    char pad[0x8];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual void v09();
-    virtual void v10();
-    virtual void v11();
-    virtual void v12();
-    virtual void v13();
-    virtual void v14();
-    virtual void v15();
-    virtual void v16();
-    virtual void v17();
-    virtual void v18();
-    virtual void v19();
-    virtual void v20();
-    virtual void v21();
-    virtual void v22();
-    virtual void v23();
-    virtual void v24();
-    virtual void v25();
-    virtual void v26();
-    virtual void v27();
-    virtual void v28();
-    virtual void v29();
-    virtual void v30();
-    virtual void v31();
-    virtual void v32();
-};
 
-extern "C" int func_001ADFB8(func_001ADFB8_cObj* self)
+extern "C" int func_001ADFB8(cUIState* self)
 {
     self->v32();
     return 1;
@@ -7105,48 +6734,10 @@ extern "C" int func_001AF3E0(void* self, void* a1, int a2)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001AF428);
 #ifdef SKIP_ASM
-class cFEVObj_001AF428 {
-public:
-    int field_0x0;
-    int field_0x4;
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual void v09();
-    virtual void v10();
-    virtual void v11();
-    virtual void v12();
-    virtual void v13();
-    virtual void v14();
-    virtual void v15();
-    virtual void v16();
-    virtual void v17();
-    virtual void v18();
-    virtual void v19();
-    virtual void v20();
-    virtual void v21();
-    virtual void v22();
-    virtual void v23();
-    virtual void v24();
-    virtual void v25();
-    virtual void v26();
-    virtual void v27();
-    virtual void v28();
-    virtual void v29();
-    virtual void v30();
-    virtual void v31();
-    virtual void v32();
-    virtual void v33(void* a1, int a2);
-};
 
 extern "C" int func_001A97B8(void* self, void* a1, int a2);
 
-extern "C" void func_001AF428(cFEVObj_001AF428* self, void* a1, int a2)
+extern "C" void func_001AF428(cUIState* self, void* a1, int a2)
 {
     if (*(int*)((char*)a1 + 0x18) == 0x835) {
         self->v33(a1, a2);
@@ -7820,48 +7411,10 @@ extern "C" void func_001B0538(void* self, void* obj, int msg)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001B05E0);
 #ifdef SKIP_ASM
-class cFEVObj_001B05E0 {
-public:
-    int field_0x0;
-    int field_0x4;
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual void v09();
-    virtual void v10();
-    virtual void v11();
-    virtual void v12();
-    virtual void v13();
-    virtual void v14();
-    virtual void v15();
-    virtual void v16();
-    virtual void v17();
-    virtual void v18();
-    virtual void v19();
-    virtual void v20();
-    virtual void v21();
-    virtual void v22();
-    virtual void v23();
-    virtual void v24();
-    virtual void v25();
-    virtual void v26();
-    virtual void v27();
-    virtual void v28();
-    virtual void v29();
-    virtual void v30();
-    virtual void v31();
-    virtual void v32();
-    virtual void v33(void* a1, int a2);
-};
 
 extern "C" int func_001A97B8(void* self, void* a1, int a2);
 
-extern "C" void func_001B05E0(cFEVObj_001B05E0* self, void* a1, int a2)
+extern "C" void func_001B05E0(cUIState* self, void* a1, int a2)
 {
     if (*(int*)((char*)a1 + 0x18) == 0x835) {
         self->v33(a1, a2);
@@ -7889,50 +7442,13 @@ extern "C" int func_001B0628(void* self, void* a1, int a2)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001B0670);
 #ifdef SKIP_ASM
-class cFEVObj_001B0670 {
-public:
-    int field_0x0;
-    int field_0x4;
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual void v09();
-    virtual void v10();
-    virtual void v11();
-    virtual void v12();
-    virtual void v13();
-    virtual void v14();
-    virtual void v15();
-    virtual void v16();
-    virtual void v17();
-    virtual void v18();
-    virtual void v19();
-    virtual void v20();
-    virtual void v21();
-    virtual void v22();
-    virtual void v23();
-    virtual void v24();
-    virtual void v25();
-    virtual void v26();
-    virtual void v27();
-    virtual void v28();
-    virtual void v29();
-    virtual void v30();
-    virtual void v31();
-    virtual void v32();
-};
 
 extern "C" void* cBE_getBE();
 // PORT: cBE_getInterface__Fv really takes (be, kind); bound by asm label
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void func_001B0850(void* self, void* iface, void* screen);
 
-extern "C" int func_001B0670(cFEVObj_001B0670* self, int a1)
+extern "C" int func_001B0670(cUIState* self, int a1)
 {
     self->v32();
     if (a1 != 0) {
@@ -11757,38 +11273,10 @@ extern "C" int func_001B66B8(void* self, cFEVObj_001B66B8* obj)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001B6740);
 #ifdef SKIP_ASM
-class func_001B6740_cObj {
-public:
-    char pad[0x8];
-    virtual int v01(int, int);
-    virtual int v02(int, int);
-    virtual int v03(int, int);
-    virtual int v04(int, int);
-    virtual int v05(int, int);
-    virtual int v06(int, int);
-    virtual int v07(int, int);
-    virtual int v08(int, int);
-    virtual int v09(int, int);
-    virtual int v10(int, int);
-    virtual int v11(int, int);
-    virtual int v12(int, int);
-    virtual int v13(int, int);
-    virtual int v14(int, int);
-    virtual int v15(int, int);
-    virtual int v16(int, int);
-    virtual int v17(int, int);
-    virtual int v18(int, int);
-    virtual int v19(int, int);
-    virtual int v20(int, int);
-    virtual int v21(int, int);
-    virtual int v22(int, int);
-    virtual int v23(int, int);
-    virtual int v24(int, int);
-};
 
 extern "C" int func_001B6740(void* self, int a1, int a2)
 {
-    return (*(func_001B6740_cObj**)((char*)self + 0x20))->v24(a1, a2);
+    return (*(cUIState**)((char*)self + 0x20))->v24(a1, a2);
 }
 #endif
 
@@ -11824,28 +11312,6 @@ extern char D_00464208[];
 extern char D_00464220[];
 extern char D_00464250[];
 
-class cFEVObj_001B6798 {
-public:
-    char pad[0x8];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual void setVisible(int on);
-    virtual void v10();
-    virtual void v11();
-    virtual void v12();
-    virtual void v13();
-    virtual void v14();
-    virtual void v15();
-    virtual void v16();
-    virtual void v17(void* owner, int msg);
-};
-
 static inline int IsReady_001B6798(int* d) { return *d >= 3; }
 static inline int IsDone_001B6798(int* d) { return *d == 5; }
 
@@ -11855,12 +11321,12 @@ extern "C" void func_001B6798(void* self)
     switch (*(int*)(s + 0x6E4)) {
     case 1:
         if (IsReady_001B6798(*(int**)(s + 0x6D0))) {
-            (*(cFEVObj_001B6798**)(s + 0x6D8))->setVisible(1);
-            (*(cFEVObj_001B6798**)(s + 0x6DC))->setVisible(1);
-            (*(cFEVObj_001B6798**)(s + 0x6E0))->setVisible(1);
-            (*(cFEVObj_001B6798**)(s + 0x6D4))->setVisible(1);
+            (*(cUIThing**)(s + 0x6D8))->setVisible(1);
+            (*(cUIThing**)(s + 0x6DC))->setVisible(1);
+            (*(cUIThing**)(s + 0x6E0))->setVisible(1);
+            (*(cUIThing**)(s + 0x6D4))->setVisible(1);
             cUIText_setUnicodeStringByID(*(cUIText**)(s + 0x6D4), GetHashValue32(D_00464208));
-            cFEVObj_001B6798* g = (cFEVObj_001B6798*)cUIScreen_getObjectByHashName(*(void**)(s + 0x40), GetHashValue32(D_00464250));
+            cUIThing* g = (cUIThing*)cUIScreen_getObjectByHashName(*(void**)(s + 0x40), GetHashValue32(D_00464250));
             if (g != 0) {
                 g->setVisible(1);
             }
@@ -11898,15 +11364,15 @@ extern "C" void func_001B6798(void* self)
             USTR_copy(*(void**)(o + 0x710), a);
             USTR_copy(*(void**)(o + 0x714), b);
             USTR_copy(*(void**)(o + 0x718), c);
-            (*(cFEVObj_001B6798**)(s + 0x20))->v17(self, 0x10);
+            (*(cUIState**)(s + 0x20))->onPopupEvent(self, 0x10);
         } else {
-            (*(cFEVObj_001B6798**)(s + 0x20))->v17(self, 0xF);
+            (*(cUIState**)(s + 0x20))->onPopupEvent(self, 0xF);
         }
         break;
     }
     case 4:
         if (IsDone_001B6798(*(int**)(s + 0x6D0))) {
-            (*(cFEVObj_001B6798**)(s + 0x20))->v17(self, 0x14);
+            (*(cUIState**)(s + 0x20))->onPopupEvent(self, 0x14);
         }
         break;
     }
@@ -12064,66 +11530,16 @@ extern "C" int func_001B6C98(void* self, int on)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001B6E10);
 #ifdef SKIP_ASM
-class func_001B6E10_cObj {
-public:
-    char pad[0x8];
-    virtual int v01(int, int);
-    virtual int v02(int, int);
-    virtual int v03(int, int);
-    virtual int v04(int, int);
-    virtual int v05(int, int);
-    virtual int v06(int, int);
-    virtual int v07(int, int);
-    virtual int v08(int, int);
-    virtual int v09(int, int);
-    virtual int v10(int, int);
-    virtual int v11(int, int);
-    virtual int v12(int, int);
-    virtual int v13(int, int);
-    virtual int v14(int, int);
-    virtual int v15(int, int);
-    virtual int v16(int, int);
-    virtual int v17(int, int);
-    virtual int v18(int, int);
-    virtual int v19(int, int);
-    virtual int v20(int, int);
-    virtual int v21(int, int);
-    virtual int v22(int, int);
-    virtual int v23(int, int);
-    virtual int v24(int, int);
-};
 
 extern "C" int func_001B6E10(void* self, int a1, int a2)
 {
-    return (*(func_001B6E10_cObj**)((char*)self + 0x20))->v24(a1, a2);
+    return (*(cUIState**)((char*)self + 0x20))->v24(a1, a2);
 }
 #endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001B6E40);
 #ifdef SKIP_ASM
-class cFEVObj_001B6E40 {
-public:
-    int field_0x0;
-    int field_0x4;
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual void v09();
-    virtual void v10();
-    virtual void v11();
-    virtual void v12();
-    virtual void v13();
-    virtual void v14();
-    virtual void v15();
-    virtual void v16();
-    virtual void v17(void* sender, int msg);
-};
 
 extern "C" void func_001A8918(void* self, int a1, int msg);
 
@@ -12132,7 +11548,7 @@ extern "C" void func_001B6E40(void* self, int a1, unsigned int msg)
     switch (msg) {
     case 5:
     case 6:
-        (*(cFEVObj_001B6E40**)((char*)self + 0x20))->v17(self, 0xF);
+        (*(cUIState**)((char*)self + 0x20))->onPopupEvent(self, 0xF);
         break;
     case 7:
     case 8:
@@ -13140,29 +12556,6 @@ extern "C" int func_001B8890(void* self, int state);
 extern "C" int func_00265D68(void* p);
 extern int* D_004A33D0;
 
-class cListener_001B84D8 {
-public:
-    char pad[0x8];
-    // vptr at 0x8; slot N at vtable offset N*8
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual void v09();
-    virtual void v10();
-    virtual void v11();
-    virtual void v12();
-    virtual void v13();
-    virtual void v14();
-    virtual void v15();
-    virtual void v16();
-    virtual void v17(void* owner, int v);
-};
-
 extern "C" void func_001B84D8(void* self, void* w, unsigned int msg)
 {
     char* s = (char*)self;
@@ -13201,7 +12594,7 @@ extern "C" void func_001B84D8(void* self, void* w, unsigned int msg)
         }
         case 22:
             func_001A97B8_v(self, w, 22);
-            (*(cListener_001B84D8**)(s + 0x20))->v17(self, *(int*)(s + 0x6D0));
+            (*(cUIState**)(s + 0x20))->onPopupEvent(self, *(int*)(s + 0x6D0));
             break;
         default:
             func_001A97B8_v(self, w, msg);
@@ -13230,7 +12623,7 @@ extern "C" void func_001B84D8(void* self, void* w, unsigned int msg)
             func_001A97B8_v(self, w, 22);
             v = *(int*)(s + 0x6D0);
             if (v != 0) {
-                (*(cListener_001B84D8**)(s + 0x20))->v17(self, v);
+                (*(cUIState**)(s + 0x20))->onPopupEvent(self, v);
             }
             break;
         default:
@@ -13256,7 +12649,7 @@ extern "C" void func_001B84D8(void* self, void* w, unsigned int msg)
             func_001A97B8_v(self, w, 22);
             v = *(int*)(s + 0x6D0);
             if (v != 0) {
-                (*(cListener_001B84D8**)(s + 0x20))->v17(self, v);
+                (*(cUIState**)(s + 0x20))->onPopupEvent(self, v);
             }
             break;
         default:
@@ -13283,7 +12676,7 @@ extern "C" void func_001B84D8(void* self, void* w, unsigned int msg)
             func_001A97B8_v(self, w, 22);
             v = *(int*)(s + 0x6D0);
             if (v != 0) {
-                (*(cListener_001B84D8**)(s + 0x20))->v17(self, v);
+                (*(cUIState**)(s + 0x20))->onPopupEvent(self, v);
             }
             break;
         default:
@@ -13298,7 +12691,7 @@ extern "C" void func_001B84D8(void* self, void* w, unsigned int msg)
     case 29:
         if (msg == 22) {
             func_001A97B8_v(self, w, 22);
-            (*(cListener_001B84D8**)(s + 0x20))->v17(self, 0xF);
+            (*(cUIState**)(s + 0x20))->onPopupEvent(self, 0xF);
         } else {
             func_001A97B8_v(self, w, msg);
         }
@@ -13313,38 +12706,10 @@ extern "C" void func_001B84D8(void* self, void* w, unsigned int msg)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001B8860);
 #ifdef SKIP_ASM
-class func_001B8860_cObj {
-public:
-    char pad[0x8];
-    virtual int v01(int, int);
-    virtual int v02(int, int);
-    virtual int v03(int, int);
-    virtual int v04(int, int);
-    virtual int v05(int, int);
-    virtual int v06(int, int);
-    virtual int v07(int, int);
-    virtual int v08(int, int);
-    virtual int v09(int, int);
-    virtual int v10(int, int);
-    virtual int v11(int, int);
-    virtual int v12(int, int);
-    virtual int v13(int, int);
-    virtual int v14(int, int);
-    virtual int v15(int, int);
-    virtual int v16(int, int);
-    virtual int v17(int, int);
-    virtual int v18(int, int);
-    virtual int v19(int, int);
-    virtual int v20(int, int);
-    virtual int v21(int, int);
-    virtual int v22(int, int);
-    virtual int v23(int, int);
-    virtual int v24(int, int);
-};
 
 extern "C" int func_001B8860(void* self, int a1, int a2)
 {
-    return (*(func_001B8860_cObj**)((char*)self + 0x20))->v24(a1, a2);
+    return (*(cUIState**)((char*)self + 0x20))->v24(a1, a2);
 }
 #endif
 
@@ -16039,46 +15404,13 @@ extern "C" sFEObj_001BCB58* func_001BCB58(sFEObj_001BCB58* self, int a1)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001BCC30);
 #ifdef SKIP_ASM
-class cFEVObj_001BCC30 {
-public:
-    int field_0x0;
-    int field_0x4;
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual void v09();
-    virtual void v10();
-    virtual void v11();
-    virtual void v12();
-    virtual void v13();
-    virtual void v14();
-    virtual void v15();
-    virtual void v16();
-    virtual void v17();
-    virtual void v18();
-    virtual void v19();
-    virtual void v20();
-    virtual void v21();
-    virtual void v22();
-    virtual void v23();
-    virtual void v24();
-    virtual void v25();
-    virtual void v26();
-    virtual void v27();
-    virtual void v28();
-};
 
 int GetHashValue32(char* str);
 extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
 extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
 extern char D_00464DA0[];
 
-extern "C" void func_001BCC30(cFEVObj_001BCC30* self)
+extern "C" void func_001BCC30(cUIState* self)
 {
     void* engine = *(void**)((char*)self + 0x10);
     void* screen = cUIEngine_addScreenByHashName(engine, self, GetHashValue32(D_00464DA0), 0);
@@ -17338,29 +16670,6 @@ extern const char* D_004A1A6C;
 extern char D_00465248[];
 extern char D_00465260[];
 
-class cFEVObj_001BEA38 {
-public:
-    char pad[0x8];
-    // vptr at 0x8; slot N at vtable offset N*8
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual void v09();
-    virtual void v10();
-    virtual void v11();
-    virtual void v12();
-    virtual void v13();
-    virtual void v14();
-    virtual void v15();
-    virtual void v16();
-    virtual void v17(void* owner, int msg);
-};
-
 // PORT: obj is a pointer passed as int (the unit's handler signature)
 extern "C" void func_001BEA38(void* self, int a1, unsigned int msg)
 {
@@ -17378,13 +16687,13 @@ extern "C" void func_001BEA38(void* self, int a1, unsigned int msg)
             break;
         case 3:
             if (func_001BEC78(self)) {
-                (*(cFEVObj_001BEA38**)((char*)self + 0x20))->v17(self, 0xF);
+                (*(cUIState**)((char*)self + 0x20))->onPopupEvent(self, 0xF);
             }
             break;
         }
         break;
     case 6:
-        (*(cFEVObj_001BEA38**)((char*)self + 0x20))->v17(self, 0x14);
+        (*(cUIState**)((char*)self + 0x20))->onPopupEvent(self, 0x14);
         break;
     case 9:
         if (obj == *(char**)((char*)self + 0x6D8)) {
@@ -17456,38 +16765,10 @@ extern "C" int func_001BEC78(void* self)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001BED28);
 #ifdef SKIP_ASM
-class func_001BED28_cObj {
-public:
-    char pad[0x8];
-    virtual int v01(int, int);
-    virtual int v02(int, int);
-    virtual int v03(int, int);
-    virtual int v04(int, int);
-    virtual int v05(int, int);
-    virtual int v06(int, int);
-    virtual int v07(int, int);
-    virtual int v08(int, int);
-    virtual int v09(int, int);
-    virtual int v10(int, int);
-    virtual int v11(int, int);
-    virtual int v12(int, int);
-    virtual int v13(int, int);
-    virtual int v14(int, int);
-    virtual int v15(int, int);
-    virtual int v16(int, int);
-    virtual int v17(int, int);
-    virtual int v18(int, int);
-    virtual int v19(int, int);
-    virtual int v20(int, int);
-    virtual int v21(int, int);
-    virtual int v22(int, int);
-    virtual int v23(int, int);
-    virtual int v24(int, int);
-};
 
 extern "C" int func_001BED28(void* self, int a1, int a2)
 {
-    return (*(func_001BED28_cObj**)((char*)self + 0x20))->v24(a1, a2);
+    return (*(cUIState**)((char*)self + 0x20))->v24(a1, a2);
 }
 #endif
 
@@ -17771,30 +17052,6 @@ extern char D_004652E0[];
 extern char D_004652F0[];
 extern char D_0045DB90[];
 
-class cFEVObj_001BF438 {
-public:
-    int f0;
-    int f4;
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual void v09();
-    virtual void v10();
-    virtual void v11();
-    virtual void v12();
-    virtual void v13();
-    virtual void v14();
-    virtual void v15();
-    virtual void v16();
-    virtual void v17();
-    virtual void v18(void* obj);
-};
-
 extern "C" void func_001BF438(void* self, void* a1, int kind)
 {
     if (kind == 15) {
@@ -17802,25 +17059,25 @@ extern "C" void func_001BF438(void* self, void* a1, int kind)
         {
             void* o = cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_004652C0));
             if (o) {
-                ((cFEVObj_001BF438*)self)->v18(o);
+                ((cUIState*)self)->onWidgetCreate(o);
             }
         }
         {
             void* o = cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_00465330));
             if (o) {
-                ((cFEVObj_001BF438*)self)->v18(o);
+                ((cUIState*)self)->onWidgetCreate(o);
             }
         }
         {
             void* o = cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_004652E0));
             if (o) {
-                ((cFEVObj_001BF438*)self)->v18(o);
+                ((cUIState*)self)->onWidgetCreate(o);
             }
         }
         {
             void* o = cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_004652F0));
             if (o) {
-                ((cFEVObj_001BF438*)self)->v18(o);
+                ((cUIState*)self)->onWidgetCreate(o);
             }
         }
         void* menu = cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_0045DB90));
@@ -17892,50 +17149,12 @@ extern "C" void func_001BF5A8(void* self, void* a1, int kind)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/feasyncfile", func_001BF6C0);
 #ifdef SKIP_ASM
-class cFEVObj_001BF6C0 {
-public:
-    int field_0x0;
-    int field_0x4;
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual void v09();
-    virtual void v10();
-    virtual void v11();
-    virtual void v12();
-    virtual void v13();
-    virtual void v14();
-    virtual void v15();
-    virtual void v16();
-    virtual void v17();
-    virtual void v18();
-    virtual void v19();
-    virtual void v20();
-    virtual void v21();
-    virtual void v22();
-    virtual void v23();
-    virtual void v24();
-    virtual void v25();
-    virtual void v26();
-    virtual void v27();
-    virtual void v28();
-    virtual void v29();
-    virtual void v30();
-    virtual void v31();
-    virtual void v32();
-    virtual void v33(void* a1, int a2);
-};
 
 extern "C" int func_001A97B8(void* self, void* a1, int a2);
 extern "C" void func_001BF438(void* self, void* a1, int a2);
 extern "C" void func_001BF5A8(void* self, void* a1, int a2);
 
-extern "C" void func_001BF6C0(cFEVObj_001BF6C0* self, void* a1, int a2)
+extern "C" void func_001BF6C0(cUIState* self, void* a1, int a2)
 {
     switch (*(unsigned int*)((char*)a1 + 0x18)) {
     case 0x80E:
@@ -18686,47 +17905,9 @@ extern char D_00465710[];
 extern char D_00465720[];
 extern char D_00465730[];
 
-class cFEVObj_001C0B20 {
-public:
-    char pad[0x8];
-    // vptr at 0x8; slot N at vtable offset N*8
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void setFocus(int on);
-    virtual void v08();
-    virtual void setVisible(int on);
-    virtual void v10();
-    virtual void v11();
-    virtual void v12();
-    virtual void v13();
-    virtual void v14();
-    virtual void v15();
-    virtual void v16();
-    virtual void v17();
-    virtual void v18();
-    virtual void v19();
-    virtual void v20();
-    virtual void v21();
-    virtual void v22();
-    virtual void v23();
-    virtual void v24();
-    virtual void v25();
-    virtual void v26();
-    virtual void v27();
-    virtual void v28();
-    virtual void v29();
-    virtual void v30();
-    virtual void v31();
-    virtual void v32();
-};
-
 extern "C" int func_001C0B20(void* self)
 {
-    ((cFEVObj_001C0B20*)self)->v32();
+    ((cUIState*)self)->v32();
     char* o = (char*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_004619B8));
     cUIText* a = cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_004619C8));
     cUIText* b = cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_004619D8));
@@ -18752,9 +17933,9 @@ extern "C" int func_001C0B20(void* self)
     char* x = (char*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_00465710));
     *(char**)(x + 0xB8) = o;
     func_003A1310(x, 1);
-    ((cFEVObj_001C0B20*)x)->setFocus(1);
+    ((cUIThing*)x)->setFocus(1);
     if (o) {
-        ((cFEVObj_001C0B20*)o)->setVisible(1);
+        ((cUIThing*)o)->setVisible(1);
     }
     return 1;
 }
@@ -19090,28 +18271,6 @@ struct sSelf_001C1560 {
     int ids[5];
 };
 
-class cFEVObj_001C1560 {
-public:
-    char pad[0x8];
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void setStatic(int on);
-    virtual void setVisible(int on);
-    virtual void v10();
-    virtual void v11();
-    virtual void v12();
-    virtual void v13();
-    virtual void v14();
-    virtual void v15();
-    virtual void v16();
-    virtual void v17(void* owner, int msg);
-};
-
 // PORT: obj is a pointer passed as int (the unit's handler signature)
 extern "C" void func_001C1560(void* self, int a1, unsigned int msg)
 {
@@ -19126,7 +18285,7 @@ extern "C" void func_001C1560(void* self, int a1, unsigned int msg)
         if (*(int*)(s + 0x6F4) == a1) {
             if (*(int*)(s + 0x6EC) != 0) {
                 cUIText_setUnicodeStringByID(*(cUIText**)(s + 0x6E4), GetHashValue32(D_00465938));
-                (*(cFEVObj_001C1560**)(s + 0x6F4))->setStatic(1);
+                (*(cUIThing**)(s + 0x6F4))->setStatic(1);
                 func_001C13E0(self, *(int*)(s + 0x6EC) ^ 1);
                 func_0025EED8(D_004A3028);
             } else {
@@ -19146,7 +18305,7 @@ extern "C" void func_001C1560(void* self, int a1, unsigned int msg)
                 o->ids[3] = func_0039A738(*(void**)(s + 0x718));
                 o->ids[4] = func_0039A738(*(void**)(s + 0x71C));
                 func_0025EE20(D_004A3028, ids, *(signed char*)(s + 0x14));
-                (*(cFEVObj_001C1560**)(s + 0x6E4))->setVisible(1);
+                (*(cUIThing**)(s + 0x6E4))->setVisible(1);
                 cUIText_setUnicodeStringByID(*(cUIText**)(s + 0x6F4), GetHashValue32(D_00462C88));
                 *(int*)(s + 0x6E8) = 0x1E;
                 func_001C17F8(self, 1);
@@ -19157,10 +18316,10 @@ extern "C" void func_001C1560(void* self, int a1, unsigned int msg)
         func_001C13E0(self, *(int*)(s + 0x6EC) ^ 1);
         if (*(int*)(s + 0x6EC) != 0) {
             cUIText_setUnicodeStringByID(*(cUIText**)(s + 0x6E4), GetHashValue32(D_00465938));
-            (*(cFEVObj_001C1560**)(s + 0x6F4))->setStatic(1);
+            (*(cUIThing**)(s + 0x6F4))->setStatic(1);
             func_0025EED8(D_004A3028);
         } else {
-            (*(cFEVObj_001C1560**)(s + 0x20))->v17(self, 0x14);
+            (*(cUIState**)(s + 0x20))->onPopupEvent(self, 0x14);
         }
         break;
     default:
@@ -19229,28 +18388,6 @@ extern const char D_00461C60[];
 extern char D_00461618[];
 extern char D_00465958[];
 
-struct cFEObj_001C19C8 {
-    int f0;
-    int f4;
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual void v09();
-    virtual void v10();
-    virtual void v11();
-    virtual void v12();
-    virtual void v13();
-    virtual void v14();
-    virtual void v15();
-    virtual void v16();
-    virtual void v17(void* a1, int a2);
-};
-
 // Message handler: on 0xE7 confirms (if armed) or closes the screen; other ids as in the sibling handlers.
 extern "C" void* func_001C19C8(void* self, int a1, int a2)
 {
@@ -19275,7 +18412,7 @@ extern "C" void* func_001C19C8(void* self, int a1, int a2)
             func_001A9BC0(self, p);
         } else {
             *(int*)((char*)self + 0x6EC) = 0;
-            (*(cFEObj_001C19C8**)((char*)self + 0x20))->v17(self, 0x14);
+            (*(cUIState**)((char*)self + 0x20))->onPopupEvent(self, 0x14);
         }
         break;
     case 0xF3:
@@ -19641,47 +18778,10 @@ extern "C" void func_001C2298(sOwner1C2298* self, cUIText* text)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001C23C0);
 #ifdef SKIP_ASM
-class cFEVObj_001C23C0 {
-public:
-    int field_0x0;
-    int field_0x4;
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual void v09();
-    virtual void v10();
-    virtual void v11();
-    virtual void v12();
-    virtual void v13();
-    virtual void v14();
-    virtual void v15();
-    virtual void v16();
-    virtual void v17();
-    virtual void v18();
-    virtual void v19();
-    virtual void v20();
-    virtual void v21();
-    virtual void v22();
-    virtual void v23();
-    virtual void v24();
-    virtual void v25();
-    virtual void v26();
-    virtual void v27();
-    virtual void v28();
-    virtual void v29();
-    virtual void v30();
-    virtual void v31();
-    virtual void v32();
-};
 
 extern "C" void func_001C2418(void* self);
 
-extern "C" int func_001C23C0(cFEVObj_001C23C0* self, int a1)
+extern "C" int func_001C23C0(cUIState* self, int a1)
 {
     self->v32();
     if (a1 != 0) {
@@ -20255,47 +19355,10 @@ extern "C" void func_001C2F00(void* self, cFEVObj_001C2F00* obj)
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001C32B8);
 #ifdef SKIP_ASM
-class cFEVObj_001C32B8 {
-public:
-    int field_0x0;
-    int field_0x4;
-    virtual void v01();
-    virtual void v02();
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual void v06();
-    virtual void v07();
-    virtual void v08();
-    virtual void v09();
-    virtual void v10();
-    virtual void v11();
-    virtual void v12();
-    virtual void v13();
-    virtual void v14();
-    virtual void v15();
-    virtual void v16();
-    virtual void v17();
-    virtual void v18();
-    virtual void v19();
-    virtual void v20();
-    virtual void v21();
-    virtual void v22();
-    virtual void v23();
-    virtual void v24();
-    virtual void v25();
-    virtual void v26();
-    virtual void v27();
-    virtual void v28();
-    virtual void v29();
-    virtual void v30();
-    virtual void v31();
-    virtual void v32();
-};
 
 extern "C" void func_001C3EE8(void* self, int a1);
 
-extern "C" int func_001C32B8(cFEVObj_001C32B8* self, int a1)
+extern "C" int func_001C32B8(cUIState* self, int a1)
 {
     self->v32();
     if (a1 != 0) {
