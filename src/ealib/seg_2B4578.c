@@ -10085,13 +10085,9 @@ int func_003C6C28(int arg0) {
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C6C98);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct Inner_6C98 { char pad[0x48]; int a; int b; };
-struct S_6C98 { char pad[0x304]; struct Inner_6C98 *p[1]; };
-extern struct S_6C98 D_005157B8_6C98 __asm__("D_005157B8");
 int func_003C6C98(int i) {
-    struct Inner_6C98 *q = (&D_005157B8_6C98)[0].p[i];
-    int b = q->b; int a = q->a; return a + b;
+    struct s7B8Queue *q = D_005157B8.f304[i];
+    return q->f48 + q->f4C;
 }
 #endif
 
