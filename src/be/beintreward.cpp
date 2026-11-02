@@ -1730,7 +1730,197 @@ extern "C" void func_00159170(void* self, int a1, int a2, int kind, int tier)
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/beintreward", func_001591E8);
+#ifdef SKIP_ASM
+extern "C" void* cBE_getBE();
+// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+signed char cBERewardInterface_getTrackMedal(void* self, int b, int c, int d, int e);
+int cBERewardInterface_isBetterMedal(void* self, int a, int b);
+extern "C" int func_00157BF0(void* self, int a, int b, int c, int i);
+extern "C" void func_00159818(void* self, int a, int b, int c);
+extern "C" int func_001577E0(void* self, int a, int b);
+extern "C" unsigned int func_00151040(void* score, int medal, int event, int mode);
+extern "C" void func_001E1DD0(int group, int mode, int flag);
+extern "C" void func_001E1C10(int group);
+extern "C" void func_001E2370(int group);
+extern "C" int func_0015A3B8(void* self, int a, int b);
+extern "C" int func_0015A398(void* self, int a1);
+
+// PORT: 64-bit `long` flags word (ld/sd).
+struct sProfileChar_1591E8 {
+    char pad0[0x278];
+    long flags;     // 0x278
+    char pad280[0xF88 - 0x280];
+};
+extern sProfileChar_1591E8 D_004A6CA8_1591E8[][10] __asm__("D_004A6CA8");
+extern "C" int func_00152528(sProfileChar_1591E8* pc, int event, int mode, int medal);
+
+struct sScoreStat_1591E8 {
+    char pad0;
+    signed char medal;      // 0x1
+    unsigned short count;   // 0x2
+};
+sScoreStat_1591E8* cBECharProfileDB_getScoreStats_1591E8(void* self, int a, int b) __asm__("cBECharProfileDB_getScoreStats__FPvii");
+
+struct sRewardReq_1591E8
+{
+    signed char track;
+    signed char kind;
+};
+extern sRewardReq_1591E8 D_0045AAD8_1591E8[][4][5] __asm__("D_0045AAD8");
+
+struct sRaceSettings_1591E8 {
+    char pad_0x00[0x49];
+    signed char b49;    // 0x49
+};
+extern sRaceSettings_1591E8 D_005305B0_1591E8 __asm__("D_005305B0");
+extern signed char D_005305F9[];
+
+struct sRewardState_1591E8 {
+    char pad_0x00[0x10];
+    unsigned int money; // 0x10
+    int medal;          // 0x14
+};
+
+extern "C" void func_001591E8(void* self, int profile, int c, int mode, int event, int medal)
+{
+    sProfileChar_1591E8* pc = &D_004A6CA8_1591E8[profile][c];
+    int bit = -1;
+    void* score = cBE_getInterface_Fv(cBE_getBE(), 0xB);
+    sScoreStat_1591E8* stats = cBECharProfileDB_getScoreStats_1591E8(pc, event, mode);
+    int tier = func_0015A3B8(self, mode, event);
+    int group = func_0015A398(self, event);
+    unsigned int money;
+    int oldMedal = stats->medal;
+    if (mode == 6 || mode == 9)
+        group = 0;
+    else if (mode == 7 || mode == 10)
+        group = 1;
+    else if (mode == 8 || mode == 11)
+        group = 2;
+    money = func_00151040(score, medal, event, mode);
+    switch (mode) {
+    case 0:
+    case 1:
+    case 2:
+    case 3:
+        bit = group + 0x11;
+        break;
+    case 4:
+        bit = group + 0x14;
+        break;
+    case 5:
+        bit = group + 0x17;
+        break;
+    case 6:
+    case 7:
+    case 8:
+        bit = group + 0x1A;
+        break;
+    case 9:
+    case 10:
+    case 11:
+        bit = group + 0x1D;
+        break;
+    case 12:
+    case 13:
+        break;
+    }
+    if ((unsigned int)medal < 2) {
+        if (stats->count == 0)
+            func_00159CD0(self, profile, c, bit);
+    } else if ((unsigned int)(mode - 6) < 6 && D_005305F9[0] == 0) {
+        if (medal == 3)
+            func_001E1DD0(group, mode, 0);
+        else if (medal == 2)
+            func_001E1DD0(group, mode, 1);
+    }
+    if (cBERewardInterface_isBetterMedal(self, oldMedal, medal)) {
+        int had = func_00157BF0(self, profile, c, group, tier);
+        func_00159818(self, profile, c, money);
+        func_00152528(pc, event, mode, medal);
+        if (func_00157BF0(self, profile, c, group, tier) && !had)
+            func_00159170(self, profile, c, group, tier);
+    } else {
+        func_00152528(pc, event, mode, medal);
+        money >>= 1;
+        func_00159818(self, profile, c, money);
+    }
+    if (func_001577E0(self, profile, c) && func_0015A2E0(self, profile, c, 0) == 0)
+        func_00159CD0(self, profile, c, 0);
+    ((sRewardState_1591E8*)D_004A1264)->medal = medal;
+    ((sRewardState_1591E8*)D_004A1264)->money = money;
+    if (!cBERewardInterface_isBetterMedal(self, -1, medal))
+        return;
+    int any = 0;
+    int okA = 1;
+    int okB = 1;
+    for (int i = 0; i < 5; i++) {
+        int kind = D_0045AAD8_1591E8[group][tier][i].kind;
+        int track = D_0045AAD8_1591E8[group][tier][i].track;
+        if (track == -1) {
+            if (D_005305B0_1591E8.b49 == 0)
+                func_001E1C10(group);
+            break;
+        }
+        if ((unsigned int)(track - 4) < 2) {
+            any = 1;
+            if (!cBERewardInterface_isBetterMedal(self, -1, cBERewardInterface_getTrackMedal(self, profile, c, track, kind))) {
+                okB = 0;
+                break;
+            }
+        } else {
+            if (!cBERewardInterface_isBetterMedal(self, -1, cBERewardInterface_getTrackMedal(self, profile, c, track, kind))) {
+                if (!any) {
+                    if (D_005305B0_1591E8.b49 == 0)
+                        func_001E1C10(group);
+                    okA = 0;
+                    okB = 0;
+                }
+                break;
+            }
+        }
+    }
+    if (okA) {
+        if (tier == 0) {
+            if (group == 0)
+                pc->flags &= ~0x40L;
+            else if (group == 1)
+                pc->flags &= ~0x80L;
+            else if (group == 2)
+                pc->flags &= ~0x100L;
+        } else {
+            if (group == 0)
+                pc->flags &= ~0x200L;
+            else if (group == 1)
+                pc->flags &= ~0x400L;
+            else if (group == 2)
+                pc->flags &= ~0x800L;
+        }
+        if (D_005305F9[0] == 0)
+            func_001E2370(group);
+    }
+    if (okB) {
+        if (tier == 0) {
+            if (group == 0)
+                pc->flags &= ~0x4000L;
+            else if (group == 1)
+                pc->flags &= ~0x8000L;
+            else if (group == 2)
+                pc->flags &= ~0x10000L;
+        } else {
+            if (group == 0)
+                pc->flags &= ~0x20000L;
+            else if (group == 1)
+                pc->flags &= ~0x40000L;
+            else if (group == 2)
+                pc->flags &= ~0x80000L;
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("be/beintreward", func_001597B0);
