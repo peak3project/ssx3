@@ -21,6 +21,9 @@ struct sSmElem {
     char pad_0x50[0x10];
 };
 
+// An octree hash-cell key: depth level and integer cell coordinates.
+struct sSmCell { int level; int x, y, z; };
+
 // ---- end of shared declarations ----
 
 //100%
@@ -937,13 +940,9 @@ INCLUDE_ASM("object/splinemodifier", cMultiSplineModifier_setupOverlapSystem);
 #ifdef SKIP_ASM
 
 
-struct sSmCell_A5F8 {
-    int level;
-    int x, y, z;
-};
 
 struct sSmRoot_A5F8 {
-    sSmCell_A5F8 cell;
+    sSmCell cell;
     void* node;
 };
 
@@ -1016,7 +1015,7 @@ static inline sSmRoot_A5F8* findRoot_A5F8(char* w, int x, int y, int z)
 
 static inline void insert_A5F8(char* w, void* item, const void* box)
 {
-    sSmCell_A5F8 c;
+    sSmCell c;
     func_00328F28(&c, box);
     func_00328C20(findRoot_A5F8(w, c.x, c.y, c.z), 0, item, &c);
 }
@@ -1053,12 +1052,6 @@ INCLUDE_ASM("object/splinemodifier", func_0035A780);
 void operator_delete(int*);
 extern "C" void* func_002D1BE0();
 
-struct sHashKey_A780 {
-    int level;      // 0x0
-    int x;          // 0x4
-    int y;          // 0x8
-    int z;          // 0xC
-};
 
 struct sOctCell_A780 {
     void* child[8];
@@ -1070,8 +1063,8 @@ struct sHashCellR_A780 {
     sOctCell_A780* oct;   // 0x10
 };
 
-extern "C" void func_00328F28_A780(sHashKey_A780* out, void* box) __asm__("func_00328F28");
-extern "C" void func_003284B8_A780(sOctCell_A780* oct, int type, void* node, sHashKey_A780* key,
+extern "C" void func_00328F28_A780(sSmCell* out, void* box) __asm__("func_00328F28");
+extern "C" void func_003284B8_A780(sOctCell_A780* oct, int type, void* node, sSmCell* key,
                                    sHashCellR_A780* cell) __asm__("func_003284B8");
 
 static inline int octEmpty_A780(sOctCell_A780* o)
@@ -1098,7 +1091,7 @@ extern "C" void func_0035A780(void* vself)
         // PORT: the segment array (0x60-byte entries) is indexed with 32-bit integer arithmetic.
         char* box = (char*)(i * 0x60 + *(int*)(self + 0x3C)) + 0x30;
         (*(int*)((char*)cell + 0xA0))++;
-        sHashKey_A780 key;
+        sSmCell key;
         func_00328F28_A780(&key, box);
         sHashCellR_A780* c1 = key.x < 0 ? cell + 4 : cell;
         sHashCellR_A780* c2 = key.y < 0 ? c1 + 2 : c1;
@@ -1547,10 +1540,6 @@ extern "C" void cRailModifier_buildXform(void* self);
 struct sSmMod_C040;
 extern "C" void func_0035C040(sSmMod_C040* self);
 
-struct sSmCell_B708 {
-    int level;
-    int x, y, z;
-};
 struct sSmNode_B708 {
     sSmNode_B708* child[2][2][2];   // 0x00
     void* lists[3];                 // 0x20
@@ -1567,7 +1556,7 @@ struct sSmNode_B708 {
     }
 };
 struct sSmRoot_B708 {
-    sSmCell_B708 cell;              // 0x00
+    sSmCell cell;              // 0x00
     sSmNode_B708* node;             // 0x10
 };
 struct sSmSeg_B708 {
@@ -1624,7 +1613,7 @@ static inline sSmRoot_B708* findRoot_B708(char* w, int x, int y, int z)
 static inline void remove_B708(char* w, void* item, const sBoundBox* box)
 {
     (*(int*)(w + 0xA0))++;
-    sSmCell_B708 c;
+    sSmCell c;
     func_00328F28(&c, box);
     sSmRoot_B708* r = findRoot_B708(w, c.x, c.y, c.z);
     func_003284B8(r->node, 2, item, &c, &r->cell);
@@ -1636,7 +1625,7 @@ static inline void remove_B708(char* w, void* item, const sBoundBox* box)
 
 static inline void insert_B708(char* w, void* item, const sBoundBox* box)
 {
-    sSmCell_B708 c;
+    sSmCell c;
     func_00328F28(&c, box);
     func_00328C20(findRoot_B708(w, c.x, c.y, c.z), 2, item, &c);
 }
@@ -1781,10 +1770,6 @@ INCLUDE_ASM("object/splinemodifier", func_0035BA88);
 void operator_delete(int*);
 extern "C" void* func_002D1BE0();
 
-struct sSmCell_BA88 {
-    int level;
-    int x, y, z;
-};
 struct sSmNode_BA88 {
     sSmNode_BA88* child[2][2][2];   // 0x00
     void* lists[3];                 // 0x20
@@ -1801,7 +1786,7 @@ struct sSmNode_BA88 {
     }
 };
 struct sSmRoot_BA88 {
-    sSmCell_BA88 cell;              // 0x00
+    sSmCell cell;              // 0x00
     sSmNode_BA88* node;             // 0x10
 };
 struct sSmSeg_BA88 {
@@ -1839,7 +1824,7 @@ public:
     virtual int v03();
 };
 
-static inline sSmRoot_BA88* findRoot_BA88(char* w, const sSmCell_BA88& c)
+static inline sSmRoot_BA88* findRoot_BA88(char* w, const sSmCell& c)
 {
     sSmRoot_BA88* r = (sSmRoot_BA88*)w;
     sSmRoot_BA88* rx = c.x >= 0 ? r : r + 4;
@@ -1851,7 +1836,7 @@ static inline sSmRoot_BA88* findRoot_BA88(char* w, const sSmCell_BA88& c)
 static inline void remove_BA88(char* w, void* item, const sBoundBox* box)
 {
     (*(int*)(w + 0xA0))++;
-    sSmCell_BA88 c;
+    sSmCell c;
     func_00328F28(&c, box);
     sSmRoot_BA88* r = findRoot_BA88(w, c);
     func_003284B8(r->node, 2, item, &c, &r->cell);
@@ -1863,7 +1848,7 @@ static inline void remove_BA88(char* w, void* item, const sBoundBox* box)
 
 static inline void insert_BA88(char* w, void* item, const sBoundBox* box)
 {
-    sSmCell_BA88 c;
+    sSmCell c;
     func_00328F28(&c, box);
     func_00328C20(findRoot_BA88(w, c), 2, item, &c);
 }
@@ -1930,10 +1915,6 @@ INCLUDE_ASM("object/splinemodifier", func_0035BD70);
 void operator_delete(int*);
 extern "C" void* func_002D1BE0();
 
-struct sSmCell_BD70 {
-    int level;
-    int x, y, z;
-};
 struct sSmNode_BD70 {
     sSmNode_BD70* child[2][2][2];   // 0x00
     void* lists[3];                 // 0x20
@@ -1950,7 +1931,7 @@ struct sSmNode_BD70 {
     }
 };
 struct sSmRoot_BD70 {
-    sSmCell_BD70 cell;              // 0x00
+    sSmCell cell;              // 0x00
     sSmNode_BD70* node;             // 0x10
 };
 struct sSmSeg_BD70 {
@@ -1981,7 +1962,7 @@ extern "C" void func_00328C20(void* root, int idx, void* item, const void* targe
 extern char D_004911D0[];
 extern char D_00491200[];
 
-static inline sSmRoot_BD70* findRoot_BD70(char* w, const sSmCell_BD70& c)
+static inline sSmRoot_BD70* findRoot_BD70(char* w, const sSmCell& c)
 {
     sSmRoot_BD70* r = (sSmRoot_BD70*)w;
     sSmRoot_BD70* rx = c.x >= 0 ? r : r + 4;
@@ -1993,7 +1974,7 @@ static inline sSmRoot_BD70* findRoot_BD70(char* w, const sSmCell_BD70& c)
 static inline void remove_BD70(char* w, void* item, const sBoundBox* box)
 {
     (*(int*)(w + 0xA0))++;
-    sSmCell_BD70 c;
+    sSmCell c;
     func_00328F28(&c, box);
     sSmRoot_BD70* r = findRoot_BD70(w, c);
     func_003284B8(r->node, 2, item, &c, &r->cell);
@@ -2005,7 +1986,7 @@ static inline void remove_BD70(char* w, void* item, const sBoundBox* box)
 
 static inline void insert_BD70(char* w, void* item, const sBoundBox* box)
 {
-    sSmCell_BD70 c;
+    sSmCell c;
     func_00328F28(&c, box);
     func_00328C20(findRoot_BD70(w, c), 2, item, &c);
 }
