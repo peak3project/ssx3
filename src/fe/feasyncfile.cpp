@@ -61,6 +61,12 @@ struct sColour {
     float r, g, b, a;
 };
 
+// A colour built from four floats passed by value.
+struct sColourF {
+    float r, g, b, a;
+    sColourF(float r_, float g_, float b_, float a_) : r(r_), g(g_), b(b_), a(a_) {}
+};
+
 class cUIThing {
 public:
     char pad[0x8];
@@ -2427,11 +2433,6 @@ extern char D_004619D8[];
 extern char D_004619E8[];
 extern char D_004619F8[];
 
-struct sCol1A7970 {
-    float r, g, b, a;
-    sCol1A7970(float r_, float g_, float b_, float a_) : r(r_), g(g_), b(b_), a(a_) {}
-};
-
 struct sBlk1A7970 {
     int v[4];
 };
@@ -2451,7 +2452,7 @@ public:
     virtual void v08();
     virtual void setVisible(int on);
     virtual void v10();
-    virtual void setColour(const sCol1A7970& c);
+    virtual void setColour(const sColourF& c);
 };
 
 extern "C" void func_001A7970(void* self)
@@ -2478,7 +2479,7 @@ extern "C" void func_001A7970(void* self)
         func_003A1310(o, 1);
         obj->setVisible(1);
         *(int*)(o + 0x14) |= 0x80;
-        obj->setColour(sCol1A7970(1.0f, 0.0f, 0.0f, 0.0f));
+        obj->setColour(sColourF(1.0f, 0.0f, 0.0f, 0.0f));
         *(sBlk1A7970*)(o + 0xA8) = *(sBlk1A7970*)((char*)self + 0x6EC);
         *(char**)(o + 0xB8) = a;
     }
@@ -10674,11 +10675,6 @@ extern "C" void func_00286200(void* p);
 extern "C" void func_00256088();
 extern char D_00463F98[];
 
-struct sColor1B5BD8 {
-    float r, g, b, a;
-    sColor1B5BD8(float r_, float g_, float b_, float a_) : r(r_), g(g_), b(b_), a(a_) {}
-};
-
 class cFEVObj_001B5BD8 {
 public:
     int field_0x0;
@@ -10694,7 +10690,7 @@ public:
     virtual void v08();
     virtual void v09();
     virtual void v10();
-    virtual void setColour(const sColor1B5BD8& c);
+    virtual void setColour(const sColourF& c);
 };
 
 struct sFlags1B5BD8 {
@@ -10712,7 +10708,7 @@ extern "C" void func_001B5BD8(void* self, void* a1, unsigned int kind)
         cFEVObj_001B5BD8* o = (cFEVObj_001B5BD8*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_00463F98));
         if (o != 0) {
             o->setEnabled(0);
-            o->setColour(sColor1B5BD8(1.0f, 0.5f, 0.5f, 0.5f));
+            o->setColour(sColourF(1.0f, 0.5f, 0.5f, 0.5f));
         }
         ((sFlags1B5BD8*)((char*)self + 0x1C))->mode = 7;
         break;
