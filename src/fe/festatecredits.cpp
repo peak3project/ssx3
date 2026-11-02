@@ -1,5 +1,13 @@
 #include "common.h"
 
+// g++ 2.95 vtable slot: this-pointer adjustment, index, function (F is the slot's function type;
+// sVEntry<void> is a raw slot). Virtual calls in this unit go through these by hand.
+template <class F> struct sVEntry {
+    short delta;
+    short index;
+    F* fn;
+};
+
 //100%
 INCLUDE_ASM("fe/festatecredits", cFEStateCredits_onCreateScreen);
 #ifdef SKIP_ASM
@@ -12,11 +20,6 @@ extern char D_0045DB90[];
 extern char D_0045DBA0[];
 extern char D_0045DBB0[];
 
-struct sVEntryK185A98 {
-    short delta;
-    short index;
-    void (*fn)(void*, int);
-};
 
 extern "C" void cFEStateCredits_onCreateScreen(void* self)
 {
@@ -32,13 +35,13 @@ extern "C" void cFEStateCredits_onCreateScreen(void* self)
     char* t = (char*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_0045DBA0));
     *(void**)((char*)self + 0x58) = t;
     if (t != 0) {
-        sVEntryK185A98* vt = *(sVEntryK185A98**)(t + 8);
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(t + 8);
         vt[9].fn(t + vt[9].delta, 0);
     }
     t = (char*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_0045DBB0));
     *(void**)((char*)self + 0x58) = t;
     if (t != 0) {
-        sVEntryK185A98* vt = *(sVEntryK185A98**)(t + 8);
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(t + 8);
         vt[9].fn(t + vt[9].delta, 0);
     }
 }
@@ -326,22 +329,17 @@ extern "C" void func_001863B8(void* self)
 //100%
 INCLUDE_ASM("fe/festatecredits", func_001863E8);
 #ifdef SKIP_ASM
-struct sVEntry001863E8 {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
 
 extern "C" int func_001863E8(void* self, void* pad)
 {
-    sVEntry001863E8* e = &(*(sVEntry001863E8**)((char*)pad + 8))[17];
+    sVEntry<int(void*)>* e = &(*(sVEntry<int(void*)>**)((char*)pad + 8))[17];
     if (e->fn((char*)pad + e->delta)) {
         if (*(int*)((char*)self + 0x64) >= -7) {
             *(int*)((char*)self + 0x64) -= 1;
         }
         return 1;
     }
-    e = &(*(sVEntry001863E8**)((char*)pad + 8))[18];
+    e = &(*(sVEntry<int(void*)>**)((char*)pad + 8))[18];
     if (e->fn((char*)pad + e->delta)) {
         if (*(int*)((char*)self + 0x64) < 8) {
             *(int*)((char*)self + 0x64) += 1;
@@ -370,18 +368,13 @@ extern "C" int func_00186478(void* self, int a1, unsigned int a2)
 //100%
 INCLUDE_ASM("fe/festatecredits", func_001864B0);
 #ifdef SKIP_ASM
-struct sVEntry001864B0 {
-    short delta;
-    short index;
-    void* (*fn)(void*, void*, int);
-};
 extern "C" void func_0039F400(void* list, void* item);
 
 extern "C" void func_001864B0(void* self, void* item, int msg)
 {
     if (item != 0 && msg == 6) {
         void* obj = **(void***)((char*)self + 0x10);
-        sVEntry001864B0* vt = *(sVEntry001864B0**)((char*)obj + 4);
+        sVEntry<void*(void*, void*, int)>* vt = *(sVEntry<void*(void*, void*, int)>**)((char*)obj + 4);
         void* r = vt[5].fn((char*)obj + vt[5].delta, self, 0x24);
         if (r != 0) {
             func_0039F400((char*)*(void**)((char*)self + 0x10) + 0x18, r);
