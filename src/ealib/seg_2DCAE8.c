@@ -61,6 +61,76 @@ struct sSyncTask {                  /* 16 bytes, D_0051ED98[16]: a task SYNCTASK
     int f0C;                        /* running */
 };
 extern struct sSyncTask D_0051ED98[16];
+/* D_00519AB0: the file system's command manager (func_003DCC88 sets it up). Layout from every use in this unit;
+   field names are their offsets. Several fields are also reached through their own splat symbols (declared
+   below), which the functions that address them directly must keep using. */
+struct sFsHd {                      /* 0x110: an open file (D_00519AB0.f2C[], func_003DE800 hands one out) */
+    int f00;                        /* handle, or the archive's sFsNode */
+    int f04;                        /* size */
+    int f08;                        /* offset in the archive */
+    int f0C;
+    char f10[0x100];                /* name */
+};
+struct sFsCmdId {
+    unsigned int id : 20;
+    unsigned int type : 4;
+    unsigned int idx : 8;           /* index in D_00519AB0.f28 */
+};
+struct sFsCmd {                     /* 0x30: a command (D_00519AB0.f28[], func_003DE670 hands one out) */
+    union {
+        unsigned int w;
+        struct sFsCmdId b;
+    } f00;                          /* the handle */
+    int f04;                        /* aborted */
+    volatile int f08;               /* status */
+    int f0C;                        /* error */
+    int f10;                        /* priority */
+    int f14;                        /* callback argument */
+    int f18;
+    int f1C;
+    int f20;
+    struct sFsHd *f24;
+    void (*f28)(int, int, int);     /* completion callback */
+    struct sFsCmd *f2C;             /* next in the queue */
+};
+struct sFsNode {                    /* 0x18: an open archive (D_00519AB0.f34 list) */
+    int f00;                        /* data */
+    int f04;                        /* size */
+    int f08;
+    struct sFsHd *f0C;
+    struct sFsCmd *f10;
+    struct sFsNode *f14;            /* next */
+};
+struct sAB0 {
+    int f00;                        /* number of commands */
+    int f04;                        /* number of open files */
+    int f08;                        /* highest priority run (also D_00519AB8) */
+    int f0C;                        /* commands queued */
+    volatile int f10;               /* callback depth */
+    int f14[4];                     /* mutex (also D_00519AC4) */
+    struct sFsCmd *f24;             /* running */
+    struct sFsCmd *f28;             /* commands (also D_00519AD8) */
+    struct sFsHd *f2C;              /* open files */
+    struct sFsCmd *f30;             /* queue */
+    struct sFsNode *f34;            /* archives (also D_00519AE4) */
+    int f38;                        /* (also D_00519AE8) */
+};
+extern struct sAB0 D_00519AB0;
+extern int D_00519AB8;                          /* D_00519AB0.f08 */
+struct sAB0Lock {                   /* D_00519AB0 from the mutex on (D_00519AC4) */
+    int f00[4];                     /* the mutex */
+    struct sFsCmd *f10;
+    struct sFsCmd *f14;
+    struct sFsHd *f18;
+    struct sFsCmd *f1C;             /* the queue (D_00519AB0.f30) */
+    struct sFsNode *f20;
+    int f24;
+};
+extern struct sAB0Lock D_00519AC4;
+extern struct sFsCmd *D_00519AD8;               /* D_00519AB0.f28 */
+extern struct sFsNode *D_00519AE4;              /* D_00519AB0.f34 */
+extern int D_00519AE8;                          /* D_00519AB0.f38 */
+extern char D_00519AF0[0x100];                  /* the current directory */
 struct sC40Mode {                   /* the CD read mode handed to func_00401DF8 */
     unsigned char f00;
     unsigned char f01;
@@ -724,16 +794,13 @@ void func_003DCB20_impl(char *out, unsigned short *in) {
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DCBD8);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern int func_003DCC88(int, int, int, int);
 extern int func_003DCD98(int, int, int);
 extern char D_00495D28_CBD8[] __asm__("D_00495D28");
-extern int D_00519AB0_CBD8[] __asm__("D_00519AB0");
-extern int D_00519AE8;
 
 int func_003DCBD8(int arg0, int arg1, int arg2) {
     int r;
-    if (D_00519AB0_CBD8[0] == 0) {
+    if (D_00519AB0.f00 == 0) {
         r = (int)D_00450C10.f04(D_00495D28_CBD8, func_003DCD98(arg0, arg1, arg2), 0x100);
         D_00519AE8 = r;
         return func_003DCC88(arg0, arg1, arg2, r);
@@ -1011,7 +1078,6 @@ int func_003DD1D8(int h) {
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003DD310);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern void func_003DE7B0_p(void *) __asm__("func_003DE7B0");
 extern void func_003DE8C0_p(void *) __asm__("func_003DE8C0");
 
@@ -1022,33 +1088,18 @@ struct sHandle_D310 {
     unsigned char idx;
 };
 
-struct sSlot_D310 {
-    unsigned int flags;
-    int f4;
-    volatile int state;
-    int fC;
-    int f10;
-    int f14;
-    int f18;
-    int f1C;
-    int f20;
-    int *f24;
-};
-
-extern struct sSlot_D310 *D_00519AD8;
-
 int func_003DD310_a(struct sHandle_D310 h) __asm__("func_003DD310");
 int func_003DD310_a(struct sHandle_D310 h) {
     int ret = 0;
-    struct sSlot_D310 *slot = (struct sSlot_D310 *)((char *)D_00519AD8 + h.idx * 0x30);
+    struct sFsCmd *slot = &D_00519AD8[h.idx];
     int sum;
-    int *t;
+    struct sFsHd *t;
 
-    switch (slot->state) {
+    switch (slot->f08) {
     case 0:
         break;
     case 1:
-        switch ((slot->flags >> 20) & 0xF) {
+        switch ((slot->f00.w >> 20) & 0xF) {
         case 2:
         case 9:
             ret = (int)slot->f24;
@@ -1056,7 +1107,7 @@ int func_003DD310_a(struct sHandle_D310 h) {
         case 3:
         case 7:
         case 10:
-            ret = slot->state;
+            ret = slot->f08;
             break;
         case 6:
         case 8:
@@ -1069,15 +1120,15 @@ int func_003DD310_a(struct sHandle_D310 h) {
             t = slot->f24;
             ret = slot->f1C;
             sum = ret + slot->f18;
-            if (t[1] < sum) {
-                t[1] = sum;
+            if (t->f04 < sum) {
+                t->f04 = sum;
             }
             break;
         }
         break;
     case -2:
     case -1: {
-        int type = (slot->flags >> 20) & 0xF;
+        int type = (slot->f00.w >> 20) & 0xF;
         if (type == 2 || type == 9) {
             func_003DE8C0_p(slot->f24);
         }
