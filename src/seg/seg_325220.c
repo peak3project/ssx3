@@ -17,6 +17,25 @@
 // PORT: PS2-only COP0 (write the TLB Wired register).
 #define MTC0_WIRED_4248(v) __asm__ volatile("mtc0 %z0, $6\n\tsync.p" : : "rJ"(v))
 
+/* SIF RPC client data (the SDK's sceSifClientData, 0x28 bytes); `server` is non-zero once bound.
+   func_00426B48 / func_00426F08 in this unit are the implementation. */
+typedef struct {
+    int rpcd[4];
+    unsigned int command;
+    void *buff;
+    void *cbuff;
+    void (*end_function)(void *);
+    void *end_param;
+    void *server;
+} sSifClient;
+extern int func_00426B48(sSifClient *cd, unsigned int rpc_number, int mode);
+extern int func_00426D18(sSifClient *cd, int fno, int mode, void *send, int ssize, void *recv, int rsize,
+                         void (*end_function)(void *), void *end_param);
+extern sSifClient D_0052EE00;   /* fileio */
+extern sSifClient D_0052EEC0;
+extern sSifClient D_0052F280;
+
+
 /* fileio RPC send block D_0052D700: one packet layout per RPC function number (sent to D_0052EE00) */
 typedef struct { int f0; int f4; int f8; int fC; } sFioCmd4;                                    /* 15 */
 typedef struct { int f0; int f4; int f8; int fC; int f10; } sFioFdCmd;                          /* 1, 10, 11 */
@@ -2297,7 +2316,6 @@ struct H4A90 { void (*fn)(int); int arg; };
 struct T4A90 { int f0; int f4; int f8; int fC; };
 extern struct H4A90 D_4A90_ee80 __asm__("D_0052EE80");
 extern char D_4A90_ee40[] __asm__("D_0052EE40");
-extern int D_4A90_ee00[] __asm__("D_0052EE00");
 extern int D_4A90_ee28 __asm__("D_0052EE28");
 extern struct T4A90 D_4A90_ec00[] __asm__("D_0052EC00");
 extern int D_4A90_6c0[] __asm__("D_0052D6C0");
@@ -2310,13 +2328,11 @@ extern void func_00426408_z(int) __asm__("func_00426408");
 extern int func_0042C078_z(void) __asm__("func_0042C078");
 extern void func_0042C0C0_z(void) __asm__("func_0042C0C0");
 extern void func_00426020_z(int, void *, void *) __asm__("func_00426020");
-extern int func_00426B48_z(void *, int, int) __asm__("func_00426B48");
 extern void func_00427438_z(void) __asm__("func_00427438");
 extern void func_00427590_z(void) __asm__("func_00427590");
 extern void func_00427A60_z(void) __asm__("func_00427A60");
 extern int func_00423DE0_z(int) __asm__("func_00423DE0");
 extern int func_00423DC0_z(int) __asm__("func_00423DC0");
-extern int func_00426D18_z(void *, int, int, void *, int, void *, int, int, int) __asm__("func_00426D18");
 int func_00427A90_d(void) __asm__("func_00427A90");
 int func_00427A90_d(void) {
     int old;
@@ -2333,9 +2349,9 @@ int func_00427A90_d(void) {
     if (old != 0)
         func_0042C0C0_z();
     for (;;) {
-        if (func_00426B48_z(D_4A90_ee00, 0x80000001, 0) < 0)
+        if (func_00426B48(&D_0052EE00, 0x80000001, 0) < 0)
             return -1;
-        if (D_4A90_ee00[9] != 0)
+        if (D_0052EE00.server != 0)
             break;
         v = 0x100000;
         do {
@@ -2349,7 +2365,7 @@ int func_00427A90_d(void) {
     func_00423DC0_z(D_00455218);
     D_4A90_6c0[0] = (int)D_4A90_380;
     D_4A90_6c0[1] = D_4A90_6c0[0] + 0x440;
-    if (func_00426D18_z(D_4A90_ee00, 0xFF, 0, D_4A90_6c0, 8, D_4A90_340, 8, 0, 0) < 0)
+    if (func_00426D18(&D_0052EE00, 0xFF, 0, D_4A90_6c0, 8, D_4A90_340, 8, 0, 0) < 0)
         return 0xFFFEFFFF;
     *(struct W4A90 *)&D_4A90_ee28 = *(struct W4A90 *)((int)D_4A90_340 | 0x20000000);
     w = *(struct W4A90 *)((int)(D_4A90_340 + 4) | 0x20000000);
@@ -2398,7 +2414,6 @@ struct E7D60 { int f0; int f4; };
 extern int D_0045520C;
 extern int D_00455218;
 extern char D_0052E340[];
-extern char D_0052EE00[];
 extern char D_0052EC00[];
 extern int func_00427988_b(int) __asm__("func_00427988");
 extern void func_00427A90(void);
@@ -2409,7 +2424,6 @@ extern int func_00423DA0(int *p);
 extern int db0i(int) __asm__("func_00423DB0");
 extern void func_00423DC0(int);
 extern int func_00423DE0_i(int) __asm__("func_00423DE0");
-extern int func_00426D18_v(void *a0, int a1, int a2, void *a3, int a4, void *a5, int a6, int a7, int a8) __asm__("func_00426D18");
 int func_00427D60_d(unsigned char *, unsigned, ...) __asm__("func_00427D60");
 // sceOpen
 int func_00427D60_d(unsigned char *s, unsigned flags, ...) {
@@ -2462,7 +2476,7 @@ int func_00427D60_d(unsigned char *s, unsigned flags, ...) {
     p->f0 = sem;
     p->f4 = (int)&buf[8];
     p->f8 = 4;
-    if (func_00426D18_v(D_0052EE00, 0, 0, &D_0052D700.open, 0x418, D_0052E340, 4, 0, 0) < 0) {
+    if (func_00426D18(&D_0052EE00, 0, 0, &D_0052D700.open, 0x418, D_0052E340, 4, 0, 0) < 0) {
         db0i(sem);
         func_004279B8();
         return -0xB;
@@ -2496,14 +2510,12 @@ INCLUDE_ASM("seg/seg_325220", func_00427FE8);
 extern int D_0045520C;
 extern char D_0052E340[];
 extern char D_0052EC00[];
-extern char D_0052EE00[];
 extern int *func_00427520_p(int) __asm__("func_00427520");
 extern int func_00427988_b(int) __asm__("func_00427988");
 extern void func_004279B8(void);
 extern int func_00423DA0(int *p);
 extern void func_00423DB0(int);
 extern int func_00423DE0_i(int) __asm__("func_00423DE0");
-extern int func_00426D18_v(void *a0, int a1, int a2, void *a3, int a4, void *a5, int a6, int a7, int a8) __asm__("func_00426D18");
 // sceClose
 int func_00427FE8(int a0) {
     int buf[12];
@@ -2530,7 +2542,7 @@ int func_00427FE8(int a0) {
     p->f0 = sem;
     p->f4 = (int)&buf[8];
     p->f8 = 4;
-    if (func_00426D18_v(D_0052EE00, 1, 0, p, 0x14, D_0052E340, 4, 0, 0) < 0) {
+    if (func_00426D18(&D_0052EE00, 1, 0, p, 0x14, D_0052E340, 4, 0, 0) < 0) {
         func_00423DB0(sem);
         func_004279B8();
         return -0xB;
@@ -2561,7 +2573,6 @@ extern int D_0045521C;
 extern volatile int D_00455188[];
 extern char D_0052E340[];
 extern char D_0052EC00[];
-extern char D_0052EE00[];
 extern int *func_00427520_p(int) __asm__("func_00427520");
 extern int func_00427988_b(int) __asm__("func_00427988");
 extern void func_004279B8(void);
@@ -2569,7 +2580,6 @@ extern int func_00423DA0(int *p);
 extern void func_00423DB0(int);
 extern void func_00423DC0(int);
 extern int func_00423DE0_i(int) __asm__("func_00423DE0");
-extern int func_00426D18_v(void *a0, int a1, int a2, void *a3, int a4, void *a5, int a6, int a7, int a8) __asm__("func_00426D18");
 // sceLseek
 int func_00428168(int a0, int a1, int a2)
 {
@@ -2622,7 +2632,7 @@ int func_00428168(int a0, int a1, int a2)
 
     func_00423DC0(D_0045521C);
   }
-  if (func_00426D18_v(D_0052EE00, 4, 0, &D_0052D700.lseek, 0x1C, D_0052E340, 4, 0, 0) < 0)
+  if (func_00426D18(&D_0052EE00, 4, 0, &D_0052D700.lseek, 0x1C, D_0052E340, 4, 0, 0) < 0)
   {
     func_00423DB0(sem);
     func_004279B8();
@@ -2654,7 +2664,6 @@ extern int D_0045521C;
 extern volatile int D_00455188[];
 extern char D_0052E340[];
 extern char D_0052EC00[];
-extern char D_0052EE00[];
 extern int *func_00427520_p(int) __asm__("func_00427520");
 extern int func_00427988_b(int) __asm__("func_00427988");
 extern void func_004279B8(void);
@@ -2662,7 +2671,6 @@ extern int func_00423DA0(int *p);
 extern void func_00423DB0(int);
 extern void func_00423DC0(int);
 extern int func_00423DE0_i(int) __asm__("func_00423DE0");
-extern int func_00426D18_v(void *a0, int a1, int a2, void *a3, int a4, void *a5, int a6, int a7, int a8) __asm__("func_00426D18");
 int func_004283A0(int a0, int a1, int a2)
 {
   int buf[12];
@@ -2717,7 +2725,7 @@ int func_004283A0(int a0, int a1, int a2)
   if (!(fl & 0x20000000))
     func_00426358(a1, a2);
   func_00426358((int) p, 0x20);
-  if (func_00426D18_v(D_0052EE00, 2, 0, &D_0052D700.read, 0x20, D_0052E340, 4, 0, 0) < 0)
+  if (func_00426D18(&D_0052EE00, 2, 0, &D_0052D700.read, 0x20, D_0052E340, 4, 0, 0) < 0)
   {
     func_00423DB0(sem);
     func_004279B8();
@@ -2749,7 +2757,6 @@ extern int D_0045521C;
 extern volatile int D_00455188[];
 extern char D_0052E340[];
 extern char D_0052EC00[];
-extern char D_0052EE00[];
 extern int *func_00427520_p(int) __asm__("func_00427520");
 extern int func_00427988_b(int) __asm__("func_00427988");
 extern void func_004279B8(void);
@@ -2757,7 +2764,6 @@ extern int func_00423DA0(int *p);
 extern void func_00423DB0(int);
 extern void func_00423DC0(int);
 extern int func_00423DE0_i(int) __asm__("func_00423DE0");
-extern int func_00426D18_v(void *a0, int a1, int a2, void *a3, int a4, void *a5, int a6, int a7, int a8) __asm__("func_00426D18");
 int func_00428600(int a0, unsigned a1, int a2)
 {
   int buf[12];
@@ -2826,7 +2832,7 @@ int func_00428600(int a0, unsigned a1, int a2)
   p->f18 = n;
   for (j = 0; j < n; j++)
     p->data[j] = ((char *) a1)[j];
-  if (func_00426D18_v(D_0052EE00, 3, 0, &D_0052D700.write, 0x30, D_0052E340, 4, 0, 0) < 0)
+  if (func_00426D18(&D_0052EE00, 3, 0, &D_0052D700.write, 0x30, D_0052E340, 4, 0, 0) < 0)
   {
     func_00423DB0(sem);
     func_004279B8();
@@ -2857,7 +2863,6 @@ INCLUDE_ASM("seg/seg_325220", func_00428C38);
 #ifdef SKIP_ASM
 extern int D_0045520C;
 extern char D_0052E340[];
-extern char D_0052EE00[];
 extern int *func_00427520_p(int) __asm__("func_00427520");
 extern int func_00427988_b(int) __asm__("func_00427988");
 extern void func_00427A90(void);
@@ -2867,7 +2872,6 @@ extern void *func_0041605C(void *, void *, int);
 extern int func_00423DA0(int *p);
 extern void func_00423DB0(int);
 extern int func_00423DE0_i(int) __asm__("func_00423DE0");
-extern int func_00426D18_v(void *a0, int a1, int a2, void *a3, int a4, void *a5, int a6, int a7, int a8) __asm__("func_00426D18");
 int func_00428C38_d(int, int, void *, unsigned, int, unsigned) __asm__("func_00428C38");
 int func_00428C38_d(int a0, int a1, void *data, unsigned len, int a4, unsigned a5) {
     int buf[12];
@@ -2906,7 +2910,7 @@ int func_00428C38_d(int a0, int a1, void *data, unsigned len, int a4, unsigned a
     p->f414 = a4;
     p->f0 = sem;
     func_00426358((int)&D_0052D700.ioctl2, 0x420);
-    if (func_00426D18_v(D_0052EE00, 0x1A, 0, &D_0052D700.ioctl2, 0x420, D_0052E340, 4, 0, 0) < 0) {
+    if (func_00426D18(&D_0052EE00, 0x1A, 0, &D_0052D700.ioctl2, 0x420, D_0052E340, 4, 0, 0) < 0) {
         func_00423DB0(sem);
         func_004279B8();
         return -0xB;
@@ -2928,14 +2932,12 @@ INCLUDE_ASM("seg/seg_325220", func_00428E18);
 #ifdef SKIP_ASM
 extern int D_0045520C;
 extern char D_0052E340[];
-extern char D_0052EE00[];
 extern int func_00427988_b(int) __asm__("func_00427988");
 extern void func_00427A90(void);
 extern void func_004279B8(void);
 extern int func_00423DA0(int *p);
 extern void func_00423DB0(int);
 extern int func_00423DE0_i(int) __asm__("func_00423DE0");
-extern int func_00426D18_v(void *a0, int a1, int a2, void *a3, int a4, void *a5, int a6, int a7, int a8) __asm__("func_00426D18");
 int func_00428E18_d(char *, int) __asm__("func_00428E18");
 int func_00428E18_d(char *s, int a1) {
     int buf[12];
@@ -2966,7 +2968,7 @@ int func_00428E18_d(char *s, int a1) {
     p->f4 = (int)&buf[8];
     p->f0 = sem;
     p->f8 = 4;
-    if (func_00426D18_v(D_0052EE00, a1, 0, &D_0052D700.path, n + 0xD, D_0052E340, 4, 0, 0) < 0) {
+    if (func_00426D18(&D_0052EE00, a1, 0, &D_0052D700.path, n + 0xD, D_0052E340, 4, 0, 0) < 0) {
         func_00423DB0(sem);
         func_004279B8();
         return -0xB;
@@ -2997,14 +2999,12 @@ INCLUDE_ASM("seg/seg_325220", func_00428FE0);
 #ifdef SKIP_ASM
 extern int D_0045520C;
 extern char D_0052E340[];
-extern char D_0052EE00[];
 extern int func_00427988_b(int) __asm__("func_00427988");
 extern void func_00427A90(void);
 extern void func_004279B8(void);
 extern int func_00423DA0(int *p);
 extern void func_00423DB0(int);
 extern int func_00423DE0_i(int) __asm__("func_00423DE0");
-extern int func_00426D18_v(void *a0, int a1, int a2, void *a3, int a4, void *a5, int a6, int a7, int a8) __asm__("func_00426D18");
 int func_00428FE0_d(char *, int) __asm__("func_00428FE0");
 int func_00428FE0_d(char *s, int a1) {
     int buf[12];
@@ -3036,7 +3036,7 @@ int func_00428FE0_d(char *s, int a1) {
     p->f4 = (int)&buf[8];
     p->f0 = sem;
     p->f8 = 4;
-    if (func_00426D18_v(D_0052EE00, 7, 0, &D_0052D700.mkdir, n + 0x11, D_0052E340, 4, 0, 0) < 0) {
+    if (func_00426D18(&D_0052EE00, 7, 0, &D_0052D700.mkdir, n + 0x11, D_0052E340, 4, 0, 0) < 0) {
         func_00423DB0(sem);
         func_004279B8();
         return -0xB;
@@ -3067,7 +3067,6 @@ INCLUDE_ASM("seg/seg_325220", func_004291B0);
 #ifdef SKIP_ASM
 extern int D_0045520C;
 extern char D_0052E340[];
-extern char D_0052EE00[];
 extern int func_00427988_b(int) __asm__("func_00427988");
 extern void func_00427A90(void);
 extern void func_004279B8(void);
@@ -3075,7 +3074,6 @@ extern void func_00426358(int, int);
 extern int func_00423DA0(int *p);
 extern void func_00423DB0(int);
 extern int func_00423DE0_i(int) __asm__("func_00423DE0");
-extern int func_00426D18_v(void *a0, int a1, int a2, void *a3, int a4, void *a5, int a6, int a7, int a8) __asm__("func_00426D18");
 int func_004291B0_d(char *, char *, char *, int) __asm__("func_004291B0");
 int func_004291B0_d(char *s, char *t, char *data, int len) {
     int buf[12];
@@ -3130,7 +3128,7 @@ int func_004291B0_d(char *s, char *t, char *data, int len) {
     p->f0 = sem;
     p->f8 = 4;
     func_00426358((int)&D_0052D700.format, 0xC10);
-    if (func_00426D18_v(D_0052EE00, 0xE, 0, &D_0052D700.format, 0xC10, D_0052E340, 4, 0, 0) < 0) {
+    if (func_00426D18(&D_0052EE00, 0xE, 0, &D_0052D700.format, 0xC10, D_0052E340, 4, 0, 0) < 0) {
         func_00423DB0(sem);
         func_004279B8();
         return -0xB;
@@ -3152,14 +3150,12 @@ INCLUDE_ASM("seg/seg_325220", func_00429420);
 #ifdef SKIP_ASM
 extern int D_0045520C;
 extern char D_0052E340[];
-extern char D_0052EE00[];
 extern int func_00427988_b(int) __asm__("func_00427988");
 extern void func_00427A90(void);
 extern void func_004279B8(void);
 extern int func_00423DA0(int *p);
 extern void func_00423DB0(int);
 extern int func_00423DE0_i(int) __asm__("func_00423DE0");
-extern int func_00426D18_v(void *a0, int a1, int a2, void *a3, int a4, void *a5, int a6, int a7, int a8) __asm__("func_00426D18");
 int func_00429420(int a0) {
     int buf[12];
     int sem;
@@ -3177,7 +3173,7 @@ int func_00429420(int a0) {
     D_0052D700.adddrv.f0 = sem;
     p->f4 = (int)&buf[8];
     p->f8 = 4;
-    if (func_00426D18_v(D_0052EE00, 0xF, 0, &D_0052D700.adddrv, 0x10, D_0052E340, 4, 0, 0) < 0) {
+    if (func_00426D18(&D_0052EE00, 0xF, 0, &D_0052D700.adddrv, 0x10, D_0052E340, 4, 0, 0) < 0) {
         func_00423DB0(sem);
         func_004279B8();
         return -1;
@@ -3252,14 +3248,12 @@ struct E9628 { int f0; int f4; };
 extern int D_0045520C;
 extern char D_0052E340[];
 extern char D_0052EC00[];
-extern char D_0052EE00[];
 extern struct E9628 *func_00427520_r(int) __asm__("func_00427520");
 extern int func_00427988_b(int) __asm__("func_00427988");
 extern void func_004279B8(void);
 extern int func_00423DA0(int *p);
 extern void func_00423DB0(int);
 extern int func_00423DE0_i(int) __asm__("func_00423DE0");
-extern int func_00426D18_v(void *a0, int a1, int a2, void *a3, int a4, void *a5, int a6, int a7, int a8) __asm__("func_00426D18");
 int func_00429628(int a0) {
     int buf[12];
     int sem;
@@ -3284,7 +3278,7 @@ int func_00429628(int a0) {
     p->f0 = sem;
     p->f4 = (int)&buf[8];
     p->f8 = 4;
-    if (func_00426D18_v(D_0052EE00, 0xA, 0, p, 0x14, D_0052E340, 4, 0, 0) < 0) {
+    if (func_00426D18(&D_0052EE00, 0xA, 0, p, 0x14, D_0052E340, 4, 0, 0) < 0) {
         func_00423DB0(sem);
         func_004279B8();
         return -0xB;
@@ -3312,14 +3306,12 @@ INCLUDE_ASM("seg/seg_325220", func_00429790);
 #ifdef SKIP_ASM
 extern int D_0045520C;
 extern char D_0052E340[];
-extern char D_0052EE00[];
 extern int *func_00427520_p(int) __asm__("func_00427520");
 extern int func_00427988_b(int);
 extern void func_004279B8(void);
 extern int func_00423DA0(int *p);
 extern void func_00423DB0(int);
 extern int func_00423DE0_i(int) __asm__("func_00423DE0");
-extern int func_00426D18_v(void *a0, int a1, int a2, void *a3, int a4, void *a5, int a6, int a7, int a8) __asm__("func_00426D18");
 int func_00429790_d(int, int) __asm__("func_00429790");
 int func_00429790_d(int a0, int a1) {
     int buf[12];
@@ -3346,7 +3338,7 @@ int func_00429790_d(int a0, int a1) {
     p->f0 = sem;
     p->f4 = (int)&buf[8];
     p->f8 = 4;
-    if (func_00426D18_v(D_0052EE00, 0xB, 0, p, 0x20, D_0052E340, 4, 0, 0) < 0) {
+    if (func_00426D18(&D_0052EE00, 0xB, 0, p, 0x20, D_0052E340, 4, 0, 0) < 0) {
         func_00423DE0_i(sem);
         func_004279B8();
         return -0xB;
@@ -3368,14 +3360,12 @@ INCLUDE_ASM("seg/seg_325220", func_004298E8);
 #ifdef SKIP_ASM
 extern int D_0045520C;
 extern char D_0052E340[];
-extern char D_0052EE00[];
 extern int func_00427988_b(int) __asm__("func_00427988");
 extern void func_00427A90(void);
 extern void func_004279B8(void);
 extern int func_00423DA0(int *p);
 extern void func_00423DB0(int);
 extern int func_00423DE0_i(int) __asm__("func_00423DE0");
-extern int func_00426D18_v(void *a0, int a1, int a2, void *a3, int a4, void *a5, int a6, int a7, int a8) __asm__("func_00426D18");
 int func_004298E8(char *a0, int a1) {
     int buf[12];
     int sem;
@@ -3409,7 +3399,7 @@ int func_004298E8(char *a0, int a1) {
     p->f4 = (int)&buf[8];
     p->f0 = sem;
     p->f8 = 4;
-    if (func_00426D18_v(D_0052EE00, 0xC, 0, &D_0052D700.getstat, i + 0x11, D_0052E340, 4, 0, 0) < 0) {
+    if (func_00426D18(&D_0052EE00, 0xC, 0, &D_0052D700.getstat, i + 0x11, D_0052E340, 4, 0, 0) < 0) {
         func_00423DB0(sem);
         func_004279B8();
         return -0xB;
@@ -3431,7 +3421,6 @@ INCLUDE_ASM("seg/seg_325220", func_00429A88);
 #ifdef SKIP_ASM
 extern int D_0045520C;
 extern char D_0052E340[];
-extern char D_0052EE00[];
 extern int func_00427988_b(int) __asm__("func_00427988");
 extern void func_00427A90(void);
 extern void func_004279B8(void);
@@ -3439,7 +3428,6 @@ extern void func_00426358(int, int);
 extern int func_00423DA0(int *p);
 extern void func_00423DB0(int);
 extern int func_00423DE0_i(int) __asm__("func_00423DE0");
-extern int func_00426D18_v(void *a0, int a1, int a2, void *a3, int a4, void *a5, int a6, int a7, int a8) __asm__("func_00426D18");
 int func_00429A88_d(char *, sFioStat *, int) __asm__("func_00429A88");
 int func_00429A88_d(char *s, sFioStat *src, int a2) {
     int buf[12];
@@ -3476,7 +3464,7 @@ int func_00429A88_d(char *s, sFioStat *src, int a2) {
     p->f4 = (int)&buf[8];
     p->f8 = 4;
     func_00426358((int)&D_0052D700.chstat, 0x450);
-    if (func_00426D18_v(D_0052EE00, 0xD, 0, &D_0052D700.chstat, n + 0x51, D_0052E340, 4, 0, 0) < 0) {
+    if (func_00426D18(&D_0052EE00, 0xD, 0, &D_0052D700.chstat, n + 0x51, D_0052E340, 4, 0, 0) < 0) {
         func_00423DB0(sem);
         func_004279B8();
         return -0xB;
@@ -3498,7 +3486,6 @@ INCLUDE_ASM("seg/seg_325220", func_00429CC8);
 #ifdef SKIP_ASM
 extern int D_0045520C;
 extern char D_0052E340[];
-extern char D_0052EE00[];
 extern int func_00427988_b(int) __asm__("func_00427988");
 extern void func_00427A90(void);
 extern void func_004279B8(void);
@@ -3506,7 +3493,6 @@ extern void func_00426358(int, int);
 extern int func_00423DA0(int *p);
 extern void func_00423DB0(int);
 extern int func_00423DE0_i(int) __asm__("func_00423DE0");
-extern int func_00426D18_v(void *a0, int a1, int a2, void *a3, int a4, void *a5, int a6, int a7, int a8) __asm__("func_00426D18");
 int func_00429CC8_d(char *, char *) __asm__("func_00429CC8");
 int func_00429CC8_d(char *s, char *t) {
     int buf[12];
@@ -3548,7 +3534,7 @@ int func_00429CC8_d(char *s, char *t) {
     p->f0 = sem;
     p->f8 = 4;
     func_00426358((int)&D_0052D700.rename, 0x80C);
-    if (func_00426D18_v(D_0052EE00, 0x11, 0, &D_0052D700.rename, 0x80C, D_0052E340, 4, 0, 0) < 0) {
+    if (func_00426D18(&D_0052EE00, 0x11, 0, &D_0052D700.rename, 0x80C, D_0052E340, 4, 0, 0) < 0) {
         func_00423DB0(sem);
         func_004279B8();
         return -0xB;
@@ -3579,14 +3565,12 @@ INCLUDE_ASM("seg/seg_325220", func_00429ED8);
 #ifdef SKIP_ASM
 extern int D_0045520C;
 extern char D_0052E340[];
-extern char D_0052EE00[];
 extern int func_00427988_b(int) __asm__("func_00427988");
 extern void func_00427A90(void);
 extern void func_004279B8(void);
 extern int func_00423DA0(int *p);
 extern void func_00423DB0(int);
 extern int func_00423DE0_i(int) __asm__("func_00423DE0");
-extern int func_00426D18_v(void *a0, int a1, int a2, void *a3, int a4, void *a5, int a6, int a7, int a8) __asm__("func_00426D18");
 int func_00429ED8_d(char *, int) __asm__("func_00429ED8");
 int func_00429ED8_d(char *s, int a1) {
     int buf[12];
@@ -3618,7 +3602,7 @@ int func_00429ED8_d(char *s, int a1) {
     p->f4 = (int)&buf[8];
     p->f0 = sem;
     p->f8 = 4;
-    if (func_00426D18_v(D_0052EE00, 0x13, 0, &D_0052D700.sync, 0x414, D_0052E340, 4, 0, 0) < 0) {
+    if (func_00426D18(&D_0052EE00, 0x13, 0, &D_0052D700.sync, 0x414, D_0052E340, 4, 0, 0) < 0) {
         func_00423DB0(sem);
         func_004279B8();
         return -0xB;
@@ -3640,7 +3624,6 @@ INCLUDE_ASM("seg/seg_325220", func_0042A070);
 #ifdef SKIP_ASM
 extern int D_0045520C;
 extern char D_0052E340[];
-extern char D_0052EE00[];
 extern int func_00427988_b(int) __asm__("func_00427988");
 extern void func_00427A90(void);
 extern void func_004279B8(void);
@@ -3648,7 +3631,6 @@ extern void func_00426358(int, int);
 extern int func_00423DA0(int *p);
 extern void func_00423DB0(int);
 extern int func_00423DE0_i(int) __asm__("func_00423DE0");
-extern int func_00426D18_v(void *a0, int a1, int a2, void *a3, int a4, void *a5, int a6, int a7, int a8) __asm__("func_00426D18");
 int func_0042A070_d(char *, char *, int, char *, int) __asm__("func_0042A070");
 int func_0042A070_d(char *s, char *t, int a2, char *data, int len) {
     int buf[12];
@@ -3700,7 +3682,7 @@ int func_0042A070_d(char *s, char *t, int a2, char *data, int len) {
     p->f0 = sem;
     p->f8 = 4;
     func_00426358((int)&D_0052D700.mount, 0xC14);
-    if (func_00426D18_v(D_0052EE00, 0x14, 0, &D_0052D700.mount, 0xC14, D_0052E340, 4, 0, 0) < 0) {
+    if (func_00426D18(&D_0052EE00, 0x14, 0, &D_0052D700.mount, 0xC14, D_0052E340, 4, 0, 0) < 0) {
         func_00423DB0(sem);
         func_004279B8();
         return -0xB;
@@ -3734,7 +3716,6 @@ extern int D_0045521C;
 extern volatile int D_00455188[];
 extern char D_0052E340[];
 extern char D_0052EC00[];
-extern char D_0052EE00[];
 extern int *func_00427520_p(int) __asm__("func_00427520");
 extern int func_00427988_b(int) __asm__("func_00427988");
 extern void func_004279B8(void);
@@ -3742,7 +3723,6 @@ extern int func_00423DA0(int *p);
 extern void func_00423DB0(int);
 extern void func_00423DC0(int);
 extern int func_00423DE0_i(int) __asm__("func_00423DE0");
-extern int func_00426D18_v(void *a0, int a1, int a2, void *a3, int a4, void *a5, int a6, int a7, int a8) __asm__("func_00426D18");
 long func_0042A300(int a0, long a1, int a2)
 {
   int buf[8];
@@ -3793,7 +3773,7 @@ long func_0042A300(int a0, long a1, int a2)
 
     func_00423DC0(D_0045521C);
   }
-  if (func_00426D18_v(D_0052EE00, 0x16, 0, &D_0052D700.lseek64, 0x20, D_0052E340, 4, 0, 0) < 0)
+  if (func_00426D18(&D_0052EE00, 0x16, 0, &D_0052D700.lseek64, 0x20, D_0052E340, 4, 0, 0) < 0)
   {
     func_00423DB0(sem);
     func_004279B8();
@@ -3822,7 +3802,6 @@ INCLUDE_ASM("seg/seg_325220", func_0042A538);
 #ifdef SKIP_ASM
 extern int D_0045520C;
 extern char D_0052E340[];
-extern char D_0052EE00[];
 extern int func_00427988_b(int) __asm__("func_00427988");
 extern void func_00427A90(void);
 extern void func_004279B8(void);
@@ -3830,7 +3809,6 @@ extern void func_00426358(int, int);
 extern int func_00423DA0(int *p);
 extern void func_00423DB0(int);
 extern int func_00423DE0_i(int) __asm__("func_00423DE0");
-extern int func_00426D18_v(void *a0, int a1, int a2, void *a3, int a4, void *a5, int a6, int a7, int a8) __asm__("func_00426D18");
 int func_0042A538_d(char *, int, char *, unsigned, int, unsigned) __asm__("func_0042A538");
 int func_0042A538_d(char *s, int a1, char *data, unsigned len, int a4, unsigned a5) {
     int buf[12];
@@ -3873,7 +3851,7 @@ int func_0042A538_d(char *s, int a1, char *data, unsigned len, int a4, unsigned 
     p->f814 = a4;
     p->f0 = sem;
     func_00426358((int)&D_0052D700.devctl, 0x81C);
-    if (func_00426D18_v(D_0052EE00, 0x17, 0, &D_0052D700.devctl, 0x81C, D_0052E340, 4, 0, 0) < 0) {
+    if (func_00426D18(&D_0052EE00, 0x17, 0, &D_0052D700.devctl, 0x81C, D_0052E340, 4, 0, 0) < 0) {
         func_00423DB0(sem);
         func_004279B8();
         return -0xB;
@@ -3895,14 +3873,12 @@ INCLUDE_ASM("seg/seg_325220", func_0042A770);
 #ifdef SKIP_ASM
 extern int D_0045520C;
 extern char D_0052E340[];
-extern char D_0052EE00[];
 extern int func_00427988_b(int) __asm__("func_00427988");
 extern void func_00427A90(void);
 extern void func_004279B8(void);
 extern int func_00423DA0(int *p);
 extern void func_00423DB0(int);
 extern int func_00423DE0_i(int) __asm__("func_00423DE0");
-extern int func_00426D18_v(void *a0, int a1, int a2, void *a3, int a4, void *a5, int a6, int a7, int a8) __asm__("func_00426D18");
 int func_0042A770_d(char *, char *) __asm__("func_0042A770");
 int func_0042A770_d(char *s, char *t) {
     int buf[12];
@@ -3943,7 +3919,7 @@ int func_0042A770_d(char *s, char *t) {
     p->f4 = (int)&buf[8];
     p->f0 = sem;
     p->f8 = 4;
-    if (func_00426D18_v(D_0052EE00, 0x18, 0, &D_0052D700.symlink, 0x80C, D_0052E340, 4, 0, 0) < 0) {
+    if (func_00426D18(&D_0052EE00, 0x18, 0, &D_0052D700.symlink, 0x80C, D_0052E340, 4, 0, 0) < 0) {
         func_00423DB0(sem);
         func_004279B8();
         return -0xB;
@@ -3965,7 +3941,6 @@ INCLUDE_ASM("seg/seg_325220", func_0042A950);
 #ifdef SKIP_ASM
 extern int D_0045520C;
 extern char D_0052E340[];
-extern char D_0052EE00[];
 extern int func_00427988_b(int) __asm__("func_00427988");
 extern void func_00427A90(void);
 extern void func_004279B8(void);
@@ -3973,7 +3948,6 @@ extern void func_00426358(int, int);
 extern int func_00423DA0(int *p);
 extern void func_00423DB0(int);
 extern int func_00423DE0_i(int) __asm__("func_00423DE0");
-extern int func_00426D18_v(void *a0, int a1, int a2, void *a3, int a4, void *a5, int a6, int a7, int a8) __asm__("func_00426D18");
 int func_0042A950_d(char *, int, unsigned) __asm__("func_0042A950");
 int func_0042A950_d(char *s, int a1, unsigned len) {
     int buf[12];
@@ -4009,7 +3983,7 @@ int func_0042A950_d(char *s, int a1, unsigned len) {
     p->f4 = (int)&buf[8];
     p->f0 = sem;
     p->f8 = 4;
-    if (func_00426D18_v(D_0052EE00, 0x19, 0, &D_0052D700.readlink, 0x80C, D_0052E340, 4, 0, 0) < 0) {
+    if (func_00426D18(&D_0052EE00, 0x19, 0, &D_0052D700.readlink, 0x80C, D_0052E340, 4, 0, 0) < 0) {
         func_00423DB0(sem);
         func_004279B8();
         return -0xB;
@@ -4030,16 +4004,14 @@ int func_0042A950_d(char *s, int a1, unsigned len) {
 INCLUDE_ASM("seg/seg_325220", func_0042AB18);
 #ifdef SKIP_ASM
 extern int D_00455224;
-extern char D_0052EEC0[];
-extern int func_00426B48_v(void *, int, int) __asm__("func_00426B48");
 int func_0042AB18(void) {
     int i;
     for (;;) {
-        i = func_00426B48_v(D_0052EEC0, 0x80000003, 0);
+        i = func_00426B48(&D_0052EEC0, 0x80000003, 0);
         if (i < 0) {
             return -1;
         }
-        if (((int *)D_0052EEC0)[9] != 0) {
+        if (D_0052EEC0.server != 0) {
             D_00455224 = 0;
             break;
         }
@@ -4056,14 +4028,12 @@ int func_0042AB18(void) {
 INCLUDE_ASM("seg/seg_325220", func_0042ABA0);
 #ifdef SKIP_ASM
 extern int D_00455224;
-extern char D_0052EEC0[];
 extern int D_0052EF00;
 extern int D_0052EF40;
-extern int func_00426D18(void *a0, int a1, int a2, int a3, int a4, int *a5, int a6, int a7, int a8);
 int func_0042ABA0(int a0) {
     if (D_00455224 >= 0) {
         D_0052EF40 = a0;
-        if (func_00426D18(D_0052EEC0, 1, 0, (int)&D_0052EF40, 4, &D_0052EF00, 4, 0, 0) >= 0) {
+        if (func_00426D18(&D_0052EEC0, 1, 0, &D_0052EF40, 4, &D_0052EF00, 4, 0, 0) >= 0) {
             return D_0052EF00;
         }
     }
@@ -4075,10 +4045,8 @@ int func_0042ABA0(int a0) {
 INCLUDE_ASM("seg/seg_325220", func_0042AC10);
 #ifdef SKIP_ASM
 extern int D_00455224;
-extern char D_0052EEC0[];
 extern int D_0052EF00;
 extern int D_0052EF40;
-extern int func_00426D18(void *a0, int a1, int a2, int a3, int a4, int *a5, int a6, int a7, int a8);
 int func_0042AC10(int a0, int a1, int a2) {
     int *p;
     if (D_00455224 < 0) {
@@ -4088,7 +4056,7 @@ int func_0042AC10(int a0, int a1, int a2) {
     p[0] = a1;
     p[1] = a0;
     p[2] = a2;
-    if (func_00426D18(D_0052EEC0, 4, 0, (int)p, 0xC, &D_0052EF00, 4, 0, 0) >= 0) {
+    if (func_00426D18(&D_0052EEC0, 4, 0, p, 0xC, &D_0052EF00, 4, 0, 0) >= 0) {
         return D_0052EF00;
     }
     return 0;
@@ -4099,17 +4067,15 @@ int func_0042AC10(int a0, int a1, int a2) {
 INCLUDE_ASM("seg/seg_325220", func_0042AC90);
 #ifdef SKIP_ASM
 extern int D_00455224;
-extern char D_0052EEC0[];
 extern int D_0052EF00;
 extern int D_0052EF40;
-extern int func_00426D18(void *a0, int a1, int a2, int a3, int a4, int *a5, int a6, int a7, int a8);
 int func_0042AC90_impl(int a0) __asm__("func_0042AC90");
 int func_0042AC90_impl(int a0) {
     if (D_00455224 < 0) {
         return 0;
     }
     D_0052EF40 = a0;
-    if (func_00426D18(D_0052EEC0, 2, 0, (int)&D_0052EF40, 4, &D_0052EF00, 4, 0, 0) < 0) {
+    if (func_00426D18(&D_0052EEC0, 2, 0, &D_0052EF40, 4, &D_0052EF00, 4, 0, 0) < 0) {
         return -1;
     }
     return D_0052EF00;
@@ -4130,10 +4096,8 @@ INCLUDE_ASM("seg/seg_325220", func_0042AD28);
 #ifdef SKIP_ASM
 struct S2AD28 { int cmd; char name[0xFC]; };
 extern int D_00455224;
-extern char D_0052EEC0[];
 extern int D_0052EF00;
 extern struct S2AD28 D_0052EF80;
-extern int func_00426D18(void *a0, int a1, int a2, int a3, int a4, int *a5, int a6, int a7, int a8);
 int func_0042AD28(char *a0, int a1) {
     int i;
     if (D_00455224 < 0) {
@@ -4154,7 +4118,7 @@ int func_0042AD28(char *a0, int a1) {
     }
     D_0052EF80.cmd = a1;
     D_0052EF80.name[0xFB] = 0;
-    if (func_00426D18(D_0052EEC0, 3, 0, (int)&D_0052EF80, i + 5, &D_0052EF00, 4, 0, 0) < 0) {
+    if (func_00426D18(&D_0052EEC0, 3, 0, &D_0052EF80, i + 5, &D_0052EF00, 4, 0, 0) < 0) {
         return -1;
     }
     return D_0052EF00;
@@ -4165,14 +4129,12 @@ int func_0042AD28(char *a0, int a1) {
 INCLUDE_ASM("seg/seg_325220", func_0042AE18);
 #ifdef SKIP_ASM
 extern int D_00455224;
-extern char D_0052EEC0[];
 extern int D_0052EF00;
-extern int func_00426D18(void *a0, int a1, int a2, int a3, int a4, int *a5, int a6, int a7, int a8);
 unsigned int func_0042AE18(void) {
     if (D_00455224 < 0) {
         return 0;
     }
-    if (func_00426D18(D_0052EEC0, 5, 0, 0, 0, &D_0052EF00, 4, 0, 0) < 0) {
+    if (func_00426D18(&D_0052EEC0, 5, 0, 0, 0, &D_0052EF00, 4, 0, 0) < 0) {
         return 0xFFFFFFFF;
     }
     return D_0052EF00;
@@ -4183,14 +4145,12 @@ unsigned int func_0042AE18(void) {
 INCLUDE_ASM("seg/seg_325220", func_0042AE88);
 #ifdef SKIP_ASM
 extern int D_00455224;
-extern char D_0052EEC0[];
 extern int D_0052EF00;
-extern int func_00426D18(void *a0, int a1, int a2, int a3, int a4, int *a5, int a6, int a7, int a8);
 unsigned int func_0042AE88(void) {
     if (D_00455224 < 0) {
         return 0;
     }
-    if (func_00426D18(D_0052EEC0, 6, 0, 0, 0, &D_0052EF00, 4, 0, 0) < 0) {
+    if (func_00426D18(&D_0052EEC0, 6, 0, 0, 0, &D_0052EF00, 4, 0, 0) < 0) {
         return 0xFFFFFFFF;
     }
     return D_0052EF00;
@@ -4201,14 +4161,12 @@ unsigned int func_0042AE88(void) {
 INCLUDE_ASM("seg/seg_325220", func_0042AEF8);
 #ifdef SKIP_ASM
 extern int D_00455224;
-extern char D_0052EEC0[];
 extern int D_0052EF00;
-extern int func_00426D18(void *a0, int a1, int a2, int a3, int a4, int *a5, int a6, int a7, int a8);
 unsigned int func_0042AEF8(void) {
     if (D_00455224 < 0) {
         return 0;
     }
-    if (func_00426D18(D_0052EEC0, 7, 0, 0, 0, &D_0052EF00, 4, 0, 0) < 0) {
+    if (func_00426D18(&D_0052EEC0, 7, 0, 0, 0, &D_0052EF00, 4, 0, 0) < 0) {
         return 0xFFFFFFFF;
     }
     return D_0052EF00;
@@ -4219,16 +4177,14 @@ unsigned int func_0042AEF8(void) {
 INCLUDE_ASM("seg/seg_325220", func_0042AF68);
 #ifdef SKIP_ASM
 extern int D_00455224;
-extern char D_0052EEC0[];
 extern int D_0052EF00;
 extern int D_0052EF40;
-extern int func_00426D18(void *a0, int a1, int a2, int a3, int a4, int *a5, int a6, int a7, int a8);
 unsigned int func_0042AF68(int a0) {
     if (D_00455224 < 0) {
         return 0;
     }
     D_0052EF40 = a0;
-    if (func_00426D18(D_0052EEC0, 8, 0, (int)&D_0052EF40, 4, &D_0052EF00, 4, 0, 0) < 0) {
+    if (func_00426D18(&D_0052EEC0, 8, 0, &D_0052EF40, 4, &D_0052EF00, 4, 0, 0) < 0) {
         return 0xFFFFFFFF;
     }
     return D_0052EF00;
@@ -4239,16 +4195,14 @@ unsigned int func_0042AF68(int a0) {
 INCLUDE_ASM("seg/seg_325220", func_0042AFE8);
 #ifdef SKIP_ASM
 extern int D_00455224;
-extern char D_0052EEC0[];
 extern int D_0052EF00;
 extern int D_0052EF40;
-extern int func_00426D18(void *a0, int a1, int a2, int a3, int a4, int *a5, int a6, int a7, int a8);
 unsigned int func_0042AFE8(int a0) {
     if (D_00455224 < 0) {
         return 0;
     }
     D_0052EF40 = a0;
-    if (func_00426D18(D_0052EEC0, 9, 0, (int)&D_0052EF40, 4, &D_0052EF00, 4, 0, 0) < 0) {
+    if (func_00426D18(&D_0052EEC0, 9, 0, &D_0052EF40, 4, &D_0052EF00, 4, 0, 0) < 0) {
         return 0xFFFFFFFF;
     }
     return D_0052EF00;
@@ -4260,21 +4214,18 @@ INCLUDE_ASM("seg/seg_325220", func_0042B068);
 #ifdef SKIP_ASM
 typedef struct { char b[4]; } K4;
 extern int D_00455228;
-extern char D_0052F280[];
 extern K4 D_Gm __asm__("D_0052F2A8");
 extern K4 D_G68 __asm__("D_0052F080");
-extern int func_00426B48_v(void *, int, int) __asm__("func_00426B48");
-extern int func_00426D18_v(void *a0, int a1, int a2, void *a3, int a4, void *a5, int a6, int a7, int a8) __asm__("func_00426D18");
 int func_0042B068(void) {
     int i;
     if (D_00455228 < 0) {
         for (;;) {
-            if (func_00426B48_v(D_0052F280, 0x80000006, 0) < 0) {
+            if (func_00426B48(&D_0052F280, 0x80000006, 0) < 0) {
                 return -1;
             }
-            if (((int *)D_0052F280)[9] != 0) {
+            if (D_0052F280.server != 0) {
                 D_00455228 = 0;
-                if (func_00426D18_v(D_0052F280, 0xFF, 0, 0, 0, &D_G68, 4, 0, 0) < 0) {
+                if (func_00426D18(&D_0052F280, 0xFF, 0, 0, 0, &D_G68, 4, 0, 0) < 0) {
                     return 0xFFFEFFFF;
                 }
                 D_Gm = D_G68;
@@ -4328,11 +4279,9 @@ INCLUDE_ASM("seg/seg_325220", func_0042B230);
 typedef struct { char b[0xFC]; } K2B230;
 struct B230 { int f0; int f4; char pad0[0xFC]; char pad[0xFC]; };
 extern struct B230 D_G30 __asm__("D_0052F080");
-extern char D_0052F280[];
 extern int func_0042B068(void);
 extern int func_0042B168(void);
 extern void *func_0041605C(void *, void *, int);
-extern int func_00426D18_v(void *a0, int a1, int a2, void *a3, int a4, void *a5, int a6, int a7, int a8) __asm__("func_00426D18");
 int func_0042B230_i(int a0, int a1, K2B230 *a2, int *a3) __asm__("func_0042B230");
 int func_0042B230_i(int a0, int a1, K2B230 *a2, int *a3) {
     int r;
@@ -4354,7 +4303,7 @@ int func_0042B230_i(int a0, int a1, K2B230 *a2, int *a3) {
     } else {
         D_G30.f4 = 0;
     }
-    if (func_00426D18_v(D_0052F280, 6, 0, &D_G30, 0x200, &D_G30, 8, 0, 0) < 0) {
+    if (func_00426D18(&D_0052F280, 6, 0, &D_G30, 0x200, &D_G30, 8, 0, 0) < 0) {
         return 0xFFFEFFFF;
     }
     r = D_G30.f0;
@@ -4369,11 +4318,9 @@ INCLUDE_ASM("seg/seg_325220", func_0042B438);
 typedef struct { char b[0xFC]; } K2B438;
 struct B438 { int f0; int f4; char pad0[0xFC]; char pad[0xFC]; };
 extern struct B438 D_G38 __asm__("D_0052F080");
-extern char D_0052F280[];
 extern int func_0042B068(void);
 extern int func_0042B168(void);
 extern void *func_0041605C(void *, void *, int);
-extern int func_00426D18_v(void *a0, int a1, int a2, void *a3, int a4, void *a5, int a6, int a7, int a8) __asm__("func_00426D18");
 int func_0042B438_i(int a0, int a1, K2B438 *a2, int *a3) __asm__("func_0042B438");
 int func_0042B438_i(int a0, int a1, K2B438 *a2, int *a3) {
     int r;
@@ -4395,7 +4342,7 @@ int func_0042B438_i(int a0, int a1, K2B438 *a2, int *a3) {
     } else {
         D_G38.f4 = 0;
     }
-    if (func_00426D18_v(D_0052F280, 7, 0, &D_G38, 0x200, &D_G38, 8, 0, 0) < 0) {
+    if (func_00426D18(&D_0052F280, 7, 0, &D_G38, 0x200, &D_G38, 8, 0, 0) < 0) {
         return 0xFFFEFFFF;
     }
     r = D_G38.f0;
@@ -4409,10 +4356,8 @@ INCLUDE_ASM("seg/seg_325220", func_0042B640);
 #ifdef SKIP_ASM
 struct B640 { int f0; };
 extern struct B640 D_G6 __asm__("D_0052F080");
-extern char D_0052F280[];
 extern int func_0042B068(void);
 extern int func_0042B168(void);
-extern int func_00426D18_v(void *a0, int a1, int a2, void *a3, int a4, void *a5, int a6, int a7, int a8) __asm__("func_00426D18");
 int func_0042B640(int a0) {
     if (func_0042B068() < 0) {
         return 0xFFFF0000;
@@ -4421,7 +4366,7 @@ int func_0042B640(int a0) {
         return 0xFFFEFFFC;
     }
     D_G6.f0 = a0;
-    if (func_00426D18_v(D_0052F280, 8, 0, &D_G6, 4, &D_G6, 4, 0, 0) < 0) {
+    if (func_00426D18(&D_0052F280, 8, 0, &D_G6, 4, &D_G6, 4, 0, 0) < 0) {
         return 0xFFFEFFFF;
     }
     return D_G6.f0;
@@ -4433,11 +4378,9 @@ INCLUDE_ASM("seg/seg_325220", func_0042B6D0);
 #ifdef SKIP_ASM
 struct B6D0 { int f0; int f4; char n1[0xFC]; };
 extern struct B6D0 D_G6D __asm__("D_0052F080");
-extern char D_0052F280[];
 extern int func_0042B068(void);
 extern int func_0042B168(void);
 extern char *strncpy(char *, const char *, int);
-extern int func_00426D18_v(void *a0, int a1, int a2, void *a3, int a4, void *a5, int a6, int a7, int a8) __asm__("func_00426D18");
 int func_0042B6D0(char *a0) {
     if (func_0042B068() < 0) {
         return 0xFFFF0000;
@@ -4447,7 +4390,7 @@ int func_0042B6D0(char *a0) {
     }
     strncpy(D_G6D.n1, a0, 0xFC);
     D_G6D.n1[0xFB] = 0;
-    if (func_00426D18_v(D_0052F280, 9, 0, &D_G6D, 0x200, &D_G6D, 4, 0, 0) < 0) {
+    if (func_00426D18(&D_0052F280, 9, 0, &D_G6D, 0x200, &D_G6D, 4, 0, 0) < 0) {
         return 0xFFFEFFFF;
     }
     return D_G6D.f0;
@@ -4459,10 +4402,8 @@ INCLUDE_ASM("seg/seg_325220", func_0042B770);
 #ifdef SKIP_ASM
 struct B770 { int f0; };
 extern struct B770 D_G7a __asm__("D_0052F080");
-extern char D_0052F280[];
 extern int func_0042B068(void);
 extern int func_0042B168(void);
-extern int func_00426D18_v(void *a0, int a1, int a2, void *a3, int a4, void *a5, int a6, int a7, int a8) __asm__("func_00426D18");
 int func_0042B770(int a0) {
     if (func_0042B068() < 0) {
         return 0xFFFF0000;
@@ -4471,7 +4412,7 @@ int func_0042B770(int a0) {
         return 0xFFFEFFFC;
     }
     D_G7a.f0 = a0;
-    if (func_00426D18_v(D_0052F280, 0xA, 0, &D_G7a, 4, &D_G7a, 4, 0, 0) < 0) {
+    if (func_00426D18(&D_0052F280, 0xA, 0, &D_G7a, 4, &D_G7a, 4, 0, 0) < 0) {
         return 0xFFFEFFFF;
     }
     return D_G7a.f0;
@@ -4503,12 +4444,10 @@ INCLUDE_ASM("seg/seg_325220", func_0042B840);
 typedef struct { char b[0xFC]; } K2B840;
 struct B840 { int f0; int f4; char n1[0xFC]; char n2[0xFC]; };
 extern struct B840 D_G40 __asm__("D_0052F080");
-extern char D_0052F280[];
 extern int func_0042B068(void);
 extern int func_0042B168(void);
 extern char *strncpy(char *, const char *, int);
 extern void *func_0041605C(void *, void *, int);
-extern int func_00426D18_v(void *a0, int a1, int a2, void *a3, int a4, void *a5, int a6, int a7, int a8) __asm__("func_00426D18");
 int func_0042B840_i(char *a0, int a1, K2B840 *a2, int *a3, int a4) __asm__("func_0042B840");
 int func_0042B840_i(char *a0, int a1, K2B840 *a2, int *a3, int a4) {
     int r;
@@ -4532,7 +4471,7 @@ int func_0042B840_i(char *a0, int a1, K2B840 *a2, int *a3, int a4) {
         D_G40.n2[0] = 0;
         D_G40.f0 = 0;
     }
-    if (func_00426D18_v(D_0052F280, a4, 0, &D_G40, 0x200, &D_G40, 8, 0, 0) < 0) {
+    if (func_00426D18(&D_0052F280, a4, 0, &D_G40, 0x200, &D_G40, 8, 0, 0) < 0) {
         return 0xFFFEFFFF;
     }
     r = D_G40.f0;
@@ -4565,11 +4504,9 @@ INCLUDE_ASM("seg/seg_325220", func_0042BAA8);
 #ifdef SKIP_ASM
 struct B2F080 { int f0; int f4; char n1[0xFC]; char n2[0xFC]; };
 extern struct B2F080 D_X __asm__("D_0052F080");
-extern char D_0052F280[];
 extern int func_0042B068(void);
 extern int func_0042B168(void);
 extern char *strncpy(char *, const char *, int);
-extern int func_00426D18_v(void *a0, int a1, int a2, void *a3, int a4, void *a5, int a6, int a7, int a8) __asm__("func_00426D18");
 int func_0042BAA8_i(char *, char *, int *, int) __asm__("func_0042BAA8");
 int func_0042BAA8_i(char *a0, char *a1, int *a2, int a3) {
     if (func_0042B068() < 0) {
@@ -4582,7 +4519,7 @@ int func_0042BAA8_i(char *a0, char *a1, int *a2, int a3) {
     D_X.n1[0xFB] = 0;
     strncpy(D_X.n2, a1, 0xFC);
     D_X.n2[0xFB] = 0;
-    if (func_00426D18_v(D_0052F280, a3, 0, &D_X, 0x200, &D_X, 0x10, 0, 0) < 0) {
+    if (func_00426D18(&D_0052F280, a3, 0, &D_X, 0x200, &D_X, 0x10, 0, 0) < 0) {
         return 0xFFFEFFFF;
     }
     if (D_X.f0 == 0) {
@@ -4618,9 +4555,7 @@ INCLUDE_ASM("seg/seg_325220", func_0042BBF8);
 #ifdef SKIP_ASM
 struct B80 { union { unsigned char b; unsigned short h; int w; } f0; int f4; };
 extern struct B80 D_0052F080;
-extern char D_0052F280[];
 extern int func_0042B068(void);
-extern int func_00426D18_v(void *a0, int a1, int a2, void *a3, int a4, void *a5, int a6, int a7, int a8) __asm__("func_00426D18");
 int func_0042BBF8(int a0, void *a1, unsigned a2) {
     if (func_0042B068() < 0) {
         return 0xFFFF0000;
@@ -4630,7 +4565,7 @@ int func_0042BBF8(int a0, void *a1, unsigned a2) {
     }
     *(int *)&D_0052F080 = a0;
     D_0052F080.f4 = a2;
-    if (func_00426D18_v(D_0052F280, 3, 0, &D_0052F080, 0x20, &D_0052F080, 0x20, 0, 0) < 0) {
+    if (func_00426D18(&D_0052F280, 3, 0, &D_0052F080, 0x20, &D_0052F080, 0x20, 0, 0) < 0) {
         return 0xFFFEFFFF;
     }
     if (a2 == 0) {
@@ -4651,9 +4586,7 @@ INCLUDE_ASM("seg/seg_325220", func_0042BCE8);
 #ifdef SKIP_ASM
 struct S7080 { int f0; int f4; union { unsigned char b; unsigned short h; unsigned w; } f8; };
 extern struct S7080 D_F080 __asm__("D_0052F080");
-extern char D_0052F280[];
 extern int func_0042B068(void);
-extern int f6D18_b(void *a0, int a1, int a2, int a3, int a4, void *a5, int a6, int a7, int a8) __asm__("func_00426D18");
 int func_0042BCE8(int a0, void *a1, int a2) {
     if (func_0042B068() < 0) {
         return 0xFFFF0000;
@@ -4669,7 +4602,7 @@ int func_0042BCE8(int a0, void *a1, int a2) {
     } else {
         return 0xFFFEFFFE;
     }
-    if (f6D18_b(D_0052F280, 2, 0, (int)&D_F080, 0x20, &D_F080, 0x10, 0, 0) < 0) {
+    if (func_00426D18(&D_0052F280, 2, 0, &D_F080, 0x20, &D_F080, 0x10, 0, 0) < 0) {
         return 0xFFFEFFFF;
     }
     return 0;
