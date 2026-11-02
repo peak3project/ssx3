@@ -19,6 +19,34 @@ struct sCharStat {
 };
 extern sCharStat D_005308D8[];
 
+// One player slot (0x1C bytes), as in be/beintplayer; D_00535B20 is the saved table.
+struct sPlayerCharEntry {
+    char name[0xC];                 // 0x00
+    int ctrlID;                     // 0x0C (-1 = none)
+    unsigned int flag0 : 1;         // 0x10 bit 0
+    unsigned int flag1 : 1;         // 0x10 bit 1
+    unsigned int missionMan : 1;    // 0x10 bit 2
+    unsigned int flag3 : 1;         // 0x10 bit 3
+    signed char mCharID;            // 0x11
+    signed char field_0x12;         // 0x12
+    signed char field_0x13;         // 0x13
+    int field_0x14;                 // 0x14
+    int field_0x18;                 // 0x18
+};
+extern sPlayerCharEntry D_00535B20[];
+
+// Race settings, as in be/beintplayer: two rider -> player slot maps, the event and the mode.
+struct sRaceSettings {
+    int playerID[6];            // 0x00
+    int playerID2[6];           // 0x18
+    char pad_0x30[0x40 - 0x30];
+    int event;                  // 0x40
+    char pad_0x44[4];
+    signed char mode;           // 0x48
+    char pad_0x49[0x4C - 0x49];
+};
+extern sRaceSettings D_005305B0;
+
 //100%
 INCLUDE_ASM("be/beintstat", cBEStatInterface_getCollisionAttrib);
 #ifdef SKIP_ASM
@@ -333,7 +361,6 @@ void* cBENewPlayerInterface_getThis();
 void* cBEBAGTInterface_getThis();
 extern char* D_004A28A8;
 extern char D_0045A268[];
-extern char D_00535B20[];
 extern char D_004A6CA8[];
 
 struct sVEntry_149A88
@@ -341,15 +368,6 @@ struct sVEntry_149A88
     short delta;
     short index;
     int (*fn)(void*, ...);
-};
-
-struct sRiderEntry_149A88
-{
-    char name[0x10];
-    unsigned f0 : 1;
-    unsigned f1 : 1;
-    unsigned pad : 6;
-    unsigned char c11;
 };
 
 static inline void vreset_149A88(char* o)
@@ -361,14 +379,14 @@ static inline void vreset_149A88(char* o)
 extern "C" void func_00149A88(void* self, signed char idx)
 {
     char buf[64];
-    sRiderEntry_149A88* e = (sRiderEntry_149A88*)(D_00535B20 + idx * 0x1C);
+    sPlayerCharEntry* e = &D_00535B20[idx];
     func_00416210(e, 0, 0x1C);
-    e->f1 = 1;
-    e->c11 = 4;
+    e->flag1 = 1;
+    e->mCharID = 4;
     char* o = *(char**)(D_004A28A8 + 0x8C);
     sVEntry_149A88* vt = *(sVEntry_149A88**)(o + 4);
     func_002C2580(buf, vt[4].fn(o + vt[4].delta, GetHashValue32(D_0045A268)));
-    sprintf((char*)e, buf, idx + 1);
+    sprintf(e->name, buf, idx + 1);
     func_001567B8(D_004A6CA8 + idx * 0x9B50, 1);
     vreset_149A88((char*)cBENewPlayerInterface_getThis());
     vreset_149A88((char*)func_00147F78());
@@ -414,7 +432,6 @@ extern "C" void* FILE_load(const char* name, int flags);
 void cMemMan_free(void*);
 extern char D_004A6750[];
 extern char D_004C3E98[];
-extern int D_005305B0[];
 extern char D_0045A2E0[];
 extern char D_00530970[];
 extern char D_00535898[];
@@ -425,17 +442,17 @@ extern "C" void func_00149BB8(void)
     void* f;
     func_0014C6A0(D_004A6750);
     cBERewardDB_init(D_004C3E98, 0);
-    func_00416210(D_005305B0, 0, 0x4C);
+    func_00416210(&D_005305B0, 0, 0x4C);
     for (i = 0; i < 6; i++) {
-        D_005305B0[i] = i;
-        D_005305B0[i + 6] = i;
+        D_005305B0.playerID[i] = i;
+        D_005305B0.playerID2[i] = i;
     }
     func_00416210(D_00535B20, 0, 0xA8);
     for (i = 0; i < 6; i++) {
-        sRiderEntry_149A88* e = (sRiderEntry_149A88*)(D_00535B20 + i * 0x1C);
+        sPlayerCharEntry* e = &D_00535B20[i];
         e->name[0] = 0;
-        e->f1 = 1;
-        e->c11 = 4;
+        e->flag1 = 1;
+        e->mCharID = 4;
     }
     f = FILE_load(D_0045A2E0, 0x100);
     func_0041605C(D_00530970, f, 0x550);
