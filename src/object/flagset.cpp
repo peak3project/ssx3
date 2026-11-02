@@ -1,4 +1,28 @@
 #include "common.h"
+#include "bx/math3d.h"
+
+// ---- Shared declarations: one type per real thing, used by the functions below ----
+
+// g++ 2.95 vtable slot: this-pointer adjustment, index, function (F is the slot's function type;
+// sVEntry<void> is a raw slot). Virtual calls in this unit go through these by hand.
+template <class F> struct sVEntry {
+    short delta;
+    short index;
+    F* fn;
+};
+
+// Three floats with an empty and a by-value ctor (not the POD t3Vector).
+struct sFsVec3 {
+    float x, y, z;
+    sFsVec3() {}
+    sFsVec3(float ax, float ay, float az) : x(ax), y(ay), z(az) {}
+};
+
+inline sFsVec3 operator+(const sFsVec3& a, const sFsVec3& b) { return sFsVec3(a.x + b.x, a.y + b.y, a.z + b.z); }
+inline sFsVec3 operator-(const sFsVec3& a, const sFsVec3& b) { return sFsVec3(a.x - b.x, a.y - b.y, a.z - b.z); }
+inline sFsVec3 operator*(const sFsVec3& a, float s) { return sFsVec3(a.x * s, a.y * s, a.z * s); }
+
+// ---- end of shared declarations ----
 
 //100%
 INCLUDE_ASM("object/flagset", cFlagSet_CreateMesh);
@@ -11,11 +35,6 @@ extern "C" void func_0034BCA0(void* self, void* verts);
 // PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
 void* operator new[](unsigned int size, const char* tag, unsigned int flags, int d) __asm__("operator_new__FUi");
 
-struct sFsV3_CM {
-    float x, y, z;
-    sFsV3_CM() {}
-    sFsV3_CM(float ax, float ay, float az) : x(ax), y(ay), z(az) {}
-};
 
 struct sFsV2_CM {
     float x, y;
@@ -28,8 +47,6 @@ struct sFsCol_CM {
     sFsCol_CM() {}
 };
 
-inline sFsV3_CM operator+(const sFsV3_CM& a, const sFsV3_CM& b) { return sFsV3_CM(a.x + b.x, a.y + b.y, a.z + b.z); }
-inline sFsV3_CM operator*(const sFsV3_CM& a, float s) { return sFsV3_CM(a.x * s, a.y * s, a.z * s); }
 inline sFsV2_CM operator+(const sFsV2_CM& a, const sFsV2_CM& b) { return sFsV2_CM(a.x + b.x, a.y + b.y); }
 inline sFsV2_CM operator*(const sFsV2_CM& a, float s) { return sFsV2_CM(a.x * s, a.y * s); }
 
@@ -53,13 +70,13 @@ struct sFsVE_CM {
 struct sFsQuadVE_CM {
     short delta;
     short index;
-    void (*fn)(void*, void*, int, sFsV3_CM*, sFsV2_CM*, sFsCol_CM*);
+    void (*fn)(void*, void*, int, sFsVec3*, sFsV2_CM*, sFsCol_CM*);
 };
 
 struct sFsMeshVE_CM {
     short delta;
     short index;
-    void (*fn)(void*, sFsV3_CM*, sFsCol_CM*, sFsV2_CM*);
+    void (*fn)(void*, sFsVec3*, sFsCol_CM*, sFsV2_CM*);
 };
 
 struct sFsMesh_CM {
@@ -77,7 +94,7 @@ struct sFlagElem_CM {
     int rows;               // 0x68
     float colScale;         // 0x6C
     float rowScale;         // 0x70
-    sFsV3_CM* verts;        // 0x74
+    sFsVec3* verts;        // 0x74
     float phase[4];         // 0x78
     float u;                // 0x88
     float v;                // 0x8C
@@ -95,7 +112,7 @@ extern "C" void cFlagSet_CreateMesh(void* p, void* item)
     char* mgr = D_004A5B80;
     sFsV2_CM quv[4];
     sFsCol_CM qcol[4];
-    sFsV3_CM pos[4];
+    sFsVec3 pos[4];
     sFsQuadVE_CM* vt = *(sFsQuadVE_CM**)(mgr + 0x10D8);
     vt[97].fn(mgr + vt[97].delta, item, 0, pos, quv, qcol);
     if (self->windX < 0.01f && self->windY < 0.01f) {
@@ -113,8 +130,8 @@ extern "C" void cFlagSet_CreateMesh(void* p, void* item)
         return;
     }
     int n = self->cols * self->rows;
-    sFsV3_CM** pv = &self->verts;
-    *pv = new (D_0048E850, 0x20000000, 0) sFsV3_CM[n];
+    sFsVec3** pv = &self->verts;
+    *pv = new (D_0048E850, 0x20000000, 0) sFsVec3[n];
     sFsV2_CM uv[50];
     sFsCol_CM col[50];
     int idx = 0;
@@ -131,7 +148,7 @@ extern "C" void cFlagSet_CreateMesh(void* p, void* item)
             idx++;
         }
     }
-    sFsV3_CM verts[50];
+    sFsVec3 verts[50];
     func_0034BCA0(self, verts);
     sFsMesh_CM* m = self->mesh;
     m->vt[6].fn((char*)m + m->vt[6].delta, verts, col, uv);
@@ -1031,11 +1048,6 @@ struct sFsVec4_CF98 {
     sFsVec4_CF98(float ax, float ay, float az, float aw) : x(ax), y(ay), z(az), w(aw) {}
 } __attribute__((aligned(16)));
 
-struct sFsVec3_CF98 {
-    float x, y, z;
-    sFsVec3_CF98() {}
-    sFsVec3_CF98(float ax, float ay, float az) : x(ax), y(ay), z(az) {}
-};
 
 // PORT: VU0 macro-mode vector scale in place (v *= s).
 static inline void fsScaleIn_CF98(sFsVec4_CF98& v, float s)
@@ -1067,9 +1079,9 @@ static inline sFsVec4_CF98 fsScale_CF98(const sFsVec4_CF98& a, float s)
     return r;
 }
 
-static inline sFsVec3_CF98 fsAdd_CF98(const sFsVec3_CF98& a, const sFsVec4_CF98& b)
+static inline sFsVec3 fsAdd_CF98(const sFsVec3& a, const sFsVec4_CF98& b)
 {
-    return sFsVec3_CF98(a.x + b.x, a.y + b.y, a.z + b.z);
+    return sFsVec3(a.x + b.x, a.y + b.y, a.z + b.z);
 }
 
 struct sFlagVEntry_CF98 {
@@ -1091,8 +1103,8 @@ struct sFlagSet_CF98 {
     float wind;             // 0x2C
     char pad30[0x10];
     sFlagMesh_CF98* mesh;   // 0x40
-    sFsVec3_CF98 top[8];    // 0x44
-    sFsVec3_CF98 bottom[8]; // 0xA4
+    sFsVec3 top[8];    // 0x44
+    sFsVec3 bottom[8]; // 0xA4
 };
 
 extern "C" void func_0034CF98(void* p)
@@ -1109,7 +1121,7 @@ extern "C" void func_0034CF98(void* p)
     for (int i = 0; i < 8; i++) {
         *o++ = fsScale_CF98(dir, D_0044AFD0[i]);
     }
-    sFsVec3_CF98 pts[16];
+    sFsVec3 pts[16];
     if (self->mode == 1) {
         for (int i = 0; i < 8; i++) {
             pts[i] = fsAdd_CF98(self->top[i], offs[i]);
@@ -1133,11 +1145,6 @@ INCLUDE_ASM("object/flagset", func_0034D1E8);
 extern char* D_004A5B80;
 extern "C" void func_0034CF98(void* self);
 
-struct sFsV3_D1E8 {
-    float x, y, z;
-    sFsV3_D1E8() {}
-    sFsV3_D1E8(float ax, float ay, float az) : x(ax), y(ay), z(az) {}
-};
 
 struct sFsV2_D1E8 {
     float x, y;
@@ -1150,9 +1157,6 @@ struct sFsCol_D1E8 {
     sFsCol_D1E8() {}
 };
 
-inline sFsV3_D1E8 operator+(const sFsV3_D1E8& a, const sFsV3_D1E8& b) { return sFsV3_D1E8(a.x + b.x, a.y + b.y, a.z + b.z); }
-inline sFsV3_D1E8 operator-(const sFsV3_D1E8& a, const sFsV3_D1E8& b) { return sFsV3_D1E8(a.x - b.x, a.y - b.y, a.z - b.z); }
-inline sFsV3_D1E8 operator*(const sFsV3_D1E8& a, float s) { return sFsV3_D1E8(a.x * s, a.y * s, a.z * s); }
 inline sFsV2_D1E8 operator+(const sFsV2_D1E8& a, const sFsV2_D1E8& b) { return sFsV2_D1E8(a.x + b.x, a.y + b.y); }
 inline sFsV2_D1E8 operator-(const sFsV2_D1E8& a, const sFsV2_D1E8& b) { return sFsV2_D1E8(a.x - b.x, a.y - b.y); }
 inline sFsV2_D1E8 operator*(const sFsV2_D1E8& a, float s) { return sFsV2_D1E8(a.x * s, a.y * s); }
@@ -1166,13 +1170,13 @@ struct sFsVE_D1E8 {
 struct sFsQuadVE_D1E8 {
     short delta;
     short index;
-    void (*fn)(void*, void*, int, sFsV3_D1E8*, sFsV2_D1E8*, sFsCol_D1E8*);
+    void (*fn)(void*, void*, int, sFsVec3*, sFsV2_D1E8*, sFsCol_D1E8*);
 };
 
 struct sFsMeshVE_D1E8 {
     short delta;
     short index;
-    void (*fn)(void*, sFsV3_D1E8*, sFsCol_D1E8*, sFsV2_D1E8*);
+    void (*fn)(void*, sFsVec3*, sFsCol_D1E8*, sFsV2_D1E8*);
 };
 
 struct sFsMesh_D1E8 {
@@ -1190,8 +1194,8 @@ struct sFlagSet_D1E8 {
     sFsNode_D1E8* node;     // 0x18
     char pad1C[0x24];
     sFsMesh_D1E8* mesh;     // 0x40
-    sFsV3_D1E8 top[8];      // 0x44
-    sFsV3_D1E8 bottom[8];   // 0xA4
+    sFsVec3 top[8];      // 0x44
+    sFsVec3 bottom[8];   // 0xA4
     void* obj104;           // 0x104
     void* obj108;           // 0x108
 };
@@ -1205,7 +1209,7 @@ extern "C" void func_0034D1E8(void* p)
     char* mgr = D_004A5B80;
     sFsVE_D1E8* e = &(*(sFsVE_D1E8**)(mgr + 0x10D8))[76];
     self->mesh = (sFsMesh_D1E8*)e->fn(mgr + e->delta, 8, 2, 0x60000000u);
-    sFsV3_D1E8 pos[4];
+    sFsVec3 pos[4];
     sFsV2_D1E8 quv[4];
     sFsCol_D1E8 qcol[4];
     sFsQuadVE_D1E8* vt = *(sFsQuadVE_D1E8**)(mgr + 0x10D8);
