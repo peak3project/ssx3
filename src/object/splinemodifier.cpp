@@ -215,17 +215,22 @@ static inline t4Vector vu0Add(const t4Vector& a, const t4Vector& b)
 extern void* D_0048F168[];
 extern char D_004911D0[];
 
+// A serialisation stream (vptr at 0x0; slot N at vtable offset N*8): v01 reads, v02 writes, v03 reads an int,
+// v05 reads an object reference.
+class cSmStream {
+public:
+    virtual void v01(void* buf, int size);
+    virtual void v02(void* buf, int size);
+    virtual int v03();
+    virtual void v04();
+    virtual void v05(void* obj);
+};
+
 // ---- end of shared declarations ----
 
 //100%
 INCLUDE_ASM("object/splinemodifier", cSplineModifier_cSplineModifier);
 #ifdef SKIP_ASM
-class cStream003595D8 {
-public:
-    // vptr at 0x0; slot N at vtable offset N*8
-    virtual void v01(void* buf, int size);
-    virtual void v02(void* buf, int size);
-};
 
 struct sSmQuad_95D8 {
     float v[4];
@@ -246,9 +251,9 @@ struct cSplineModifier_95D8 {
 
 extern void* D_0048F250[];
 extern sSmQuad_95D8 D_004FF120;
-extern "C" void cSpline_readFromReplayFrame(void* self, cStream003595D8* stream);
+extern "C" void cSpline_readFromReplayFrame(void* self, cSmStream* stream);
 
-extern "C" cSplineModifier_95D8* cSplineModifier_cSplineModifier(cSplineModifier_95D8* self, cStream003595D8* stream)
+extern "C" cSplineModifier_95D8* cSplineModifier_cSplineModifier(cSplineModifier_95D8* self, cSmStream* stream)
 {
     self->vtable = D_0048F250;
     sSmFollow* f = &self->follow;
@@ -726,15 +731,10 @@ extern "C" void func_00359EB8(void* self, int msg)
 //100%
 INCLUDE_ASM("object/splinemodifier", func_00359F30);
 #ifdef SKIP_ASM
-class cStream00359F30 {
-public:
-    // vptr at 0x0; slot N at vtable offset N*8
-    virtual void v01(void* buf, int size);
-};
 
-extern "C" void func_00345538(void* self, cStream00359F30* stream);
+extern "C" void func_00345538(void* self, cSmStream* stream);
 
-extern "C" void func_00359F30(void* self, cStream00359F30* stream)
+extern "C" void func_00359F30(void* self, cSmStream* stream)
 {
     stream->v01((char*)self + 0x10, 0x50);
     func_00345538((char*)self + 0xD8, stream);
@@ -802,13 +802,6 @@ extern "C" void* func_00359F88(char* self, char* desc, char* model)
 //100%
 INCLUDE_ASM("object/splinemodifier", func_0035A118);
 #ifdef SKIP_ASM
-class cStream0035A118 {
-public:
-    // vptr at 0x0; slot N at vtable offset N*8
-    virtual void v01(void* buf, int size);
-    virtual void v02(void* buf, int size);
-    virtual int v03();
-};
 
 
 struct cMultiSplineModifier_A118 {
@@ -822,15 +815,15 @@ struct cMultiSplineModifier_A118 {
     sSmFollow follow;  // 0x48
 };
 
-// PORT: same symbol as the unit's cSpline_readFromReplayFrame(void*, cStream003595D8*).
-extern "C" void cSpline_readFromReplayFrame_A118(void* self, cStream0035A118* stream) __asm__("cSpline_readFromReplayFrame");
+// PORT: same symbol as the unit's cSpline_readFromReplayFrame(void*, cSmStream*).
+extern "C" void cSpline_readFromReplayFrame_A118(void* self, cSmStream* stream) __asm__("cSpline_readFromReplayFrame");
 extern "C" void cMultiSplineModifier_allocNodes(void* self);
 extern "C" void cMultiSplineModifier_setupNodes(void* self);
 extern "C" void cMultiSplineModifier_setupOverlapSystem(void* self);
 void* cObjectInterface_getInstanceMan();
 extern "C" void* func_003511D0(void* man, unsigned int id);
 
-extern "C" cMultiSplineModifier_A118* func_0035A118(cMultiSplineModifier_A118* self, cStream0035A118* stream)
+extern "C" cMultiSplineModifier_A118* func_0035A118(cMultiSplineModifier_A118* self, cSmStream* stream)
 {
     self->vtable = D_0048F168;
     sSmFollow* f = &self->follow;
@@ -1457,23 +1450,12 @@ extern "C" void func_0035B418(cMultiSpline_35B418* self)
 //100%
 INCLUDE_ASM("object/splinemodifier", func_0035B5A8);
 #ifdef SKIP_ASM
-class cStream0035B5A8 {
-public:
-    // vptr at 0x0; slot N at vtable offset N*8
-    virtual void v01(void* buf, int size);
-    virtual void v02(void* buf, int size);
-    virtual void v03();
-    virtual void v04();
-    virtual void v05(void* obj);
-};
 
-class cStream00359F30;
-extern "C" void func_00345538(void* self, cStream00359F30* stream);
 
-extern "C" void func_0035B5A8(void* self, cStream0035B5A8* stream)
+extern "C" void func_0035B5A8(void* self, cSmStream* stream)
 {
     stream->v01((char*)self + 0x4, 0x34);
-    func_00345538((char*)self + 0x48, (cStream00359F30*)stream);
+    func_00345538((char*)self + 0x48, stream);
     stream->v05(*(void**)((char*)self + 0x40));
     for (int i = 0; i < *(int*)((char*)self + 0x4); i++) {
         stream->v01((*(char***)((char*)self + 0x44))[i] + 0x78, 4);
@@ -1695,12 +1677,6 @@ extern "C" void* func_002D1BE0();
 
 extern "C" void cRailModifier_buildXform(void* self);
 
-class cSmStream_BA88 {
-public:
-    virtual void v01();
-    virtual void v02(void* p, int n);
-    virtual int v03();
-};
 
 
 
@@ -1708,7 +1684,7 @@ public:
 
 
 
-extern "C" char* func_0035BA88(char* self, cSmStream_BA88* src)
+extern "C" char* func_0035BA88(char* self, cSmStream* src)
 {
     *(unsigned int*)(self + 0x30) = 0xFFFFFFFF;
     *(void**)(self + 0x8) = D_004911D0;
