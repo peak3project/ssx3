@@ -91,6 +91,24 @@ struct cChaseCameraController {
     int field_0x40;
 };
 
+// The per-frame camera input record (0x70 bytes) that func_00162568 fills from the target for the chase algorithms.
+struct sCamInfo {
+    t4Vector f00;               // 0x00
+    t4Vector pos;               // 0x10
+    t4Vector dir;               // 0x20
+    t4Vector out;               // 0x30: written back by func_00162C78
+    int mode;                   // 0x40
+    float speed;                // 0x44: length of dir
+    char pad48[4];
+    float f4C;                  // 0x4C
+    float f50;                  // 0x50
+    float f54;                  // 0x54
+    int f58;                    // 0x58
+    int f5C;                    // 0x5C
+    int f60;                    // 0x60
+    int f64;                    // 0x64
+};
+
 //100%
 INCLUDE_ASM("camera/camera", cCamera_resetChaseControllerSwitches);
 #ifdef SKIP_ASM
@@ -1613,18 +1631,13 @@ void func_001604B0(void* self, void* other)
 INCLUDE_ASM("camera/camera", func_001604B8);
 #ifdef SKIP_ASM
 extern "C" float func_00320BF0(int pad, int axis);
-extern "C" void func_00162568(void* self, struct sCamInfo_001607E0* out, float a, float b, float c, float d,
+extern "C" void func_00162568(void* self, sCamInfo* out, float a, float b, float c, float d,
                               float e, float f, float g, float h);
 extern "C" void func_001668B8(void* self, void* out);
 extern float D_004A127C;
 extern float D_004A1280;
 extern float D_004A1284;
 
-struct sCamInfo_1604B8 {
-    char pad0[0x10];
-    t4Vector pos;    // 0x10
-    char pad20[0x50];
-} __attribute__((aligned(16)));
 
 // PORT: PS2-only VU0 inline asm (vector times scalar).
 static inline t4Vector Scale_1604B8(const t4Vector& v, float s)
@@ -1721,8 +1734,8 @@ struct sCamYP_1604B8 {
 
 extern "C" void func_001604B8(char* self)
 {
-    sCamInfo_1604B8 info;
-    func_00162568(self, (sCamInfo_001607E0*)&info, 0.2713613510131836f, 0.8999999761581421f, 0.29420721530914307f,
+    sCamInfo info;
+    func_00162568(self, &info, 0.2713613510131836f, 0.8999999761581421f, 0.29420721530914307f,
                   0.8513929843902588f, 0.8500000238418579f, 0.9700000286102295f, 0.10000000149011612f,
                   0.6000000238418579f);
     sApp* g = D_004A28A8;
@@ -1826,13 +1839,8 @@ INCLUDE_ASM("camera/camera", func_001607E0);
 extern "C" float func_0031BF60(float x);
 extern "C" float func_0031C040(float x);
 
-struct sCamInfo_001607E0 {
-    char pad0[0x20];
-    t4Vector dir;  // 0x20
-    char pad30[0x38];
-} __attribute__((aligned(16)));
 
-extern "C" void func_00162568(void* self, sCamInfo_001607E0* out, float a, float b, float c, float d,
+extern "C" void func_00162568(void* self, sCamInfo* out, float a, float b, float c, float d,
                               float e, float f, float g, float h);
 
 // PORT: PS2-only VU0 inline asm (vector times scalar).
@@ -1947,7 +1955,7 @@ static inline t4Vector cmGet_001607E0(char* self, int slot)
 
 extern "C" void func_001607E0(char* self)
 {
-    sCamInfo_001607E0 info;
+    sCamInfo info;
     func_00162568(self, &info, 0.2713613510131836f, 0.8999999761581421f, 0.29420721530914307f,
                   0.8513929843902588f, 0.8500000238418579f, 0.9700000286102295f, 0.10000000149011612f,
                   0.6000000238418579f);
@@ -2063,7 +2071,7 @@ static inline t4Vector cmSub_00160BF8(const t4Vector& a, const t4Vector& b)
 
 extern "C" void func_00160BF8(char* self)
 {
-    sCamInfo_001607E0 info;
+    sCamInfo info;
     func_00162568(self, &info, 0.2713613510131836f, 0.8999999761581421f, 0.29420721530914307f,
                   0.8513929843902588f, 0.8500000238418579f, 0.9700000286102295f, 0.10000000149011612f,
                   0.6000000238418579f);
@@ -2463,7 +2471,7 @@ extern "C" void func_00161728_v(char* self) __asm__("func_00161728");
 
 extern "C" void func_00161728_v(char* self)
 {
-    sCamInfo_001607E0 info;
+    sCamInfo info;
     func_00162568(self, &info, 0.2713613510131836f, 0.8999999761581421f, 0.29420721530914307f,
                   0.8513929843902588f, 0.8500000238418579f, 0.9700000286102295f, 0.10000000149011612f,
                   0.6000000238418579f);
@@ -3448,16 +3456,6 @@ static inline float ClampLo_162B90(float v, float lo)
     return lo;
 }
 
-struct sCamSrc_162B90 {
-    char pad00[0x44];
-    float f44;
-    char pad48[4];
-    float f4C;
-    char pad50[4];
-    float f54;
-    char pad58[8];
-    int f60;
-};
 
 struct sCam_162B90 {
     char pad00[0x20];
@@ -3468,10 +3466,10 @@ struct sCam_162B90 {
     float f208;
 };
 
-extern "C" void func_00162B90_i(float a, float b, float c, float d, float e, sCam_162B90* self, sCamSrc_162B90* src) __asm__("func_00162B90");
-extern "C" void func_00162B90_i(float a, float b, float c, float d, float e, sCam_162B90* self, sCamSrc_162B90* src)
+extern "C" void func_00162B90_i(float a, float b, float c, float d, float e, sCam_162B90* self, sCamInfo* src) __asm__("func_00162B90");
+extern "C" void func_00162B90_i(float a, float b, float c, float d, float e, sCam_162B90* self, sCamInfo* src)
 {
-    float dist = src->f44 - 1388.888916015625f;
+    float dist = src->speed - 1388.888916015625f;
     float t = Min_162B90(ClampLo_162B90(dist, 0.0f) * 0.0005142856971360743f, 1.0f);
     float x;
     if (src->f60 != 0) x = self->f208;
@@ -3487,13 +3485,6 @@ extern "C" void func_00162B90_i(float a, float b, float c, float d, float e, sCa
 //100%
 INCLUDE_ASM("camera/camera", func_00162C78);
 #ifdef SKIP_ASM
-struct sInfo_162C78 {
-    char pad0[0x20];
-    t4Vector dir;      // 0x20
-    t4Vector out;      // 0x30
-    char pad40[0x4];
-    float speed;        // 0x44
-};
 
 struct sHist_162C78 {
     float a[5];         // 0x00
@@ -3636,8 +3627,8 @@ static inline void LerpTo_162C78(t4Vector& out, const t4Vector& p, const t4Vecto
     out = Add_162C78(Scale_162C78(p, t), Scale_162C78(q, 1.0f - t));
 }
 
-extern "C" void func_00162C78_impl(char* self, sInfo_162C78* info) __asm__("func_00162C78");
-extern "C" void func_00162C78_impl(char* self, sInfo_162C78* info)
+extern "C" void func_00162C78_impl(char* self, sCamInfo* info) __asm__("func_00162C78");
+extern "C" void func_00162C78_impl(char* self, sCamInfo* info)
 {
     t4Vector n;
     if (info->speed > 27.77777862548828f) {
@@ -3831,16 +3822,6 @@ static inline float Sqrt_163270(float x)
     return r;
 }
 
-struct sCamSrc_163270 {
-    char pad00[0x44];
-    float f44;
-    char pad48[4];
-    float f4C;
-    char pad50[4];
-    float f54;
-    char pad58[8];
-    int f60;
-};
 
 struct sCam_163270 {
     char pad00[0x40];
@@ -3851,14 +3832,14 @@ struct sCam_163270 {
     float f204;
 };
 
-extern "C" void func_00163270_i(float a, float b, float c, float d, float e, sCam_163270* self, sCamSrc_163270* src) __asm__("func_00163270");
-extern "C" void func_00163270_i(float a, float b, float c, float d, float e, sCam_163270* self, sCamSrc_163270* src)
+extern "C" void func_00163270_i(float a, float b, float c, float d, float e, sCam_163270* self, sCamInfo* src) __asm__("func_00163270");
+extern "C" void func_00163270_i(float a, float b, float c, float d, float e, sCam_163270* self, sCamInfo* src)
 {
-    float dist = ClampLo_162B90(src->f44 - 1388.888916015625f, 0.0f);
+    float dist = ClampLo_162B90(src->speed - 1388.888916015625f, 0.0f);
     float t;
-    if (src->f44 >= 833.3333740234375f) {
-        if (src->f44 <= 1666.666748046875f)
-            t = (src->f44 - 833.3333740234375f) / 833.3333740234375f;
+    if (src->speed >= 833.3333740234375f) {
+        if (src->speed <= 1666.666748046875f)
+            t = (src->speed - 833.3333740234375f) / 833.3333740234375f;
         else
             t = 1.0f;
     } else {
@@ -6598,11 +6579,6 @@ void func_00168330(void* self, void* other)
 //100%
 INCLUDE_ASM("camera/camera", func_00168338);
 #ifdef SKIP_ASM
-struct sCamInfo_8338 {
-    char pad0[0x10];
-    t4Vector pos;  // 0x10
-    char pad20[0x48];
-} __attribute__((aligned(16)));
 
 // PORT: PS2-only VU0 inline asm (in-place vector times scalar).
 static inline void cmScaleEq_8338(t4Vector& v, float s)
@@ -6623,8 +6599,8 @@ extern "C" void func_00168338_v(char* self) __asm__("func_00168338");
 
 extern "C" void func_00168338_v(char* self)
 {
-    sCamInfo_8338 info;
-    func_00162568(self, (sCamInfo_001607E0*)&info, 0.2713613510131836f, 0.8999999761581421f, 0.29420721530914307f,
+    sCamInfo info;
+    func_00162568(self, &info, 0.2713613510131836f, 0.8999999761581421f, 0.29420721530914307f,
                   0.8513929843902588f, 0.8500000238418579f, 0.9700000286102295f, 0.10000000149011612f,
                   0.6000000238418579f);
     *(t4Vector*)(self + 0x20) = cmAdd_001607E0(info.pos, cmScaleP_1848(&D_004FF160, 2.3602666854858398f));
@@ -6842,7 +6818,7 @@ static inline t4Vector Get_1686D0(char* self, int slot)
 
 extern "C" void func_001686D0(char* self)
 {
-    sCamInfo_001607E0 info;
+    sCamInfo info;
     func_00162568(self, &info, 0.2713613510131836f, 0.8999999761581421f, 0.29420721530914307f, 0.8513929843902588f,
                   0.8500000238418579f, 0.9700000286102295f, 0.10000000149011612f, 0.6000000238418579f);
     func_00162A20(self, (char*)&info);
@@ -6972,7 +6948,7 @@ void func_00163450_8(char* self, char* trig, float a, float b, float c, float d,
 
 extern "C" void func_00168A70(char* self)
 {
-    sCamInfo_001607E0 info;
+    sCamInfo info;
     func_00162568(self, &info, 0.2713613510131836f, 0.8999999761581421f, 0.29420721530914307f, 0.8513929843902588f,
                   0.8500000238418579f, 0.9700000286102295f, 0.10000000149011612f, 0.6000000238418579f);
     float k = 0.9800000190734863f;
@@ -7081,7 +7057,7 @@ void func_00163450_8(char* self, char* trig, float a, float b, float c, float d,
 
 extern "C" void func_00168D80(char* self)
 {
-    sCamInfo_001607E0 info;
+    sCamInfo info;
     func_00162568(self, &info, 0.2713613510131836f, 0.8999999761581421f, 0.29420721530914307f, 0.8513929843902588f,
                   0.8500000238418579f, 0.9700000286102295f, 0.10000000149011612f, 0.6000000238418579f);
     float k = 0.9800000190734863f;
