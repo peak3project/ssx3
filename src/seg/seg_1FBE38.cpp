@@ -4678,7 +4678,6 @@ extern "C" void* func_00303490(void* self) {
 INCLUDE_ASM("seg/seg_1FBE38", func_003034F8);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern char *D_004A3DD8_34F8 __asm__("D_004A3DD8");
 extern char *D_004A28A8_34F8 __asm__("D_004A28A8");
 struct A_34F8 { char pad[0x6C0]; };
 struct B_34F8 { virtual void v01(); };
@@ -4686,7 +4685,7 @@ struct D_34F8 : A_34F8, B_34F8 { };
 struct Tab_34F8 { char pad[0x28]; D_34F8 *arr[1]; };
 extern "C" int func_00122EE8_34F8(D_34F8*, int) __asm__("func_00122EE8");
 extern "C" void* func_003034F8(void* self) {
-    D_34F8 *r = (*(Tab_34F8**)(*(char**)(D_004A28A8_34F8 + 0x84) + 0xC))->arr[*(int*)D_004A3DD8_34F8];
+    D_34F8 *r = (*(Tab_34F8**)(*(char**)(D_004A28A8_34F8 + 0x84) + 0xC))->arr[D_004A3DD8->being];
     B_34F8 *b = r;
     D_34F8 *d = (D_34F8*)b;
     unsigned v;
