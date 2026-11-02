@@ -6371,10 +6371,6 @@ void func_003E5C60(void) {
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E5C78);
 #ifdef SKIP_ASM
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
-struct E_5C78 { int a; unsigned int b0 : 1; unsigned int rest : 31; };
-struct H_5C78 { int a; void (*fn)(int, char *); unsigned int b0 : 1; unsigned int rest : 31; };
-extern struct E_5C78 D_00450E08_5C78[] __asm__("D_00450E08");
-extern struct H_5C78 D_00451250_5C78[] __asm__("D_00451250");
 
 void func_003E5C78_5C78(int, char *, char *) __asm__("func_003E5C78");
 void func_003E5C78_5C78(int idx, char *fmt, char *ap) {
@@ -6383,17 +6379,18 @@ void func_003E5C78_5C78(int idx, char *fmt, char *ap) {
     if (D_00451008 == 0) {
         func_003E5B60();
     }
-    if (D_00450E08_5C78[idx].b0) {
+    if (D_00450E08[idx].on) {
         func_004186C8(buf, fmt, ap);
-        h = (int)D_00451250_5C78;
+        /* the walk compares addresses as ints (slt); a typed pointer walk gives sltu, an index loop a down counter */
+        h = (int)D_00451250;
         do {
-            if (((struct H_5C78 *)h)->b0) {
-                if (((struct H_5C78 *)h)->fn) {
-                    ((struct H_5C78 *)h)->fn(idx, buf);
+            if (((struct sDbgOut *)h)->on) {
+                if (((struct sDbgOut *)h)->f04) {
+                    ((struct sDbgOut *)h)->f04(idx, buf);
                 }
             }
-            h += 12;
-        } while (h < (int)D_00451250_5C78 + 0x60);
+            h += sizeof(struct sDbgOut);
+        } while (h < (int)(D_00451250 + 8));
     }
 }
 #endif
