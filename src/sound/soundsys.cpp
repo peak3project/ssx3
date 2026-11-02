@@ -233,14 +233,45 @@ struct sSndSys69A0 : public sSndSys8140 {
     int f18;                 // 0x18
     sSndRandSlot ent[3];     // 0x1C
 };
-struct cSSXAudio : public sSndSys69A0 {
-    cBankManager** p118;     // 0x118
-};
 
 extern sSndSys8140* D_004A3744;
 extern sSndSys69A0* D_004A36F8;
 extern "C" void func_002A8450(sSndSys8140* self, int a, int b);
 extern "C" int func_002A86B8(sSndSys8140* self);
+
+// cSSXAudio's own state, as far as the handlers here use it (field names by offset where nothing names them).
+struct sSnd5028Ring {        // int ring buffer of the pending one-shot queue
+    int cap;
+    int* data;
+    int head;
+    int tail;
+};
+struct sSndQuad2 {
+    t4Vector a;
+    t4Vector b;
+};
+struct cSSXAudio : public sSndSys69A0 {
+    cBankManager** p118;     // 0x118
+    char pad11C[0x597C - 0x11C];
+    sSnd5028Ring ring;       // 0x597C
+    char pad598C[0x59E0 - 0x598C];
+    int handle59E0;          // 0x59E0
+    int count59E4;           // 0x59E4
+    char pad59E8[0x5FB8 - 0x59E8];
+    int handle5FB8;          // 0x5FB8
+    char pad5FBC[0x5FE0 - 0x5FBC];
+    int f5FE0[2];            // 0x5FE0
+    unsigned short f5FE8[2]; // 0x5FE8
+    int f5FEC[2];            // 0x5FEC
+    int handle5FF4;          // 0x5FF4
+    char pad5FF8[0x6030 - 0x5FF8];
+    int slots[3];            // 0x6030
+    char pad603C[0x6040 - 0x603C];
+    int users;               // 0x6040
+    char pad6044[0x6050 - 0x6044];
+    sSndQuad2 xf;            // 0x6050 rider transform pair (func_002DA1C0 output)
+    int idx;                 // 0x6070 rider index (cBeing::getAIIndex)
+};
 
 // ---- end of shared declarations ----
 
@@ -1900,15 +1931,6 @@ extern "C" void* cBE_getBE();
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern signed char D_00535C11[];
 
-struct sSnd48D0Sys {
-    cBankManager* mgr;
-    int* a4;                 // 0x4
-    int* a8;                 // 0x8
-    char padC[0x118 - 0xC];
-    cBankManager** p118;      // 0x118
-    char pad11C[0x5FB8 - 0x11C];
-    int handle;              // 0x5FB8
-};
 
 extern "C" void func_002A7438(void* self, int id);
 extern "C" void func_002A73A8(void* self, int level, int id);
@@ -1924,7 +1946,7 @@ static inline int vcall_48D0(char* obj, int slot)
     return vt[slot].fn(o + vt[slot].delta);
 }
 
-static inline void snd48D0AddVoice(sSnd48D0Sys* self, int a, int b)
+static inline void snd48D0AddVoice(cSSXAudio* self, int a, int b)
 {
     cBankManager* m = self->mgr;
     cSndPlayOpts* s = &m->sub;
@@ -1959,7 +1981,7 @@ static inline void snd48D0AddVoice(sSnd48D0Sys* self, int a, int b)
 // curve-mapped volume.
 extern "C" void func_002948D0(void* vself, char* obj, float speed)
 {
-    sSnd48D0Sys* self = (sSnd48D0Sys*)vself;
+    cSSXAudio* self = (cSSXAudio*)vself;
     int id = -1;
     if (func_00288AE0(self) != 0) {
         id = 0;
@@ -1997,10 +2019,10 @@ extern "C" void func_002948D0(void* vself, char* obj, float speed)
         b = func_00291710(self, (int)obj) * 8 + 5;
     }
     func_003B58A0();
-    bool playing = func_003B8AB8(self->handle) != 0;
+    bool playing = func_003B8AB8(self->handle5FB8) != 0;
     func_003B58D8();
     if (!playing) {
-        func_002AD5F0(&(*self->p118)->sub, self->handle, 1, 0.0f);
+        func_002AD5F0(&(*self->p118)->sub, self->handle5FB8, 1, 0.0f);
     }
     int flag = 0;
     bool ok2 = *(int*)(obj + 0x874) && *(int*)(obj + 0x87C);
@@ -2032,7 +2054,7 @@ extern "C" void func_002948D0(void* vself, char* obj, float speed)
         (*self->p118)->sub.p80[(*self->p118)->sub.cur] = 1;
         (*self->p118)->sub.p84[(*self->p118)->sub.cur] = *(int*)(obj + 0x870);
     }
-    self->handle = func_002906B8(self);
+    self->handle5FB8 = func_002906B8(self);
 }
 #endif
 
@@ -2098,28 +2120,16 @@ INCLUDE_ASM("sound/soundsys", func_00295028);
 #ifdef SKIP_ASM
 extern "C" void* func_002AD550(void* self, int idx, int a2);
 
-struct sSnd5028Ring {
-    int cap;
-    int* data;
-    int head;
-    int tail;
-};
-struct sSnd5028Sys {
-    char pad0[0x118];
-    char** mgr;                 // 0x118
-    char pad11C[0x597C - 0x11C];
-    sSnd5028Ring ring;          // 0x597C
-};
 
-static inline int ring5028Count(sSnd5028Sys* s)
+static inline int ring5028Count(cSSXAudio* s)
 {
     return (s->ring.head - s->ring.tail + s->ring.cap) % s->ring.cap;
 }
-static inline int ring5028Empty(sSnd5028Sys* s)
+static inline int ring5028Empty(cSSXAudio* s)
 {
     return s->ring.head == s->ring.tail;
 }
-static inline int ring5028Get(sSnd5028Sys* s, int i)
+static inline int ring5028Get(cSSXAudio* s, int i)
 {
     if (ring5028Empty(s) || i >= ring5028Count(s)) return -1;
     sSnd5028Ring* r = &s->ring;
@@ -2128,14 +2138,14 @@ static inline int ring5028Get(sSnd5028Sys* s, int i)
 
 extern "C" int func_00295028(void* vself, int a, int b)
 {
-    sSnd5028Sys* self = (sSnd5028Sys*)vself;
+    cSSXAudio* self = (cSSXAudio*)vself;
     int n = ring5028Count(self);
     for (int i = 0; i < n; i += 5) {
         int x = ring5028Get(self, i);
         int y = ring5028Get(self, i + 4);
         if (a == x && b == y) {
             int v = ring5028Get(self, i + 1);
-            if (v != 0 && func_002AD550(*self->mgr + 0x1D8, v, 1) == 0) continue;
+            if (v != 0 && func_002AD550(&(*self->p118)->sub, v, 1) == 0) continue;
             return 1;
         }
     }
@@ -2147,11 +2157,11 @@ extern "C" int func_00295028(void* vself, int a, int b)
 INCLUDE_ASM("sound/soundsys", func_00295208);
 #ifdef SKIP_ASM
 
-static inline int ring5208Full(sSnd5028Sys* s)
+static inline int ring5208Full(cSSXAudio* s)
 {
     return (s->ring.head + 1) % s->ring.cap == s->ring.tail;
 }
-static inline int ring5208Pop(sSnd5028Sys* s)
+static inline int ring5208Pop(cSSXAudio* s)
 {
     sSnd5028Ring* r = &s->ring;
     if (ring5028Empty(s)) return -1;
@@ -2159,7 +2169,7 @@ static inline int ring5208Pop(sSnd5028Sys* s)
     if (++s->ring.tail >= s->ring.cap) s->ring.tail = 0;
     return v;
 }
-static inline void ring5208Push(sSnd5028Sys* s, int v)
+static inline void ring5208Push(cSSXAudio* s, int v)
 {
     sSnd5028Ring* r = &s->ring;
     if (ring5208Full(s)) return;
@@ -2171,7 +2181,7 @@ static inline void ring5208Push(sSnd5028Sys* s, int v)
 // sounds are dropped, timed-out ones are stopped if flagged, the others go back into the queue.
 extern "C" void func_00295208(void* vself)
 {
-    sSnd5028Sys* self = (sSnd5028Sys*)vself;
+    cSSXAudio* self = (cSSXAudio*)vself;
     int n = ring5028Count(self) / 5;
     for (int i = 0; i < n; i++) {
         int e = ring5208Pop(self);
@@ -2180,8 +2190,8 @@ extern "C" void func_00295208(void* vself)
         int stop = ring5208Pop(self);
         int idx = ring5208Pop(self);
         if (h < 0) continue;
-        if (h != 0 && func_002AD550(*self->mgr + 0x1D8, h, 1) == 0) continue;
-        char* mgr = *self->mgr;
+        if (h != 0 && func_002AD550(&(*self->p118)->sub, h, 1) == 0) continue;
+        char* mgr = (char*)*self->p118;
         char* bank = mgr + 0x1D8;
         if (*(int*)(mgr + 0x260) < t) {
             ring5208Push(self, e);
@@ -2205,11 +2215,11 @@ extern "C" void func_00295208(void* vself)
 //100%
 INCLUDE_ASM("sound/soundsys", func_00295628);
 #ifdef SKIP_ASM
-static inline int ring5628Full(sSnd5028Sys* s)
+static inline int ring5628Full(cSSXAudio* s)
 {
     return (s->ring.head + 1) % s->ring.cap == s->ring.tail;
 }
-static inline int ring5628Pop(sSnd5028Sys* s)
+static inline int ring5628Pop(cSSXAudio* s)
 {
     sSnd5028Ring* r = &s->ring;
     if (ring5028Empty(s)) return -1;
@@ -2217,7 +2227,7 @@ static inline int ring5628Pop(sSnd5028Sys* s)
     if (++s->ring.tail >= s->ring.cap) s->ring.tail = 0;
     return v;
 }
-static inline void ring5628Push(sSnd5028Sys* s, int v)
+static inline void ring5628Push(cSSXAudio* s, int v)
 {
     sSnd5028Ring* r = &s->ring;
     if (ring5628Full(s)) return;
@@ -2228,10 +2238,10 @@ static inline void ring5628Push(sSnd5028Sys* s, int v)
 // PORT: the event pointer is stored in an int ring slot.
 extern "C" void func_00295628(void* vself, void* evt, int h, int t, int a, int idx)
 {
-    sSnd5028Sys* self = (sSnd5028Sys*)vself;
+    cSSXAudio* self = (cSSXAudio*)vself;
     if (ring5628Full(self)) {
         ring5628Pop(self);
-        func_002AD5F0(*self->mgr + 0x1D8, ring5628Pop(self), 1, 0.0f);
+        func_002AD5F0(&(*self->p118)->sub, ring5628Pop(self), 1, 0.0f);
         ring5628Pop(self);
         ring5628Pop(self);
         ring5628Pop(self);
@@ -2247,11 +2257,11 @@ extern "C" void func_00295628(void* vself, void* evt, int h, int t, int a, int i
 //100%
 INCLUDE_ASM("sound/soundsys", func_00295950);
 #ifdef SKIP_ASM
-static inline int ring5950Full(sSnd5028Sys* s)
+static inline int ring5950Full(cSSXAudio* s)
 {
     return (s->ring.head + 1) % s->ring.cap == s->ring.tail;
 }
-static inline int ring5950Pop(sSnd5028Sys* s)
+static inline int ring5950Pop(cSSXAudio* s)
 {
     sSnd5028Ring* r = &s->ring;
     if (ring5028Empty(s)) return -1;
@@ -2259,7 +2269,7 @@ static inline int ring5950Pop(sSnd5028Sys* s)
     if (++s->ring.tail >= s->ring.cap) s->ring.tail = 0;
     return v;
 }
-static inline void ring5950Push(sSnd5028Sys* s, int v)
+static inline void ring5950Push(cSSXAudio* s, int v)
 {
     sSnd5028Ring* r = &s->ring;
     if (ring5950Full(s)) return;
@@ -2269,7 +2279,7 @@ static inline void ring5950Push(sSnd5028Sys* s, int v)
 
 extern "C" void func_00295950(void* vself, int evt, int h, int idx)
 {
-    sSnd5028Sys* self = (sSnd5028Sys*)vself;
+    cSSXAudio* self = (cSSXAudio*)vself;
     int n = ring5028Count(self);
     for (int i = 0; i < n; i++) {
         int e = ring5950Pop(self);
@@ -2290,11 +2300,11 @@ extern "C" void func_00295950(void* vself, int evt, int h, int idx)
 //100%
 INCLUDE_ASM("sound/soundsys", func_00295CC8);
 #ifdef SKIP_ASM
-static inline int ring5CC8Full(sSnd5028Sys* s)
+static inline int ring5CC8Full(cSSXAudio* s)
 {
     return (s->ring.head + 1) % s->ring.cap == s->ring.tail;
 }
-static inline int ring5CC8Pop(sSnd5028Sys* s)
+static inline int ring5CC8Pop(cSSXAudio* s)
 {
     sSnd5028Ring* r = &s->ring;
     if (ring5028Empty(s)) return -1;
@@ -2302,7 +2312,7 @@ static inline int ring5CC8Pop(sSnd5028Sys* s)
     if (++s->ring.tail >= s->ring.cap) s->ring.tail = 0;
     return v;
 }
-static inline void ring5CC8Push(sSnd5028Sys* s, int v)
+static inline void ring5CC8Push(cSSXAudio* s, int v)
 {
     sSnd5028Ring* r = &s->ring;
     if (ring5CC8Full(s)) return;
@@ -2314,7 +2324,7 @@ static inline void ring5CC8Push(sSnd5028Sys* s, int v)
 // record's fourth word is set) and requeues the rest.
 extern "C" void func_00295CC8(void* vself, int evt)
 {
-    sSnd5028Sys* self = (sSnd5028Sys*)vself;
+    cSSXAudio* self = (cSSXAudio*)vself;
     int n = ring5028Count(self);
     for (int i = 0; i < n; i++) {
         int e = ring5CC8Pop(self);
@@ -2324,7 +2334,7 @@ extern "C" void func_00295CC8(void* vself, int evt)
         int v4 = ring5CC8Pop(self);
         if (evt == e) {
             if (v3 != 0) {
-                func_002AD5F0(*self->mgr + 0x1D8, v1, 1, 0.0f);
+                func_002AD5F0(&(*self->p118)->sub, v1, 1, 0.0f);
             }
         } else {
             ring5CC8Push(self, e);
@@ -3385,13 +3395,6 @@ extern "C" int func_002906B8(void* self);
 extern "C" int func_00288AE0(void* self);
 extern "C" void func_002ADDE0_8D90(void* bank, sSndCallback key) __asm__("func_002ADDE0");
 
-struct sSnd8D90Self {
-    cSSXAudio sys;
-    char pad11C[0x59E0 - sizeof(cSSXAudio)];
-    int handle;              // 0x59E0
-    int count;               // 0x59E4
-};
-
 static inline void snd8D90AddVoice(void* vself, int a, int b)
 {
     cSSXAudio* self = (cSSXAudio*)vself;
@@ -3425,22 +3428,22 @@ static inline void snd8D90AddVoice(void* vself, int a, int b)
 }
 
 // Landing/trick sting: first call starts the base sting, an extra layer on request; counts the calls.
-extern "C" void func_00298D90(sSnd8D90Self* self, char* obj, int extra)
+extern "C" void func_00298D90(cSSXAudio* self, char* obj, int extra)
 {
     int b7 = 0x7A;
     if (func_00288AE0(self) == 0) {
         bool ok = *(int*)(obj + 0x874) && *(int*)(obj + 0x87C);
         if (ok) {
-            func_002ADDE0_8D90(&(*self->sys.p118)->sub, D_004A36A8[0]);
-            if (self->count == 0) {
+            func_002ADDE0_8D90(&(*self->p118)->sub, D_004A36A8[0]);
+            if (self->count59E4 == 0) {
                 snd8D90AddVoice(self, 0, b7);
-                self->handle = func_002906B8(self);
+                self->handle59E0 = func_002906B8(self);
             }
             if (extra != 0) {
                 snd8D90AddVoice(self, 0, 0x4A);
                 func_002906B8(self);
             }
-            self->count++;
+            self->count59E4++;
         }
     }
 }
@@ -4021,17 +4024,6 @@ static inline int floori_AB40(float x)
 }
 
 
-struct sSndSysAB40 {
-    cBankManager* mgr;
-    int* a4;                 // 0x4
-    int* a8;                 // 0x8
-    char padC[0x118 - 0xC];
-    cBankManager** p118;      // 0x118
-    char pad11C[0x5FE0 - 0x11C];
-    int f5FE0[2];            // 0x5FE0
-    unsigned short f5FE8[2]; // 0x5FE8
-    int f5FEC[2];            // 0x5FEC
-};
 
 static inline bool sndAB40Active(sSndRider* r)
 {
@@ -4040,7 +4032,7 @@ static inline bool sndAB40Active(sSndRider* r)
 
 #define MIN_AB40(a,b) ((a) < (b) ? (a) : (b))
 #define MAX_AB40(a,b) ((a) < (b) ? (b) : (a))
-static inline void sndAB40AddVoice(sSndSysAB40* self, int a, int b, int type, int vol)
+static inline void sndAB40AddVoice(cSSXAudio* self, int a, int b, int type, int vol)
 {
     cBankManager* m = self->mgr;
     cSndPlayOpts* s = &m->sub;
@@ -4077,7 +4069,7 @@ static inline void sndAB40AddVoice(sSndSysAB40* self, int a, int b, int type, in
 }
 
 
-extern "C" void func_0029AB40(sSndSysAB40* self)
+extern "C" void func_0029AB40(cSSXAudio* self)
 {
     if (func_00288AE0(self) != 0)
         return;
@@ -5257,22 +5249,6 @@ static inline int vcall_DEF0(char* o, int slot)
     return vt[slot].fn(o + vt[slot].delta);
 }
 
-struct sSndDEF0Sys {
-    cBankManager* mgr;
-    int* a4;                 // 0x4
-    int* a8;                 // 0x8
-    char padC[0x118 - 0xC];
-    cBankManager** p118;      // 0x118
-    char pad11C[0x5FF4 - 0x11C];
-    int handle;              // 0x5FF4
-    char pad5FF8[0x6030 - 0x5FF8];
-    int slots[3];            // 0x6030
-    char pad603C[0x6040 - 0x603C];
-    int users;               // 0x6040
-    char pad6044[0x6050 - 0x6044];
-    sQDEF0 blk[2];           // 0x6050
-    int f6070;               // 0x6070
-};
 
 // cSndPlayOpts::OPTS_Callback (prototype name)
 static inline void OPTS_Callback_DEF0(cBankManager* m, sSndCallback cb)
@@ -5281,7 +5257,7 @@ static inline void OPTS_Callback_DEF0(cBankManager* m, sSndCallback cb)
     s->callbacks[m->sub.cur] = cb;
 }
 
-static inline void sndDEF0Init(sSndDEF0Sys* self, int a, int b)
+static inline void sndDEF0Init(cSSXAudio* self, int a, int b)
 {
     cBankManager* m = self->mgr;
     cSndPlayOpts* s = &m->sub;
@@ -5312,7 +5288,7 @@ static inline void sndDEF0Init(sSndDEF0Sys* self, int a, int b)
 // Grind/ride loop sound: reference-counted start (pushes the voice at the rider's position) and stop.
 extern "C" void func_0029DEF0(void* vself, int on)
 {
-    sSndDEF0Sys* self = (sSndDEF0Sys*)vself;
+    cSSXAudio* self = (cSSXAudio*)vself;
     if (on != 0) {
         if (++self->users == 1) {
             int id = -1;
@@ -5320,7 +5296,7 @@ extern "C" void func_0029DEF0(void* vself, int on)
                 id = 0;
             }
             char* obj = (char*)func_00285D98(self, id);
-            self->f6070 = vcall_DEF0(obj + 0x6C0, 7);
+            self->idx = vcall_DEF0(obj + 0x6C0, 7);
             {
                 sV3DEF0* p = (sV3DEF0*)vcall_DEF0(obj + 0x6C0, 5);
                 sOutDEF0 out;
@@ -5329,11 +5305,11 @@ extern "C" void func_0029DEF0(void* vself, int on)
                 pos.y = p->y;
                 pos.z = p->z;
                 func_002DA1C0(&out, &pos);
-                *(sOutDEF0*)self->blk = out;
+                *(sOutDEF0*)&self->xf = out;
             }
             sndDEF0Init(self, 8, 2);
             cBankManager** p0 = self->p118;
-            int v = func_0029E438(self, (char*)self->blk);
+            int v = func_0029E438(self, (char*)&self->xf);
             cBankManager* m3 = *p0;
             cSndPlayOpts* s3 = &m3->sub;
             s3->vals[m3->sub.cur] = v;
@@ -5343,7 +5319,7 @@ extern "C" void func_0029DEF0(void* vself, int on)
             (*pp)->sub.p3C[(*pp)->sub.cur] = r;
             {
                 cBankManager* m2 = *self->p118;
-                m2->sub.tgt[m2->sub.cur] = self->blk;
+                m2->sub.tgt[m2->sub.cur] = &self->xf;
             }
             func_002A9988(&(*self->p118)->sub, 100.0f, -1.0f);
             OPTS_Callback_DEF0(*self->p118, D_004A36D0[0]);
@@ -5353,11 +5329,11 @@ extern "C" void func_0029DEF0(void* vself, int on)
                 (*pq)->sub.p64[(*pq)->sub.cur] = q;
             }
             (*self->p118)->sub.p74[(*self->p118)->sub.cur] = 1;
-            self->handle = func_002906B8(self);
+            self->handle5FF4 = func_002906B8(self);
         }
     } else {
         if (--self->users == 0) {
-            func_002AD5F0(&(*self->p118)->sub, self->handle, 1, 2.0f);
+            func_002AD5F0(&(*self->p118)->sub, self->handle5FF4, 1, 2.0f);
             cBankManager* mg = *self->p118;
             sSndVtCb* vt = *(sSndVtCb**)((char*)mg + 0xAB0);
             char* sub = (char*)&mg->sub;
@@ -5394,14 +5370,12 @@ extern "C" int func_0029E438_m5722(void *, void *) __asm__("func_0029E438");
 extern "C" void func_002DA1C0_m5723(void *, float *) __asm__("func_002DA1C0");
 
 struct sVEntryP_29E4A0 { short delta; short index; float* (*fn)(void*); };
-struct sQuad2_29E4A0 { t4Vector a; t4Vector b; };
-struct sSndCam_29E4A0 { char pad[0x6050]; sQuad2_29E4A0 xf; int idx; };
 
-extern "C" void func_0029E4A0(sSndCam_29E4A0 *arg0, void *arg1) {
+extern "C" void func_0029E4A0(cSSXAudio *arg0, void *arg1) {
     if (arg0->idx < *(int *)((char*)func_0028B1D8() + 0x78)) {
-        sQuad2_29E4A0 q;
+        sSndQuad2 q;
         float v[3];
-        sQuad2_29E4A0* dst = &arg0->xf;
+        sSndQuad2* dst = &arg0->xf;
         cRider* rider = *(cRider**)((char*)func_0028B1D8() + (arg0->idx << 2) + 0x28);
         char* obj = (char*)&rider->mVtbl;
         sVEntryP_29E4A0* vt = *(sVEntryP_29E4A0**)obj;
