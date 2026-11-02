@@ -14,6 +14,11 @@ template <int N> struct sVtbl {
     sVEntry<void> e[N];
 } __attribute__((aligned(8)));
 
+// Global vectors and a matrix in .bss read by the handplant code (set up elsewhere at startup).
+extern t4Vector D_004FF120;
+extern t4Vector D_004FF160;
+extern t4Matrix D_004FF1A0;
+
 //100%
 INCLUDE_ASM("ai/control/handplantcontrol", cHandplantMotion_gainFocus);
 #ifdef SKIP_ASM
@@ -88,8 +93,6 @@ struct sQ_91A8 {
     sQ_91A8(float ax, float ay, float az, float aw) { w = aw; x = ax; y = ay; z = az; }
 } __attribute__((aligned(16)));
 
-extern sQ_91A8 D_004FF120_91A8 __asm__("D_004FF120");
-extern sQ_91A8 D_004FF160_91A8 __asm__("D_004FF160");
 
 struct sHP_91A8 {
     sQ_91A8 start;   // 0x00
@@ -252,10 +255,10 @@ extern "C" void func_001391A8(sHP_91A8* self)
         *(sQ_91A8*)(self->rider + 0x120) = QuatMul_91A8(q, *(sQ_91A8*)(self->rider + 0x120));
     } else {
         *(sQ_91A8*)(self->rider + 0x110) = self->target;
-        *(sQ_91A8*)(self->rider + 0x1E0) = D_004FF120_91A8;
-        if (eq_91A8(self, D_004FF120_91A8)) {
+        *(sQ_91A8*)(self->rider + 0x1E0) = (const sQ_91A8&)D_004FF120;
+        if (eq_91A8(self, (const sQ_91A8&)D_004FF120)) {
             if (func_00139548(self)) {
-                self->lpos = vu0Add_91A8(self->target, vu0ScaleP_91A8(&D_004FF160_91A8, 5.0f));
+                self->lpos = vu0Add_91A8(self->target, vu0ScaleP_91A8((const sQ_91A8*)&D_004FF160, 5.0f));
                 self->lvel = self->vel;
                 cAirPredictor_startLaunchIntoAir(*(void**)(self->rider + 0x788), &self->lpos, &self->lvel,
                                                  3333.33349609375f);
@@ -291,8 +294,6 @@ void* func_00139528(void* self)
 //100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_00139548);
 #ifdef SKIP_ASM
-extern t4Vector D_004FF120_9548 __asm__("D_004FF120");
-extern t4Vector D_004FF160_9548 __asm__("D_004FF160");
 
 struct sHP_9548 {
     char pad0[0x10];
@@ -419,13 +420,13 @@ static inline void vu0SubTo_9548(t4Vector& dst, const t4Vector& a, const t4Vecto
 extern "C" int func_00139548_x(sHP_9548* s) __asm__("func_00139548");
 extern "C" int func_00139548_x(sHP_9548* s)
 {
-    if (neq_9548(s, D_004FF120_9548))
+    if (neq_9548(s, D_004FF120))
         return 1;
     int kind = *(int*)(s->rider + 0x32C);
     t4Vector n;
     if (kind == 3) {
         t4Vector c;
-        vu0CrossTo_9548(c, D_004FF160_9548, s->v20);
+        vu0CrossTo_9548(c, D_004FF160, s->v20);
         vu0NormTo_9548(n, c);
         float a = s->m8C * 0.699999988079071f;
         float k = 2.0f;
@@ -449,7 +450,7 @@ extern "C" int func_00139548_x(sHP_9548* s)
     }
     if (kind == 4) {
         t4Vector c;
-        vu0CrossTo_9548(c, s->v20, D_004FF160_9548);
+        vu0CrossTo_9548(c, s->v20, D_004FF160);
         vu0NormTo_9548(n, c);
         float z = 0.0f;
         float d = vu0Dot_9548(n, s->v40);
@@ -469,7 +470,7 @@ extern "C" int func_00139548_x(sHP_9548* s)
     }
     if (kind == 5) {
         t4Vector c;
-        vu0CrossTo_9548(c, s->v20, D_004FF160_9548);
+        vu0CrossTo_9548(c, s->v20, D_004FF160);
         vu0NormTo_9548(n, c);
         float z = 0.0f;
         float d = vu0Dot_9548(n, s->v40);
@@ -547,7 +548,6 @@ extern "C" void func_00121AA0(void* rider, void* a, void* b, float x, float y);
 extern "C" void func_00125970(char* self);
 int func_0011FEE8(void* rider);
 extern void* D_004A28A8;
-extern void* D_004FF120[];
 
 // PORT: PS2-only VU0 inline asm (in-place vector times scalar).
 static inline void vu0ScaleEq_139A20(t4Vector& v, float s)
@@ -602,7 +602,7 @@ extern "C" void func_00139A20(void* p)
         t4Vector up = *(t4Vector*)(r1 + 0x180);
         *(t4Vector*)(r1 + 0x370) = up;
     }
-    *(t4Vector*)(*(char**)(self + 0x4) + 0x3D0) = *(t4Vector*)D_004FF120;
+    *(t4Vector*)(*(char**)(self + 0x4) + 0x3D0) = D_004FF120;
     int st = *(int*)(*(char**)(*(char**)(self + 0x4) + 0x788) + 0xAC);
     int ok = 0;
     if (st == 1 || st == 3) ok = 1;
@@ -631,7 +631,7 @@ extern "C" void func_00139A20(void* p)
                 int big = 1;
                 if (!(0.0872664749622345f < absf_139A20(*(float*)(*(char**)(r3 + 0x77C) + 0x258)))) big = 0;
                 if (big) {
-                    func_00121AA0(r3, *(char**)(r3 + 0x788) + 0x20, D_004FF120, x, y);
+                    func_00121AA0(r3, *(char**)(r3 + 0x788) + 0x20, &D_004FF120, x, y);
                     goto done;
                 }
             }
@@ -646,7 +646,7 @@ extern "C" void func_00139A20(void* p)
                 char* r5 = *(char**)(self + 0x4);
                 func_00121AA0(r5, *(char**)(r5 + 0x788) + 0x20, &v, x, y);
             } else {
-                func_00121AA0(r4, tgt, D_004FF120, x, y);
+                func_00121AA0(r4, tgt, &D_004FF120, x, y);
             }
         }
     }
@@ -931,7 +931,6 @@ INCLUDE_ASM("ai/control/handplantcontrol", func_0013AF28);
 INCLUDE_ASM("ai/control/handplantcontrol", func_0013BD80);
 #ifdef SKIP_ASM
 extern "C" void func_0031BE50(float* s, float* c, float angle);
-extern t4Vector D_004FF160_BD80 __asm__("D_004FF160");
 
 // PORT: PS2-only VU0 inline asm (vector times scalar).
 static inline t4Vector vu0Scale_BD80(const t4Vector& v, float s)
@@ -1054,7 +1053,7 @@ extern "C" t4Vector func_0013BD80(char* p, const t4Vector& n)
     bool steep = absf_BD80(n.z) > 0.92f;
     t4Vector r;
     if (!steep) {
-        r = vu0Normalize_BD80(vu0Sub_BD80(D_004FF160_BD80, vu0Scale_BD80(n, n.z)));
+        r = vu0Normalize_BD80(vu0Sub_BD80(D_004FF160, vu0Scale_BD80(n, n.z)));
         if (vu0Dot_BD80(r, up_BD80(p)) < 0.0f)
             vu0ScaleEq_BD80(r, -1.0f);
     } else {
@@ -1499,7 +1498,6 @@ extern "C" float func_0013D028(void* self, float* v, float a, float b, float c)
 INCLUDE_ASM("ai/control/handplantcontrol", func_0013D1B8);
 #ifdef SKIP_ASM
 extern "C" void* func_0032E100(void* seg, const t4Vector& a, const t4Vector& b, int n, float r);
-extern void* D_004FF120[];
 
 struct sHit_13D1B8 {
     t4Vector pos;            // 0x00
@@ -1519,8 +1517,6 @@ struct sHit_13D1B8 {
 } __attribute__((aligned(16)));
 
 extern "C" int func_00333EF8(void* world, void* seg, sHit_13D1B8* hits, int max, int flags);
-extern t4Vector D_004FF160;
-extern t4Vector D_004FF120_v __asm__("D_004FF120");
 
 // PORT: PS2-only VU0 inline asm (vector times scalar).
 static inline t4Vector vu0Scale_13D1B8(const t4Vector& v, float s)
@@ -1718,7 +1714,7 @@ extern "C" int func_0013D1B8(void* self, sHit_13D1B8* out, float* dist)
     int n = func_00333EF8(*(void**)(RIDER + 0x860), seg, hits, 0x40, *(int*)(RIDER + 0x864));
     if (n == 0) {
         RV(0x370) = D_004FF160;
-        RV(0x3D0) = D_004FF120_v;
+        RV(0x3D0) = D_004FF120;
         RV(0x3A0) = vu0Normalize_13D1B8(vu0SubV_13D1B8(RV(0x1B0), vu0Scale_13D1B8(RV(0x370), vu0DotV_13D1B8(RV(0x1B0), RV(0x370)))));
         RV(0x3B0) = vu0Cross_13D1B8(RV(0x370), RV(0x3A0));
         *(int*)(RIDER + 0x438) = 0;
@@ -2315,14 +2311,13 @@ extern "C" void func_00140680(int* self, int flags)
 }
 #endif
 
-extern void* D_004FF120[];
 
 //100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_001406B0__FPv);
 #ifdef SKIP_ASM
 void* func_001406B0(void* self)
 {
-    return (void*)D_004FF120;
+    return &D_004FF120;
 }
 #endif
 
@@ -2348,18 +2343,16 @@ INCLUDE_ASM("ai/control/handplantcontrol", func_001406D0__FPv);
 #ifdef SKIP_ASM
 void* func_001406D0(void* self)
 {
-    return (void*)D_004FF120;
+    return &D_004FF120;
 }
 #endif
-
-extern void* D_004FF1A0[];
 
 //100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_001406E0__FPv);
 #ifdef SKIP_ASM
 void* func_001406E0(void* self)
 {
-    return (void*)D_004FF1A0;
+    return &D_004FF1A0;
 }
 #endif
 
