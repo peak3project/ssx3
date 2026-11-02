@@ -3599,8 +3599,6 @@ INCLUDE_ASM("seg/seg_1FBE38", func_00301560);
 // PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" void func_003E6574(void*, void*, int);
 struct Ent_1560 { int idx; int val; int pad; int kind; };
-struct R12_1560 { int a; int b; int c; };
-extern R12_1560 D_004C9098_1560 __asm__("D_004C9098");
 
 extern int D_004A3C80_1560[2] __asm__("D_004A3C80");
 extern "C" int func_0030BA80(int, unsigned);
