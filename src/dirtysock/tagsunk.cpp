@@ -61,6 +61,172 @@ struct sNetState {
     sName7 name;                    // 0x4A8
 };
 extern sNetState D_00534B30;
+extern void* D_004812B0[];
+extern char D_00480488[];
+extern void* D_00481290[];
+void operator_delete(int*);
+extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
+extern void* D_004A33D8;
+extern int D_004A33D4;
+extern char D_004A2F40[];
+extern "C" void* cBXString_cBXString2(void* self, const char* s);
+extern "C" void cBXString__cBXString(void* self, int flags);
+extern void* D_004A2EB8;
+extern char D_004A2F58[];
+extern "C" int func_003E8B10(void* p, int tag, void* cb, int a3, void* user);
+extern "C" int cDirtysock_tag_TagFieldGetString(const char* tag, char* buf, int size, const char* defval);
+extern void* D_004A28A8;
+extern char D_004A3108[];
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" int func_003FA1D0(int code, void* out);
+extern "C" int func_00262468(void* self, int a1);
+extern "C" const char* cDirtysock_tag_TagFieldFind(const char* record, const char* name);
+extern char D_004A2F30[];
+extern "C" int func_004165A8(void*, void*);
+extern "C" int cDirtysock_tag_TagFieldGetNumber(const char* tag, int defval);
+extern "C" void* func_003E6448(void* dst, int value, int size);
+extern "C" void* func_002625C8(void* self, int idx);
+extern "C" int cDirtysock_tag_TagFieldGetStructure(const char* tag, void* data, int len, const char* fmt);
+extern int D_004A33E0;
+extern char D_004813A0[];
+extern "C" void* cBXString_cBXString4(void* self, const char* str);
+extern "C" void* cBE_getBE();
+extern "C" int func_00264BE8(void* self, void* msg, int size);
+extern "C" int func_00263128(char* self, char* name);
+extern "C" int func_00262400(void* self, int a1);
+extern void* D_004A33F4;
+extern char D_004A3040[];
+extern "C" void* func_0041610C(void* dst, const void* src, unsigned int n);
+extern "C" void* func_003EE560(void*, int);
+extern "C" void func_00263BA8(void* p, int arg);
+extern "C" void func_00263018(void* self, void* name);
+extern "C" int sprintf(char* buf, const char* fmt, ...);
+extern "C" int func_00262598(void* self);
+extern "C" int cDirtysock_tag_TagFieldSetNumber(char* buf, int size, const char* key, int value);
+extern void* D_004A33CC;
+extern char D_00536760[0x11];
+extern "C" void* func_00263630(void* self, unsigned int i);
+extern "C" void func_0025B608(void* self, int a1, int tag, void* cb, int a4, float f);
+extern "C" int* func_002591D0();
+extern "C" const char* func_00259198();
+void* cMemMan_free(void* ptr);
+// PORT: callee defined as returning void* in this unit; called here as void.
+void func_0025FC28_v(void* self, int a1) __asm__("func_0025FC28__FPvi");
+extern int D_00534B34[];
+extern int D_004A33F8;
+extern int D_004A33DC;
+extern float D_004A5154;
+extern char D_00537190[];
+extern char D_004A31F8[];
+extern char D_004A3050[];
+extern char D_004A2FE0[];
+extern char D_004A2F68[];
+// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
+extern "C" void* func_0041AA88(void*, void*);
+extern "C" void* cBXString_cBXString1(void* self, void* other);
+extern "C" void func_003F11F8(void* h, void* e, void* cb, void* user, int timeout);
+extern "C" void func_00268F90(void* self, void* a1, int a2);
+extern "C" void func_00264E50(void* self, int type, int rider, int state);
+extern "C" void func_00262768(void* self, int a1, int a2, int a3, int a4, int a5);
+extern "C" void func_00261408(void* self);
+extern "C" void func_0025F740(void* self, int type);
+extern "C" int func_003E8D70(void* p, int a);
+extern "C" int func_002620D8(char* self, char* name, int kind, int* err, char* other);
+extern "C" int func_0025A730(void* self, const char* key, int def);
+extern "C" int cDirtysock_tag_TagFieldSetString(char* buf, int size, const char* key, const char* value);
+extern "C" char* func_003E8A70(void* p, int tag);
+void* func_003EE560(void* list, int idx);
+void* func_0025FC48(void* self);
+void operator_delete(int* ptr);
+void func_002C67E8(void* self, int a1);
+// PORT: the unit declares func_002623E0 as `int (void*)`; this caller passes a
+// second argument (it reaches func_00262658's callee in $a1). Bound by asm label.
+int func_002623E0_2(void* self, int a1) __asm__("func_002623E0__FPv");
+extern void* D_004A33F0;
+extern void* D_004A33D0;
+extern void* D_004A2EEC;
+extern void* D_00481250[];
+extern void* D_00481230[];
+extern void* D_00481210[];
+extern void* D_004811F0[];
+extern void* D_004811B0[];
+extern void* D_00481190[];
+extern void* D_00481170[];
+extern void* D_00481150[];
+extern void* D_00481130[];
+extern void* D_00481110[];
+extern void* D_004810C8[];
+extern void* D_004810B0[];
+extern void* D_004807F8[];
+extern int D_00535610[];
+extern int D_00534E58[];
+extern int D_004A3940;
+extern int D_004A33E4;
+extern int D_004A3018;
+extern char D_004A33E8[];
+extern char D_004A3370[];
+extern char D_004A3368[];
+extern char D_004A3360[];
+extern char D_004A3358[];
+extern char D_004A3218[];
+extern char D_004A3200[];
+extern char D_004A31A8[];
+extern char D_004A31A0[];
+extern char D_004A3198[];
+extern char D_004A3130[];
+extern char D_004A3128[];
+extern char D_004A30D0[];
+extern char D_004A30C8[];
+extern char D_004A3048[];
+extern char D_004A3030[];
+extern char D_004A3010[];
+extern char D_004A2FA0[];
+extern char D_004A2F38[];
+extern char D_004A2ED0[];
+extern char D_00480F18[];
+extern char D_00480498[];
+extern "C" void* func_003E85B0(void* mgr, int idx, void* cb, void* user);
+extern "C" void* func_0025FB80(void*, int, void*);
+extern "C" void* func_0025F150(void* self, int i);
+extern "C" void func_003F6C10(int a0, int a1);
+extern "C" void func_003EE5A0(void* h, int a, int b, void* cb);
+extern "C" void func_002C6CE0(void* obj, char* str);
+extern "C" void func_00268EA0(void* self, void* a1, int a2);
+extern "C" void func_00268E78(void* self, void* a1, int a2);
+extern "C" void func_00268D88(void* self, void* a1, int a2);
+extern "C" void func_00268BA8(void* self, void* a1, int a2);
+extern "C" void func_00268AE0(void* self, void* a1, int a2);
+extern "C" void func_00266E88(void* self);
+extern "C" void func_00266E30(void* self);
+extern "C" void func_00266DF8(void* self);
+extern "C" void func_00264E50(void* self, int event, int a2, int state);
+extern "C" void func_00264D80(void* self, int charID, sName7* name);
+extern "C" void func_00264B20(void* p);
+extern "C" void func_00264A58(void* self);
+extern "C" void func_00264098(void);
+extern "C" void func_00262EC0(char* self, int idx);
+extern "C" void func_00261248(void* self, void* self2, int idx, void* a, void* b, int c);
+extern "C" void func_0025FC70(void* self, int a1, int a2);
+extern "C" void func_0025F858(void* self);
+extern "C" void func_0025F628(void* selfp, int notify, int flag);
+extern "C" void func_00256C50(void);
+extern "C" void func_00255CC8(void* comm, int chan);
+extern "C" void func_00147448(void* self, int a1, int charID);
+extern "C" void cBXString_Reset(void* self);
+extern "C" int func_003EE558(void*);
+extern "C" int func_003EE550(void*);
+extern "C" int func_003E8DC0(void* p, const char* key, int value, int timeout, void* cb, void* user);
+extern "C" int func_003E8260(void* p, int a, int timeout, void* cb, void* user);
+extern "C" int func_00262A38(void* self, void* name);
+extern "C" int func_00262938(void* self);
+// PORT: the target calls func_00262598 without setting $4 (self is still there from entry);
+// bound here with a no-arg prototype.
+extern "C" int func_00262598_noarg() __asm__("func_00262598");
+extern "C" int func_00262438(void* self, int a1);
+extern "C" int func_00255E00(void* mgr, int idx, void* buf, int len);
+extern "C" int func_00255D38(void* comm, int chan);
+extern "C" const char* func_003F3F78();
 
 // The session manager singleton D_004A3328, created / reset on demand.
 static inline void* Mgr()
@@ -73,8 +239,6 @@ static inline void* Mgr()
         func_0025B800(D_004A3028);
     return D_004A3328;
 }
-
-void operator_delete(int*);
 
 // The tag message queue itself (list<void*>: allocator word, then the sentinel node).
 struct sMsgList {
@@ -155,9 +319,6 @@ static inline void postList(char* lst, void* msg)
     sMsgList_insert(*(sMsgListNode**)(lst + 4), mp);
 }
 
-extern char D_00480488[];
-extern void* D_004812B0[];
-
 // Queue a simple tag message {type, D_004812B0 vtable} on the session's list.
 static inline void postMsg(char* self, int type)
 {
@@ -171,8 +332,6 @@ static inline void postMsg(char* self, int type)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", cDirtysock_tag_TagFieldSetUnk);
 #ifdef SKIP_ASM
-extern "C" int cDirtysock_tag_TagFieldSetString(char* buf, int size, const char* key, const char* value);
-
 // PORT: the unit declares value as int (callers pass a string pointer in it).
 extern "C" int cDirtysock_tag_TagFieldSetUnk(char* buf, int size, const char* key, int value)
 {
@@ -192,8 +351,6 @@ extern "C" int cDirtysock_tag_TagFieldSetUnk(char* buf, int size, const char* ke
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", cDirtysock_tag_TagFieldGetUnk);
 #ifdef SKIP_ASM
-extern "C" int cDirtysock_tag_TagFieldGetString(const char* tag, char* buf, int size, const char* defval);
-
 // PORT: variable-length array (GNU extension in C++).
 extern "C" void cDirtysock_tag_TagFieldGetUnk(const char* tag, char* dst, int size, const char* defval)
 {
@@ -213,8 +370,6 @@ void func_00259390(void* self)
 {
 }
 #endif
-
-extern "C" void* func_0041AA88(void*, void*);
 
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00259398__FPviT0T0);
@@ -253,9 +408,6 @@ extern "C" int func_002593F0(void* self, void* a1, int* a, int* b)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00259400);
 #ifdef SKIP_ASM
-extern "C" int cDirtysock_tag_TagFieldGetStructure(const char* tag, void* data, int len, const char* fmt);
-extern char D_004A2F30[];
-
 extern "C" int func_00259400(void* self, int a1, char* a2, char* a3)
 {
     int s2[2];
@@ -268,9 +420,6 @@ extern "C" int func_00259400(void* self, int a1, char* a2, char* a3)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00259468);
 #ifdef SKIP_ASM
-extern "C" int cDirtysock_tag_TagFieldGetStructure(const char* tag, void* data, int len, const char* fmt);
-extern char D_004A2F30[];
-
 extern "C" int func_00259468(void* self, int a1, char* a2, char* a3)
 {
     int s2[2];
@@ -286,8 +435,6 @@ INCLUDE_ASM("dirtysock/tagsunk", func_002594D0);
 #ifdef SKIP_ASM
 struct cBXString2;
 cBXString2* cBXString_cBXString(cBXString2* self);
-extern "C" void* cBXString_cBXString2(void* self, const char* s);
-extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void func_00260F10(void* self);
 extern char D_004807D8[];
 
@@ -364,9 +511,7 @@ extern "C" void* func_002594D0(void* self_)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00259628);
 #ifdef SKIP_ASM
-extern "C" void cBXString__cBXString(void* self, int flags);
 extern "C" void func_001DB718(void* self);
-void operator_delete(int*);
 
 static inline void dtorSub_9628(char* sub)
 {
@@ -439,11 +584,6 @@ void* func_002598A8(void* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_002598C8);
 #ifdef SKIP_ASM
-extern char D_00480488[];
-extern void* D_004812B0[];
-extern "C" int* func_002591D0();
-extern "C" void func_00263BA8(void* p, int arg);
-
 extern "C" void func_002598C8(char* self, int* msg)
 {
     if (msg[1] == 0x64697363) {
@@ -462,9 +602,6 @@ extern "C" void func_002598C8(char* self, int* msg)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_002599B0);
 #ifdef SKIP_ASM
-extern char D_00480488[];
-extern void* D_004812B0[];
-
 extern "C" void func_002599B0(char* self)
 {
     int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
@@ -478,9 +615,6 @@ extern "C" void func_002599B0(char* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00259A60);
 #ifdef SKIP_ASM
-extern char D_00480488[];
-extern void* D_004812B0[];
-
 extern "C" void func_00259A60(char* self, int unused)
 {
     int* m = (int*)operator new(8, D_00480488, 0x20000000, 0);
@@ -494,8 +628,6 @@ extern "C" void func_00259A60(char* self, int unused)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00259B10);
 #ifdef SKIP_ASM
-extern char D_004A2F38[];
-extern char D_004A2F40[];
 extern char D_004A2F48[];
 extern char D_004A2F50[];
 extern char D_004A2EF8[];
@@ -506,20 +638,12 @@ extern char D_00480660[];
 extern char D_00480670[];
 extern char D_00480680[];
 extern char D_004807E8[];
-extern void* D_004807F8[];
 extern char D_00480808[];
-extern void* D_004A2EB8;
-extern "C" const char* cDirtysock_tag_TagFieldFind(const char* record, const char* name);
 extern "C" int func_004178B0(const char* s, const char* fmt, ...);
-extern "C" int func_004165A8(void*, void*);
 char* cCommSystem_getSignature_9B10(void* comm) __asm__("cCommSystem_getSignature");
 extern "C" int func_002623B0_9B10(void* self, char* name) __asm__("func_002623B0");
-extern "C" int func_00263128(char* self, char* name);
-extern "C" void func_00263018(void* self, void* name);
 extern "C" void func_00262AF0(char* self, char* name, int a2, int a3, int a4, int a5, int a6, int a7,
                               int s0, int s1, char* s2, int s3, int s4, int s5, int s6);
-extern "C" void func_0025F628(void* selfp, int notify, int flag);
-extern "C" void func_0025F858(void* self);
 extern "C" void func_0025FA48(void* self, const char* name);
 extern "C" void func_0025FAD0(void* self, const char* name);
 void* func_0025FB80_9B10(void* self, const char* name, const void* reason) __asm__("func_0025FB80");
@@ -633,43 +757,24 @@ extern "C" void func_00259B10(char* self, sTagEvt9B10* msg)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025A1D0);
 #ifdef SKIP_ASM
-extern "C" const char* cDirtysock_tag_TagFieldFind(const char* record, const char* name);
-// PORT: TagFieldGetString really takes a 4th (default value) argument; the unit declares 3.
-extern "C" int cDirtysock_tag_TagFieldGetString(const char* tag, char* buf, int size, const char* defval);
-extern "C" int cDirtysock_tag_TagFieldGetNumber(const char* tag, int defval);
 extern "C" unsigned int cDirtysock_tag_TagFieldGetTime(const char* tag, int defval);
 extern "C" unsigned int cDirtysock_tag_TagFieldGetAddr(const char* tag, int defval);
-extern "C" void* cBXString_cBXString4(void* self, const char* str);
-extern "C" int func_0025A730(void* self, const char* key, int def);
-extern "C" int func_004165A8(void*, void*);
-extern "C" int* func_002591D0();
-extern "C" void func_00263BA8(void* p, int arg);
 extern "C" void func_00259098(void* p, int a, int b);
 extern "C" unsigned int strlen(const char*);
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int cBENewRaceInterface_setGameMode(void* self, int mode);
 extern "C" int cBENewRaceInterface_setGameEvent(void* self, int ev);
 extern "C" int cBENewRaceInterface_setNumberAI(void* self, int n);
-extern char D_004A2F40[];
-extern char D_004A2F58[];
 extern char D_004A2F60[];
-extern char D_004A2F68[];
 extern char D_004A2F70[];
 extern char D_004A2F78[];
 extern char D_004A2F80[];
 extern char D_004A2F88[];
 extern char D_004A2F90[];
 extern char D_004A2F98[];
-extern char D_004A2FA0[];
 extern char D_004A2FA8[];
 extern int D_00535C08[];
 extern int D_004A11B8;
-extern void* D_004A28A8;
-extern int D_00534B34[];
 extern char D_005308B8[];
-extern char D_00480488[];
-extern void* D_004812B0[];
 
 struct sAppA1D0 { char pad[0x78]; void* mBE; };
 
@@ -770,10 +875,8 @@ extern "C" void func_0025A1D0(char* self, char* msg)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025A650);
 #ifdef SKIP_ASM
-extern "C" char* func_003E8A70(void* p, int tag);
 extern "C" void* func_003E6E08();
 extern "C" void func_003E7120(void* h, char* fmt, char* arg);
-extern char D_004813A0[];
 
 extern "C" void func_0025A650(char* self)
 {
@@ -810,7 +913,6 @@ extern "C" void func_0025A6F8(void* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025A730);
 #ifdef SKIP_ASM
-extern char D_004813A0[];
 extern "C" int func_003E7218(void* tags, const char* key, const char* def);
 
 extern "C" int func_0025A730(void* self, const char* key, int def)
@@ -829,11 +931,8 @@ extern "C" int func_0025A730(void* self, const char* key, int def)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025A778);
 #ifdef SKIP_ASM
-extern "C" void* func_003E85B0(void* mgr, int idx, void* cb, void* user);
-extern "C" void func_003EE5A0(void* h, int a, int b, void* cb);
 extern "C" void func_00268A90(void* self, void* a1, int a2);
 extern "C" void func_00268AB8(void* self, void* a1, int a2);
-extern "C" void func_00268AE0(void* self, void* a1, int a2);
 
 extern "C" void func_0025A778(sTagSess* self)
 {
@@ -902,10 +1001,8 @@ extern "C" void func_0025A8B0(void* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025A948);
 #ifdef SKIP_ASM
-extern "C" int sprintf(char* buf, const char* fmt, ...);
 extern "C" void* func_003E7FF0(const char* tag, int a, void* cb);
 extern "C" void func_003E8248(void* mgr, int idx, void* cb, void* user);
-extern "C" const char* func_00259198();
 extern "C" void func_00268B08(void* self, void* a1, int a2);
 extern "C" void func_00268B30(void* self, void* a1, int a2);
 extern "C" void func_00268B58(void* self, void* a1, int a2);
@@ -913,9 +1010,7 @@ extern "C" void func_00268B80(void* self, void* a1, int a2);
 extern char D_004A2FC8[];
 extern char D_004A2FD0[];
 extern char D_004A2FD8[];
-extern char D_004A2FE0[];
 extern char D_004A2FE8[];
-extern char D_004813A0[];
 extern char D_004813B0[];
 extern char D_00481390[];
 extern char D_00480818[];
@@ -964,9 +1059,7 @@ extern "C" void func_0025AA98(void* self)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("dirtysock/tagsunk", func_0025AAE0);
 #ifdef SKIP_ASM
-extern char D_004A3010[];
 extern "C" int cDirtysock_tag_TagFieldSetUnk(char* buf, int size, const char* key, int value);
-extern "C" int func_003E8B10(void* p, int tag, void* cb, int a3, void* user);
 
 extern "C" void func_0025AAE0(void* self, int value)
 {
@@ -982,12 +1075,6 @@ extern "C" void func_0025AAE0(void* self, int value)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025AB40);
 #ifdef SKIP_ASM
-extern char D_00480498[];
-extern void* D_00481230[];
-extern "C" void cBXString__cBXString(void* self, int flags);
-extern "C" void* cBXString_cBXString1(void* self, void* other);
-extern "C" void* cBXString_cBXString2(void* self, const char* s);
-
 // cBXString temporary (one pointer; non-POD, so it gets its own 16-byte stack slot).
 struct cBXStrAB40 {
     char* str;
@@ -1016,35 +1103,14 @@ extern "C" void func_0025AB40(char* self, const char* a, const char* b)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025AC50);
 #ifdef SKIP_ASM
-extern char D_00480488[];
-extern void* D_004812B0[];
-extern void* D_00481290[];
-extern void* D_004811B0[];
 extern void* D_00481270[];
-extern void* D_004A28A8;
-extern void* D_004A2EB8;
-extern int D_004A3018;
-extern float D_004A5154;
 extern "C" void func_003E95C8(void* p);
 extern "C" int func_003E8FB8(void* p);
 extern "C" void func_0025A650(char* self);
-extern "C" int func_003E8260(void* p, int a, int timeout, void* cb, void* user);
-extern "C" void func_00268BA8(void* self, void* a1, int a2);
-extern "C" char* func_003E8A70(void* p, int tag);
-extern "C" void* cBXString_cBXString2(void* self, const char* s);
-extern "C" void func_00261408(void* self);
-extern "C" int func_00263128(char* self, char* name);
-extern "C" void func_00263018(void* self, void* name);
-extern "C" void func_0025F628(void* selfp, int notify, int flag);
 extern "C" void func_0025EED8(char* self);
-extern "C" int* func_002591D0();
-extern "C" void func_00263BA8(void* p, int arg);
-extern "C" int func_00255D38(void* comm, int chan);
-extern "C" void func_00255CC8(void* comm, int chan);
 extern "C" void func_003EE620(void* p);
 extern "C" void func_00261490(void* self);
 extern "C" void func_0017D260(void* self, void* msg);
-void operator_delete(int* ptr);
 
 // Simple tag message: kind word, then the vtable pointer.
 // Error message: kind 0x102 with a reason code.
@@ -1197,8 +1263,6 @@ extern "C" void func_0025AC50(char* selfp)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025B608);
 #ifdef SKIP_ASM
-extern "C" int func_003E8B10(void* p, int tag, void* cb, int a3, void* user);
-
 extern "C" void func_0025B608(void* self, int a1, int tag, void* cb, int a4, float f)
 {
     *(int*)self = a1;
@@ -1211,7 +1275,6 @@ extern "C" void func_0025B608(void* self, int a1, int tag, void* cb, int a4, flo
 INCLUDE_ASM("dirtysock/tagsunk", func_0025B650);
 #ifdef SKIP_ASM
 extern char D_00480838[];
-extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void* func_002594D0(void* self);
 
 extern "C" void func_0025B650(void)
@@ -1223,9 +1286,7 @@ extern "C" void func_0025B650(void)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("dirtysock/tagsunk", func_0025B688);
 #ifdef SKIP_ASM
-extern void* D_004A2EEC;
 extern "C" void func_00259628(void* self, int flags);
-extern "C" void func_00256C50(void);
 
 extern "C" void func_0025B688(void)
 {
@@ -1245,13 +1306,8 @@ extern "C" void func_0025B688(void)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("dirtysock/tagsunk", func_0025B6D8);
 #ifdef SKIP_ASM
-extern char D_00480488[];
-extern void* D_004812B0[];
-extern int D_004A3018;
 extern "C" void func_0025A948(void* self);
-extern "C" int func_003E8260(void* p, int a, int timeout, void* cb, void* user);
 extern "C" int func_003F3A98(void* p, int a);
-extern "C" void func_00268BA8(void* self, void* a1, int a2);
 
 extern "C" void func_0025B6D8(char* self, int conn)
 {
@@ -1294,11 +1350,7 @@ extern "C" void func_0025B800(void* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025B848);
 #ifdef SKIP_ASM
-extern "C" int func_003E8B10(void* p, int tag, void* cb, int a3, void* user);
-extern char D_00480488[];
 extern char D_00480848[];
-extern void* D_004812B0[];
-extern void* D_00481290[];
 
 extern "C" void func_0025B848(char* self, char* msg)
 {
@@ -1323,16 +1375,8 @@ extern "C" void func_0025B848(char* self, char* msg)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025B9C8);
 #ifdef SKIP_ASM
-extern char D_00480488[];
-extern void* D_004812B0[];
 extern char D_00480870[];
-extern char D_004A2F58[];
-extern char D_004A2FE0[];
-extern char D_004A3030[];
 extern char D_004A3038[];
-extern char D_004A3040[];
-extern char D_004A3048[];
-extern char D_004A3050[];
 extern char D_004A3058[];
 extern char D_004A3060[];
 extern char D_004A3068[];
@@ -1340,8 +1384,6 @@ extern char D_004A3070[];
 extern char D_004A3078[];
 extern char D_004A3080[];
 extern "C" void func_00268BD0(void* self, void* a1, int a2);
-extern "C" int cDirtysock_tag_TagFieldSetNumber(char* buf, int size, const char* key, int value);
-extern "C" const char* func_00259198();
 
 extern "C" void func_0025B9C8(char* self, char* msg)
 {
@@ -1376,12 +1418,7 @@ extern "C" void func_0025B9C8(char* self, char* msg)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025BC48);
 #ifdef SKIP_ASM
-extern char D_004A2F40[];
 extern char D_004A3090[];
-extern "C" const char* cDirtysock_tag_TagFieldFind(const char* record, const char* name);
-// PORT: TagFieldGetString really takes a 4th (default value) argument; the unit declares 3.
-extern "C" int cDirtysock_tag_TagFieldGetString(const char* tag, char* buf, int size, const char* defval);
-extern "C" void* cBXString_cBXString4(void* self, const char* str);
 
 // Splits a comma-separated tag field into up to 4 strings.
 extern "C" void func_0025BC48(sTagSess* self, char* msg)
@@ -1406,13 +1443,7 @@ extern "C" void func_0025BC48(sTagSess* self, char* msg)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025BD30);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern char D_00480488[];
-extern void* D_004811F0[];
-extern void* D_004812B0[];
-extern void* D_00481290[];
 extern char D_004A3098[];
-extern "C" int cDirtysock_tag_TagFieldGetNumber(const char* tag, int defval);
 extern "C" void func_0025BC48(sTagSess* self, char* msg);
 
 extern "C" void func_0025BD30(char* self, char* msg)
@@ -1447,13 +1478,6 @@ extern "C" void func_0025BD30(char* self, char* msg)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025BF18);
 #ifdef SKIP_ASM
-extern char D_00480488[];
-extern void* D_004812B0[];
-extern char D_004A2F58[];
-extern char D_004A3030[];
-extern char D_004A3040[];
-extern char D_004A3048[];
-extern char D_004A3050[];
 extern char D_004A30A0[];
 extern "C" void func_00268BF8(void* self, void* a1, int a2);
 
@@ -1483,10 +1507,6 @@ extern "C" void func_0025BF18(char* self, char* msg)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025C0C0);
 #ifdef SKIP_ASM
-extern char D_00480488[];
-extern void* D_004812B0[];
-extern void* D_00481290[];
-
 extern "C" void func_0025C0C0(char* self, char* msg)
 {
     *(int*)self = 1;
@@ -1508,9 +1528,6 @@ extern "C" void func_0025C0C0(char* self, char* msg)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025C1E0);
 #ifdef SKIP_ASM
-extern char D_00480488[];
-extern void* D_004812B0[];
-extern char D_004A3050[];
 extern "C" void func_00268C20(void* self, void* a1, int a2);
 
 extern "C" void func_0025C1E0(char* self, const char* value)
@@ -1527,10 +1544,6 @@ extern "C" void func_0025C1E0(char* self, const char* value)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025C2D8);
 #ifdef SKIP_ASM
-extern char D_00480488[];
-extern void* D_004812B0[];
-extern void* D_00481290[];
-
 extern "C" void func_0025C2D8(char* self, char* msg)
 {
     *(int*)self = 1;
@@ -1552,9 +1565,6 @@ extern "C" void func_0025C2D8(char* self, char* msg)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025C3F8);
 #ifdef SKIP_ASM
-extern char D_00480488[];
-extern void* D_004812B0[];
-extern char D_004A2F58[];
 extern "C" void func_00268C48(void* self, void* a1, int a2);
 
 extern "C" void func_0025C3F8(char* self, const char* value)
@@ -1571,10 +1581,6 @@ extern "C" void func_0025C3F8(char* self, const char* value)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025C4F0);
 #ifdef SKIP_ASM
-extern char D_00480488[];
-extern void* D_004812B0[];
-extern void* D_00481290[];
-
 extern "C" void func_0025C4F0(char* self, char* msg)
 {
     *(int*)self = 1;
@@ -1596,22 +1602,10 @@ extern "C" void func_0025C4F0(char* self, char* msg)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025C610);
 #ifdef SKIP_ASM
-extern char D_00480488[];
-extern void* D_004812B0[];
-extern char D_004813A0[];
-extern char D_004A2F58[];
-extern char D_004A3040[];
 extern char D_004A30C0[];
-extern char D_004A30C8[];
-extern char D_004A30D0[];
 extern char D_004A30D8[];
 extern char D_004A30E0[];
-extern void* D_004A2EB8;
-extern void* D_004A33F0;
-extern void* D_004A33F4;
 extern "C" void func_00268C70(void* self, void* a1, int a2);
-extern "C" int cDirtysock_tag_TagFieldSetNumber(char* buf, int size, const char* key, int value);
-extern "C" const char* func_003F3F78();
 void* func_00266F38(void* self);
 
 struct sDsSlotC610 {
@@ -1671,8 +1665,6 @@ extern "C" void func_0025C610(char* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025C878);
 #ifdef SKIP_ASM
-extern "C" int func_003E8D70(void* p, int a);
-
 extern "C" void func_0025C878(void* self)
 {
     if (*(int*)((char*)self + 0) == 8) {
@@ -1697,19 +1689,8 @@ void func_0025CD28(void* self, int a1)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025CD50);
 #ifdef SKIP_ASM
-extern "C" int func_003E8B10(void* p, int tag, void* cb, int a3, void* user);
-extern char D_00480488[];
-extern char D_004A3108[];
-extern char D_004A30C8[];
-extern char D_004A30D0[];
 extern char D_004A3110[];
-extern char D_004813A0[];
-extern "C" const char* func_003F3F78();
-extern "C" void* cBXString_cBXString4(void* self, const char* str);
-extern "C" void func_0025B608(void* self, int a1, int tag, void* cb, int a4, float f);
 extern "C" void func_00268C98(void* self, void* a1, int a2);
-extern void* D_004812B0[];
-extern void* D_00481290[];
 
 // PORT: the unit declares func_0025CD50 as void* (void*, int) (a caller tail-calls it); the body takes (self, name).
 extern "C" void func_0025CD50_impl(char* self, const char* name) __asm__("func_0025CD50");
@@ -1734,9 +1715,6 @@ extern "C" void func_0025CD50_impl(char* self, const char* name)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025CEB0);
 #ifdef SKIP_ASM
-extern char D_00480488[];
-extern void* D_004812B0[];
-extern void* D_00481290[];
 extern "C" void func_0025CFE0(void* self);
 
 extern "C" void func_0025CEB0(char* self, char* msg)
@@ -1761,9 +1739,6 @@ extern "C" void func_0025CEB0(char* self, char* msg)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("dirtysock/tagsunk", func_0025CFE0);
 #ifdef SKIP_ASM
-extern char D_004A3108[];
-extern "C" int cDirtysock_tag_TagFieldSetString(char* buf, int size, const char* key, const char* value);
-extern "C" void func_0025B608(void* self, int a1, int tag, void* cb, int a4, float f);
 extern "C" void func_00268CC0(void* self, void* a1, int a2);
 
 extern "C" void func_0025CFE0(void* self)
@@ -1779,19 +1754,7 @@ extern "C" void func_0025CFE0(void* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025D048);
 #ifdef SKIP_ASM
-extern "C" int cDirtysock_tag_TagFieldGetStructure(const char* tag, void* data, int len, const char* fmt);
-extern "C" int cDirtysock_tag_TagFieldGetNumber(const char* tag, int defval);
-extern "C" const char* cDirtysock_tag_TagFieldFind(const char* record, const char* name);
-extern "C" int func_003E8B10(void* p, int tag, void* cb, int a3, void* user);
-extern char D_00480488[];
-extern char D_004A3128[];
-extern char D_004A3130[];
-extern char D_004A2F40[];
-extern char D_004A2F30[];
-extern "C" int cDirtysock_tag_TagFieldGetString(const char* tag, char* buf, int size, const char* defval);
 extern "C" void func_0025E0C8(void* self, int value);
-extern void* D_004812B0[];
-extern void* D_00481290[];
 
 extern "C" void func_0025D048(char* self, char* msg)
 {
@@ -1820,10 +1783,6 @@ extern "C" void func_0025D048(char* self, char* msg)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025D1B8);
 #ifdef SKIP_ASM
-extern char D_00480488[];
-extern void* D_004812B0[];
-extern char D_004A3108[];
-extern "C" void* cBXString_cBXString4(void* self, const char* str);
 extern "C" void func_00268CE8(void* self, void* a1, int a2);
 
 extern "C" void func_0025D1B8(char* self, const char* name)
@@ -1844,12 +1803,6 @@ extern "C" void func_0025D1B8(char* self, const char* name)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025D2D8);
 #ifdef SKIP_ASM
-extern "C" int func_003E8B10(void* p, int tag, void* cb, int a3, void* user);
-extern char D_00480488[];
-
-extern void* D_004812B0[];
-extern void* D_00481290[];
-
 extern "C" void func_0025D2D8(char* self, char* msg)
 {
     *(int*)self = 1;
@@ -1874,9 +1827,6 @@ extern "C" void func_0025D2D8(char* self, char* msg)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025D428);
 #ifdef SKIP_ASM
-extern char D_00480488[];
-extern void* D_004812B0[];
-extern char D_004A3108[];
 extern "C" void func_00268D10(void* self, void* a1, int a2);
 
 extern "C" void func_0025D428(char* self, int idx)
@@ -1896,11 +1846,7 @@ extern "C" void func_0025D428(char* self, int idx)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025D538);
 #ifdef SKIP_ASM
-extern "C" int func_003E8B10(void* p, int tag, void* cb, int a3, void* user);
-extern char D_00480488[];
 extern "C" void* cBXString_operatorE(void* self, void* other);
-extern void* D_004812B0[];
-extern void* D_00481290[];
 
 extern "C" void func_0025D538(char* self, char* msg)
 {
@@ -1928,10 +1874,6 @@ extern "C" void func_0025D538(char* self, char* msg)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025D6C0);
 #ifdef SKIP_ASM
-extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
-extern char D_00480488[];
-extern void* D_004812B0[];
-
 extern "C" void func_0025D6C0(char* self)
 {
     int* m = (int*)cMemMan_alloc(8, D_00480488, 0x20000000, 0);
@@ -1946,10 +1888,6 @@ extern "C" void func_0025D6C0(char* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025D770);
 #ifdef SKIP_ASM
-extern char D_004A2F40[];
-extern char D_004A2F58[];
-extern "C" void* func_0025F150(void* self, int i);
-
 extern "C" void func_0025D770(void* self, int idx)
 {
     char buf[256];
@@ -1971,8 +1909,6 @@ extern "C" void func_0025D770(void* self, int idx)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025D800);
 #ifdef SKIP_ASM
-extern char D_004A2F40[];
-extern "C" void* func_0025F150(void* self, int i);
 extern "C" void func_0025D860(void* self, void* name, int a2);
 
 extern "C" void func_0025D800(void* self, int idx, int a2)
@@ -1990,8 +1926,6 @@ extern "C" void func_0025D800(void* self, int idx, int a2)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("dirtysock/tagsunk", func_0025D860);
 #ifdef SKIP_ASM
-extern char D_004A2F58[];
-extern char D_004A3040[];
 extern "C" void func_00268D38(void* self, void* a1, int a2);
 
 // PORT: the unit declares a2 as int; it carries an optional string pointer.
@@ -2013,15 +1947,6 @@ extern "C" void func_0025D860(void* self, void* name, int a2)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025D8F8);
 #ifdef SKIP_ASM
-extern char D_00480488[];
-extern void* D_004812B0[];
-extern void* D_00481290[];
-extern char D_004A2F40[];
-extern char D_004A2F58[];
-extern "C" void cBXString_Reset(void* self);
-// PORT: TagFieldGetString really takes a 4th (default value) argument; the unit declares 3.
-extern "C" int cDirtysock_tag_TagFieldGetString(const char* tag, char* buf, int size, const char* defval);
-
 extern "C" void func_0025D8F8(char* self, char* msg)
 {
     *(int*)self = 1;
@@ -2066,10 +1991,7 @@ extern "C" char* func_0025DA90(void* self)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("dirtysock/tagsunk", func_0025DAC0);
 #ifdef SKIP_ASM
-extern char D_004A2F58[];
-extern char D_004A3040[];
 extern char D_004A3150[];
-extern "C" int sprintf(char* buf, const char* fmt, ...);
 extern "C" void func_00268D60(void* self, void* a1, int a2);
 
 extern "C" void func_0025DAC0(void* self, int a1, int a2, const char* a3)
@@ -2092,16 +2014,6 @@ extern "C" void func_0025DAC0(void* self, int a1, int a2, const char* a3)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025DB80);
 #ifdef SKIP_ASM
-extern "C" int func_003E8B10(void* p, int tag, void* cb, int a3, void* user);
-extern char D_00480488[];
-extern char D_004A2F58[];
-extern char D_004A2F40[];
-extern "C" const char* cDirtysock_tag_TagFieldFind(const char* record, const char* name);
-extern "C" int cDirtysock_tag_TagFieldGetString(const char* tag, char* buf, int size, const char* defval);
-extern "C" void* cBXString_cBXString4(void* self, const char* str);
-extern void* D_004812B0[];
-extern void* D_00481290[];
-
 extern "C" void func_0025DB80(char* self, char* msg)
 {
     *(int*)self = 1;
@@ -2124,10 +2036,6 @@ extern "C" void func_0025DB80(char* self, char* msg)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025DD08);
 #ifdef SKIP_ASM
-extern "C" int func_0025A730(void* self, const char* key, int def);
-extern "C" void func_00268D88(void* self, void* a1, int a2);
-extern "C" int func_003E8DC0(void* p, const char* key, int value, int timeout, void* cb, void* user);
-
 extern "C" void func_0025DD08(void* self, const char* key, int def)
 {
     if (*(int*)self != 0) {
@@ -2139,11 +2047,6 @@ extern "C" void func_0025DD08(void* self, const char* key, int def)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025DD68);
 #ifdef SKIP_ASM
-extern "C" int func_0025A730(void* self, const char* key, int def);
-extern "C" void func_00268D88(void* self, void* a1, int a2);
-extern "C" int func_003E8DC0(void* p, const char* key, int value, int timeout, void* cb, void* user);
-extern "C" void* func_003EE560(void*, int);
-
 extern "C" void func_0025DD68(char* self, int i)
 {
     if (*(int*)self != 0) {
@@ -2159,14 +2062,7 @@ extern "C" void func_0025DD68(char* self, int i)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025DDE0);
 #ifdef SKIP_ASM
-extern char D_00480488[];
-extern void* D_004812B0[];
-extern void* D_00481170[];
-extern char D_004A2F58[];
-extern char D_004A2F40[];
 extern char D_004A3168[];
-extern "C" int cDirtysock_tag_TagFieldGetNumber(const char* tag, int defval);
-extern "C" void* cBXString_cBXString2(void* self, const char* s);
 
 extern "C" void func_0025DDE0(char* self, char* msg)
 {
@@ -2190,9 +2086,6 @@ extern "C" void func_0025DDE0(char* self, char* msg)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("dirtysock/tagsunk", func_0025DF00);
 #ifdef SKIP_ASM
-extern char D_004A3108[];
-extern char D_004A2FE0[];
-extern "C" const char* func_00259198();
 extern "C" void func_00268DB0(void* self, void* a1, int a2);
 
 extern "C" void func_0025DF00(void* self, const char* name)
@@ -2212,10 +2105,6 @@ extern "C" void func_0025DF00(void* self, const char* name)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025DF98);
 #ifdef SKIP_ASM
-extern char D_00480488[];
-extern void* D_004812B0[];
-extern void* D_00481290[];
-
 extern "C" void func_0025DF98(char* self, char* msg)
 {
     *(int*)self = 1;
@@ -2235,9 +2124,6 @@ extern "C" void func_0025DF98(char* self, char* msg)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("dirtysock/tagsunk", func_0025E0C8);
 #ifdef SKIP_ASM
-extern char D_004A2F58[];
-extern "C" int cDirtysock_tag_TagFieldSetNumber(char* buf, int size, const char* key, int value);
-extern "C" void func_0025B608(void* self, int a1, int tag, void* cb, int a4, float f);
 extern "C" void func_00268DD8(void* self, void* a1, int a2);
 
 extern "C" void func_0025E0C8(void* self, int value)
@@ -2255,20 +2141,10 @@ extern "C" void func_0025E0C8(void* self, int value)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025E138);
 #ifdef SKIP_ASM
-extern char D_00480488[];
-extern void* D_00481210[];
-extern void* D_004812B0[];
 extern char D_00480890[];
 extern char D_004808A0[];
 extern char D_004808B0[];
 extern char D_004808C0[];
-extern char D_004813A0[];
-extern char D_004A2F40[];
-// PORT: TagFieldGetString really takes a 4th (default value) argument; the unit declares 3.
-extern "C" int cDirtysock_tag_TagFieldGetString(const char* tag, char* buf, int size, const char* defval);
-extern "C" int cDirtysock_tag_TagFieldGetNumber(const char* tag, int defval);
-extern "C" void* cBXString_cBXString2(void* self, const char* s);
-extern "C" void func_00261248(void* self, void* self2, int idx, void* a, void* b, int c);
 
 struct sNetMgrE138 {
     char pad[0xA4];
@@ -2336,18 +2212,10 @@ extern "C" void func_0025E348(sTagSess* self, int slot)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025E420);
 #ifdef SKIP_ASM
-extern "C" int cDirtysock_tag_TagFieldSetNumber(char* buf, int size, const char* key, int value);
-extern "C" void func_0025B608(void* self, int a1, int tag, void* cb, int a4, float f);
-extern "C" void* func_003E85B0(void* mgr, int idx, void* cb, void* user);
-extern "C" int func_003E8D70(void* p, int a);
-extern "C" void func_00268AE0(void* self, void* a1, int a2);
 extern "C" void func_00268E00(void* self, void* a1, int a2);
 extern int D_004A3180;
 extern char D_004A3188[];
 extern char D_004A3190[];
-extern char D_004A3198[];
-extern char D_004A31A0[];
-extern char D_004A31A8[];
 
 extern "C" void func_0025E420(void* self_, int a1, int a2, int a3)
 {
@@ -2373,14 +2241,6 @@ extern "C" void func_0025E420(void* self_, int a1, int a2, int a3)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025E590);
 #ifdef SKIP_ASM
-extern char D_00480488[];
-extern void* D_004812B0[];
-extern void* D_00481290[];
-extern char D_004A3198[];
-extern char D_004A31A8[];
-extern char D_004A31A0[];
-extern "C" int cDirtysock_tag_TagFieldGetNumber(const char* tag, int defval);
-
 extern "C" void func_0025E590(char* self, char* msg)
 {
     int v = *(int*)(msg + 0x8);
@@ -2403,9 +2263,6 @@ extern "C" void func_0025E590(char* self, char* msg)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025E6D0);
 #ifdef SKIP_ASM
-extern char D_00480488[];
-extern void* D_004812B0[];
-extern char D_004A3108[];
 extern "C" void func_00268E28(void* self, void* a1, int a2);
 
 extern "C" void func_0025E6D0(char* self, const char* name)
@@ -2428,22 +2285,8 @@ extern "C" void func_0025E6D0(char* self, const char* name)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025E7F0);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" int cDirtysock_tag_TagFieldGetStructure(const char* tag, void* data, int len, const char* fmt);
-extern "C" int cDirtysock_tag_TagFieldGetNumber(const char* tag, int defval);
-extern "C" const char* cDirtysock_tag_TagFieldFind(const char* record, const char* name);
-extern char D_00480488[];
-extern char D_004A2F30[];
-extern char D_004A2F40[];
-extern char D_004A2FA0[];
-extern char D_004A3108[];
-extern char D_004A3128[];
 extern char D_004A31C0[];
 extern char D_004A31C8[];
-extern "C" int cDirtysock_tag_TagFieldGetString(const char* tag, char* buf, int size, const char* defval);
-extern "C" void* cBXString_cBXString2(void* self, const char* s);
-extern void* D_00481190[];
-extern void* D_00481290[];
 
 struct sRec {
     int id;
@@ -2521,22 +2364,10 @@ extern "C" void func_0025EAA0(char* self, const char* name)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025EB00);
 #ifdef SKIP_ASM
-extern "C" int cDirtysock_tag_TagFieldGetStructure(const char* tag, void* data, int len, const char* fmt);
-extern "C" int cDirtysock_tag_TagFieldGetNumber(const char* tag, int defval);
-extern "C" const char* cDirtysock_tag_TagFieldFind(const char* record, const char* name);
-extern char D_00480488[];
-extern char D_004A2F30[];
-extern char D_004A2F38[];
-extern char D_004A2F40[];
-extern char D_004A3130[];
 extern char D_004A31D8[];
 extern char D_004A31E0[];
 extern char D_004A31E8[];
 extern char D_004A31F0[];
-extern char D_004A31F8[];
-extern "C" int cDirtysock_tag_TagFieldGetString(const char* tag, char* buf, int size, const char* defval);
-extern void* D_00481110[];
-extern void* D_00481290[];
 
 struct sMsg25EB00 {
     int type;
@@ -2595,12 +2426,9 @@ extern "C" void func_0025EB00(char* self, char* msg)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("dirtysock/tagsunk", func_0025EE20);
 #ifdef SKIP_ASM
-extern char D_004A3200[];
 extern char D_004A3208[];
 extern char D_004808D0[];
-extern char D_004A2F30[];
 extern "C" int cDirtysock_tag_TagFieldSetStructure(char* buf, int size, const char* key, const void* data, int len, const char* fmt);
-extern "C" void func_00268E78(void* self, void* a1, int a2);
 
 extern "C" void func_0025EE20(void* self, const void* data, int a2)
 {
@@ -2623,16 +2451,6 @@ extern "C" void func_0025EE20(void* self, const void* data, int a2)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025EED8);
 #ifdef SKIP_ASM
-extern "C" int func_003E8B10(void* p, int tag, void* cb, int a3, void* user);
-extern char D_00480488[];
-extern char D_004A3200[];
-extern char D_004A3218[];
-extern "C" int* func_002591D0();
-extern "C" void func_00263BA8(void* p, int arg);
-extern "C" void func_00268E78(void* self, void* a1, int a2);
-extern void* D_004812B0[];
-extern void* D_00481290[];
-
 extern "C" void func_0025EED8(char* self)
 {
     int st = *(int*)self;
@@ -2657,11 +2475,6 @@ extern "C" void func_0025EED8(char* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025F030);
 #ifdef SKIP_ASM
-extern char D_00480488[];
-extern void* D_004812B0[];
-
-extern void* D_00481290[];
-
 extern "C" void func_0025F030(char* self, char* msg)
 {
     if (*(int*)(msg + 0x8) == 0) {
@@ -2683,8 +2496,6 @@ extern "C" void func_0025F030(char* self, char* msg)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025F120);
 #ifdef SKIP_ASM
-extern "C" int func_003EE558(void*);
-
 extern "C" int func_0025F120(void* self)
 {
     if (*(int*)self == 0) {
@@ -2697,8 +2508,6 @@ extern "C" int func_0025F120(void* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025F150);
 #ifdef SKIP_ASM
-extern "C" void* func_003EE560(void*, int);
-
 extern "C" void* func_0025F150(void* self, int i)
 {
     if (*(int*)self == 0) {
@@ -2711,8 +2520,6 @@ extern "C" void* func_0025F150(void* self, int i)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025F180);
 #ifdef SKIP_ASM
-extern "C" void* func_003EE560(void*, int);
-
 static inline short getFlags(void* p)
 {
     return *(short*)((char*)p + 0xA);
@@ -2730,8 +2537,6 @@ extern "C" int func_0025F180(void* self, int i)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025F1B0);
 #ifdef SKIP_ASM
-extern "C" int func_003EE558(void*);
-
 extern "C" int func_0025F1B0(void* self)
 {
     if (*(int*)self == 0) {
@@ -2744,9 +2549,6 @@ extern "C" int func_0025F1B0(void* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025F1E0);
 #ifdef SKIP_ASM
-extern char D_004A2ED0[];
-void* func_003EE560(void* list, int idx);
-
 extern "C" char* func_0025F1E0(void* self, int idx, int* outFlag)
 {
     if (*(int*)self == 0) {
@@ -2783,10 +2585,7 @@ extern "C" int func_0025F248(void* self, int i)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025F288);
 #ifdef SKIP_ASM
-extern char D_004A2F30[];
-extern "C" void* func_003EE560(void*, int);
 extern "C" int func_004187C0(const char* s);
-extern "C" int cDirtysock_tag_TagFieldGetStructure(const char* tag, void* data, int len, const char* fmt);
 
 struct sDsPeerK2 {
     char pad_0x00[0x28];
@@ -2829,8 +2628,6 @@ extern "C" void func_0025F288(void* self, int a1, sDsPeerInfoK2* out)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025F338);
 #ifdef SKIP_ASM
-extern "C" int func_003EE550(void*);
-
 static inline int handleCount_F338(void* h)
 {
     return h ? func_003EE550(h) : 0;
@@ -2848,10 +2645,6 @@ extern "C" unsigned int func_0025F338(void* self_)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025F388);
 #ifdef SKIP_ASM
-extern char D_004A2F30[];
-extern "C" void* func_003EE560(void*, int);
-extern "C" int cDirtysock_tag_TagFieldGetStructure(const char* tag, void* data, int len, const char* fmt);
-
 extern "C" void* func_0025F388(sTagSess* self, int a1, int* outA, int* outB)
 {
     if (self->state == 0)
@@ -2873,7 +2666,6 @@ extern "C" void* func_0025F388(sTagSess* self, int a1, int* outA, int* outB)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025F430);
 #ifdef SKIP_ASM
-extern "C" char* func_003E8A70(void* p, int tag);
 extern "C" bool func_0025F430(void* self)
 {
     char* s;
@@ -2901,13 +2693,6 @@ INCLUDE_ASM("dirtysock/tagsunk", func_0025F4C0);
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025F628);
 #ifdef SKIP_ASM
-extern char D_00480488[];
-extern void* D_004812B0[];
-extern "C" int func_003E8D70(void* p, int a);
-extern "C" void func_0025F858(void* self);
-extern "C" void func_0025F740(void* self, int type);
-void* func_0025FC48(void* self);
-
 extern "C" void func_0025F628(void* selfp, int notify, int flag)
 {
     char* self = (char*)selfp;
@@ -2931,11 +2716,6 @@ extern "C" void func_0025F628(void* selfp, int notify, int flag)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025F740);
 #ifdef SKIP_ASM
-extern char D_00480488[];
-extern void* D_004812B0[];
-extern char D_004A3108[];
-extern char D_004A3218[];
-
 extern "C" void func_0025F740(void* selfp, int type)
 {
     char* self = (char*)selfp;
@@ -2962,9 +2742,6 @@ extern "C" void func_0025F740(void* selfp, int type)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025F858);
 #ifdef SKIP_ASM
-extern char D_004A2F40[];
-extern "C" int func_003E8B10(void* p, int tag, void* cb, int a3, void* user);
-
 extern "C" void func_0025F858(void* self)
 {
     func_003E8B10(*(void**)((char*)self + 0x54), 0x6368616C, D_004A2F40, 0, 0);
@@ -2975,19 +2752,10 @@ extern "C" void func_0025F858(void* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025F8A0);
 #ifdef SKIP_ASM
-extern char D_00480488[];
-extern void* D_00481290[];
-extern char D_004A2F40[];
 extern char D_004A3220[];
 extern char D_004A3228[];
 extern char D_004A3230[];
 extern char D_004A3238[];
-extern float D_004A5154;
-// PORT: TagFieldGetString really takes a 4th (default value) argument; the unit declares 3.
-extern "C" int cDirtysock_tag_TagFieldGetString(const char* tag, char* buf, int size, const char* defval);
-void* func_0025FC48(void* self);
-extern "C" void func_0025FC70(void* self, int a1, int a2);
-extern "C" int func_004165A8(void*, void*);
 
 extern "C" void func_0025F8A0(char* self, char* msg)
 {
@@ -3021,10 +2789,7 @@ extern "C" void func_0025F8A0(char* self, char* msg)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("dirtysock/tagsunk", func_0025FA48);
 #ifdef SKIP_ASM
-extern char D_004A3108[];
-extern char D_004A2F68[];
 extern char D_004A3240[];
-extern "C" void func_00268EA0(void* self, void* a1, int a2);
 
 extern "C" void func_0025FA48(void* self, const char* name)
 {
@@ -3041,10 +2806,7 @@ extern "C" void func_0025FA48(void* self, const char* name)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("dirtysock/tagsunk", func_0025FAD0);
 #ifdef SKIP_ASM
-extern char D_004A3108[];
-extern char D_004A2F68[];
 extern char D_004A3250[];
-extern "C" void func_00268EA0(void* self, void* a1, int a2);
 
 extern "C" void func_0025FAD0(void* self, const char* name)
 {
@@ -3061,8 +2823,6 @@ extern "C" void func_0025FAD0(void* self, const char* name)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025FB58);
 #ifdef SKIP_ASM
-extern "C" void func_0025FC70(void* self, int a1, int a2);
-
 extern "C" void func_0025FB58(void* self, int a1, int a2)
 {
     if (*(int*)self != 0) {
@@ -3076,7 +2836,6 @@ extern "C" void func_0025FB58(void* self, int a1, int a2)
 INCLUDE_ASM("dirtysock/tagsunk", func_0025FB80);
 #ifdef SKIP_ASM
 extern char D_004A3258[];
-extern char D_004A3010[];
 extern char D_004A3260[];
 extern "C" int cDirtysock_tag_TagFieldSetFlags(char* record, int len, const char* name, int value);
 extern "C" void func_00268EC8(void* self, void* a1, int a2);
@@ -3103,7 +2862,6 @@ void func_0025FC20(void* self)
 #endif
 
 extern void* D_004A3270[];
-extern "C" void* func_0025FB80(void*, int, void*);
 
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025FC28__FPvi);
@@ -3113,9 +2871,6 @@ void* func_0025FC28(void* self, int a1)
     return func_0025FB80(self, a1, (void*)D_004A3270);
 }
 #endif
-
-extern void* D_004807F8[];
-extern "C" void* func_0025FB80(void*, int, void*);
 
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025FC48__FPv);
@@ -3129,10 +2884,7 @@ void* func_0025FC48(void* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025FC70);
 #ifdef SKIP_ASM
-extern char D_00480488[];
-extern void* D_004812B0[];
 extern char D_00480910[];
-extern float D_004A5154;
 
 extern "C" void func_0025FC70(void* self, int a1, int a2)
 {
@@ -3149,14 +2901,6 @@ INCLUDE_ASM("dirtysock/tagsunk", func_0025FD50);
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00260C68);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern void* D_004A28A8;
-extern char D_00480488[];
-extern void* D_004812B0[];
-extern void* D_00481290[];
-extern int D_00534B34[];
-
 extern "C" void func_00260C68(char* self, char* msg)
 {
     cBE_getInterface_Fv(*(void**)((char*)D_004A28A8 + 0x78), 7);
@@ -3187,9 +2931,6 @@ extern "C" void func_00260C68(char* self, char* msg)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00260E50);
 #ifdef SKIP_ASM
-extern "C" void cBXString__cBXString(void* self, int flags);
-extern "C" void* cBXString_cBXString1(void* self, void* other);
-extern "C" void* cBXString_cBXString2(void* self, const char* s);
 extern "C" void func_003194A8(void* str, const char* fmt, ...);
 extern char D_00480E10[];
 extern char D_004A3320[];
@@ -3227,8 +2968,6 @@ extern "C" void* func_00260E50(void* ret, void* self, unsigned int tag)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00260F10);
 #ifdef SKIP_ASM
-extern "C" void cBXString_Reset(void* self);
-
 extern "C" void func_00260F10(void* self)
 {
     cBXString_Reset((char*)self + 0x260);
@@ -3284,7 +3023,6 @@ INCLUDE_ASM("dirtysock/tagsunk", func_00261008);
 void func_00261058(void* self);
 struct sVec261070;
 extern "C" void func_00261070(sVec261070* self);
-extern "C" void func_00261408(void* self);
 extern "C" void func_002689B8(void* self, int flags);
 
 extern "C" void func_00261008(void)
@@ -3348,9 +3086,6 @@ extern "C" void func_00261070(sVec261070* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_002610D0);
 #ifdef SKIP_ASM
-extern "C" int func_00262938(void* self);
-extern "C" void* func_00263630(void* self, unsigned int i);
-extern "C" int func_00262468(void* self, int a1);
 extern "C" void func_00261EF8(void* self, int a1, int a2, void* out);
 
 extern "C" void func_002610D0()
@@ -3370,10 +3105,7 @@ extern "C" void func_002610D0()
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00261248);
 #ifdef SKIP_ASM
-extern "C" void cBXString__cBXString(void* self, int flags);
-extern "C" void* cBXString_cBXString4(void* self, const char* str);
 extern "C" void* cBXString_Concat(void* self, const char* str);
-extern "C" const char* func_00259198();
 extern "C" void func_002614E8(void* self, void* a1);
 extern "C" int func_003F0818(void* p, const char* a1, int tag, const char* a3, int a4);
 extern "C" int func_003F08E8(void* p, const char* name, int a2, int a3, const char* s1, const char* s2, void* cb, void* user);
@@ -3441,7 +3173,6 @@ extern "C" void func_00261248(void* self_, void* name_, int a2, void* a3_, void*
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_002613C8);
 #ifdef SKIP_ASM
-extern "C" void func_00261248(void* self, void* self2, int idx, void* a, void* b, int c);
 extern "C" void func_002613C8(void* self)
 {
     int idx = *(int*)((char*)self + 0x40);
@@ -3457,7 +3188,6 @@ extern "C" void func_002613C8(void* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00261408);
 #ifdef SKIP_ASM
-extern "C" void func_00262768(void* self, int a1, int a2, int a3, int a4, int a5);
 extern "C" void func_00261530(void* self);
 
 extern "C" void func_00261408(void* self)
@@ -3487,7 +3217,6 @@ extern "C" long f_261460(void* p)
 INCLUDE_ASM("dirtysock/tagsunk", func_00261490);
 #ifdef SKIP_ASM
 extern "C" void func_003F17D8(void* p);
-extern "C" void func_00261408(void* self);
 
 extern "C" void func_00261490(void* self)
 {
@@ -3529,8 +3258,6 @@ extern "C" void func_002614E8(void* self, void* a1)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00261530);
 #ifdef SKIP_ASM
-// PORT: callee defined as returning void* in this unit; called here as void.
-void func_0025FC28_v(void* self, int a1) __asm__("func_0025FC28__FPvi");
 extern "C" void func_003F0BE0(void* p);
 extern "C" void func_003F07A0(void* p);
 
@@ -3572,11 +3299,7 @@ extern "C" void func_00261530(void* vself)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_002615C8);
 #ifdef SKIP_ASM
-extern char D_00480488[];
-extern void* D_004812B0[];
 extern "C" void* func_003F0C90(void* h, void* cb, void* user);
-extern "C" void func_003EE5A0(void* h, int a, int b, void* cb);
-extern "C" void func_00262768(void* self, int a1, int a2, int a3, int a4, int a5);
 extern "C" void func_00268F68(void* self, void* a1, int a2);
 extern "C" int func_002634C0(void* self, int a1, void* a, void* b);
 
@@ -3634,9 +3357,6 @@ INCLUDE_ASM("dirtysock/tagsunk", func_00261770);
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_002618C0);
 #ifdef SKIP_ASM
-extern char D_00480488[];
-extern void* D_004812B0[];
-
 extern "C" void func_002618C0(int unused)
 {
     char* g = (char*)D_004A3028;
@@ -3651,9 +3371,6 @@ extern "C" void func_002618C0(int unused)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00261970);
 #ifdef SKIP_ASM
-extern char D_00480488[];
-extern void* D_004812B0[];
-
 struct sMsg {
     int kind;
     void** vt;
@@ -3681,9 +3398,6 @@ void func_00261A20(void* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00261A28);
 #ifdef SKIP_ASM
-extern char D_00480488[];
-extern void* D_004812B0[];
-
 static inline sMsgListIter sMsgList_261A28_insert(sMsgListIter pos, void* x)
 {
     sMsgListNode* tmp = (sMsgListNode*)operator new(0xC, D_004804A8, 0x20000000, 0);
@@ -3706,23 +3420,14 @@ static inline void post_261A28(int type)
     sMsgList_261A28_insert(*(sMsgListNode**)(g + 0xF0), m);
 }
 
-extern "C" const char* cDirtysock_tag_TagFieldFind(const char* record, const char* name);
 extern "C" int func_002623B0_s(void* self, char* name) __asm__("func_002623B0");
 extern "C" int func_004162D0(char* dst, char* src);
 extern "C" int func_003EDD70(const char* tag, int* a, int* b, int* c, int* d, int* e, int* f, int g);
-extern "C" int sprintf(char* buf, const char* fmt, ...);
 extern "C" void func_00261CD0(char* self, char* name, char* a, char* b);
 extern "C" int func_00262A08_s(void* self, char* name) __asm__("func_00262A08");
-extern "C" void* func_00263630(void* self, unsigned int i);
-extern "C" int func_004165A8(void*, void*);
 extern "C" void func_002635A8_u(void* self, unsigned int i) __asm__("func_002635A8");
-extern char D_004A3358[];
-extern char D_004A3360[];
-extern char D_004A3368[];
-extern char D_004A3370[];
 extern char D_004A3378[];
 extern char D_00480E68[];
-extern char D_004A2ED0[];
 extern char D_00480E78[];
 
 static inline unsigned int vsize_261A28(void* self)
@@ -3773,17 +3478,10 @@ extern "C" void func_00261A28(char* self, char* msg)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00261CD0);
 #ifdef SKIP_ASM
-extern char D_00480488[];
-extern void* D_004812B0[];
 extern char D_00480E98[];
 extern void* D_0046D8C0[];
 extern "C" int func_00262360(void* self, int a1);
 extern "C" int func_002623B0(void* self, int a1);
-extern "C" int func_00262438(void* self, int a1);
-extern "C" int func_00262400(void* self, int a1);
-extern "C" int func_00262598(void* self);
-extern "C" void func_00262EC0(char* self, int idx);
-extern "C" int func_002620D8(char* self, char* name, int kind, int* err, char* other);
 struct sPtrVec {
     void* alloc;
     void** start;
@@ -3857,11 +3555,6 @@ extern "C" void func_00261CD0(char* self, char* name, char* a2, char* a3)
 INCLUDE_ASM("dirtysock/tagsunk", func_00261EF8);
 #ifdef SKIP_ASM
 extern "C" void* func_003F14D8(void* h);
-extern "C" int func_002620D8(char* self, char* name, int kind, int* err, char* other);
-extern "C" void func_00263018(void* self, void* name);
-extern "C" int func_00263128(char* self, char* name);
-extern "C" void func_003F11F8(void* h, void* e, void* cb, void* user, int timeout);
-extern "C" void func_00268F90(void* self, void* a1, int a2);
 
 // PORT: the unit declares (void*, int, int, void*); a1 carries the name pointer.
 extern "C" void func_00261EF8(void* self_, int a1, int kind, void* out)
@@ -3989,9 +3682,6 @@ extern "C" int func_002620D8(char* self, char* name, int kind, int* err, char* o
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00262280);
 #ifdef SKIP_ASM
-extern "C" int func_00262400(void* self, int a1);
-extern "C" int func_00262598(void* self);
-
 extern "C" int func_00262280(void* self)
 {
     int n = 0;
@@ -4006,9 +3696,6 @@ extern "C" int func_00262280(void* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_002622F0);
 #ifdef SKIP_ASM
-extern "C" int func_00262400(void* self, int a1);
-extern "C" int func_00262598(void* self);
-
 extern "C" int func_002622F0(void* self)
 {
     int n = 0;
@@ -4023,7 +3710,6 @@ extern "C" int func_002622F0(void* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00262360);
 #ifdef SKIP_ASM
-extern "C" int func_00262468(void* self, int a1);
 // PORT: the unit declares func_00262390 as `int (void*)`; this caller passes a
 // second argument (it reaches func_00262620's callee in $a1). Bound by asm label.
 int func_00262390_2(void* self, int a1) __asm__("func_00262390__FPv");
@@ -4048,11 +3734,6 @@ int func_00262390(void* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_002623B0);
 #ifdef SKIP_ASM
-extern "C" int func_00262468(void* self, int a1);
-// PORT: the unit declares func_002623E0 as `int (void*)`; this caller passes a
-// second argument (it reaches func_00262658's callee in $a1). Bound by asm label.
-int func_002623E0_2(void* self, int a1) __asm__("func_002623E0__FPv");
-
 extern "C" int func_002623B0(void* self, int a1)
 {
     return func_002623E0_2(self, func_00262468(self, a1));
@@ -4073,8 +3754,6 @@ int func_002623E0(void* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00262400);
 #ifdef SKIP_ASM
-extern "C" void* func_002625C8(void* self, int idx);
-
 extern "C" int func_00262400(void* self, int a1)
 {
     void* p = func_002625C8(self, a1);
@@ -4088,9 +3767,6 @@ extern "C" int func_00262400(void* self, int a1)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00262438);
 #ifdef SKIP_ASM
-extern "C" int func_00262468(void* self, int a1);
-extern "C" int func_00262400(void* self, int a1);
-
 extern "C" int func_00262438(void* self, int a1)
 {
     return func_00262400(self, func_00262468(self, a1));
@@ -4100,9 +3776,6 @@ extern "C" int func_00262438(void* self, int a1)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00262468);
 #ifdef SKIP_ASM
-extern "C" int func_004165A8(void*, void*);
-extern "C" void* func_002625C8(void* self, int idx);
-
 // PORT: a1 carries a name pointer in an int (the unit's declaration).
 extern "C" int func_00262468(void* self, int a1)
 {
@@ -4121,8 +3794,6 @@ extern "C" int func_00262468(void* self, int a1)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_002624F8);
 #ifdef SKIP_ASM
-extern "C" void* func_002625C8(void* self, int idx);
-
 extern "C" int func_002624F8(void* self, void** key)
 {
     int i;
@@ -4144,8 +3815,6 @@ extern "C" int func_002624F8(void* self, void** key)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00262598);
 #ifdef SKIP_ASM
-extern "C" int func_003EE550(void*);
-
 extern "C" int func_00262598(void* self)
 {
     void* p = *(void**)((char*)self + 0xCC);
@@ -4159,9 +3828,6 @@ extern "C" int func_00262598(void* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_002625C8);
 #ifdef SKIP_ASM
-extern "C" int func_00262598(void* self);
-void* func_003EE560(void* list, int idx);
-
 extern "C" void* func_002625C8(void* self, int idx)
 {
     void* r;
@@ -4177,7 +3843,6 @@ extern "C" void* func_002625C8(void* self, int idx)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00262620);
 #ifdef SKIP_ASM
-extern "C" void* func_002625C8(void* self, int idx);
 // PORT: the unit declares func_00262620 as `void* (void*)`; the body passes a second
 // argument through to func_002625C8 in $a1. Bound by asm label.
 void* func_00262620_2(void* self, int idx) __asm__("func_00262620");
@@ -4195,7 +3860,6 @@ void* func_00262620_2(void* self, int idx)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00262658);
 #ifdef SKIP_ASM
-extern "C" void* func_002625C8(void* self, int idx);
 // PORT: the unit declares func_00262658 as `void* (void*)`; the body passes a second
 // argument through to func_002625C8 in $a1. Bound by asm label.
 void* func_00262658_2(void* self, int idx) __asm__("func_00262658");
@@ -4213,11 +3877,6 @@ void* func_00262658_2(void* self, int idx)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00262690);
 #ifdef SKIP_ASM
-extern char D_004A2F40[];
-extern char D_004A3358[];
-extern char D_004A3360[];
-extern char D_004A3368[];
-extern char D_004A3370[];
 extern char D_004A3390[];
 extern char D_004A3398[];
 extern "C" void func_00268FE0(void* self, void* a1, int a2);
@@ -4239,14 +3898,11 @@ extern "C" void func_00262690(char* self, const char* name, int a2)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00262768);
 #ifdef SKIP_ASM
-extern "C" int cDirtysock_tag_TagFieldSetNumber(char* buf, int size, const char* key, int value);
-extern "C" int cDirtysock_tag_TagFieldSetString(char* buf, int size, const char* key, const char* value);
 extern "C" int func_002628C0(void* self, int sel);
 extern "C" void func_003F1538(void* p);
 extern "C" void func_003F1548(void* p, char* buf);
 extern "C" void func_003F1578(void* p, const char* a, const char* b);
 extern "C" int func_003F15C8(void* p, const char* name, int a2, int a3);
-extern char D_004A31F8[];
 extern char D_004A33A8[];
 extern char D_004A33B0[];
 extern char D_004A33B8[];
@@ -4318,9 +3974,6 @@ extern "C" int func_00262938(void* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00262950);
 #ifdef SKIP_ASM
-extern "C" void* func_00263630(void* self, unsigned int i);
-extern "C" int func_004165A8(void*, void*);
-
 static inline unsigned int sDsListK2_size(void* self)
 {
     return *(void***)((char*)self + 0xB0) - *(void***)((char*)self + 0xAC);
@@ -4348,7 +4001,6 @@ extern "C" int func_00262950(void* self, int idx)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("dirtysock/tagsunk", func_00262A08);
 #ifdef SKIP_ASM
-extern "C" int func_00262468(void* self, int a1);
 extern "C" int func_00262950(void* self, int a1);
 
 extern "C" int func_00262A08(void* self, int a1)
@@ -4360,8 +4012,6 @@ extern "C" int func_00262A08(void* self, int a1)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00262A38);
 #ifdef SKIP_ASM
-extern "C" int func_004165A8(void*, void*);
-
 extern "C" int func_00262A38(void* self, void* name)
 {
     for (void*** it = *(void****)((char*)self + 0xAC); it != *(void****)((char*)self + 0xB0); it++) {
@@ -4389,22 +4039,9 @@ extern "C" int func_00262AB0(void* self, void** arg1)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00262AF0);
 #ifdef SKIP_ASM
-extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
-extern "C" void* cBXString_cBXString2(void* self, const char* s);
-extern "C" int func_002620D8(char* self, char* name, int kind, int* err, char* other);
-int func_002623E0_2(void* self, int a1) __asm__("func_002623E0__FPv");
-extern "C" int func_00262400(void* self, int a1);
-extern "C" int func_00262468(void* self, int a1);
-extern "C" int func_00262598(void* self);
-extern "C" void func_00262EC0(char* self, int idx);
-extern "C" void func_00263018(void* self, void* name);
-extern "C" int func_00263128(char* self, char* name);
-extern "C" void* func_0041AA88(void*, void*);
 extern "C" void func_002672C8(sPtrVec* self, void** pos, void* const& x);
-extern char D_00480488[];
 extern char D_00480EC0[];
 extern char D_004810E0[];
-extern void* D_004812B0[];
 
 struct sObjVec_262AF0 {
     void* alloc;
@@ -4518,22 +4155,8 @@ extern "C" int func_00262E20(void* self, void* name)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00262EC0);
 #ifdef SKIP_ASM
-// PORT: callee defined as returning void* in this unit; called here as void.
-void func_0025FC28_v(void* self, int a1) __asm__("func_0025FC28__FPvi");
-extern "C" void cBXString__cBXString(void* self, int flags);
-extern "C" void* cBXString_cBXString2(void* self, const char* s);
-extern "C" int func_00262400(void* self, int a1);
-extern "C" void* func_002625C8(void* self, int idx);
-extern "C" int func_00262938(void* self);
-extern "C" int func_00262A38(void* self, void* name);
 extern "C" int func_00262E20(void* self, void* name);
-extern "C" int func_00263128(char* self, char* name);
 extern "C" void func_002635A8(void* self, int i);
-extern "C" void* func_00263630(void* self, unsigned int i);
-extern "C" void func_003F11F8(void* h, void* e, void* cb, void* user, int timeout);
-extern "C" void* func_0041610C(void* dst, const void* src, unsigned int n);
-extern "C" void* func_0041AA88(void*, void*);
-extern "C" void func_00268F90(void* self, void* a1, int a2);
 
 struct sObjVec_262EC0 {
     void* alloc;
@@ -4585,16 +4208,6 @@ extern "C" void func_00262EC0(char* self, int idx)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00263018);
 #ifdef SKIP_ASM
-// PORT: callee defined as returning void* in this unit; called here as void.
-void func_0025FC28_v(void* self, int a1) __asm__("func_0025FC28__FPvi");
-extern "C" void* func_0041610C(void* dst, const void* src, unsigned int n);
-extern "C" int func_00262438(void* self, int a1);
-extern "C" int func_00262A38(void* self, void* name);
-extern "C" int func_00262468(void* self, int a1);
-extern "C" void* func_002625C8(void* self, int idx);
-extern "C" void func_003F11F8(void* h, void* e, void* cb, void* user, int timeout);
-extern "C" void func_00268F90(void* self, void* a1, int a2);
-
 struct sTagsUnkVEntry18 {
     short delta;
     short index;
@@ -4646,10 +4259,6 @@ extern "C" void func_00263018(void* self, void* name)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00263128);
 #ifdef SKIP_ASM
-extern "C" void cBXString__cBXString(void* self, int flags);
-extern "C" void* cBXString_cBXString2(void* self, const char* s);
-extern "C" int func_004165A8(void*, void*);
-
 // Returns 1 if any entry's name equals `name`.
 extern "C" int func_00263128(char* self, char* name)
 {
@@ -4722,10 +4331,6 @@ extern "C" void* func_00263308(void* self, unsigned int i)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00263338);
 #ifdef SKIP_ASM
-// PORT: the target calls func_00262598 without setting $4 (self is still there from entry);
-// bound here with a no-arg prototype.
-extern "C" int func_00262598_noarg() __asm__("func_00262598");
-
 extern "C" int func_00263338(void* self, int idx)
 {
     if (idx < 0) {
@@ -4749,7 +4354,6 @@ extern "C" int func_00263338(void* self, int idx)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("dirtysock/tagsunk", func_002633C8);
 #ifdef SKIP_ASM
-extern "C" int func_00262468(void* self, int a1);
 extern "C" int func_00263338(void* self, int a1);
 
 extern "C" int func_002633C8(void* self, int a1)
@@ -4761,15 +4365,6 @@ extern "C" int func_002633C8(void* self, int a1)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_002633F8);
 #ifdef SKIP_ASM
-extern char D_004A2F40[];
-extern char D_004A31F8[];
-extern "C" const char* cDirtysock_tag_TagFieldFind(const char* record, const char* name);
-// PORT: the target calls func_00262598 without setting $4 (self is still there from entry);
-// bound here with a no-arg prototype.
-extern "C" int func_00262598_noarg() __asm__("func_00262598");
-// PORT: TagFieldGetString really takes a 4th (default value) argument; the unit declares 3.
-extern "C" int cDirtysock_tag_TagFieldGetString(const char* tag, char* buf, int size, const char* defval);
-
 extern "C" int func_002633F8(void* self, int idx)
 {
     if (idx < 0) {
@@ -4791,7 +4386,6 @@ extern "C" int func_002633F8(void* self, int idx)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("dirtysock/tagsunk", func_00263490);
 #ifdef SKIP_ASM
-extern "C" int func_00262468(void* self, int a1);
 extern "C" int func_002633F8(void* self, int a1);
 
 extern "C" int func_00263490(void* self, int a1)
@@ -4842,8 +4436,6 @@ extern "C" void func_00263500(char* self, void* obj)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_002635A8);
 #ifdef SKIP_ASM
-extern "C" void* func_0041610C(void* dst, const void* src, unsigned int n);
-
 struct sTagsUnkVEntry {
     short delta;
     short index;
@@ -4892,8 +4484,6 @@ extern "C" void* func_00263630(void* self, unsigned int i)
 }
 #endif
 
-extern void* D_004810C8[];
-
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00263660__FPv);
 #ifdef SKIP_ASM
@@ -4908,9 +4498,6 @@ void* func_00263660(void* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00263678);
 #ifdef SKIP_ASM
-extern void* D_004810C8[];
-void operator_delete(int*);
-
 // deleting destructor: reset the vtable, free when bit 0 of flags is set
 extern "C" void func_00263678(void* self, int flags)
 {
@@ -4924,7 +4511,6 @@ extern "C" void func_00263678(void* self, int flags)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_002636A8);
 #ifdef SKIP_ASM
-extern void* D_004A2EB8;
 extern float D_004A2F0C;
 extern float D_004A2F10;
 extern "C" void func_00255F50(void* p, int arg1);
@@ -4947,8 +4533,6 @@ extern "C" void func_002636A8(void* self, int arg1)
 INCLUDE_ASM("dirtysock/tagsunk", func_002636F0);
 #ifdef SKIP_ASM
 extern char D_00480ED0[];
-extern void* D_00481250[];
-extern void* D_004A2EB8;
 extern "C" void func_00261408(void* p);
 extern "C" void func_00255FA0(void* p);
 // The tag connection state word (D_004A2EB8 + 0x20) equals st.
@@ -4986,14 +4570,7 @@ extern "C" void func_002636F0(int* out, int val)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00263828);
 #ifdef SKIP_ASM
-extern "C" int func_003E8B10(void* p, int tag, void* cb, int a3, void* user);
-extern char D_00480488[];
-extern void* D_004A2EB8;
-extern void* D_004A28A8;
 extern "C" void func_002636F0(int* out, int val);
-
-extern void* D_004812B0[];
-extern void* D_00481290[];
 
 struct sDsTimer_263828 {
     int state;
@@ -5033,8 +4610,6 @@ extern "C" void func_00263828(int* self)
 }
 #endif
 
-extern void* D_004810B0[];
-
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00263998__FPv);
 #ifdef SKIP_ASM
@@ -5049,9 +4624,6 @@ void* func_00263998(void* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_002639B0);
 #ifdef SKIP_ASM
-extern void* D_004810B0[];
-void operator_delete(int*);
-
 // deleting destructor: reset the vtable, free when bit 0 of flags is set
 extern "C" void func_002639B0(void* self, int flags)
 {
@@ -5065,19 +4637,11 @@ extern "C" void func_002639B0(void* self, int flags)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_002639E0);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 void cBENewRaceInterface_setNumberHumans(void* self, int n);
 extern "C" void func_001472C8(void* self, int a1, int a2);
 extern "C" int cCommSystem_openDSockChannel(void* comm, const char* addr, unsigned short port, int a3);
 extern "C" void func_00266D58(void* self, void* ip);
-extern "C" void func_00266E30(void* self);
-extern void* D_004A28A8;
-extern void* D_004A2EB8;
-extern void* D_004A33F4;
 extern float D_004A2F14;
-extern int D_00535610[];
 extern char D_00480EE0[];
 
 struct sVEntryV {
@@ -5125,20 +4689,6 @@ extern "C" void func_002639E0(int* self, unsigned int ip, int chan, int a3, int 
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00263BA8);
 #ifdef SKIP_ASM
-extern "C" int func_003E8B10(void* p, int tag, void* cb, int a3, void* user);
-extern char D_00480488[];
-extern void* D_004A2EB8;
-extern void* D_004A33CC;
-extern void* D_004A33F4;
-extern "C" int func_00255D38(void* comm, int chan);
-extern "C" void func_00255CC8(void* comm, int chan);
-extern "C" void func_00264098(void);
-extern "C" void func_00266DF8(void* self);
-extern "C" void func_00266E88(void* self);
-extern "C" void func_0025F740(void* self, int type);
-extern void* D_004812B0[];
-extern void* D_00481290[];
-
 extern "C" void func_00263BA8(void* p, int arg)
 {
     int* self = (int*)p;
@@ -5174,28 +4724,16 @@ INCLUDE_ASM("dirtysock/tagsunk", func_00263CF0);
 struct cAppMan;
 void cAppMan_setNextModule(cAppMan* self, unsigned int module);
 void* func_00232720(void* self);
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void cBENewPlayerInterface_setRiderCharID(void* iface, int rider, int ch);
 extern "C" void cGameComm_construct(int a, int b);
 extern "C" void func_0014EBF8(void* self, int a);
 extern "C" int func_00255D50(void* comm, int chan);
 extern "C" int func_00255E40(void* comm, int chan);
-extern "C" void func_00256C50(void);
-extern "C" void func_00262768(void* self, int a1, int a2, int a3, int a4, int a5);
-extern "C" void func_00263BA8(void* p, int arg);
 extern "C" void func_00264030(int a1, int a2, int a3);
-extern "C" void func_00264098(void);
 extern "C" void func_002642B8(void* self);
 // PORT: func_00264CB8 is defined with one parameter; this caller passes a second in $a1.
 extern "C" void func_00264CB8(void* self, int a);
-extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
-extern void* D_004A28A8;
-extern void* D_004A2EB8;
-extern void* D_004A2EEC;
-extern void* D_004A33CC;
 extern int D_004A19C4;
-extern int D_00534B34[];
-extern int D_00534E58[];
 extern char D_00480EF0[];
 
 static inline bool tsTimedOut_263CF0(int* self)
@@ -5284,8 +4822,6 @@ extern "C" void func_00263CF0(int* self)
 INCLUDE_ASM("dirtysock/tagsunk", func_00264030);
 #ifdef SKIP_ASM
 extern char D_00480F08[];
-extern void* D_004A33CC;
-extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void* func_002640C0(void* self, int a1, int a2, int a3);
 
 extern "C" void func_00264030(int a1, int a2, int a3)
@@ -5297,7 +4833,6 @@ extern "C" void func_00264030(int a1, int a2, int a3)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00264098);
 #ifdef SKIP_ASM
-extern void* D_004A33CC;
 extern "C" void func_00264138(void* self, int flags);
 
 extern "C" void func_00264098(void)
@@ -5312,8 +4847,6 @@ extern "C" void func_00264098(void)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_002640C0);
 #ifdef SKIP_ASM
-extern "C" void* func_003E6448(void* dst, int value, int size);
-
 extern "C" void* func_002640C0(void* self, int a1, int a2, int a3)
 {
     *(int*)((char*)self + 0x0) = 1;
@@ -5336,7 +4869,6 @@ extern "C" void* func_002640C0(void* self, int a1, int a2, int a3)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00264138);
 #ifdef SKIP_ASM
-void operator_delete(int* ptr);
 extern "C" void func_00264990(void* self, int* p);
 
 struct sRing_264138
@@ -5398,12 +4930,6 @@ extern "C" void func_00264138(void* self_, int flags)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_002642B8);
 #ifdef SKIP_ASM
-extern char D_00480488[];
-extern void* D_004812B0[];
-extern void* D_004A28A8;
-extern "C" void func_00264A58(void* self);
-extern "C" void func_00264B20(void* p);
-extern "C" int func_00264BE8(void* self, void* msg, int size);
 int func_002649B0_42B8(void* self, void* dst, int size) __asm__("func_002649B0");
 extern "C" void func_00264F88(void* self, int a1);
 extern "C" void func_00265190(void* self, int rider, sName7* name);
@@ -5427,10 +4953,6 @@ extern "C" void func_00269AE0(void* self, int a1);
 extern "C" void func_00269B90(void* self, int a1);
 extern "C" void func_00269C40(void* self, int a1);
 extern "C" void func_00269CF0(void* self, int a1);
-extern "C" int func_00263128(char* self, char* name);
-extern "C" void func_00263018(void* self, void* name);
-extern "C" void func_0025F740(void* self, int type);
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 int cBENewPlayerInterface_getPlayerCharID(void* self, int index);
 
 struct sTagMsg42B8 {
@@ -5609,7 +5131,6 @@ extern "C" void func_002642B8(void* selfp)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00264960);
 #ifdef SKIP_ASM
-extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern const char D_004805A8[];
 
 extern "C" void* func_00264960(void* self)
@@ -5617,8 +5138,6 @@ extern "C" void* func_00264960(void* self)
     return cMemMan_alloc(0xF0, D_004805A8, 0x20000000, 0);
 }
 #endif
-
-void operator_delete(int*);
 
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00264990);
@@ -5632,7 +5151,6 @@ extern "C" void func_00264990(void* self, int* p)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_002649B0);
 #ifdef SKIP_ASM
-extern "C" void func_00264A58(void* self);
 extern "C" void func_003E6574(void* dst, const void* src, int n);
 
 struct sDsPacketK2 {
@@ -5668,7 +5186,6 @@ extern "C" int func_002649B0(sDsPacketQueueK2* self, void* dst)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00264A58);
 #ifdef SKIP_ASM
-extern void* D_004A2EB8;
 extern "C" int func_00255DC0(void* mgr, int idx, void* buf, int len);
 // PORT: func_00264960 is defined as f(void); this caller passes self in $a0.
 void* func_00264960(void* self);
@@ -5706,9 +5223,6 @@ extern "C" void func_00264A58(void* p)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00264B20);
 #ifdef SKIP_ASM
-extern void* D_004A2EB8;
-extern "C" int func_00255E00(void* mgr, int idx, void* buf, int len);
-
 struct sDsPacket_00264B20 {
     unsigned short kind;   // 0x0
     unsigned short size;   // 0x2 (including this 4-byte header)
@@ -5746,9 +5260,6 @@ extern "C" void func_00264B20(void* p)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00264BE8);
 #ifdef SKIP_ASM
-extern void* D_004A2EB8;
-extern "C" int func_00255E00(void* mgr, int idx, void* buf, int len);
-extern "C" void func_00264B20(void* p);
 // PORT: func_00264960 is defined as f(void); this caller passes self in $a0.
 void* func_00264960(void* self);
 
@@ -5794,8 +5305,6 @@ int func_00264BE8_impl(void* p, const void* src, int len)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00264CB8);
 #ifdef SKIP_ASM
-extern "C" int func_00264BE8(void* self, void* msg, int size);
-
 struct sTagStateMsg {
     int type;          // 0x0
     int state;         // 0x4
@@ -5816,13 +5325,6 @@ extern "C" void func_00264CB8(void* self, int a)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00264CF0);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void func_00147448(void* self, int a1, int charID);
-extern void* D_004A28A8;
-extern int D_00534E58[];
-
 extern "C" void func_00264CF0(void* self, int charID)
 {
     sIf* p = (sIf*)cBE_getInterface_Fv(cBE_getBE(), 1);
@@ -5837,12 +5339,6 @@ extern "C" void func_00264CF0(void* self, int charID)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00264D80);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" void func_00147448(void* self, int a1, int charID);
-extern void* D_004A28A8;
-
 extern "C" void func_00264D80(void* self, int charID, sName7* name)
 {
     sIf* p = (sIf*)cBE_getInterface_Fv(cBE_getBE(), 1);
@@ -5859,10 +5355,6 @@ extern "C" void func_00264D80(void* self, int charID, sName7* name)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00264E50);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
-extern "C" int func_00264BE8(void* self, void* msg, int size);
 extern "C" int func_00148BC8(void* iface, int a, int rider);
 extern "C" int func_00148C68(void* iface, int a, int rider);
 extern "C" int func_00148B78(void* iface, int a, int rider);
@@ -5870,7 +5362,6 @@ extern "C" int func_00148CB8(void* iface, int a, int rider);
 extern "C" int func_00148D58(void* iface, int a, int rider);
 extern "C" int func_00148D08(void* iface, int a, int rider);
 extern "C" int func_00148C18(void* iface, int a, int rider);
-extern void* D_004A28A8;
 
 struct sTagMsg264E50 {
     int type;                   // 0x0
@@ -5908,7 +5399,6 @@ extern "C" void func_00264E50(void* self, int type, int rider, int state)
 INCLUDE_ASM("dirtysock/tagsunk", func_00264F88);
 #ifdef SKIP_ASM
 extern "C" void func_00264CF0(void* self, int a1);
-extern "C" void func_00264E50(void* self, int event, int a2, int state);
 
 extern "C" void func_00264F88(void* self, int a1)
 {
@@ -5931,10 +5421,7 @@ extern "C" void func_00264F88(void* self, int a1)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00265018);
 #ifdef SKIP_ASM
-extern char D_00480488[];
-extern void* D_004812B0[];
 extern "C" void func_00264CF0(void* self, int charID);
-extern "C" void func_00264E50(void* self, int type, int rider, int state);
 
 extern "C" void func_00265018(void* self, int rider)
 {
@@ -5959,8 +5446,6 @@ extern "C" void func_00265018(void* self, int rider)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("dirtysock/tagsunk", func_00265140);
 #ifdef SKIP_ASM
-extern "C" void func_00264E50(void* self, int event, int a2, int state);
-
 extern "C" void func_00265140(int* self)
 {
     int event;
@@ -5981,11 +5466,6 @@ extern "C" void func_00265140(int* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00265190);
 #ifdef SKIP_ASM
-extern char D_00480488[];
-extern void* D_004812B0[];
-extern "C" void func_00264D80(void* self, int charID, sName7* name);
-extern "C" void func_00264E50(void* self, int type, int rider, int state);
-
 extern "C" void func_00265190(void* self, int rider, sName7* name)
 {
     int st = *(int*)self;
@@ -6007,11 +5487,6 @@ extern "C" void func_00265190(void* self, int rider, sName7* name)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00265290);
 #ifdef SKIP_ASM
-extern char D_00480488[];
-extern void* D_004812B0[];
-extern "C" void func_00264D80(void* self, int charID, sName7* name);
-extern "C" void func_00264E50(void* self, int type, int rider, int state);
-
 extern "C" void func_00265290(void* self, int rider)
 {
     int st = *(int*)self;
@@ -6033,9 +5508,6 @@ extern "C" void func_00265290(void* self, int rider)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00265398);
 #ifdef SKIP_ASM
-extern char D_00480488[];
-extern void* D_004812B0[];
-
 extern "C" void func_00265398(int* self)
 {
     if (*self == 3)
@@ -6052,11 +5524,6 @@ extern "C" void func_00265398(int* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00265458);
 #ifdef SKIP_ASM
-extern char D_00480F18[];
-extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
-extern "C" int func_00264BE8(void* self, void* msg, int size);
-extern void* D_00481150[];
-
 struct sTagMsg5458 {
     int type;   // 0x0
     int id;     // 0x4
@@ -6104,11 +5571,6 @@ extern "C" void func_00265458(void* self, int id)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00265568);
 #ifdef SKIP_ASM
-extern char D_00480F18[];
-extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
-extern "C" int func_00264BE8(void* self, void* msg, int size);
-extern void* D_00481130[];
-
 struct sTagMsg5568 {
     int type;   // 0x0
     int a;      // 0x4
@@ -6188,8 +5650,6 @@ send:
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00265700);
 #ifdef SKIP_ASM
-extern "C" int func_00264BE8(void* self, void* msg, int size);
-
 extern "C" void func_00265700(void* self)
 {
     sTagStateMsg msg;
@@ -6217,8 +5677,6 @@ INCLUDE_ASM("dirtysock/tagsunk", func_00265768);
 INCLUDE_ASM("dirtysock/tagsunk", func_00265880);
 #ifdef SKIP_ASM
 extern char D_00480F30[];
-extern void* D_004A33D0;
-extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void* func_002658E0(void* self);
 
 extern "C" void func_00265880(void)
@@ -6230,7 +5688,6 @@ extern "C" void func_00265880(void)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_002658B8);
 #ifdef SKIP_ASM
-extern void* D_004A33D0;
 extern "C" void func_00265908(void* self, int flags);
 
 extern "C" void func_002658B8(void)
@@ -6258,7 +5715,6 @@ extern "C" void* func_002658E0(void* self)
 INCLUDE_ASM("dirtysock/tagsunk", func_00265908);
 #ifdef SKIP_ASM
 extern "C" void func_002659C0(void* self);
-void operator_delete(int*);
 
 extern "C" void func_00265908(void* self, int flags)
 {
@@ -6272,16 +5728,9 @@ extern "C" void func_00265908(void* self, int flags)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00265950);
 #ifdef SKIP_ASM
-extern void* D_004A33D8;
-extern int D_004A33D4;
-extern int D_004A33DC;
-extern int D_004A33E0;
-extern int D_004A33E4;
 struct sDsInit { void* buf; int len; };
 extern sDsInit D_004A5B48;
 extern char D_00442A18[];
-extern char D_00537190[];
-extern "C" void* func_003E6448(void* dst, int value, int size);
 extern "C" void func_003F7EE0(void* p);
 extern "C" void* func_002C22C8();
 
@@ -6306,7 +5755,6 @@ extern "C" void func_00265950(void* vself)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_002659C0);
 #ifdef SKIP_ASM
-extern void* D_004A33D8;
 extern "C" int func_003F7F18();
 extern "C" void func_002C2300(void* h);
 
@@ -6334,9 +5782,6 @@ struct cDsObj2659E8 {
     virtual void v10();
     virtual int v11();
 };
-
-extern void* D_004A33D8;
-extern int D_004A33DC;
 
 extern "C" void func_002659E8(void* self)
 {
@@ -6372,8 +5817,6 @@ struct cDsObj265A38 {
     virtual int v20();
 };
 
-extern void* D_004A33D8;
-
 extern "C" int func_00265A38(void* self)
 {
     return ((cDsObj265A38*)D_004A33D8)->v20();
@@ -6383,7 +5826,6 @@ extern "C" int func_00265A38(void* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00265A68);
 #ifdef SKIP_ASM
-extern int D_004A3940;
 extern "C" void func_00265D98(void* state);
 extern "C" void func_00265E40(void* state);
 extern "C" void func_00265E80(void* state);
@@ -6544,8 +5986,6 @@ struct cDsObj265CB0 {
     virtual bool v55();
 };
 
-extern void* D_004A33D8;
-
 extern "C" int func_00265CB0(void* self)
 {
     if (((cDsObj265CB0*)D_004A33D8)->v53() != 0) {
@@ -6607,8 +6047,6 @@ struct cDsObj265D08 {
     virtual void v46();
     virtual void v47();
 };
-
-extern void* D_004A33D8;
 
 extern "C" void func_00265D08(void* self)
 {
@@ -6685,8 +6123,6 @@ struct cDsObj265D38 {
     virtual int v63();
 };
 
-extern void* D_004A33D8;
-
 extern "C" int func_00265D38(void* self)
 {
     return ((cDsObj265D38*)D_004A33D8)->v63();
@@ -6752,8 +6188,6 @@ struct cDsObj265D68 {
     virtual bool v53();
 };
 
-extern void* D_004A33D8;
-
 extern "C" int func_00265D68(void* self)
 {
     return !((cDsObj265D68*)D_004A33D8)->v53();
@@ -6763,9 +6197,6 @@ extern "C" int func_00265D68(void* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00265D98);
 #ifdef SKIP_ASM
-extern char D_00536760[0x11];
-extern int D_004A33E0;
-extern "C" void* func_003E6448(void* dst, int value, int size);
 extern "C" int func_003F8000(void* p);
 
 extern "C" void func_00265D98(void* self)
@@ -6826,8 +6257,6 @@ void func_00265E30(void* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00265E40);
 #ifdef SKIP_ASM
-extern char D_00536760[0x11];
-extern int D_004A33E0;
 extern "C" int func_003F8048(void* p);
 
 extern "C" void func_00265E40(void* self)
@@ -6842,9 +6271,7 @@ extern "C" void func_00265E40(void* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00265E80);
 #ifdef SKIP_ASM
-extern char D_00536760[0x11];
 extern char D_00442A60[];
-extern int D_004A33E0;
 extern "C" int func_003F7F48(void* a, void* b);
 
 extern "C" void func_00265E80(void* self)
@@ -6859,7 +6286,6 @@ extern "C" void func_00265E80(void* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00265EC8);
 #ifdef SKIP_ASM
-extern int D_004A33E0;
 extern "C" int func_003F80C0();
 
 extern "C" void func_00265EC8(void* self)
@@ -6874,8 +6300,6 @@ extern "C" void func_00265EC8(void* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00265F00);
 #ifdef SKIP_ASM
-extern int D_004A33E0;
-
 extern "C" void func_00265F00(void* self)
 {
     *(int*)((char*)self + 0x4) = 0;
@@ -6887,9 +6311,6 @@ extern "C" void func_00265F00(void* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00265F18);
 #ifdef SKIP_ASM
-extern char D_00536760[0x11];
-extern "C" void* func_003E6448(void* dst, int value, int size);
-
 extern "C" void func_00265F18(const char* name)
 {
     func_003E6448(D_00536760, 0, 0x11);
@@ -6901,7 +6322,6 @@ extern "C" void func_00265F18(const char* name)
 INCLUDE_ASM("dirtysock/tagsunk", func_00265F68);
 #ifdef SKIP_ASM
 extern char D_00536771[0x11];
-extern "C" void* func_003E6448(void* dst, int value, int size);
 
 extern "C" void func_00265F68(const char* name)
 {
@@ -6913,11 +6333,6 @@ extern "C" void func_00265F68(const char* name)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00265FB8);
 #ifdef SKIP_ASM
-extern void* D_004A33D8;
-extern int D_004A33D4;
-extern char D_00537190[];
-extern "C" void* func_003E6448(void* dst, int value, int size);
-extern "C" int func_003FA1D0(int code, void* out);
 extern "C" void func_002C6810(void* obj, void* a1);
 
 struct sDsErr {
@@ -6938,9 +6353,6 @@ extern "C" void func_00265FB8(void* arg, int code)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00266010);
 #ifdef SKIP_ASM
-extern int D_004A33D4;
-extern "C" int func_003FA1D0(int code, void* out);
-
 extern "C" void func_00266010(int code)
 {
     sDsErr err;
@@ -6952,9 +6364,6 @@ extern "C" void func_00266010(int code)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00266038);
 #ifdef SKIP_ASM
-extern int D_004A33D4;
-extern "C" int func_003FA1D0(int code, void* out);
-
 extern "C" void func_00266038(int code)
 {
     sDsErr err;
@@ -6966,13 +6375,6 @@ extern "C" void func_00266038(int code)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00266060);
 #ifdef SKIP_ASM
-extern void* D_004A33D8;
-extern int D_004A33D4;
-extern int D_004A33DC;
-extern int D_004A33E4;
-extern "C" int func_003FA1D0(int code, void* out);
-void func_002C67E8(void* self, int a1);
-
 struct sDsErrU {
     unsigned char a;
     unsigned char b;
@@ -6992,9 +6394,6 @@ extern "C" void func_00266060(int code)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_002660A0);
 #ifdef SKIP_ASM
-extern int D_004A33D4;
-extern "C" int func_003FA1D0(int code, void* out);
-
 extern "C" void func_002660A0(int code)
 {
     sDsErr err;
@@ -7006,11 +6405,6 @@ extern "C" void func_002660A0(int code)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_002660C8);
 #ifdef SKIP_ASM
-extern void* D_004A33D8;
-extern int D_004A33D4;
-extern char D_004A33E8[];
-extern "C" int func_003FA1D0(int code, void* out);
-extern "C" int sprintf(char* buf, const char* fmt, ...);
 extern "C" void func_002C6968(void* obj, char* str, int a2);
 
 extern "C" void func_002660C8(const char* a0, const char* a1, int code, int a3)
@@ -7027,8 +6421,6 @@ extern "C" void func_002660C8(const char* a0, const char* a1, int code, int a3)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00266148);
 #ifdef SKIP_ASM
-extern void* D_004A33D8;
-extern int D_004A33D4;
 void func_002C6A08(void* obj);
 
 extern "C" void func_00266148(void)
@@ -7041,9 +6433,6 @@ extern "C" void func_00266148(void)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00266170);
 #ifdef SKIP_ASM
-extern void* D_004A33D8;
-extern int D_004A33D4;
-extern "C" int func_003FA1D0(int code, void* out);
 extern "C" void func_002C6C50(void* obj, char* str, int a2);
 
 extern "C" void func_00266170(const char* name, int a1, int code)
@@ -7060,13 +6449,6 @@ extern "C" void func_00266170(const char* name, int a1, int code)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_002661D8);
 #ifdef SKIP_ASM
-extern void* D_004A33D8;
-extern int D_004A33D4;
-extern char D_004A33E8[];
-extern "C" int func_003FA1D0(int code, void* out);
-extern "C" int sprintf(char* buf, const char* fmt, ...);
-extern "C" void func_002C6CE0(void* obj, char* str);
-
 extern "C" void func_002661D8(const char* a0, const char* a1, int code)
 {
     sDsErrU err;
@@ -7081,11 +6463,6 @@ extern "C" void func_002661D8(const char* a0, const char* a1, int code)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00266240);
 #ifdef SKIP_ASM
-extern void* D_004A33D8;
-extern int D_004A33D4;
-extern "C" int func_003FA1D0(int code, void* out);
-extern "C" void func_002C6CE0(void* obj, char* str);
-
 extern "C" void func_00266240(const char* name, int code)
 {
     sDsErrU err;
@@ -7100,8 +6477,6 @@ extern "C" void func_00266240(const char* name, int code)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00266298);
 #ifdef SKIP_ASM
-extern void* D_004A33D8;
-extern int D_004A33D4;
 void func_002C6B50(void* obj, int a1, int a2);
 
 extern "C" void func_00266298(int a0, int a1, int a2)
@@ -7114,8 +6489,6 @@ extern "C" void func_00266298(int a0, int a1, int a2)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_002662C0);
 #ifdef SKIP_ASM
-extern void* D_004A33D8;
-extern int D_004A33D4;
 void func_002C6BD0(void* obj, int a1, int a2);
 
 extern "C" void func_002662C0(int a0, int a1, int a2)
@@ -7128,8 +6501,6 @@ extern "C" void func_002662C0(int a0, int a1, int a2)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_002662E8);
 #ifdef SKIP_ASM
-extern void* D_004A33D8;
-extern int D_004A33D4;
 void func_002C6A60(void* obj, int a1, int a2);
 
 extern "C" void func_002662E8(int a0, int a1, int a2)
@@ -7146,8 +6517,6 @@ extern "C" void func_002662E8(int a0, int a1, int a2)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00266320);
 #ifdef SKIP_ASM
-extern void* D_004A33D8;
-extern int D_004A33D4;
 void func_002C6AE0(void* obj);
 
 extern "C" void func_00266320(void)
@@ -7160,8 +6529,6 @@ extern "C" void func_00266320(void)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00266348);
 #ifdef SKIP_ASM
-extern int D_004A33D4;
-
 extern "C" void func_00266348(void)
 {
     D_004A33D4 = 0xF;
@@ -7172,9 +6539,7 @@ extern "C" void func_00266348(void)
 INCLUDE_ASM("dirtysock/tagsunk", func_00266358);
 #ifdef SKIP_ASM
 extern "C" int func_00266578(int err);
-extern int D_004A3940;
 extern "C" int func_002C51D0(void* self, int id);
-void func_002C67E8(void* self, int a1);
 extern "C" void func_002C68C8(void* self, int i, char* out);
 extern "C" int func_003FA360(char* name);
 
@@ -7270,9 +6635,6 @@ extern "C" int func_00266358(int* status, int* out)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00266550);
 #ifdef SKIP_ASM
-extern int D_004A33D4;
-extern char D_00537190[];
-
 extern "C" void func_00266550(char* dst)
 {
     strcpy(dst, D_00537190);
@@ -7283,8 +6645,6 @@ extern "C" void func_00266550(char* dst)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00266578);
 #ifdef SKIP_ASM
-extern int D_004A33D4;
-
 // Maps a network error code to a front-end message id depending on the current connection stage.
 extern "C" int func_00266578(int err)
 {
@@ -7373,8 +6733,6 @@ extern "C" int func_00266578(int err)
 INCLUDE_ASM("dirtysock/tagsunk", func_00266728);
 #ifdef SKIP_ASM
 extern char D_00481080[];
-// PORT: operator_new really takes (size, tag, flags, d); bound by asm label
-extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
 
 extern "C" void* func_00266728(void* self, int size, int kind)
 {
@@ -7389,8 +6747,6 @@ extern "C" void* func_00266728(void* self, int size, int kind)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00266760);
 #ifdef SKIP_ASM
-void* cMemMan_free(void* ptr);
-
 extern "C" void func_00266760(void* self, void* ptr, int a2, int a3)
 {
     if (ptr != 0) {
@@ -7403,8 +6759,6 @@ extern "C" void func_00266760(void* self, void* ptr, int a2, int a3)
 INCLUDE_ASM("dirtysock/tagsunk", func_00266788);
 #ifdef SKIP_ASM
 extern char D_00481090[];
-extern void* D_004A33F0;
-extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void* func_002667E8(void* self);
 
 extern "C" void func_00266788(void)
@@ -7432,7 +6786,6 @@ INCLUDE_ASM("dirtysock/tagsunk", func_002667E8);
 extern char D_005371D0[];
 extern "C" void func_002668A8(void* self);
 extern "C" int func_003F61D0(int a0, int a1, void* name, void* cb, int a4);
-extern "C" void* func_003E6448(void* dst, int value, int size);
 
 extern "C" void* func_002667E8(void* self)
 {
@@ -7448,7 +6801,6 @@ extern "C" void* func_002667E8(void* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00266850);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
 extern "C" int func_003F62F8();
 extern "C" void func_00266850_impl(void* self, int flags) __asm__("func_00266850");
 
@@ -7625,8 +6977,6 @@ extern "C" int func_00266BA8(sChanSet_266BA8* self, int ch, int* a, int* b)
 INCLUDE_ASM("dirtysock/tagsunk", func_00266CA0);
 #ifdef SKIP_ASM
 extern char D_004810A0[];
-extern void* D_004A33F4;
-extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 void* func_00266D00(void* self);
 
 extern "C" void func_00266CA0(void)
@@ -7638,7 +6988,6 @@ extern "C" void func_00266CA0(void)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00266CD8);
 #ifdef SKIP_ASM
-extern void* D_004A33F4;
 extern "C" void func_00266D10(void* self, int flags);
 
 extern "C" void func_00266CD8(void)
@@ -7664,9 +7013,6 @@ void* func_00266D00(void* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00266D10);
 #ifdef SKIP_ASM
-extern "C" void func_00266DF8(void* self);
-void operator_delete(int*);
-
 extern "C" void func_00266D10(void* self, int flags)
 {
     func_00266DF8(self);
@@ -7679,15 +7025,7 @@ extern "C" void func_00266D10(void* self, int flags)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00266D58);
 #ifdef SKIP_ASM
-// PORT: PS2-only inline asm; needs a C fallback off-PS2.
-extern int D_004A33F8;
-extern int D_00535610[];
-extern "C" void* cBE_getBE();
-void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" int func_003F6AB8(void* a0, int a1, int a2);
-extern "C" void func_003F6C10(int a0, int a1);
-extern "C" void func_00266E88(void* self);
-extern "C" void func_00266E30(void* self);
 
 extern "C" void func_00266D58(void* self, void* a1)
 {
@@ -7725,7 +7063,6 @@ extern "C" void func_00266DF8(void* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00266E30);
 #ifdef SKIP_ASM
-extern int D_004A33F8;
 extern "C" void func_003F6B20();
 
 extern "C" void func_00266E30(void* self)
@@ -7788,9 +7125,6 @@ void* func_00266F38(void* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00266F58);
 #ifdef SKIP_ASM
-extern int D_004A33F8;
-extern "C" void func_003F6C10(int a0, int a1);
-
 extern "C" void func_00266F58(void* self, int a1, int a2)
 {
     if (*(int*)self != 0) {
@@ -7881,13 +7215,6 @@ extern "C" void func_002670C8(char* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00267128);
 #ifdef SKIP_ASM
-// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
-extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
-extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
-extern "C" void* func_0041610C(void* dst, const void* src, unsigned int n);
-void* cMemMan_free(void* ptr);
-void operator_delete(int*);
-
 static inline void** sPtrVec7128_allocate(unsigned int n)
 {
     if (n == 1)
@@ -7958,13 +7285,6 @@ extern "C" void func_00267128(sPtrVec* self, void** pos, void* const& x)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_002672C8);
 #ifdef SKIP_ASM
-// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
-extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
-extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
-extern "C" void* func_0041610C(void* dst, const void* src, unsigned int n);
-void* cMemMan_free(void* ptr);
-void operator_delete(int*);
-
 static inline void** sPtrVec72C8_allocate(unsigned int n)
 {
     if (n == 1)
@@ -8470,9 +7790,6 @@ int func_00267E10(void* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00267E18);
 #ifdef SKIP_ASM
-extern void* D_004812B0[];
-void operator_delete(int*);
-
 // deleting destructor: reset the vtable, free when bit 0 of flags is set
 extern "C" void func_00267E18(void* self, int flags)
 {
@@ -8486,10 +7803,6 @@ extern "C" void func_00267E18(void* self, int flags)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00267E48);
 #ifdef SKIP_ASM
-extern char D_00480488[];
-extern void* D_004812B0[];
-extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
-
 extern "C" void* func_00267E48(int* self)
 {
     int* p = (int*)cMemMan_alloc(8, D_00480488, 0x20000000, 0);
@@ -8503,9 +7816,6 @@ extern "C" void* func_00267E48(int* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00267E98);
 #ifdef SKIP_ASM
-extern void* D_004812B0[];
-void operator_delete(int*);
-
 // deleting destructor: reset the vtable, free when bit 0 of flags is set
 extern "C" void func_00267E98(void* self, int flags)
 {
@@ -8519,10 +7829,6 @@ extern "C" void func_00267E98(void* self, int flags)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00267EC8);
 #ifdef SKIP_ASM
-extern char D_00480488[];
-extern void* D_00481290[];
-extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
-
 extern "C" void* func_00267EC8(void* self)
 {
     int* p = (int*)cMemMan_alloc(0xC, D_00480488, 0x20000000, 0);
@@ -8537,9 +7843,6 @@ extern "C" void* func_00267EC8(void* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00267F28);
 #ifdef SKIP_ASM
-extern void* D_004812B0[];
-void operator_delete(int*);
-
 // deleting destructor: reset the vtable, free when bit 0 of flags is set
 extern "C" void func_00267F28(void* self, int flags)
 {
@@ -8553,10 +7856,6 @@ extern "C" void func_00267F28(void* self, int flags)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00267F58);
 #ifdef SKIP_ASM
-extern char D_00480488[];
-extern void* D_00481290[];
-extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
-
 extern "C" void* func_00267F58(void* self)
 {
     int* p = (int*)cMemMan_alloc(0xC, D_00480488, 0x20000000, 0);
@@ -8571,9 +7870,6 @@ extern "C" void* func_00267F58(void* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00267FB8);
 #ifdef SKIP_ASM
-extern void* D_004812B0[];
-void operator_delete(int*);
-
 // deleting destructor: reset the vtable, free when bit 0 of flags is set
 extern "C" void func_00267FB8(void* self, int flags)
 {
@@ -8587,10 +7883,6 @@ extern "C" void func_00267FB8(void* self, int flags)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00267FE8);
 #ifdef SKIP_ASM
-extern char D_00480488[];
-extern void* D_00481250[];
-extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
-
 extern "C" void* func_00267FE8(void* self)
 {
     int* p = (int*)cMemMan_alloc(0xC, D_00480488, 0x20000000, 0);
@@ -8605,10 +7897,6 @@ extern "C" void* func_00267FE8(void* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00268048);
 #ifdef SKIP_ASM
-extern void* D_004812B0[];
-extern "C" void cBXString__cBXString(void* self, int flags);
-void operator_delete(int*);
-
 extern "C" void func_00268048(void* self, int flags)
 {
     cBXString__cBXString((char*)self + 0xC, 2);
@@ -8623,11 +7911,6 @@ extern "C" void func_00268048(void* self, int flags)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_002680A8);
 #ifdef SKIP_ASM
-extern "C" void cBXString__cBXString(void* self, int flags);
-extern "C" void* cBXString_cBXString1(void* self, void* other);
-extern char D_00480498[];
-extern void* D_00481230[];
-
 // Stand-in for cBXString (defined elsewhere): a class with a non-trivial copy constructor,
 // which g++ keeps in memory (BLKmode, 16-byte stack slots).
 struct sBXStrK2 {
@@ -8657,10 +7940,6 @@ extern "C" void* func_002680A8(char* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00268158);
 #ifdef SKIP_ASM
-extern void* D_004812B0[];
-extern "C" void cBXString__cBXString(void* self, int flags);
-void operator_delete(int*);
-
 extern "C" void func_00268158(void* self, int flags)
 {
     cBXString__cBXString((char*)self + 0x8, 2);
@@ -8674,11 +7953,6 @@ extern "C" void func_00268158(void* self, int flags)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_002681B0);
 #ifdef SKIP_ASM
-extern char D_00480488[];
-extern void* D_00481210[];
-extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
-extern "C" void* cBXString_cBXString2(void* self, const char* s);
-
 extern "C" void* func_002681B0(void* self)
 {
     int* p = (int*)cMemMan_alloc(0xC, D_00480488, 0x20000000, 0);
@@ -8693,9 +7967,6 @@ extern "C" void* func_002681B0(void* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00268210);
 #ifdef SKIP_ASM
-extern void* D_004812B0[];
-void operator_delete(int*);
-
 // deleting destructor: reset the vtable, free when bit 0 of flags is set
 extern "C" void func_00268210(void* self, int flags)
 {
@@ -8709,10 +7980,6 @@ extern "C" void func_00268210(void* self, int flags)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00268240);
 #ifdef SKIP_ASM
-extern char D_00480488[];
-extern void* D_004811F0[];
-extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
-
 extern "C" void* func_00268240(void* self)
 {
     int* p = (int*)cMemMan_alloc(0x10, D_00480488, 0x20000000, 0);
@@ -8728,10 +7995,6 @@ extern "C" void* func_00268240(void* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_002682A8);
 #ifdef SKIP_ASM
-extern void* D_004812B0[];
-extern "C" void cBXString__cBXString(void* self, int flags);
-void operator_delete(int*);
-
 extern "C" void func_002682A8(void* self, int flags)
 {
     cBXString__cBXString((char*)self + 0x10, 2);
@@ -8746,8 +8009,6 @@ extern "C" void func_002682A8(void* self, int flags)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00268308);
 #ifdef SKIP_ASM
-extern "C" void* cBXString_cBXString2(void* self, const char* s);
-extern char D_00480488[];
 extern char D_004811D0[];
 
 struct sLockMsg268308 {
@@ -8779,10 +8040,6 @@ extern "C" void* func_00268308(char* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00268398);
 #ifdef SKIP_ASM
-extern void* D_004812B0[];
-extern "C" void cBXString__cBXString(void* self, int flags);
-void operator_delete(int*);
-
 extern "C" void func_00268398(void* self, int flags)
 {
     cBXString__cBXString((char*)self + 0xC, 2);
@@ -8796,8 +8053,6 @@ extern "C" void func_00268398(void* self, int flags)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_002683F0);
 #ifdef SKIP_ASM
-extern void* D_004811B0[];
-
 extern "C" void* func_002683F0(void* self)
 {
     int* p = (int*)cMemMan_alloc(0x10, D_00480488, 0x20000000, 0);
@@ -8813,10 +8068,6 @@ extern "C" void* func_002683F0(void* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00268460);
 #ifdef SKIP_ASM
-extern void* D_004812B0[];
-extern "C" void cBXString__cBXString(void* self, int flags);
-void operator_delete(int*);
-
 extern "C" void func_00268460(void* self, int flags)
 {
     cBXString__cBXString((char*)self + 0xC, 2);
@@ -8831,10 +8082,6 @@ extern "C" void func_00268460(void* self, int flags)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_002684C0);
 #ifdef SKIP_ASM
-extern "C" void* cBXString_cBXString2(void* self, const char* s);
-extern char D_00480488[];
-extern void* D_00481190[];
-
 struct sBlk2684C0 {
     int v[5];
 };
@@ -8872,10 +8119,6 @@ extern "C" void* func_002684C0(sMsg2684C0* src)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00268588);
 #ifdef SKIP_ASM
-extern void* D_004812B0[];
-extern "C" void cBXString__cBXString(void* self, int flags);
-void operator_delete(int*);
-
 extern "C" void func_00268588(void* self, int flags)
 {
     cBXString__cBXString((char*)self + 0x8, 2);
@@ -8889,8 +8132,6 @@ extern "C" void func_00268588(void* self, int flags)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_002685E0);
 #ifdef SKIP_ASM
-extern void* D_00481170[];
-
 extern "C" void* func_002685E0(void* self)
 {
     int* p = (int*)cMemMan_alloc(0x10, D_00480488, 0x20000000, 0);
@@ -8907,9 +8148,6 @@ extern "C" void* func_002685E0(void* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00268658);
 #ifdef SKIP_ASM
-extern void* D_004812B0[];
-void operator_delete(int*);
-
 // deleting destructor: reset the vtable, free when bit 0 of flags is set
 extern "C" void func_00268658(void* self, int flags)
 {
@@ -8923,10 +8161,6 @@ extern "C" void func_00268658(void* self, int flags)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00268688);
 #ifdef SKIP_ASM
-extern char D_00480488[];
-extern void* D_00481150[];
-extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
-
 extern "C" void* func_00268688(void* self)
 {
     int* p = (int*)cMemMan_alloc(0x10, D_00480488, 0x20000000, 0);
@@ -8943,9 +8177,6 @@ extern "C" void* func_00268688(void* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_002686F0);
 #ifdef SKIP_ASM
-extern void* D_004812B0[];
-void operator_delete(int*);
-
 // deleting destructor: reset the vtable, free when bit 0 of flags is set
 extern "C" void func_002686F0(void* self, int flags)
 {
@@ -8959,8 +8190,6 @@ extern "C" void func_002686F0(void* self, int flags)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00268720);
 #ifdef SKIP_ASM
-extern void* D_00481130[];
-
 extern "C" void* func_00268720(void* self)
 {
     int* p = (int*)cMemMan_alloc(0x14, D_00480488, 0x20000000, 0);
@@ -8979,9 +8208,6 @@ extern "C" void* func_00268720(void* self)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00268790);
 #ifdef SKIP_ASM
-extern void* D_004812B0[];
-void operator_delete(int*);
-
 // deleting destructor: reset the vtable, free when bit 0 of flags is set
 extern "C" void func_00268790(void* self, int flags)
 {
@@ -8995,10 +8221,6 @@ extern "C" void func_00268790(void* self, int flags)
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_002687C0);
 #ifdef SKIP_ASM
-extern char D_00480488[];
-extern void* D_00481110[];
-extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
-
 struct sDsBlob14K2b {
     int v[5];
 };
