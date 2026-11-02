@@ -1756,10 +1756,9 @@ int func_003B7818(int a, int b, int c, int d, int e) {
 INCLUDE_ASM("ealib/seg_2B4578", func_003B7838);
 #ifdef SKIP_ASM
 char *func_003B6A38_7838(int) __asm__("func_003B6A38");
-extern int func_003B71D8_7838[] __asm__("func_003B71D8");
 extern int func_003B7410(void);
 extern int func_003B78F8(int);
-extern void func_003C6040_7838(int *) __asm__("func_003C6040");
+extern void func_003C6040(void (*)(void));
 extern int func_003C6DA0(int);
 extern void func_003E0A28(int);
 extern int D_0050A0A0_7838[] __asm__("D_0050A0A0");
@@ -1772,7 +1771,7 @@ int func_003B7838(int h) {
     if (o == 0) return -8;
     func_003B78F8(h);
     if (func_003B7410() == 1) {
-        func_003C6040_7838(func_003B71D8_7838);
+        func_003C6040(func_003B71D8);
         D_0050AAD4 = 0;
     }
     func_003C6DA0(*(volatile int *)(o + 8));
