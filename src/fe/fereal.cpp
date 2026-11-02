@@ -1,18 +1,28 @@
 #include "common.h"
 
+// g++ 2.95 vtable slot: this-pointer adjustment, index, function (F is the slot's function type;
+// sVEntry<void> is a raw slot). Virtual calls in this unit go through these by hand.
+template <class F> struct sVEntry {
+    short delta;
+    short index;
+    F* fn;
+};
+
 //100%
 INCLUDE_ASM("fe/fereal", cFECustom_cFECustom);
 #ifdef SKIP_ASM
-struct sVE0720 {
-    short delta;
-    short index;
-    int (*fn)(void*);
-};
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void* func_0039E2A0(void* self, void* owner);
 extern "C" void cUIStateStack_pushExplicit(void* stack, void* state);
 extern char D_00460B90[];
 extern void* D_0046D810[];
+// The vtable D_0046BB88 itself, as an array of slots. Kept as its own struct: declared as sVEntry<int(void*)>[] the
+// ctor below compiles 8 instructions longer.
+struct sVE0720 {
+    short delta;
+    short index;
+    int (*fn)(void*);
+};
 extern sVE0720 D_0046BB88[];
 
 extern "C" void* cFECustom_cFECustom(void* self, void* owner)
@@ -39,18 +49,13 @@ INCLUDE_ASM("fe/fereal", func_001A07C8);
 #ifdef SKIP_ASM
 int GetHashValue32(char* str);
 extern char D_0045FFF8[];
-struct sVEntry001A07C8 {
-    short delta;
-    short index;
-    int (*fn)(void*, int, int);
-};
 
 extern "C" int func_001A07C8(void* self, int a1, int hash)
 {
     if (hash == GetHashValue32(D_0045FFF8)) {
         void* obj = *(void**)((char*)self + 0x10);
         if (obj != 0) {
-            sVEntry001A07C8* vt = *(sVEntry001A07C8**)((char*)obj + 8);
+            sVEntry<int(void*, int, int)>* vt = *(sVEntry<int(void*, int, int)>**)((char*)obj + 8);
             vt[24].fn((char*)obj + vt[24].delta, 1, 0);
         }
         return 1;
@@ -338,17 +343,7 @@ struct sVec3_1DC0 {
     sVec3_1DC0(int a, int b, int c) { x = a; y = b; z = c; }
 };
 
-struct sVE_1DC0 {
-    short delta;
-    short index;
-    void (*fn)(void*, void*);
-};
 
-struct sVE0_1DC0 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
 
 class cWorld_1DC0 {
 public:
@@ -383,7 +378,7 @@ extern "C" void func_001A1DC0(char* self)
     D_004A43C8 = 0;
     ((cWorld_1DC0*)D_004A289C)->setCamera(sVec3_1DC0(0, 0, 0));
     cFEFlowState_setNumStates(&D_004A4E80, 0x56);
-    sVE0_1DC0* svt = *(sVE0_1DC0**)self;
+    sVEntry<void(void*)>* svt = *(sVEntry<void(void*)>**)self;
     svt[8].fn(self + svt[8].delta);
 }
 #endif
@@ -424,11 +419,6 @@ struct sV4_1E80 {
     float x, y, z, w;
 } __attribute__((aligned(16)));
 
-struct sVE_1E80 {
-    short delta;
-    short index;
-    void (*fn)(void*, ...);
-};
 
 class cCamObj_1E80 {
 public:
@@ -474,7 +464,7 @@ extern "C" void cRealFE_load(sRealFE_1E80* self)
     progress_1E80(50.0f);
     {
         char* g = (char*)D_004A289C;
-        sVE_1E80* vt = *(sVE_1E80**)(g + 0x10D8);
+        sVEntry<void(void*, ...)>* vt = *(sVEntry<void(void*, ...)>**)(g + 0x10D8);
         vt[44].fn(g + vt[44].delta, 0);
     }
     sUI_1E80* ui = self->ui;
@@ -554,11 +544,6 @@ extern "C" int func_001A2128(void* self)
 //100%
 INCLUDE_ASM("fe/fereal", func_001A2190);
 #ifdef SKIP_ASM
-struct sVEntry001A2190 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
 
 extern void* D_004A289C;
 extern void* D_004A28A8;
@@ -573,7 +558,7 @@ extern "C" void func_00286200(void* p);
 extern "C" void func_001A2190(void* self)
 {
     char* g = (char*)D_004A289C;
-    sVEntry001A2190* vt = *(sVEntry001A2190**)(g + 0x10D8);
+    sVEntry<void(void*)>* vt = *(sVEntry<void(void*)>**)(g + 0x10D8);
     vt[19].fn(g + vt[19].delta);
     func_001A2BC0(self);
     func_001A04C8((char*)self + 0xB0);
@@ -627,17 +612,12 @@ struct sFeGs {
 
 extern sFeGs D_00501420;
 
-struct sFeVE {
-    short delta;
-    short index;
-    void* fn;
-};
 
 struct sFeWorld {
     char pad_0x0[0xE84];
     sFeGs* top;                     // 0xE84
     char pad_0xE88[0x10D8 - 0xE88];
-    sFeVE* vt;                      // 0x10D8
+    sVEntry<void>* vt;                      // 0x10D8
 };
 
 struct sFePos {
@@ -656,14 +636,14 @@ static inline sFeWorld* feW() { return (sFeWorld*)D_004A289C; }
 static inline void feCall(int slot)
 {
     char* g = (char*)D_004A289C;
-    sFeVE* vt = *(sFeVE**)(g + 0x10D8);
+    sVEntry<void>* vt = *(sVEntry<void>**)(g + 0x10D8);
     ((void (*)(void*))vt[slot].fn)(g + vt[slot].delta);
 }
 
 static inline unsigned int feCallU(int slot)
 {
     char* g = (char*)D_004A289C;
-    sFeVE* vt = *(sFeVE**)(g + 0x10D8);
+    sVEntry<void>* vt = *(sVEntry<void>**)(g + 0x10D8);
     return ((unsigned int (*)(void*))vt[slot].fn)(g + vt[slot].delta);
 }
 
@@ -697,13 +677,13 @@ extern "C" int func_001A2208(void* self)
         }
         {
             char* g = (char*)D_004A289C;
-            sFeVE* vt = *(sFeVE**)(g + 0x10D8);
+            sVEntry<void>* vt = *(sVEntry<void>**)(g + 0x10D8);
             ((void (*)(void*, int, int, float, float, float, float, float, float))vt[26].fn)(
                 g + vt[26].delta, 0, 0, 0.0f, 0.0f, w, hgt, 0.0f, 1.0f);
         }
         {
             char* g = (char*)D_004A289C;
-            sFeVE* vt = *(sFeVE**)(g + 0x10D8);
+            sVEntry<void>* vt = *(sVEntry<void>**)(g + 0x10D8);
             ((void (*)(void*, void*))vt[34].fn)(g + vt[34].delta, D_004FF1A0);
         }
         feW()->top->setAlpha(9);
@@ -739,7 +719,7 @@ extern "C" int func_001A2208(void* self)
         *(short*)(*(char**)((char*)D_004A289C + 0xE84) + 0x10) = -1;
         {
             char* g = (char*)D_004A289C;
-            sFeVE* vt = *(sFeVE**)(g + 0x10D8);
+            sVEntry<void>* vt = *(sVEntry<void>**)(g + 0x10D8);
             ((void (*)(void*, int, sFeVert*, int))vt[71].fn)(g + vt[71].delta, 4, v, 0);
         }
         feCall(22);
@@ -752,13 +732,13 @@ extern "C" int func_001A2208(void* self)
     feCall(31);
     {
         char* g = (char*)D_004A289C;
-        sFeVE* vt = *(sFeVE**)(g + 0x10D8);
+        sVEntry<void>* vt = *(sVEntry<void>**)(g + 0x10D8);
         ((void (*)(void*, float, float, float))vt[25].fn)(g + vt[25].delta,
             *(float*)((char*)self + 0x10), *(float*)((char*)self + 0x14), *(float*)((char*)self + 0x18));
     }
     {
         char* g = (char*)D_004A289C;
-        sFeVE* vt = *(sFeVE**)(g + 0x10D8);
+        sVEntry<void>* vt = *(sVEntry<void>**)(g + 0x10D8);
         ((void (*)(void*, void*))vt[34].fn)(g + vt[34].delta, (char*)self + 0x50);
     }
     {
@@ -830,11 +810,6 @@ struct sVidInfo_27A0 {
     int b;
     int c;
     int pad[9];
-};
-struct sVE_27A0 {
-    short delta;
-    short index;
-    void (*fn)(void*);
 };
 
 extern "C" void func_001A27A0(char* self)
@@ -913,7 +888,7 @@ noh:
         } else {
             *(int*)(self + 8) = 1;
         }
-        sVE_27A0* vt = *(sVE_27A0**)(self + 0xA0);
+        sVEntry<void(void*)>* vt = *(sVEntry<void(void*)>**)(self + 0xA0);
         char* obj = self + 0x10;
         vt[3].fn(obj + vt[3].delta);
         func_0019D250(self + 0x1A70);
@@ -1024,15 +999,10 @@ extern void* D_004A3028;
 
 // PORT: cMemMan_alloc bound as a placement operator new (gcc then treats the result as unaliased)
 void* operator new(unsigned int size, const char* tag, unsigned int flags, int d) __asm__("cMemMan_alloc");
-struct sVEnt_1A2C40 {
-    short delta;
-    short index;
-    void (*fn)(void*);
-};
 struct sStartState_1A2C40 {
     int f0;
     int f4;
-    sVEnt_1A2C40* vt;   // 0x8
+    sVEntry<void(void*)>* vt;   // 0x8
     char pad[0x3C];
 };
 struct sRealFE_1A2C40 {
@@ -1044,7 +1014,7 @@ extern "C" void cRealFE_loadStartState(sRealFE_1A2C40* self)
 {
     sStartState_1A2C40* s = new (D_00461358, 0, 0) sStartState_1A2C40;
     func_0039E2A0(s, self->ui);
-    s->vt = (sVEnt_1A2C40*)D_0046BC58;
+    s->vt = (sVEntry<void(void*)>*)D_0046BC58;
     s->vt[4].fn((char*)s + s->vt[4].delta);
     cUIStateStack_pushExplicit(self->ui + 0x18, s);
     switch (D_004A19C4) {
