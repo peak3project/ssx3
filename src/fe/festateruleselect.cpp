@@ -8,16 +8,36 @@ template <class F> struct sVEntry {
     F* fn;
 };
 
-//100%
-INCLUDE_ASM("fe/festateruleselect", cFEStateRuleSelect_setupMenu);
-#ifdef SKIP_ASM
+// Declarations shared by the functions of this unit.
 struct cUIScreen;
 struct cUIText;
+struct sRuleSel_2380;
 int GetHashValue32(char* str);
 int cUIScreen_getFrameByLabel(cUIScreen* self, int hash);
 extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
 extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
 void cUIText_setUnicodeStringByID(cUIText* text, int id);
+extern "C" void cFEStateRuleSelect_updateMenuColor(void* self);
+extern char D_004A16A8[];
+extern char D_004A16B0[];
+extern char D_004A1398[];
+extern char D_0045E270[];
+extern char D_0045E280[];
+extern char D_004A13A0[];
+extern char D_004A14F8[];
+// strcpy on string literals); the two strings live at these symbols.
+extern char D_0045FAD8[] __attribute__((aligned(8)));
+extern char D_004A1708[] __attribute__((aligned(8)));
+extern "C" void* func_003E6448(void* dst, int c, int n);
+extern char D_0045FB20[];
+extern char D_005308B8[];
+extern char* D_00441058[];
+extern "C" void func_00192088(void* self, int idx, int a2);
+extern "C" int func_0039A738(void* self);
+
+//100%
+INCLUDE_ASM("fe/festateruleselect", cFEStateRuleSelect_setupMenu);
+#ifdef SKIP_ASM
 extern "C" void func_0039A670(void* self);
 extern "C" unsigned char cUIListBox_addEntryByStringID(void* box, int id, int idx);
 // The entry data is unsigned here: the negative time steps are passed as 0xFFFFFFFD etc.
@@ -25,12 +45,6 @@ extern "C" unsigned char cUIListBox_addEntryByAsciiString(void* box, const char*
 extern "C" int func_0039A768(void* self, int key, unsigned char* out);
 extern "C" void func_0039A7A8(void* self, int v);
 extern "C" int func_00192240(void* self, int rule);
-extern "C" void cFEStateRuleSelect_updateMenuColor(void* self);
-extern char D_004A16A8[];
-extern char D_004A16B0[];
-extern char D_004A1398[];
-extern char D_0045E270[];
-extern char D_0045E280[];
 extern char D_0045DF40[];
 extern char D_0045E028[];
 extern char D_0045FA80[];
@@ -48,21 +62,14 @@ extern char D_004A16E8[];
 extern char D_004A16F0[];
 extern char D_004A16F8[];
 extern char D_004A1700[];
-extern char D_004A13A0[];
-extern char D_004A14F8[];
 extern char D_004A1500[];
 extern char D_004A1508[];
 extern char D_004A1510[];
 extern char D_004A1518[];
 extern signed char D_00441008[];
 extern char* D_00441018[];
-// PORT: the frame labels are copied with the builtin block move (the original likely used
-// strcpy on string literals); the two strings live at these symbols.
-extern char D_0045FAD8[] __attribute__((aligned(8)));
-extern char D_004A1708[] __attribute__((aligned(8)));
 
 struct sStr3_1388 { char c[3]; };
-
 
 static inline void SetVisible_1388(char* o, int on)
 {
@@ -186,22 +193,13 @@ extern "C" void cFEStateRuleSelect_setupMenu(void* self_, signed char first)
 //100%
 INCLUDE_ASM("fe/festateruleselect", cFEStateRuleSelect_onCreateScreen);
 #ifdef SKIP_ASM
-struct cUIText;
-int GetHashValue32(char* str);
 extern "C" void* cBE_getBE();
 void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
 extern "C" void* cUIEngine_addScreenByHashName(void* engine, void* owner, int hash, int a3);
-extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
 extern "C" void cUIMenu_setSelectedByIndex(void* menu, unsigned char idx);
-void cUIText_setUnicodeStringByID(cUIText* text, int id);
 extern "C" void cFEStateRuleSelect_setupMenu(void* self, signed char a1);
 extern "C" void func_0039B760(void* menu, int count);
-extern "C" void* func_003E6448(void* dst, int c, int n);
 extern char D_0045FB10[];
-extern char D_0045FB20[];
-extern char D_004A1398[];
-extern char D_005308B8[];
 extern signed char D_00535C12[];
 extern signed char D_00441098[11];
 extern signed char D_004410A8[10];
@@ -209,13 +207,9 @@ extern signed char D_004410B8[11];
 extern signed char D_004A1690[8];
 extern signed char D_004A1698[8];
 extern signed char D_004A16A0[8];
-extern char* D_00441058[];
 struct sStr3_19188 { char c[3]; };
 struct sStr2_19188 { char c[2]; };
 // PORT: the local name templates "0b" and "0" are splat-named sdata literals; copied from the symbols.
-extern char D_004A16A8[];
-extern char D_004A13A0[];
-
 
 struct sUIObj_19188 {
     char pad0[0x8];
@@ -335,15 +329,9 @@ INCLUDE_ASM("fe/festateruleselect", func_00191C68);
 extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
 extern "C" void cUIStateStack_pushSpecial(void* stack, void* state, int a2, int a3);
 extern "C" void* func_001887A0(void* mem, void* owner, int a2);
-extern "C" void func_00192088(void* self, int idx, int a2);
-struct sRuleSel_2380;
 extern "C" void func_00192380(sRuleSel_2380* self, void* item);
-extern "C" int func_0039A738(void* self);
 extern "C" void func_0039F400(void* stack, void* state);
-extern "C" void* func_003E6448(void* dst, int c, int n);
 extern char D_0045D698[];
-extern char D_005308B8[];
-
 
 struct sMsg_1C68 {
     char pad_0x0[0x18];
@@ -397,9 +385,6 @@ extern "C" void func_00191C68(char* self, sMsg_1C68* msg, unsigned int type)
 //100%
 INCLUDE_ASM("fe/festateruleselect", func_00191E08);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern char D_004A13A0[];
-
 extern "C" int func_00191E08(void* self, void* msg)
 {
     int id = *(int*)((char*)msg + 0x38);
@@ -410,24 +395,7 @@ extern "C" int func_00191E08(void* self, void* msg)
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/festateruleselect", func_00191E48);
 #ifdef SKIP_ASM
-struct cUIScreen;
-struct cUIText;
-int GetHashValue32(char* str);
 extern "C" void cFEStateRuleSelect_setupMenu(void* self, signed char idx);
-int cUIScreen_getFrameByLabel(cUIScreen* self, int hash);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
-void cUIText_setUnicodeStringByID(cUIText* text, int id);
-extern char D_0045E270[];
-extern char D_0045E280[];
-extern char D_0045FB20[];
-extern char* D_00441058[];
-
-// PORT: the frame labels are copied with the builtin block move (the original likely used
-// strcpy on string literals); the two strings live at these symbols.
-extern char D_0045FAD8[] __attribute__((aligned(8)));
-extern char D_004A1708[] __attribute__((aligned(8)));
-
 
 static inline void SetVisible_1E48(char* o, int on)
 {
@@ -576,9 +544,6 @@ extern "C" int func_00192240(void* self, int rule)
 //100%
 INCLUDE_ASM("fe/festateruleselect", func_00192380);
 #ifdef SKIP_ASM
-extern "C" int func_0039A738(void* self);
-extern "C" void func_00192088(void* self, int idx, int a2);
-extern "C" void cFEStateRuleSelect_updateMenuColor(void* self);
 extern int D_004410C8[];
 
 struct sRuleSel_2380 {
@@ -616,10 +581,6 @@ extern "C" void func_00192380(sRuleSel_2380* self, void* item)
 //100%
 INCLUDE_ASM("fe/festateruleselect", cFEStateRuleSelect_updateMenuColor);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-
-
 struct sQuad_2488 {
     int a, b, c, d;
 };
@@ -636,8 +597,6 @@ struct sObj_2488 {
 
 // PORT: the names are built with the builtin block move (the original likely used
 // strcpy on string literals); the two strings live at these symbols.
-extern char D_004A16A8[];
-extern char D_004A16B0[];
 
 extern "C" void cFEStateRuleSelect_updateMenuColor(void* selfp)
 {
@@ -698,7 +657,6 @@ extern "C" void* func_001926F0(void* self)
 //100%
 INCLUDE_ASM("fe/festateruleselect", func_00192740);
 #ifdef SKIP_ASM
-
 struct sObj00192740 {
     int pad[2];
     sVEntry<void(void*, int)>* vt;
@@ -720,7 +678,6 @@ extern "C" void func_00192740(void* self, int a1)
 //100%
 INCLUDE_ASM("fe/festateruleselect", func_001927B0);
 #ifdef SKIP_ASM
-extern "C" int func_0039A738(void* self);
 extern "C" int func_00192948(void* self, int idx);
 
 struct sColor_001927B0 {
@@ -798,9 +755,6 @@ void func_00192968(void* self, int val)
 //100%
 INCLUDE_ASM("fe/festateruleselect", func_00192970);
 #ifdef SKIP_ASM
-int GetHashValue32(char* str);
-extern "C" void* cUIScreen_getObjectByHashName(void* self, int hash);
-
 struct sName11_00192970 { char c[11]; };
 struct sName12_00192970 { char c[12]; };
 struct sName13_00192970 { char c[13]; };
@@ -814,7 +768,6 @@ extern char D_0045FCA8[];
 extern char D_0045FCB8[];
 extern char D_004A1740[];
 extern char D_004A1748[];
-extern char D_004A14F8[];
 extern char D_004A1750[];
 
 class cFEVObj_00192970 {
