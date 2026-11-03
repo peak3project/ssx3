@@ -283,15 +283,16 @@ struct sPath {                      /* 0x928 */
     unsigned int f30;
     unsigned int *f34;              /* the loaded path data (32-bit words) */
     short *f38;                     /* word offsets of its nodes */
-    char pad3C[0x40 - 0x3C];
+    short *f3C;
     short *f40;
-    char pad44[0x48 - 0x44];
+    short *f44;
     int *f48;
     int *f4C;
     char *f50;
     unsigned int *f54;
     struct sPathVoice *f58[24];
-    char padB8[0xDC - 0xB8];
+    int fB8;
+    char padBC[0xDC - 0xBC];
     struct sPathEvent *f0DC[16];
     char buf[0x91C - 0x11C];
     int f91C;
