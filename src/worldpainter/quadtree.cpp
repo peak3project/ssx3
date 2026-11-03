@@ -3061,14 +3061,18 @@ extern "C" void func_002C6D70(void* self, int flags)
 }
 #endif
 
-extern "C" void* func_003DBB68(int);
+extern "C" void* func_003DBB68(void* file, int idx);
+
+// The symbol is mangled as (void*), but the function passes its second argument ($5) on to
+// func_003DBB68(file, idx) unchanged, so it takes (self, idx).
+void* func_002C6DC0(void* self, int idx) __asm__("func_002C6DC0__FPv");
 
 //100%
 INCLUDE_ASM("worldpainter/quadtree", func_002C6DC0__FPv);
 #ifdef SKIP_ASM
-void* func_002C6DC0(void* self)
+void* func_002C6DC0(void* self, int idx)
 {
-    return func_003DBB68(*(int*)((char*)self + 0x4));
+    return func_003DBB68(*(void**)((char*)self + 0x4), idx);
 }
 #endif
 
