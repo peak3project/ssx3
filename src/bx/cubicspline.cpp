@@ -216,7 +216,52 @@ extern "C" void func_0031E0E0(void* self)
 #endif
 
 INCLUDE_ASM("bx/cubicspline", func_0031E190);
+//100%
 INCLUDE_ASM("bx/cubicspline", func_0031E1D8);
+#ifdef SKIP_ASM
+// PORT: PS2-only dlmalloc 2.7 library routine; kept as the binary's own instructions (library source is never reconstructed); the whole
+// body is one asm block so the PS2 build stays byte-exact. A port replaces this function.
+__asm__(
+    ".set push\n.set noreorder\n.set noat\n"
+    ".text\n.align 3\n.globl func_0031E1D8\n.type func_0031E1D8, @function\nfunc_0031E1D8:\n"
+    "daddu $6, $4, $0\n"
+    "ori $2, $0, 0xFFFF\n"
+    "srl $4, $6, 8\n"
+    "sltu $2, $2, $4\n"
+    "bnez $2, .L0031E258\n"
+    "addiu $3, $4, -0x100\n"
+    "srl $3, $3, 16\n"
+    "andi $3, $3, 0x8\n"
+    "sllv $4, $4, $3\n"
+    "addiu $2, $4, -0x1000\n"
+    "srl $2, $2, 16\n"
+    "andi $5, $2, 0x4\n"
+    "sllv $4, $4, $5\n"
+    "addu $3, $3, $5\n"
+    "addiu $2, $4, -0x4000\n"
+    "srl $2, $2, 16\n"
+    "andi $5, $2, 0x2\n"
+    "sllv $4, $4, $5\n"
+    "addu $3, $3, $5\n"
+    "srl $2, $4, 15\n"
+    "srl $4, $4, 14\n"
+    "nor $2, $0, $2\n"
+    "and $2, $4, $2\n"
+    "addiu $2, $2, 0xD\n"
+    "subu $5, $2, $3\n"
+    "addiu $2, $5, 0x6\n"
+    "sll $3, $5, 2\n"
+    "srlv $2, $6, $2\n"
+    "andi $2, $2, 0x3\n"
+    "addiu $2, $2, 0x20\n"
+    "jr $31\n"
+    "addu $2, $3, $2\n"
+    ".L0031E258:\n"
+    "jr $31\n"
+    "addiu $2, $0, 0x5F\n"
+    ".size func_0031E1D8, . - func_0031E1D8\n"
+    ".set pop\n");
+#endif
 
 //100%
 INCLUDE_ASM("bx/cubicspline", func_0031E260__FPv);
