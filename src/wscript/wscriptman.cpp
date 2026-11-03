@@ -3285,7 +3285,156 @@ extern "C" void* func_0030D4B8(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D540);
+#ifdef SKIP_ASM
+void cMemMan_free(void* p);
+void operator_delete(int* ptr);
+
+struct sWSTex_D540 {
+    void* f0;
+    int f4;
+    int f8;
+    void* fC;
+};
+
+struct sWSSlot2_D540 {
+    sWSTex_D540* arr;
+    int cnt;
+};
+
+struct sWSGrp_D540 {
+    char pad[0x1C];
+    sWSSlot2_D540 s[4];         // 0x1C
+    char pad3C[0x58 - 0x3C];
+};
+
+struct sWSSlot_D540 {
+    void* a;
+    int b;
+};
+
+struct sWSVE_D540 {
+    short delta;
+    short index;
+    void (*fn)(void*, int);
+};
+
+struct sWSGfx_D540 {
+    char pad[0x10D8];
+    sWSVE_D540* vt;             // 0x10D8
+};
+
+struct sWSRec_D540 {
+    int id;
+    int f4;
+    int f8;
+};
+
+struct sWSMan_D540 {
+    int f0;
+    int f4;                     // 0x4
+    int f8;                     // 0x8
+    sWSGrp_D540* grps;          // 0xC
+    char pad10[0xC];
+    void* f1C;                  // 0x1C
+    void* f20;                  // 0x20
+    void* f24;                  // 0x24
+    void* f28;                  // 0x28
+    void* f2C;                  // 0x2C
+    void* f30;                  // 0x30
+    void* f34;                  // 0x34
+    void* f38;                  // 0x38
+    void* f3C;                  // 0x3C
+    int f40;
+    sWSSlot_D540 slots[4];      // 0x44
+    char pad64[0x12C - 0x64];
+    int f12C;                   // 0x12C
+    sWSRec_D540* f130;          // 0x130
+};
+
+extern sWSGfx_D540* D_004A5B80;
+
+// render context singleton (D_004A5B80) accessor
+static inline sWSGfx_D540* GetGfx_D540()
+{
+    return D_004A5B80;
+}
+
+extern "C" void func_0030D540(sWSMan_D540* self, int flags)
+{
+    sWSGfx_D540* gfx = GetGfx_D540();
+    int i;
+    int j;
+    int m;
+    int v;
+    if (self->f38 != 0) {
+        cMemMan_free(self->f38);
+    }
+    if (self->grps != 0) {
+        for (int k = 0; k < 4; k++) {
+            if (self->slots[k].a != 0) {
+                cMemMan_free(self->slots[k].a);
+            }
+            for (j = 0; j < self->f8; j++) {
+                for (m = 0; m < self->f4; m++) {
+                    if (self->grps[j].s[k].arr[m].fC != 0) {
+                        cMemMan_free(self->grps[j].s[k].arr[m].fC);
+                    }
+                    gfx->vt[0x380 / 8].fn((char*)gfx + gfx->vt[0x380 / 8].delta, (int)self->grps[j].s[k].arr[m].f0);
+                    if (self->grps[j].s[k].arr[m].f0 != 0) {
+                        cMemMan_free(self->grps[j].s[k].arr[m].f0);
+                    }
+                }
+                if (self->grps[j].s[k].arr != 0) {
+                    cMemMan_free(self->grps[j].s[k].arr);
+                }
+            }
+        }
+    }
+    if (self->f130 != 0) {
+        for (i = 0; i < self->f12C; i++) {
+            v = self->f130[i].id;
+            if (v >= 0) {
+                gfx->vt[0x190 / 8].fn((char*)gfx + gfx->vt[0x190 / 8].delta, v);
+            }
+        }
+    }
+    if (self->f30 != 0) {
+        cMemMan_free(self->f30);
+    }
+    if (self->f34 != 0) {
+        cMemMan_free(self->f34);
+    }
+    if (self->f2C != 0) {
+        cMemMan_free(self->f2C);
+    }
+    if (self->grps != 0) {
+        cMemMan_free(self->grps);
+    }
+    if (self->f1C != 0) {
+        cMemMan_free(self->f1C);
+    }
+    if (self->f3C != 0) {
+        cMemMan_free(self->f3C);
+    }
+    if (self->f130 != 0) {
+        cMemMan_free(self->f130);
+    }
+    if (self->f24 != 0) {
+        cMemMan_free(self->f24);
+    }
+    if (self->f28 != 0) {
+        cMemMan_free(self->f28);
+    }
+    if (self->f20 != 0) {
+        cMemMan_free(self->f20);
+    }
+    if (flags & 1) {
+        operator_delete((int*)self);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("wscript/wscriptman", func_0030D840);
