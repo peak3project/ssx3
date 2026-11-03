@@ -692,7 +692,444 @@ extern "C" void func_0020AB50(int kind)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/ovtemplatedialog", func_0020BAB8);
+#ifdef SKIP_ASM
+extern "C" void* cUIStateStack_getCurrentState(void* stack);
+extern "C" void func_0039F290(void* list, void* item);
+
+extern "C" void func_0020BAB8(int kind)
+{
+    char* owner = *(char**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x48);
+    char* obj = 0;
+    void* state = cUIStateStack_getCurrentState(owner + 0x18);
+    if (kind == 1) {
+        char* o = new (D_00471A30, 0, 0) char[0x114];
+        func_0039E2A0(o, owner);
+        *(void**)(o + 8) = D_00473098;
+        *(unsigned short*)(o + 0x58) = D_004A2088[0];
+        *(int*)(o + 0x98) = kind;
+        *(int*)(o + 0x48) = 0;
+        *(int*)(o + 0x4c) = 0;
+        *(int*)(o + 0x54) = 0;
+        *(int*)(o + 0xc4) = 0;
+        obj = o;
+    }
+    if (kind == 2) {
+        char* o = new (D_00471A30, 0, 0) char[0x114];
+        func_0039E2A0(o, owner);
+        *(void**)(o + 8) = D_00472FC0;
+        *(unsigned short*)(o + 0x58) = D_004A2088[0];
+        *(int*)(o + 0x98) = kind;
+        *(int*)(o + 0x48) = 0;
+        *(int*)(o + 0x4c) = 0;
+        *(int*)(o + 0x54) = 0;
+        *(int*)(o + 0xc4) = 0;
+        obj = o;
+    }
+    if (kind == 3) {
+        char* o = new (D_00471A30, 0, 0) char[0x114];
+        func_0039E2A0(o, owner);
+        *(void**)(o + 8) = D_00472EE8;
+        *(unsigned short*)(o + 0x58) = D_004A2088[0];
+        *(int*)(o + 0x98) = kind;
+        *(int*)(o + 0x48) = 0;
+        *(int*)(o + 0x4c) = 0;
+        *(int*)(o + 0x54) = 0;
+        *(int*)(o + 0xc4) = 0;
+        obj = o;
+    }
+    if (kind == 4) {
+        char* o = new (D_00471A30, 0, 0) char[0x114];
+        func_0039E2A0(o, owner);
+        *(void**)(o + 8) = D_00472E10;
+        *(unsigned short*)(o + 0x58) = D_004A2088[0];
+        *(int*)(o + 0x98) = kind;
+        *(int*)(o + 0x48) = 0;
+        *(int*)(o + 0x4c) = 0;
+        *(int*)(o + 0x54) = 0;
+        *(int*)(o + 0xc4) = 0;
+        obj = o;
+    }
+    if (kind == 5) {
+        char* o = new (D_00471A30, 0, 0) char[0x114];
+        func_0039E2A0(o, owner);
+        *(void**)(o + 8) = D_00472D38;
+        *(unsigned short*)(o + 0x58) = D_004A2088[0];
+        *(int*)(o + 0x98) = kind;
+        *(int*)(o + 0x48) = 0;
+        *(int*)(o + 0x4c) = 0;
+        *(int*)(o + 0x54) = 0;
+        *(int*)(o + 0xc4) = 0;
+        obj = o;
+    }
+    if (kind == 6) {
+        char* o = new (D_00471A30, 0, 0) char[0x114];
+        func_0039E2A0(o, owner);
+        *(void**)(o + 8) = D_00472C60;
+        *(unsigned short*)(o + 0x58) = D_004A2088[0];
+        *(int*)(o + 0x98) = kind;
+        *(int*)(o + 0x48) = 0;
+        *(int*)(o + 0x4c) = 0;
+        *(int*)(o + 0x54) = 0;
+        *(int*)(o + 0xc4) = 0;
+        obj = o;
+    }
+    if (kind == 7) {
+        char* o = new (D_00471A30, 0, 0) char[0x9C];
+        func_0039E2A0(o, owner);
+        *(void**)(o + 8) = D_00472B88;
+        *(unsigned short*)(o + 0x58) = D_004A2088[0];
+        *(int*)(o + 0x98) = kind;
+        *(int*)(o + 0x48) = 0;
+        *(int*)(o + 0x4c) = 0;
+        *(int*)(o + 0x54) = 0;
+        obj = o;
+    }
+    if (kind == 8) {
+        char* o = new (D_00471A30, 0, 0) char[0x9C];
+        func_0039E2A0(o, owner);
+        *(void**)(o + 8) = D_00472850;
+        *(unsigned short*)(o + 0x58) = D_004A2088[0];
+        *(int*)(o + 0x98) = kind;
+        *(int*)(o + 0x48) = 0;
+        *(int*)(o + 0x4c) = 0;
+        *(int*)(o + 0x54) = 0;
+        obj = o;
+    }
+    if (kind == 9) {
+        char* o = new (D_00471A30, 0, 0) char[0x9C];
+        func_0039E2A0(o, owner);
+        *(void**)(o + 8) = D_00472778;
+        *(unsigned short*)(o + 0x58) = D_004A2088[0];
+        *(int*)(o + 0x98) = kind;
+        *(int*)(o + 0x48) = 0;
+        *(int*)(o + 0x4c) = 0;
+        *(int*)(o + 0x54) = 0;
+        obj = o;
+    }
+    if (kind == 10) {
+        char* o = new (D_00471A30, 0, 0) char[0x9C];
+        func_0039E2A0(o, owner);
+        *(void**)(o + 8) = D_00474088;
+        *(unsigned short*)(o + 0x58) = D_004A2088[0];
+        *(int*)(o + 0x98) = kind;
+        *(int*)(o + 0x48) = 0;
+        *(int*)(o + 0x4c) = 0;
+        *(int*)(o + 0x54) = 0;
+        obj = o;
+    }
+    if (kind == 11) {
+        char* o = new (D_00471A30, 0, 0) char[0xA0];
+        func_0039E2A0(o, owner);
+        *(void**)(o + 8) = D_00473FB0;
+        *(unsigned short*)(o + 0x58) = D_004A2088[0];
+        *(int*)(o + 0x98) = kind;
+        *(int*)(o + 0x48) = 0;
+        *(int*)(o + 0x4c) = 0;
+        *(int*)(o + 0x54) = 0;
+        obj = o;
+    }
+    if (kind == 12) {
+        char* o = new (D_00471A30, 0, 0) char[0xA4];
+        func_0039E2A0(o, owner);
+        *(unsigned short*)(o + 0x58) = D_004A2088[0];
+        *(void**)(o + 8) = D_00473E00;
+        *(int*)(o + 0xa0) = 1;
+        *(int*)(o + 0x98) = kind;
+        *(int*)(o + 0x48) = 0;
+        *(int*)(o + 0x4c) = 0;
+        *(int*)(o + 0x54) = 0;
+        *(int*)(o + 0xC) = GetHashValue32(D_0046E340);
+        obj = o;
+    }
+    if (kind == 13) {
+        char* o = new (D_00471A30, 0, 0) char[0xA4];
+        func_0039E2A0(o, owner);
+        *(unsigned short*)(o + 0x58) = D_004A2088[0];
+        *(void**)(o + 8) = D_00473D28;
+        *(int*)(o + 0xa0) = 1;
+        *(int*)(o + 0x98) = kind;
+        *(int*)(o + 0x48) = 0;
+        *(int*)(o + 0x4c) = 0;
+        *(int*)(o + 0x54) = 0;
+        *(int*)(o + 0xC) = GetHashValue32(D_0046E340);
+        obj = o;
+    }
+    if (kind == 14) {
+        char* o = new (D_00471A30, 0, 0) char[0x9C];
+        func_0039E2A0(o, owner);
+        *(void**)(o + 8) = D_00474B80;
+        *(unsigned short*)(o + 0x58) = D_004A2088[0];
+        *(int*)(o + 0x98) = kind;
+        *(int*)(o + 0x48) = 0;
+        *(int*)(o + 0x4c) = 0;
+        *(int*)(o + 0x54) = 0;
+        obj = o;
+    }
+    if (kind == 15) {
+        char* o = new (D_00471A30, 0, 0) char[0xA4];
+        func_0039E2A0(o, owner);
+        *(void**)(o + 8) = D_004734D0;
+        *(unsigned short*)(o + 0x58) = D_004A2088[0];
+        *(int*)(o + 0x98) = kind;
+        *(int*)(o + 0x48) = 0;
+        *(int*)(o + 0x4c) = 0;
+        *(int*)(o + 0x54) = 0;
+        obj = o;
+    }
+    if (kind == 16) {
+        char* o = new (D_00471A30, 0, 0) char[0xA0];
+        func_0039E2A0(o, owner);
+        *(void**)(o + 8) = D_00472108;
+        *(unsigned short*)(o + 0x58) = D_004A2088[0];
+        *(int*)(o + 0x98) = kind;
+        *(int*)(o + 0x48) = 0;
+        *(int*)(o + 0x4c) = 0;
+        *(int*)(o + 0x54) = 0;
+        obj = o;
+    }
+    if (kind == 17) {
+        char* o = new (D_00471A30, 0, 0) char[0xB8];
+        func_0039E2A0(o, owner);
+        *(void**)(o + 8) = D_00474AA8;
+        *(unsigned short*)(o + 0x58) = D_004A2088[0];
+        *(int*)(o + 0x98) = kind;
+        *(int*)(o + 0x48) = 0;
+        *(int*)(o + 0x4c) = 0;
+        *(int*)(o + 0x54) = 0;
+        obj = o;
+    }
+    if (kind == 18) {
+        obj = (char*)func_001FDBF0(new (D_00471A30, 0, 0) char[0x274], owner, 0x12);
+    }
+    if (kind == 19) {
+        obj = (char*)func_001FE968(new (D_00471A30, 0, 0) char[0x274], owner, 0x13);
+    }
+    if (kind == 20) {
+        char* o = new (D_00471A30, 0, 0) char[0x9C];
+        func_0039E2A0(o, owner);
+        *(void**)(o + 8) = D_004725C8;
+        *(unsigned short*)(o + 0x58) = D_004A2088[0];
+        *(int*)(o + 0x98) = kind;
+        *(int*)(o + 0x48) = 0;
+        *(int*)(o + 0x4c) = 0;
+        *(int*)(o + 0x54) = 0;
+        obj = o;
+    }
+    if (kind == 21) {
+        char* o = new (D_00471A30, 0, 0) char[0x9C];
+        func_0039E2A0(o, owner);
+        *(void**)(o + 8) = D_004726A0;
+        *(unsigned short*)(o + 0x58) = D_004A2088[0];
+        *(int*)(o + 0x98) = kind;
+        *(int*)(o + 0x48) = 0;
+        *(int*)(o + 0x4c) = 0;
+        *(int*)(o + 0x54) = 0;
+        obj = o;
+    }
+    if (kind == 22) {
+        char* o = new (D_00471A30, 0, 0) char[0x9C];
+        func_0039E2A0(o, owner);
+        *(void**)(o + 8) = D_00473ED8;
+        *(unsigned short*)(o + 0x58) = D_004A2088[0];
+        *(int*)(o + 0x98) = kind;
+        *(int*)(o + 0x48) = 0;
+        *(int*)(o + 0x4c) = 0;
+        *(int*)(o + 0x54) = 0;
+        obj = o;
+    }
+    if (kind == 23) {
+        char* o = new (D_00471A30, 0, 0) char[0xA0];
+        func_0039E2A0(o, owner);
+        *(void**)(o + 8) = D_004749D0;
+        *(unsigned short*)(o + 0x58) = D_004A2088[0];
+        *(int*)(o + 0x98) = kind;
+        *(int*)(o + 0x48) = 0;
+        *(int*)(o + 0x4c) = 0;
+        *(int*)(o + 0x54) = 0;
+        *(int*)(o + 0x9c) = 0;
+        obj = o;
+    }
+    if (kind == 24) {
+        char* o = new (D_00471A30, 0, 0) char[0xA0];
+        func_0039E2A0(o, owner);
+        *(void**)(o + 8) = D_004748F8;
+        *(unsigned short*)(o + 0x58) = D_004A2088[0];
+        *(int*)(o + 0x9c) = 1;
+        *(int*)(o + 0x98) = kind;
+        *(int*)(o + 0x48) = 0;
+        *(int*)(o + 0x4c) = 0;
+        *(int*)(o + 0x54) = 0;
+        obj = o;
+    }
+    if (kind == 25) {
+        char* o = new (D_00471A30, 0, 0) char[0xA0];
+        func_0039E2A0(o, owner);
+        *(void**)(o + 8) = D_00474820;
+        *(unsigned short*)(o + 0x58) = D_004A2088[0];
+        *(int*)(o + 0x9c) = 2;
+        *(int*)(o + 0x98) = kind;
+        *(int*)(o + 0x48) = 0;
+        *(int*)(o + 0x4c) = 0;
+        *(int*)(o + 0x54) = 0;
+        obj = o;
+    }
+    if (kind == 26) {
+        char* o = new (D_00471A30, 0, 0) char[0xA0];
+        func_0039E2A0(o, owner);
+        *(void**)(o + 8) = D_00474748;
+        *(unsigned short*)(o + 0x58) = D_004A2088[0];
+        *(int*)(o + 0x9c) = 3;
+        *(int*)(o + 0x98) = kind;
+        *(int*)(o + 0x48) = 0;
+        *(int*)(o + 0x4c) = 0;
+        *(int*)(o + 0x54) = 0;
+        obj = o;
+    }
+    if (kind == 27) {
+        char* o = new (D_00471A30, 0, 0) char[0xA0];
+        func_0039E2A0(o, owner);
+        *(void**)(o + 8) = D_00474670;
+        *(unsigned short*)(o + 0x58) = D_004A2088[0];
+        *(int*)(o + 0x9c) = 4;
+        *(int*)(o + 0x98) = kind;
+        *(int*)(o + 0x48) = 0;
+        *(int*)(o + 0x4c) = 0;
+        *(int*)(o + 0x54) = 0;
+        obj = o;
+    }
+    if (kind == 28) {
+        char* o = new (D_00471A30, 0, 0) char[0xA0];
+        func_0039E2A0(o, owner);
+        *(void**)(o + 8) = D_00474598;
+        *(unsigned short*)(o + 0x58) = D_004A2088[0];
+        *(int*)(o + 0x9c) = 5;
+        *(int*)(o + 0x98) = kind;
+        *(int*)(o + 0x48) = 0;
+        *(int*)(o + 0x4c) = 0;
+        *(int*)(o + 0x54) = 0;
+        obj = o;
+    }
+    if (kind == 29) {
+        char* o = new (D_00471A30, 0, 0) char[0xA0];
+        func_0039E2A0(o, owner);
+        *(void**)(o + 8) = D_00473688;
+        *(unsigned short*)(o + 0x58) = D_004A2088[0];
+        *(int*)(o + 0x98) = kind;
+        *(int*)(o + 0x48) = 0;
+        *(int*)(o + 0x4c) = 0;
+        *(int*)(o + 0x54) = 0;
+        func_001F7548(o);
+        obj = o;
+    }
+    if (kind == 30) {
+        char* o = new (D_00471A30, 0, 0) char[0xA4];
+        func_0039E2A0(o, owner);
+        *(void**)(o + 8) = D_004735B0;
+        *(unsigned short*)(o + 0x58) = D_004A2088[0];
+        *(int*)(o + 0x98) = kind;
+        *(int*)(o + 0x48) = 0;
+        *(int*)(o + 0x4c) = 0;
+        *(int*)(o + 0x54) = 0;
+        func_001F7738(o);
+        obj = o;
+    }
+    if (kind == 31) {
+        char* o = new (D_00471A30, 0, 0) char[0x9C];
+        func_0039E2A0(o, owner);
+        *(void**)(o + 8) = D_00473760;
+        *(unsigned short*)(o + 0x58) = D_004A2088[0];
+        *(int*)(o + 0x98) = kind;
+        *(int*)(o + 0x48) = 0;
+        *(int*)(o + 0x4c) = 0;
+        *(int*)(o + 0x54) = 0;
+        obj = o;
+    }
+    if (kind == 32) {
+        char* o = new (D_00471A30, 0, 0) char[0x1D4];
+        func_0039E2A0(o, owner);
+        *(int*)(o + 0x98) = kind;
+        *(unsigned short*)(o + 0x58) = D_004A2088[0];
+        *(void**)(o + 8) = D_00473320;
+        *(int*)(o + 0x48) = 0;
+        *(int*)(o + 0x4c) = 0;
+        *(int*)(o + 0x54) = 0;
+        new (o + 0x9C) sElem_AB50[8];   // inline ctor of the member array
+        obj = o;
+    }
+    if (kind == 33) {
+        char* o = new (D_00471A30, 0, 0) char[0x390];
+        func_0039E2A0(o, owner);
+        *(void**)(o + 8) = D_004733F8;
+        *(unsigned short*)(o + 0x58) = D_004A2088[0];
+        *(int*)(o + 0x98) = kind;
+        *(int*)(o + 0x48) = 0;
+        *(int*)(o + 0x4c) = 0;
+        *(int*)(o + 0x54) = 0;
+        func_002006B8(o + 0x9C);
+        obj = o;
+    }
+    if (kind == 34) {
+        obj = (char*)func_001E3C00(new (D_00471A30, 0, 0) char[0x180], owner, 0x22);
+    }
+    if (kind == 35) {
+        char* o = new (D_00471A30, 0, 0) char[0x9C];
+        func_0039E2A0(o, owner);
+        *(void**)(o + 8) = D_00473C50;
+        *(unsigned short*)(o + 0x58) = D_004A2088[0];
+        *(int*)(o + 0x98) = kind;
+        *(int*)(o + 0x48) = 0;
+        *(int*)(o + 0x4c) = 0;
+        *(int*)(o + 0x54) = 0;
+        obj = o;
+    }
+    if (kind == 36) {
+        obj = (char*)func_00211088(new (D_00471A30, 0, 0) char[0x27C], owner, 0x24,0x2a);
+    }
+    if (kind == 37) {
+        obj = (char*)func_00212138(new (D_00471A30, 0, 0) char[0x234], owner, 0x25);
+    }
+    if (kind == 38) {
+        char* o = new (D_00471A30, 0, 0) char[0xA0];
+        func_0039E2A0(o, owner);
+        *(void**)(o + 8) = D_004744C0;
+        *(unsigned short*)(o + 0x58) = D_004A2088[0];
+        *(int*)(o + 0x9c) = 6;
+        *(int*)(o + 0x98) = kind;
+        *(int*)(o + 0x48) = 0;
+        *(int*)(o + 0x4c) = 0;
+        *(int*)(o + 0x54) = 0;
+        obj = o;
+    }
+    if (kind == 39) {
+        char* o = new (D_00471A30, 0, 0) char[0xA4];
+        func_0039E2A0(o, owner);
+        *(void**)(o + 8) = D_00472AB0;
+        *(unsigned short*)(o + 0x58) = D_004A2088[0];
+        *(int*)(o + 0xa0) = 1;
+        *(int*)(o + 0x98) = kind;
+        *(int*)(o + 0x48) = 0;
+        *(int*)(o + 0x4c) = 0;
+        *(int*)(o + 0x54) = 0;
+        *(int*)(o + 0x9c) = 0;
+        obj = o;
+    }
+    if (kind == 40) {
+        char* o = new (D_00471A30, 0, 0) char[0xE4];
+        func_0039E2A0(o, owner);
+        *(int*)(o + 0x98) = kind;
+        *(unsigned short*)(o + 0x58) = D_004A2088[0];
+        *(void**)(o + 8) = D_00473248;
+        *(int*)(o + 0x48) = 0;
+        *(int*)(o + 0x4c) = 0;
+        *(int*)(o + 0x54) = 0;
+        obj = o;
+    }
+    *(void**)(obj + 0x20) = state;
+    func_0039F290(owner + 0x18, obj);
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/ovtemplatedialog", func_0020CA10);
