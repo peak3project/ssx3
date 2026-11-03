@@ -3957,7 +3957,464 @@ extern "C" void* func_001A9C50(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001A9CC0);
+#ifdef SKIP_ASM
+extern char D_00461D68[];
+extern char D_00461D88[];
+extern char D_00461DA0[];
+extern char D_00461DC0[];
+extern char D_00461DE0[];
+extern char D_00461E00[];
+extern char D_00461E20[];
+extern char D_00461E38[];
+extern char D_00461E50[];
+extern char D_00461E70[];
+extern char D_00461E88[];
+extern char D_00461EA0[];
+extern char D_00461EB8[];
+extern char D_00461ED8[];
+extern char D_00461EF0[];
+extern char D_00461F08[];
+extern char D_00461F28[];
+extern char D_00461F40[];
+extern char D_00461F60[];
+extern char D_00461F80[];
+extern char D_00461F98[];
+extern char D_00461FB0[];
+extern char D_00461FC8[];
+extern char D_00461FD8[];
+extern char D_00461FF8[];
+extern char D_00462010[];
+extern char D_00462028[];
+extern char D_00462040[];
+extern char D_00462058[];
+extern char D_00462078[];
+extern char D_00462090[];
+extern char D_004620A8[];
+extern char D_004620C8[];
+extern char D_004620E0[];
+extern char D_004620F0[];
+extern char D_00462108[];
+extern char D_00462118[];
+extern char D_00462130[];
+extern char D_00462140[];
+extern char D_00462158[];
+extern char D_00462170[];
+extern char D_00462190[];
+extern char D_004621A8[];
+extern char D_004621C0[];
+extern char D_004621D8[];
+extern char D_004621E8[];
+extern char D_00462200[];
+extern char D_00462218[];
+extern char D_00462230[];
+extern char D_00462248[];
+extern char D_00462268[];
+extern char D_00462280[];
+extern char D_00462298[];
+extern char D_004622B8[];
+extern char D_004622D0[];
+extern char D_004622E8[];
+extern char D_00462308[];
+extern char D_00462320[];
+extern char D_00462338[];
+extern char D_00462358[];
+extern char D_00462378[];
+extern char D_00462398[];
+extern char D_004623B0[];
+extern char D_004623C8[];
+extern char D_004623E0[];
+extern char D_004623F8[];
+extern char D_00462418[];
+extern char D_00462430[];
+extern char D_00462450[];
+extern char D_00462468[];
+extern char D_00462480[];
+extern char D_00462498[];
+extern char D_004624B0[];
+extern char D_004624D0[];
+extern char D_004624E8[];
+extern char D_00462510[];
+extern char D_00462528[];
+extern char D_00462548[];
+extern char D_00462560[];
+extern char D_00462580[];
+extern char D_00462598[];
+extern char D_004625B0[];
+extern char D_004625C8[];
+extern char D_004625E8[];
+extern char D_00462600[];
+extern char D_00462618[];
+extern void* D_004A2EB8;
+extern "C" void func_00255FA0(void* p);
+extern "C" void func_00318E68(cBXString* self, int idx, char ch);
+extern "C" void func_002C27C0_9CC0(char* dst, const char* fmt, void* a, char* b, char* c) __asm__("func_002C27C0");
+
+// The popup description at popup+0xBC (func_001C5630 clears it): text slots (0 = title, 1 = message; type 3 = string
+// hash, 2 = char string, 1 = unicode string), the button slots from 0x24 (func_001C57C0) and the result code at 0x94.
+struct sPopupText_9CC0 {
+    int type;
+    int value;
+};
+struct sPopupDesc_9CC0 {
+    int count;                  // 0x00
+    sPopupText_9CC0 texts[2];   // 0x04: title, message
+    char pad14[0x80];
+    int result;                 // 0x94
+};
+
+// Inline twin of the button setters func_001C5780/func_001C57C0 for the text slots.
+static inline void SetText_9CC0(sPopupDesc_9CC0* d, int i, int type, int value)
+{
+    d->texts[i].value = value;
+    d->texts[i].type = type;
+}
+
+// Title for the 'lock' code: the localised string D_004620F0 and the message's two strings formatted into a new
+// unicode buffer kept at self+0x6B8.
+static inline void SetLockText_9CC0(void* self, sPopupDesc_9CC0* d, const char* fmt, char* b, char* a)
+{
+    char* obj = *(char**)((char*)D_004A28A8 + 0x8C);
+    sVEntry<void*(void*, int)>* vt = *(sVEntry<void*(void*, int)>**)(obj + 4);
+    void* u = vt[4].fn(obj + vt[4].delta, GetHashValue32(D_004620F0));
+    int len = USTR_length(u) + strlen(b) + strlen(a) + 7;
+    if (*(void**)((char*)self + 0x6B8) != 0) {
+        cMemMan_free(*(void**)((char*)self + 0x6B8));
+        *(void**)((char*)self + 0x6B8) = 0;
+    }
+    *(void**)((char*)self + 0x6B8) = operator_new__FUi(len * 2, D_00462108, 0, 0);
+    func_002C27C0_9CC0(*(char**)((char*)self + 0x6B8), fmt, u, b, a);
+    SetText_9CC0(d, 0, 1, *(int*)((char*)self + 0x6B8));
+}
+
+static inline void SetResult_9CC0(int* res, int r)
+{
+    *res = r;
+}
+
+static inline void* GetSession_001A9CC0()
+{
+    if (D_004A3328 == 0) {
+        func_00260F80();
+    }
+    if (func_00261460(D_004A3328) == 0) {
+        func_002613C8(D_004A3328);
+    }
+    if (D_004A3328 == 0) {
+        func_0025B800(D_004A3028);
+    }
+    return D_004A3328;
+}
+
+// Fills the popup for a message whose 4-character code at data+8 picks the title text; dnsf and unknown codes call
+// func_00255FA0 and set result 0x83E, cdev sets 0x83D, and both then go through the session calls.
+extern "C" void func_001A9CC0(void* self, void** popup, void* owner, void* data)
+{
+    int reconnect = 0;
+    int cdev = 0;
+    void* p = func_001A9C50(self);
+    *popup = p;
+    sPopupDesc_9CC0* d = (sPopupDesc_9CC0*)((char*)p + 0xBC);
+    d->count = 1;
+    func_001C57C0(d, 0, GetHashValue32(D_00461618));
+    SetResult_9CC0(&d->result, 0x102);
+    switch (*(int*)((char*)data + 8)) {
+    case 0x696D7374: // 'imst'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00461D68));
+        break;
+    case 0x69706572: // 'iper'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00461D88));
+        break;
+    case 0x70617373: // 'pass'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00461DA0));
+        break;
+    case 0x64626572: // 'dber'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00461DC0));
+        break;
+    case 0x6D697373: // 'miss'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00461DE0));
+        break;
+    case 0x696E7670: // 'invp'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00461E00));
+        break;
+    case 0x6475706C: // 'dupl'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00461E20));
+        break;
+    case 0x6D617870: // 'maxp'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00461E38));
+        break;
+    case 0x64656670: // 'defp'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00461E50));
+        break;
+    case 0x6D617574: // 'maut'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00461E70));
+        SetResult_9CC0(&d->result, 0x83D);
+        break;
+    case 0x70617574: // 'paut'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00461E88));
+        break;
+    case 0x75726F6D: // 'urom'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00461EA0));
+        break;
+    case 0x756C7374: // 'ulst'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00461EB8));
+        break;
+    case 0x75757372: // 'uusr'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00461ED8));
+        break;
+    case 0x7567616D: // 'ugam'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00461EF0));
+        break;
+    case 0x756D6163: // 'umac'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00461F08));
+        break;
+    case 0x72616E67: // 'rang'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00461F28));
+        break;
+    case 0x73747274: // 'strt'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00461F40));
+        break;
+    case 0x64657465: // 'dete'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00461F60));
+        break;
+    case 0x6B69636B: // 'kick'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00461F80));
+        break;
+    case 0x686F7374: // 'host'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00461F98));
+        break;
+    case 0x696E676D: // 'ingm'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00461FB0));
+        break;
+    case 0x73656C66: // 'self'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00461FC8));
+        break;
+    case 0x6E707269: // 'npri'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00461FD8));
+        break;
+    case 0x6E726F6D: // 'nrom'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00461FF8));
+        break;
+    case 0x6E67616D: // 'ngam'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00462010));
+        break;
+    case 0x726F6F6D: // 'room'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00462028));
+        break;
+    case 0x61757468: // 'auth'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00462040));
+        break;
+    case 0x6E657730: // 'new0'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00462058));
+        break;
+    case 0x70736574: // 'pset'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00462078));
+        break;
+    case 0x6E6F776E: // 'nown'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00462090));
+        break;
+    case 0x6C6F676E: // 'logn'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_004620A8));
+        break;
+    case 0x66696C74: // 'filt'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_004620C8));
+        break;
+    case 0x6C6F636B: // 'lock'
+        SetLockText_9CC0(self, d, D_004620E0, *(char**)((char*)data + 0x10), *(char**)((char*)data + 0xC));
+        break;
+    case 0x72737276: // 'rsrv'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00462118));
+        break;
+    case 0x746F7361: // 'tosa'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00462130));
+        break;
+    case 0x73616D65: // 'same'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00462140));
+        break;
+    case 0x69676E6F: // 'igno'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00462158));
+        break;
+    case 0x6368616C: // 'chal'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00462170));
+        break;
+    case 0x67706172: // 'gpar'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00462190));
+        break;
+    case 0x66756C6C: // 'full'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_004621A8));
+        break;
+    case 0x64697361: // 'disa'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_004621C0));
+        break;
+    case 0x776F6C66: // 'wolf'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_004621D8));
+        break;
+    case 0x6B696B68: // 'kikh'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_004621E8));
+        break;
+    case 0x72616E6B: // 'rank'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00462200));
+        break;
+    case 0x626F6775: // 'bogu'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00462218));
+        break;
+    case 0x71756974: // 'quit'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00462230));
+        break;
+    case 0x736F6F6E: // 'soon'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00462248));
+        break;
+    case 0x74696D65: // 'time'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00462268));
+        break;
+    case 0x6F766572: // 'over'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00462280));
+        break;
+    case 0x62616463: // 'badc'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00462298));
+        break;
+    case 0x6F6E6C6E: // 'onln'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_004622B8));
+        break;
+    case 0x61756E72: // 'aunr'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_004622D0));
+        break;
+    case 0x6E6B696B: // 'nkik'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_004622E8));
+        break;
+    case 0x626C616B: // 'blak'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00462308));
+        break;
+    case 0x6D61696C: // 'mail'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00462320));
+        break;
+    case 0x706D616C: // 'pmal'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00462338));
+        break;
+    case 0x626F726E: // 'born'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00462358));
+        break;
+    case 0x67656E64: // 'gend'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00462378));
+        break;
+    case 0x7370616D: // 'spam'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00462398));
+        break;
+    case 0x72617574: // 'raut'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_004623B0));
+        break;
+    case 0x6E656D6C: // 'neml'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_004623C8));
+        break;
+    case 0x6D616E79: // 'many'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_004623E0));
+        break;
+    case 0x65636F6E: // 'econ'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_004623F8));
+        break;
+    case 0x6967616D: // 'igam'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00462418));
+        break;
+    case 0x69616472: // 'iadr'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00462430));
+        break;
+    case 0x6E706C61: // 'npla'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00462450));
+        break;
+    case 0x63686574: // 'chet'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00462468));
+        break;
+    case 0x746F6F79: // 'tooy'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00462480));
+        break;
+    case 0x6E737276: // 'nsrv'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00462498));
+        break;
+    case 0x69706173: // 'ipas'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_004624B0));
+        break;
+    case 0x696E616D: // 'inam'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_004624B0));
+        break;
+    case 0x656C656E: // 'elen'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_004624D0));
+        break;
+    case 0x6974726E: // 'itrn'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_004624E8));
+        break;
+    case 0x6A6F696E: // 'join'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00462510));
+        break;
+    case 0x616A6F69: // 'ajoi'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00462528));
+        break;
+    case 0x6E737063: // 'nspc'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_004621A8));
+        break;
+    case 0x6E666E64: // 'nfnd'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00462548));
+        break;
+    case 0x78697374: // 'xist'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00462560));
+        break;
+    case 0x7465616D: // 'team'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00462580));
+        break;
+    case 0x6D617874: // 'maxt'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00462598));
+        break;
+    case 0x74737461: // 'tsta'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_004625B0));
+        break;
+    case 0x696E7073: // 'inps'
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_004625C8));
+        break;
+    case 0x63646576: // 'cdev'
+        cdev = 1;
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_004625E8));
+        break;
+    case 0x646F776E: // 'down'
+    {
+        sBXString s;
+        cBXString_cBXString1(&s, (char*)data + 0xC);
+        int pos;
+        while ((pos = cBXString_FindLastOf((cBXString*)&s, '\n', 0)) != -1) {
+            int next = pos + 1;
+            if (s.str[next] == '\n') {
+                func_00318E68((cBXString*)&s, pos, '\r');
+                func_00318E68((cBXString*)&s, next, '\r');
+            } else {
+                func_00318E68((cBXString*)&s, pos, ' ');
+            }
+        }
+        SetText_9CC0(d, 0, 2, (int)s.str);
+        SetText_9CC0(d, 1, 3, GetHashValue32(D_00462600));
+        cBXString__cBXString(&s, 2);
+        break;
+    }
+    case 0x646E7366: // 'dnsf'
+        reconnect = 1;
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00461C40));
+        break;
+    default:
+        reconnect = 1;
+        SetText_9CC0(d, 0, 3, GetHashValue32(D_00462618));
+        break;
+    }
+    if (reconnect || cdev) {
+        if (reconnect) {
+            func_00255FA0(D_004A2EB8);
+            SetResult_9CC0(&d->result, 0x83E);
+        } else {
+            SetResult_9CC0(&d->result, 0x83D);
+        }
+        func_00261408(GetSession_001A9CC0());
+        func_0025B800(D_004A3028);
+        func_002636F0(func_002591B8(), 0);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001AA9B0);
