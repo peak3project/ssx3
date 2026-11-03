@@ -153,7 +153,7 @@ struct sC40Read {                   /* the read in progress */
     int *f1C;                       /* sector buffer (D_00519C80) */
 };
 struct sC40 {                       /* 0x40, D_00519C40: the CD file system */
-    unsigned int f00;               /* flags */
+    int f00;                        /* flags */
     int f04;                        /* number of files */
     int f08;                        /* reader thread */
     int f0C;                        /* semaphore (also D_00519C4C) */
@@ -5243,7 +5243,65 @@ void func_003E3B00_impl(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E3BE0);
+#ifdef SKIP_ASM
+extern void func_003E3B00_3BE0(void) __asm__("func_003E3B00");
+extern int func_00402300_3618(void) __asm__("func_00402300");
+extern void func_003E6574_2190(int, int, int) __asm__("func_003E6574");
+extern void iFILESYS_CommandCompleteCallback_33B0(int) __asm__("iFILESYS_CommandCompleteCallback");
+
+void func_003E3BE0_impl(void) __asm__("func_003E3BE0");
+void func_003E3BE0_impl(void) {
+    struct sC40Read *s = &D_00519C40.f20;
+
+    while (1) {
+        int fl;
+        func_00423DE0(D_00519C40.f0C);
+        if (func_00402300_3618() != 0 || (D_00519C40.f00 & 8)) {
+            fl = D_00519C40.f00 & ~8;
+            D_00519C40.f00 = fl;
+            if (fl & 2) {
+                if (--D_00519C40.f10 > 0) {
+                    func_003E3B00_3BE0();
+                } else {
+                    D_00519C40.f00 = fl | 4;
+                }
+            }
+            continue;
+        }
+        if (D_00519C40.f00 & 1) {
+            D_00519C40.f00 &= ~1;
+            D_00519C40.f14 = s->f0C;
+            func_003E6574_2190(s->f14, (int)D_00519C40.f20.f1C + s->f08, s->f00);
+        }
+        if (s->f04 > 0) {
+            s->f14 += s->f00;
+            s->f08 = 0;
+            s->f0C += s->f10;
+            if (s->f04 < 0x800) {
+                s->f00 = s->f04;
+                D_00519C40.f00 |= 1;
+                s->f10 = 1;
+            } else if ((s->f14 & 0x3F) != 0) {
+                s->f00 = 0x800;
+                D_00519C40.f00 |= 1;
+                s->f10 = 1;
+            } else {
+                int k = s->f04 & -0x800;
+                D_00519C40.f00 &= ~1;
+                s->f10 = k >> 11;
+                s->f00 = k;
+            }
+            s->f04 -= s->f00;
+            func_003E3B00_3BE0();
+        } else {
+            D_00519C40.f00 &= ~2;
+            iFILESYS_CommandCompleteCallback_33B0(1);
+        }
+    }
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E3D78);
 
