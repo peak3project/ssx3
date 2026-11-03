@@ -5797,7 +5797,362 @@ extern "C" void func_001E6668(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E6718);
+#ifdef SKIP_ASM
+extern "C" void cUIState_hideObjSafe(void* self, char* name);
+extern "C" void cUIState_showObjSafe(void* self, char* name);
+extern "C" unsigned short* func_002C2540(void* dst, const char* s);
+extern "C" void func_002C27C0(void* dst, const char* fmt, ...);
+extern "C" const char* func_00144BF0(void* iface);
+extern "C" char* func_00146F88(void* iface, int idx);
+extern "C" char* func_0014EEC8(void* iface, int id, int a2);
+extern "C" void func_003A0D00(void* text, unsigned short* str);
+extern "C" void func_00399730(void* obj, int hash);
+extern int D_00536708[];
+extern int D_005366A8[];
+extern char* D_00441D10[];
+extern int D_004A213C;
+struct sIdx5_6718 {
+    int v[5];
+};
+extern sIdx5_6718 D_0046E648;
+extern char D_0046E538[];
+extern char D_0046E388[];
+extern char D_0046E548[];
+extern char D_0046E398[];
+extern char D_0046E3A8[];
+extern char D_0046E3C0[];
+extern char D_0046E558[];
+extern char D_004A2140[];
+extern char D_004A2148[];
+extern char D_0046E568[];
+extern char D_0046E588[];
+extern char D_0046E5A8[];
+extern char D_0046E5C0[];
+extern char D_0046E5D8[];
+extern char D_0046E5F0[];
+extern char D_0046E608[];
+extern char D_0046E618[];
+extern char D_0046E628[];
+extern char D_004A2170[];
+extern char D_0046E638[];
+extern char D_004A2160[];
+extern char D_004A2178[];
+extern char D_0046E670[];
+extern char D_0046E688[];
+extern char D_0046E6A0[];
+extern char D_0046E6B8[];
+extern char D_0046E6D0[];
+extern char D_0046E6F0[];
+extern char D_0046E708[];
+extern char D_0046E728[];
+extern char D_0046E748[];
+extern char D_0046E768[];
+extern char D_0046E788[];
+extern char D_004A2180[];
+extern char D_004A2188[];
+extern char D_004A2190[];
+extern char D_0046E7A0[];
+extern char D_0046E4C0[];
+extern char D_0046E4D0[];
+
+// EA's 3-float vector (prototype name, as in fe/fepopup).
+struct t3Vector {
+    float x, y, z;
+};
+
+// The race setup at D_004A28A8 + 0xC0 (mode, then per-slot rider and outfit ids).
+struct sRaceSetup_6718 {
+    int mode;
+    char pad_0x4[0x14];
+    int rider[10];              // 0x18
+    int outfit[10];             // 0x40
+    char pad_0x68[0x8];
+    int f70;                    // 0x70
+};
+
+static inline unsigned short* Loc1E6718(char* name)
+{
+    char* obj = *(char**)((char*)D_004A28A8 + 0x8C);
+    sVEntry<unsigned short*(void*, int)>* vt = *(sVEntry<unsigned short*(void*, int)>**)(obj + 4);
+    return vt[4].fn(obj + vt[4].delta, GetHashValue32(name));
+}
+
+extern "C" int func_001E6718(void* self)
+{
+    if (*(int*)((char*)self + 0x9C) != 0) {
+        *(int*)((char*)self + 0x9C) = 0;
+        void* player = cBE_getInterface_Fv(cBE_getBE(), 1);
+        void* iface0 = cBE_getInterface_Fv(cBE_getBE(), 0);
+        void* net = cBE_getInterface_Fv(cBE_getBE(), 2);
+        sRaceSetup_6718* p = *(sRaceSetup_6718**)((char*)D_004A28A8 + 0xC0);
+        int mode = p->mode;
+        int track = D_00535BC8[0x48];
+        int players = D_00535BC8[0x49];
+        if ((track != 0 && players == 2) || (track == 5 || track == 6)) {
+            cUIThing* o = (cUIThing*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_0046E538));
+            o->setVisible(1);
+            t3Vector pos = *(t3Vector*)((char*)o + 0x44);
+            t3Vector v;
+            v.x = pos.x;
+            v.y = 200.0f;
+            v.z = pos.z;
+            *(t3Vector*)((char*)o + 0x44) = v;
+        }
+        cUIText* t = (cUIText*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_0046E388));
+        unsigned short name[0x38];
+        func_002C2540(name, func_00144BF0(iface0));
+        unsigned short* str = 0;
+        switch (D_00535BC8[0x48]) {
+        case 0:
+        case 5:
+            str = Loc1E6718(D_0046E548);
+            break;
+        case 1:
+            str = Loc1E6718(D_0046E398);
+            break;
+        case 2:
+            str = Loc1E6718(D_0046E3A8);
+            break;
+        case 3:
+            str = Loc1E6718(D_0046E3C0);
+            break;
+        }
+        unsigned short title[0x68];
+        // titleFmt ("%s - %s") is a variable: the target loads its %hi before the track test, which a literal
+        // argument (loaded in the else arm only) does not.
+        char* titleFmt = D_004A2140;
+        if (track == 6) {
+            func_002C27C0(title, D_0046E558, name);
+        } else {
+            func_002C27C0(title, titleFmt, name, str);
+        }
+        func_003A0E90(t, title);
+        t = (cUIText*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_004A2148));
+        if (players == 2) {
+            cUIText_setUnicodeStringByID(t, GetHashValue32(D_0046E568));
+        } else if (players == 1) {
+            cUIText_setUnicodeStringByID(t, GetHashValue32(D_0046E588));
+        } else if (track == 0) {
+            switch (mode) {
+            case 1:
+                cUIText_setUnicodeStringByID(t, GetHashValue32(D_0046E5A8));
+                break;
+            case 2:
+                cUIText_setUnicodeStringByID(t, GetHashValue32(D_0046E5C0));
+                break;
+            case 3:
+                cUIText_setUnicodeStringByID(t, GetHashValue32(D_0046E5D8));
+                break;
+            }
+        } else if (track == 5 || track == 6) {
+            cUIText_setUnicodeStringByID(t, GetHashValue32(D_0046E5F0));
+        } else {
+            cUIText_setUnicodeStringByID(t, GetHashValue32(D_0046E5D8));
+        }
+        t = (cUIText*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_0046E608));
+        if (track == 0 || track == 5) {
+            cUIText_setUnicodeStringByID(t, GetHashValue32(D_0046E618));
+        } else {
+            cUIText_setUnicodeStringByID(t, GetHashValue32(D_0046E628));
+        }
+        int count = 6;
+        if (track == 5 || track == 6) {
+            count = 2;
+        } else if (track == 0) {
+            count = *(int*)(*(char**)(*(char**)((char*)D_004A28A8 + 0x84) + 0xC) + 0x78);
+        } else if (players == 2) {
+            count = 2;
+        }
+        int pl0 = func_00146E98(player, 0);
+        int pl1;
+        int done = 0;
+        pl1 = func_00146E98(player, 1);
+        char buf[48];
+        char text[0x70];
+        for (int i = 0; i < 6; i++) {
+            int idx = D_00536708[i];
+            if (i < count) {
+                sprintf(buf, D_004A2170, i + 1);
+                int finished = 0;
+                t = (cUIText*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(buf));
+                if (i == D_00536730[pl0]) {
+                    if (D_005366A8[pl0] != 0) {
+                        finished = 1;
+                    }
+                } else if (D_00535BC8[0x49] == 2 && i == D_00536730[pl1]) {
+                    if (D_005366A8[pl1] != 0) {
+                        finished = 1;
+                    }
+                }
+                if (D_00535BC8[0x49] == 2 && i == D_00536730[pl0]) {
+                    cUIText_setAsciiString(t, func_00146F88(player, pl0));
+                } else if (D_00535BC8[0x49] == 2 && i == D_00536730[pl1]) {
+                    cUIText_setAsciiString(t, func_00146F88(player, pl1));
+                } else {
+                    int rider = p->rider[idx];
+                    int outfit = p->outfit[idx];
+                    cUIText_setAsciiString(t, func_0014EEC8(net, rider, outfit));
+                }
+                sprintf(buf, D_0046E638, i + 1);
+                t = (cUIText*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(buf));
+                if (finished) {
+                    cUIText_setAsciiString(t, D_004A2160);
+                    done = 1;
+                } else if (track == 0 || track == 5) {
+                    cUIText_setAsciiString(t, func_0020A1A8(func_004139F8(D_00536640[idx] * 0.01666666753590107f)));
+                } else {
+                    unsigned int time = D_00536640[idx];
+                    sprintf(text, D_004A2138, time);
+                    cUIText_setAsciiString(t, text);
+                }
+            } else {
+                sprintf(buf, D_004A2170, i + 1);
+                cUIState_hideObjSafe(self, buf);
+                sprintf(buf, D_0046E638, i + 1);
+                cUIState_hideObjSafe(self, buf);
+                sprintf(buf, D_004A2178, i + 1);
+                cUIState_hideObjSafe(self, buf);
+            }
+        }
+        sIdx5_6718 ids = D_0046E648;
+        int same = 0;
+        if (players == 2 && track != 0 && track != 5) {
+            same = D_00536640[pl0] == D_00536640[pl1];
+        }
+        t = (cUIText*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_0046E660));
+        if (players != 2) {
+            if (track == 5 || track == 6) {
+                if (D_00536730[pl0] == 0) {
+                    cUIText_setUnicodeStringByID(t, GetHashValue32(D_0046E670));
+                } else {
+                    cUIText_setUnicodeStringByID(t, GetHashValue32(D_0046E688));
+                }
+            } else if (track == 0 && mode < 3) {
+                if (D_00536730[pl0] < 3) {
+                    ids.v[0] = 1;
+                    if (mode == 1) {
+                        cUIText_setUnicodeStringByID(t, GetHashValue32(D_0046E6A0));
+                    } else {
+                        cUIText_setUnicodeStringByID(t, GetHashValue32(D_0046E6B8));
+                    }
+                } else if (mode == 1) {
+                    cUIText_setUnicodeStringByID(t, GetHashValue32(D_0046E6D0));
+                } else {
+                    cUIText_setUnicodeStringByID(t, GetHashValue32(D_0046E6F0));
+                }
+            } else if (D_004A213C != 0) {
+                cUIText_setUnicodeStringByID(t, GetHashValue32(D_0046E708));
+            } else if (D_00536730[pl0] == 0) {
+                cUIText_setUnicodeStringByID(t, GetHashValue32(D_0046E728));
+            } else if (D_00536730[pl0] == 1) {
+                cUIText_setUnicodeStringByID(t, GetHashValue32(D_0046E748));
+            } else if (D_00536730[pl0] == 2) {
+                cUIText_setUnicodeStringByID(t, GetHashValue32(D_0046E768));
+            } else {
+                cUIText_setUnicodeStringByID(t, GetHashValue32(D_0046E688));
+            }
+            if (players == 1) {
+                ids.v[0] = 3;
+            }
+        } else {
+            ids.v[0] = 3;
+            if (*(int*)(*(char**)(*(char**)((char*)D_004A28A8 + 0x84) + 0xC) + 0x78) != players || same) {
+                ((cUIThing*)t)->setVisible(0);
+            } else {
+                if (D_00536730[pl0] < D_00536730[pl1]) {
+                    func_002C2540(text, func_00146F88(player, pl0));
+                } else {
+                    func_002C2540(text, func_00146F88(player, pl1));
+                }
+                unsigned short msg[200];
+                unsigned short* msgFmt = Loc1E6718(D_0046E788);
+                func_002C26D0(msg, msgFmt, (unsigned short*)text);
+                func_003A0D00(t, msg);
+            }
+        }
+        if (done && players != 2 && players != 1) {
+            ids.v[0] = 2;
+        }
+        int show2 = 0;
+        cUIState_hideObjSafe(self, D_004A2180);
+        cUIState_hideObjSafe(self, D_004A2188);
+        cUIState_hideObjSafe(self, D_004A2190);
+        int show1 = 1;
+        if (D_00535BC8[0x49] != 2 && (track == 5 || track == 6) && D_00536730[pl0] != 0) {
+            show1 = 0;
+        }
+        if (pl1 != -1 && D_00535BC8[0x49] == 2) {
+            show2 = 1;
+            if ((track >= 1 && track <= 3) || track == 5 || track == 6) {
+                if (D_00536730[pl0] < D_00536730[pl1]) {
+                    show2 = 0;
+                } else {
+                    show1 = 0;
+                }
+            }
+        }
+        if (same) {
+            show1 = 0;
+            show2 = 0;
+        }
+        if (mode == 3 || track == 5 || track == 6) {
+            if (show1) {
+                if (D_00536730[pl0] == 0) {
+                    cUIState_showObjSafe(self, D_004A2180);
+                } else if (D_00536730[pl0] == 1) {
+                    cUIState_showObjSafe(self, D_004A2188);
+                } else if (D_00536730[pl0] == 2) {
+                    cUIState_showObjSafe(self, D_004A2190);
+                }
+                if (D_00535BC8[0x49] == 0 && D_004A213C != 0) {
+                    void* m = cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_004A2180));
+                    func_00399730(m, GetHashValue32(D_0046E7A0));
+                }
+            }
+            if (show2) {
+                if (D_00536730[pl1] == 0) {
+                    cUIState_showObjSafe(self, D_004A2180);
+                } else if (D_00536730[pl1] == 1) {
+                    cUIState_showObjSafe(self, D_004A2188);
+                } else if (D_00536730[pl1] == 2) {
+                    cUIState_showObjSafe(self, D_004A2190);
+                }
+            }
+        }
+        int netIds[1] = { 8 };
+        for (int i = 0; i < 5; i++) {
+            sprintf(text, D_0046E4C0, i);
+            cUIThing* button = (cUIThing*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(text));
+            if (button != 0) {
+                cBE_getInterface_Fv(*(void**)((char*)D_004A28A8 + 0x78), 7);
+                if (D_00534B30[0] != 0) {
+                    if (i < 1) {
+                        cUIText_setUnicodeStringByID((cUIText*)button, GetHashValue32(D_00441D10[netIds[i]]));
+                        *(int*)((char*)button + 0x18) = netIds[i];
+                    } else {
+                        button->setVisible(0);
+                        button->setStatic(1);
+                    }
+                } else {
+                    if (i < 5) {
+                        cUIText_setUnicodeStringByID((cUIText*)button, GetHashValue32(D_00441D10[ids.v[i]]));
+                        if (i == 0 && ids.v[0] == 1 && p->f70 == 3) {
+                            cUIText_setUnicodeStringByID((cUIText*)button, GetHashValue32(D_0046E4D0));
+                        }
+                        *(int*)((char*)button + 0x18) = ids.v[i];
+                    } else {
+                        button->setVisible(0);
+                        button->setStatic(1);
+                    }
+                }
+            }
+        }
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E7558);
