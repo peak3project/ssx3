@@ -572,7 +572,176 @@ extern "C" void func_0026F180(cReplayFramePtr_F180* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("replay/frameptr", func_0026F228);
+#ifdef SKIP_ASM
+extern char* D_004A28A8;
+void func_0026F498(void* self);
+void func_0026F4A0(void* self, int state);
+void func_0026D168(void* obj);
+void func_0026E5C0(void* list);
+extern "C" void func_0026E5D0(void* list, void* ent);
+extern "C" void func_003E6448(void* dst, int c, int n);
+
+struct sFpEntryF228 {
+    char pad[0x38];
+};
+
+struct sFpSlotF228 {
+    int id;
+    char data[0xAC];
+    int fB0;
+    void Clear()
+    {
+        fB0 = 0;
+        id = -1;
+        func_003E6448(data, 0, sizeof(data));
+    }
+    void SetId(int n)
+    {
+        id = n;
+    }
+};
+
+struct sFpMainF228 {
+    int state;                      // 0x0
+    int f4;                         // 0x4
+    int count;                      // 0x8
+    int fC;                         // 0xC
+    int f10;                        // 0x10
+    char pad14[0x1C - 0x14];
+    int f1C;                        // 0x1C
+    int f20;                        // 0x20
+    char pad24[0x28 - 0x24];
+    int f28;                        // 0x28
+    sFpEntryF228 entries[(0x3AC - 0x2C) / 0x38];   // 0x2C
+    int f3AC;                       // 0x3AC
+    char list0[0xC];                // 0x3B0
+    char list1[0xC];                // 0x3BC
+    int f3C8;                       // 0x3C8
+    int f3CC;                       // 0x3CC
+    int f3D0;                       // 0x3D0
+    int f3D4;                       // 0x3D4
+    char pad3D8[0x484 - 0x3D8];
+    int f484;                       // 0x484
+    int f488;                       // 0x488
+    void* slotObj[2];               // 0x48C
+    sFpSlotF228 slots[2];           // 0x494
+    char pad5FC[0x608 - 0x5FC];
+    int f608;
+    int f60C;
+    int f610;
+    int f614;
+    int f618;
+    int f61C;
+    int f620;
+    int f624;
+    int f628;
+    int f62C;
+    int f630;
+    int f634;
+    int f638;
+    int f63C;
+    int f640;
+    int f644;
+    int f648;
+    int f64C;
+    int f650;
+    int f654;
+    int f658;
+    int f65C;
+    int f660;
+    int f664;
+    int f668;
+    int f66C;
+    int f670;
+    int f674;
+    int f678;
+    int f67C;
+};
+static inline bool isIdle_F228(int s)
+{
+    return !(s == 14 || s == 15);
+}
+
+// Release build: asserts compile to nothing.
+#define ASSERT_F228(cond) do { } while (0)
+
+extern "C" void func_0026F228_F228(void* p) __asm__("func_0026F228");
+extern "C" void func_0026F228_F228(void* p)
+{
+    sFpMainF228* self = (sFpMainF228*)p;
+    int i;
+    if (isIdle_F228(self->state)) {
+        func_0026F498(self);
+        self->f4 = 15;
+        func_0026F4A0(self, 10);
+        self->f60C = 0;
+        self->f610 = 0;
+        self->f614 = 0;
+        self->f628 = 0;
+        self->f62C = 0;
+        self->f28 = 0;
+        self->f608 = 0;
+        self->f484 = 0;
+        self->f3C8 = 0;
+        self->f3CC = 0;
+        self->f488 = 0;
+        self->f3D4 = 0;
+        self->f3AC = 0;
+        self->f3D0 = 0;
+        self->f1C = 0;
+        self->f20 = 0;
+        self->f618 = 0;
+        self->f61C = 0;
+        self->f620 = 0;
+        self->f624 = 0;
+        self->f63C = 0;
+        self->f650 = 0;
+        self->f640 = 0;
+        self->f644 = 0;
+        self->f648 = 0;
+        self->f638 = 0;
+        self->f64C = 0;
+        self->f654 = 0;
+        self->f658 = 0;
+        self->f65C = 0;
+        self->f660 = 0;
+        self->f664 = 0;
+        self->f66C = 0;
+        self->f674 = 0;
+        self->f678 = 0;
+        self->f67C = 0;
+        self->f668 = 0;
+        for (i = 0; i < 2; i++) {
+            if (self->slotObj[i] != 0) {
+                func_0026D168(self->slotObj[i]);
+            }
+            self->slots[i].Clear();
+            self->slots[i].SetId(i);
+        }
+        func_0026E5C0(self->list0);
+        func_0026E5C0(self->list1);
+        for (i = 0; i < self->count; i++) {
+            func_0026E5D0(self->list1, &self->entries[i]);
+        }
+        self->f630 = 0;
+        self->f634 = 0;
+        // numOverhead is the prototype's own variable (replay.cpp assert below); its 3 stays
+        // in $6 ahead of the branch and feeds both stores, where literals give bnel + li.
+        int numOverhead = 3;
+        if (*(int*)(*(char**)(*(char**)(D_004A28A8 + 0x84) + 0xC) + 0x7C) == 1) {
+            self->fC = 3;
+            self->f10 = 3;
+        } else {
+            self->fC = 1;
+            self->f10 = 0;
+            numOverhead = 4;
+        }
+        ASSERT_F228(((MaxChapters + MaxPlayerHighlights) * AI()->getNumPlayers() + numOverhead) <= MaxFrames);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("replay/frameptr", func_0026F428);
