@@ -95,7 +95,7 @@ static __inline__ unsigned char *shapeTail(unsigned char *s) {
 struct sSeqHdr { char pad[6]; unsigned char n; unsigned char f7; char pad8[4]; unsigned short ids[1]; };
 /* A layer header: cnt >> 2 conditions (low 2 bits: mode), each at word offset list[i]. */
 struct sLayer { char pad[4]; unsigned char cnt; unsigned char n5; unsigned char n6; char pad7; unsigned char list[1]; };
-struct sCond { unsigned short id; unsigned char idx; unsigned char mode; signed char n; char pad5[3]; unsigned char a[8]; unsigned char b[8]; };
+struct sCond { unsigned short id; unsigned char idx; unsigned char mode; signed char n; char pad5[3]; unsigned char a[8]; unsigned char b[4]; unsigned int m[4]; };
 
 //100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003D6498);
