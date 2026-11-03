@@ -103,7 +103,9 @@ public:
     int state;                     // 0x1BC
     int f1C0;                      // 0x1C0
     int f1C4;                      // 0x1C4
-    char pad_0x1C8[0x218 - 0x1C8];
+    char pad_0x1C8[0x1EC - 0x1C8];
+    int f1EC;                      // 0x1EC (set to 1 by the popup handler on message 16)
+    char pad_0x1F0[0x218 - 0x1F0];
     char* box;                     // 0x218
     char pad_0x21C[0x22C - 0x21C];
     uMemCardFlags flags;           // 0x22C
