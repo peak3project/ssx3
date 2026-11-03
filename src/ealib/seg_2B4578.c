@@ -16588,7 +16588,61 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003D2350);
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003D25F0);
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D2A68);
+#ifdef SKIP_ASM
+extern int f5450_2A68(int) __asm__("func_003D5450");
+extern int func_003D5330(unsigned int mask);
+extern void func_003D4C40(void);
+extern void fAE100_2A68(void) __asm__("func_002AE100");
+extern void fAE690_2A68(int) __asm__("func_002AE690");
+
+static inline int isOff_2A68(unsigned int m, int b) { return ((m >> b) & 1) == 0; }
+struct sPathVoice *func_003D2A68_impl(unsigned int mask) __asm__("func_003D2A68");
+struct sPathVoice *func_003D2A68_impl(unsigned int mask) {
+    struct sPathVoice *e = 0;
+    int i, j;
+    unsigned int fl, t, u;
+    int st;
+    if (D_0044F42C == 0) return 0;
+    if (D_0044F430 != 0) return 0;
+    if (f5450_2A68(-1) == 0) return 0;
+    for (i = 0; i < 4; i++) {
+        if (D_00517610[i].f34 != 0) {
+            fl = D_00517610[i].f30;
+            t = fl & 0xF0000000;
+            if ((t & mask) != 0) {
+                u = fl & 0x0F000000;
+                if ((u & mask) != 0 && f5450_2A68(i & 0xFF) != 0) {
+                    for (j = 0; j < 24; j++) {
+                        int handle;
+                        e = D_0044F420->f58[j];
+                        if (e == 0 || isOff_2A68(mask, j)) continue;
+                        handle = e->f54;
+                        D_0044F420->f58[j] = 0;
+                        fAE690_2A68(handle);
+                        goto done;
+                    }
+                }
+            }
+        }
+    }
+done:
+    if (func_003D5330(0x1000000 << i) == 0) {
+        D_0044F420->f34 = 0;
+        D_0044F420->fB8 = 0;
+        func_003D4C40();
+    }
+    st = func_003D5330(0x0F000000);
+    if (D_0044F42C != 0 && st == 0 && e != 0) {
+        fAE100_2A68();
+        D_0044F42C = 0;
+    }
+    D_0044F430 = 0;
+    D_0044F420 = 0;
+    return e;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D2C20);
