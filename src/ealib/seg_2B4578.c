@@ -1562,7 +1562,89 @@ void func_003B5540(unsigned arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B55F0);
+#ifdef SKIP_ASM
+extern void func_003C2438(void);
+extern void f_89E0_55F0(int) __asm__("func_003B89E0");
+extern void f_A7B0_55F0(int) __asm__("func_003BA7B0");
+extern void f_25E0_55F0(int) __asm__("func_003C25E0");
+extern void f_2A50_55F0(int) __asm__("func_003C2A50");
+
+void func_003B55F0(void) {
+    int i;
+    int dirty;
+    struct sA8E8Chan *e;
+    struct sA8E8Env *q;
+
+    D_0050A8E8.f180++;
+    func_003C2438();
+    for (i = 0; i < D_0050A8E8.f177; i++) {
+        D_0050A8E8.f184[i]();
+    }
+    for (i = 0; i < D_0050A8E8.f17E; i++) {
+        e = &D_0050A8E8.f1F0[i];
+        if (e->f69 != 1 || e->f00 < 0) {
+            continue;
+        }
+        if (e->f7C != 0) {
+            if (++e->f68 >= e->f66) {
+                e->f68 = 0;
+            }
+            e->f86 = 0;
+            func_003BA938(i);
+            f_25E0_55F0(i);
+        }
+        dirty = 0;
+        if (e->f78 != 0) {
+            dirty = 1;
+            if (++e->f67 >= e->f65) {
+                e->f67 = 0;
+            }
+        }
+        if (e->f30 != 0) {
+            e->f38 += e->f30;
+            dirty = 1;
+            if (e->f30 < 0) {
+                if (e->f38 <= e->f34) {
+                    e->f38 = e->f34;
+                    e->f30 = 0;
+                }
+            } else if (e->f38 >= e->f34) {
+                e->f38 = e->f34;
+                e->f30 = 0;
+            }
+            if (e->f38 < 0) {
+                f_89E0_55F0(e->f00);
+                continue;
+            }
+        }
+        e->f44--;
+        if (e->f3C != 0) {
+            e->f40 += e->f3C;
+            dirty = 1;
+        }
+        if (e->f44 == 0) {
+            if (++e->f5D >= e->f5C) {
+                f_89E0_55F0(e->f00);
+                continue;
+            }
+            q = &e->f6C[e->f5D];
+            e->f44 = q->f00;
+            if (e->f44 < 0) {
+                e->f44 = 0x7FFFFFFF;
+            }
+            e->f3C = ((q->f04 << 16) - e->f40) / e->f44;
+        }
+        if (dirty) {
+            f_A7B0_55F0(i);
+            if (e->f00 >= 0) {
+                f_2A50_55F0(i);
+            }
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B5860);
