@@ -109,14 +109,14 @@ struct sA8E8Chan {                  /* 0x8C, D_0050A8E8.f1F0[f17E] (also D_0050A
     unsigned short f1C;
     unsigned short f1E;
     unsigned short f20;
-    char pad22;
+    unsigned char f22;
     unsigned char f23;              /* number of f04 entries */
     unsigned short f24;
     unsigned char f26;
     unsigned char f27;
     short f28;
     unsigned char f2A;
-    char pad2B;
+    unsigned char f2B;
     unsigned int f2C;
     int f30;
     int f34;
@@ -126,7 +126,8 @@ struct sA8E8Chan {                  /* 0x8C, D_0050A8E8.f1F0[f17E] (also D_0050A
     int f44;
     float f48;
     unsigned short f4C;
-    char pad4E[0x5C - 0x4E];
+    char pad4E[0x50 - 0x4E];
+    unsigned short f50[6];
     signed char f5C;                /* number of f6C steps */
     signed char f5D;
     signed char f5E;
@@ -142,7 +143,7 @@ struct sA8E8Chan {                  /* 0x8C, D_0050A8E8.f1F0[f17E] (also D_0050A
     signed char f69;
     unsigned short f6A;
     struct sA8E8Env *f6C;
-    char pad70[0x74 - 0x70];
+    int f70;
     signed char *f74;
     signed char *f78;
     signed char *f7C;
