@@ -908,7 +908,275 @@ extern "C" int func_00204FF0(void* self, int peak)
 
 INCLUDE_ASM("fe/uitemplatemap", cUITemplate_MAP_setupPeakGoals);
 
+//100%
 INCLUDE_ASM("fe/uitemplatemap", cUITemplate_MAP_showEventPath);
+#ifdef SKIP_ASM
+extern "C" int func_004165A8(const char*, const char*);
+extern char D_004A2560[];
+extern char D_004714B0[];
+extern char D_004714C0[];
+extern char D_004714D0[];
+extern char D_004714E0[];
+extern char D_004714F0[];
+extern char D_00471500[];
+extern char D_00471510[];
+extern char D_00471520[];
+extern char D_00471530[];
+extern char D_00471548[];
+extern char D_00471558[];
+extern char D_00471568[];
+extern char D_00471580[];
+extern char D_00471590[];
+extern char D_004715A0[];
+// The path-name lists the function copies onto the stack (retail rodata/sdata tables).
+struct sPaths6 { char* p[6]; };
+struct sPaths5 { char* p[5]; };
+struct sPaths3 { char* p[3]; };
+struct sPaths2 { char* p[2]; };
+extern const sPaths6 D_004713A8;
+extern const sPaths6 D_00471420;
+extern const sPaths5 D_00471488;
+extern const sPaths3 D_004714A0;
+extern const sPaths2 D_004A26A8[];
+extern const sPaths2 D_004A26B0[];
+extern const sPaths2 D_004A26B8[];
+extern const sPaths2 D_004A26C0[];
+extern const sPaths2 D_004A26C8[];
+// One 0x6C-byte entry of the event path tables; the symbols point at its path-name field.
+struct sPathName {
+    char name[0x6C];
+};
+extern sPathName D_00478225[];
+extern sPathName D_00478735[];
+extern sPathName D_004783D5[];
+extern sPathName D_00478951[];
+extern sPathName D_00478585[];
+extern sPathName D_00478B6D[];
+
+// Path widget: a cUIThing whose slot 11 is setColor (as in fe/feasyncfile).
+class cUIObj_ShowPath : public cUIThing {
+public:
+    virtual void v10();
+    virtual void setColor(float* c);
+};
+
+extern "C" void cUITemplate_MAP_showEventPath(void* tmpl, char* name)
+{
+    char* self = (char*)tmpl;
+    float colA[4];
+    float colB[4];
+    colA[0] = 1.0f;
+    colA[1] = 0.8901961445808411f;
+    colA[2] = 0.16470588743686676f;
+    colA[3] = 0.03529411926865578f;
+    colB[0] = 1.0f;
+    colB[1] = 0.8705883026123047f;
+    colB[2] = 0.5176470875740051f;
+    colB[3] = 0.13333334028720856f;
+    sPaths6 a0 = D_004713A8;
+    sPaths6 a1 = D_00471420;
+    sPaths5 a2 = D_00471488;
+    sPaths3 a3 = D_004714A0;
+    sPaths2 b0 = D_004A26A8[0];
+    sPaths2 b1 = D_004A26B0[0];
+    sPaths2 b2 = D_004A26B8[0];
+    sPaths2 b3 = D_004A26C0[0];
+    sPaths2 b4 = D_004A26C8[0];
+    cUIObj_ShowPath* o = (cUIObj_ShowPath*)cUIScreen_getObjectByHashName(*(void**)(self + 0x2E8), GetHashValue32(name));
+    if (o != 0 || func_004165A8(name, D_004A2560) == 0) {
+        switch (D_004A25A4) {
+        case 0: {
+            for (int i = 0; i < 6; i++) {
+                o = (cUIObj_ShowPath*)cUIScreen_getObjectByHashName(*(void**)(self + 0x2E8), GetHashValue32(a0.p[i]));
+                if (o != 0) {
+                    if (func_004165A8(a0.p[i], name) == 0)
+                        o->setColor(colA);
+                    else
+                        o->setColor(colB);
+                }
+            }
+            break;
+        }
+        case 1: {
+            for (int i = 0; i < 6; i++) {
+                o = (cUIObj_ShowPath*)cUIScreen_getObjectByHashName(*(void**)(self + 0x2E8), GetHashValue32(a1.p[i]));
+                if (o != 0) {
+                    if (func_004165A8(a1.p[i], name) == 0)
+                        o->setColor(colA);
+                    else
+                        o->setColor(colB);
+                }
+            }
+            break;
+        }
+        case 2: {
+            for (int i = 0; i < 5; i++) {
+                o = (cUIObj_ShowPath*)cUIScreen_getObjectByHashName(*(void**)(self + 0x2E8), GetHashValue32(a2.p[i]));
+                if (o != 0) {
+                    if (func_004165A8(a2.p[i], name) == 0)
+                        o->setColor(colA);
+                    else
+                        o->setColor(colB);
+                }
+            }
+            break;
+        }
+        }
+    } else {
+        if (func_004165A8(name, D_004714B0) == 0) {
+            for (int i = 0; i < 6; i++) {
+                o = (cUIObj_ShowPath*)cUIScreen_getObjectByHashName(*(void**)(self + 0x2E8), GetHashValue32(a0.p[i]));
+                if (o != 0) {
+                    o->setColor(colB);
+                    for (int j = 0; j < 3; j++) {
+                        if (func_004165A8(a0.p[i], a3.p[j]) == 0)
+                            o->setColor(colA);
+                    }
+                }
+            }
+        } else if (func_004165A8(name, D_004714C0) == 0) {
+            for (int i = 0; i < 6; i++) {
+                o = (cUIObj_ShowPath*)cUIScreen_getObjectByHashName(*(void**)(self + 0x2E8), GetHashValue32(a0.p[i]));
+                if (o != 0) {
+                    o->setColor(colB);
+                    for (int j = 0; j < 2; j++) {
+                        if (func_004165A8(a0.p[i], b0.p[j]) == 0)
+                            o->setColor(colA);
+                    }
+                }
+            }
+        } else if (func_004165A8(name, D_004714D0) == 0) {
+            for (int i = 0; i < 6; i++) {
+                o = (cUIObj_ShowPath*)cUIScreen_getObjectByHashName(*(void**)(self + 0x2E8), GetHashValue32(a1.p[i]));
+                if (o != 0) {
+                    o->setColor(colB);
+                    for (int j = 0; j < 2; j++) {
+                        if (func_004165A8(a1.p[i], b1.p[j]) == 0)
+                            o->setColor(colA);
+                    }
+                }
+            }
+        } else if (func_004165A8(name, D_004714E0) == 0) {
+            for (int i = 0; i < 6; i++) {
+                o = (cUIObj_ShowPath*)cUIScreen_getObjectByHashName(*(void**)(self + 0x2E8), GetHashValue32(a1.p[i]));
+                if (o != 0) {
+                    o->setColor(colB);
+                    for (int j = 0; j < 2; j++) {
+                        if (func_004165A8(a1.p[i], b2.p[j]) == 0)
+                            o->setColor(colA);
+                    }
+                }
+            }
+        } else if (func_004165A8(name, D_004714F0) == 0) {
+            for (int i = 0; i < 5; i++) {
+                o = (cUIObj_ShowPath*)cUIScreen_getObjectByHashName(*(void**)(self + 0x2E8), GetHashValue32(a2.p[i]));
+                if (o != 0) {
+                    o->setColor(colB);
+                    for (int j = 0; j < 2; j++) {
+                        if (func_004165A8(a2.p[i], b3.p[j]) == 0)
+                            o->setColor(colA);
+                    }
+                }
+            }
+        } else if (func_004165A8(name, D_00471500) == 0) {
+            for (int i = 0; i < 5; i++) {
+                o = (cUIObj_ShowPath*)cUIScreen_getObjectByHashName(*(void**)(self + 0x2E8), GetHashValue32(a2.p[i]));
+                if (o != 0) {
+                    o->setColor(colB);
+                    for (int j = 0; j < 2; j++) {
+                        if (func_004165A8(a2.p[i], b4.p[j]) == 0)
+                            o->setColor(colA);
+                    }
+                }
+            }
+        } else if (func_004165A8(name, D_00471510) == 0) {
+            for (int i = 0; i < 6; i++) {
+                o = (cUIObj_ShowPath*)cUIScreen_getObjectByHashName(*(void**)(self + 0x2E8), GetHashValue32(a0.p[i]));
+                if (o != 0)
+                    o->setColor(colB);
+            }
+            for (int k = 0; k < 3; k++) {
+                o = (cUIObj_ShowPath*)cUIScreen_getObjectByHashName(*(void**)(self + 0x2E8), GetHashValue32(D_00478225[k].name));
+                if (o != 0)
+                    o->setColor(colA);
+            }
+        } else if (func_004165A8(name, D_00471520) == 0) {
+            for (int i = 0; i < 6; i++) {
+                o = (cUIObj_ShowPath*)cUIScreen_getObjectByHashName(*(void**)(self + 0x2E8), GetHashValue32(a0.p[i]));
+                if (o != 0)
+                    o->setColor(colB);
+            }
+            for (int k = 0; k < 4; k++) {
+                o = (cUIObj_ShowPath*)cUIScreen_getObjectByHashName(*(void**)(self + 0x2E8), GetHashValue32(D_00478735[k].name));
+                if (o != 0)
+                    o->setColor(colA);
+            }
+        } else if (func_004165A8(name, D_00471530) == 0) {
+            for (int i = 0; i < 6; i++) {
+                o = (cUIObj_ShowPath*)cUIScreen_getObjectByHashName(*(void**)(self + 0x2E8), GetHashValue32(a0.p[i]));
+                if (o != 0)
+                    o->setColor(colA);
+            }
+        } else if (func_004165A8(name, D_00471548) == 0) {
+            for (int i = 0; i < 6; i++) {
+                o = (cUIObj_ShowPath*)cUIScreen_getObjectByHashName(*(void**)(self + 0x2E8), GetHashValue32(a1.p[i]));
+                if (o != 0)
+                    o->setColor(colB);
+            }
+            for (int k = 0; k < 3; k++) {
+                o = (cUIObj_ShowPath*)cUIScreen_getObjectByHashName(*(void**)(self + 0x2E8), GetHashValue32(D_004783D5[k].name));
+                if (o != 0)
+                    o->setColor(colA);
+            }
+        } else if (func_004165A8(name, D_00471558) == 0) {
+            for (int i = 0; i < 6; i++) {
+                o = (cUIObj_ShowPath*)cUIScreen_getObjectByHashName(*(void**)(self + 0x2E8), GetHashValue32(a1.p[i]));
+                if (o != 0)
+                    o->setColor(colB);
+            }
+            for (int k = 0; k < 4; k++) {
+                o = (cUIObj_ShowPath*)cUIScreen_getObjectByHashName(*(void**)(self + 0x2E8), GetHashValue32(D_00478951[k].name));
+                if (o != 0)
+                    o->setColor(colA);
+            }
+        } else if (func_004165A8(name, D_00471568) == 0) {
+            for (int i = 0; i < 6; i++) {
+                o = (cUIObj_ShowPath*)cUIScreen_getObjectByHashName(*(void**)(self + 0x2E8), GetHashValue32(a1.p[i]));
+                if (o != 0)
+                    o->setColor(colA);
+            }
+        } else if (func_004165A8(name, D_00471580) == 0) {
+            for (int i = 0; i < 5; i++) {
+                o = (cUIObj_ShowPath*)cUIScreen_getObjectByHashName(*(void**)(self + 0x2E8), GetHashValue32(a2.p[i]));
+                if (o != 0)
+                    o->setColor(colB);
+            }
+            for (int k = 0; k < 2; k++) {
+                o = (cUIObj_ShowPath*)cUIScreen_getObjectByHashName(*(void**)(self + 0x2E8), GetHashValue32(D_00478585[k].name));
+                if (o != 0)
+                    o->setColor(colA);
+            }
+        } else if (func_004165A8(name, D_00471590) == 0) {
+            for (int i = 0; i < 5; i++) {
+                o = (cUIObj_ShowPath*)cUIScreen_getObjectByHashName(*(void**)(self + 0x2E8), GetHashValue32(a2.p[i]));
+                if (o != 0)
+                    o->setColor(colB);
+            }
+            for (int k = 0; k < 4; k++) {
+                o = (cUIObj_ShowPath*)cUIScreen_getObjectByHashName(*(void**)(self + 0x2E8), GetHashValue32(D_00478B6D[k].name));
+                if (o != 0)
+                    o->setColor(colA);
+            }
+        } else if (func_004165A8(name, D_004715A0) == 0) {
+            for (int i = 0; i < 5; i++) {
+                o = (cUIObj_ShowPath*)cUIScreen_getObjectByHashName(*(void**)(self + 0x2E8), GetHashValue32(a2.p[i]));
+                if (o != 0)
+                    o->setColor(colA);
+            }
+        }
+    }
+}
+#endif
 
 INCLUDE_ASM("fe/uitemplatemap", func_00207430);
 
