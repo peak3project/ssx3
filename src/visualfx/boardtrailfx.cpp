@@ -211,7 +211,92 @@ extern "C" void func_002E8560(func_002E8560_sTrail* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("visualfx/boardtrailfx", func_002E86F0);
+#ifdef SKIP_ASM
+struct sBTV4_86F0 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+// The trail part of cBoardTrailFX that this function uses (see func_002E8938's sBTrail_8938).
+struct sBTrail_86F0 {
+    char* rider;                // 0x00 virtual base pointer (the cRider part)
+    char pad04[0x94 - 0x04];
+    int state;                  // 0x94
+    char pad98[0xB0 - 0x98];
+    sBTV4_86F0 lastPos;         // 0xB0
+    char padC0[0xE0 - 0xC0];
+    int delay;                  // 0xE0
+};
+
+// PORT: PS2-only VU0 inline asm (a - b).
+static inline sBTV4_86F0 btSub_86F0(const sBTV4_86F0& a, const sBTV4_86F0& b)
+{
+    sBTV4_86F0 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4-component vector length).
+static inline float btLength_86F0(const sBTV4_86F0& v)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %1, $vi22\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(v));
+    return r;
+}
+
+// Same test as func_002E87E8's boardTrailCanDraw.
+static inline int boardTrailCanDraw_86F0(char* r)
+{
+    int ok = 0;
+    if (*(int*)(r + 0xAC4) != 0 && *(int*)(r + 0xAD0) == 0) ok = *(int*)(r + 0xAFC) != 0;
+    return ok;
+}
+
+// Decides whether the trail starts a new segment this frame: forced (state 1), the rider moved far enough
+// from the last segment, or the direction turned enough (d = dot of the new and last direction).
+extern "C" int func_002E86F0(sBTrail_86F0* self, float d)
+{
+    if (self->delay > 0) {
+        self->delay--;
+        return 0;
+    }
+    sBTV4_86F0 dist = btSub_86F0(*(sBTV4_86F0*)(self->rider + 0x460), self->lastPos);
+    float maxLen = 110.0f;
+    float len = btLength_86F0(dist);
+    if (boardTrailCanDraw_86F0(self->rider)) {
+        maxLen = 30.0f;
+    }
+    if (self->state == 1 || maxLen <= len || d < 0.999f) {
+        if (self->state == 1) {
+            self->delay = 2;
+        }
+        self->lastPos = *(sBTV4_86F0*)(self->rider + 0x460);
+        return 1;
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("visualfx/boardtrailfx", func_002E87E8);
