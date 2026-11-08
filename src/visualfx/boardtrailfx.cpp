@@ -271,7 +271,547 @@ extern "C" int func_002E87E8(char** self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("visualfx/boardtrailfx", func_002E8938);
+#ifdef SKIP_ASM
+// Segments in the trail ring buffer (the prototype asserts BufHead < kTrailNumSeg).
+enum { kTrailNumSeg = 54 };
+
+struct sBTV4_8938 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+struct sBTMtx_8938 {
+    sBTV4_8938 row[4];
+};
+
+// One trail vertex: texture coordinates, integer colour (0..255) and position.
+struct sBTVtx_8938 {
+    float u, v, q;
+    int f0C;
+    int r, g, b, a;
+    sBTV4_8938 pos;
+};
+
+// The trail part of cBoardTrailFX (the cRider virtual base follows at +0xF0).
+struct sBTrail_8938 {
+    char* rider;                // 0x00 virtual base pointer (the cRider part)
+    float w1;                   // 0x04
+    float w2;                   // 0x08
+    int flip;                   // 0x0C
+    sBTVtx_8938* strip[6];      // 0x10
+    int f28;                    // 0x28
+    short ids[48];              // 0x2C
+    int head;                   // 0x8C
+    int count;                  // 0x90
+    int state;                  // 0x94
+    int f98;                    // 0x98
+    float fade;                 // 0x9C
+    float lift;                 // 0xA0
+    int fA4;                    // 0xA4
+    int padA8[2];               // 0xA8
+    sBTV4_8938 colB0;           // 0xB0
+    sBTV4_8938 lastDir;         // 0xC0
+    sBTV4_8938 side;            // 0xD0
+};
+
+// Rider colour (a, r, g, b) of the render-state table entry (0xF0 bytes each).
+struct sBTCol_8938 {
+    float a, r, g, b;
+};
+struct sBTRSRow_8938 {
+    sBTCol_8938 col;
+    char pad[0xF0 - 0x10];
+};
+
+struct sBTVEnt_8938 {
+    short delta;
+    short index;
+    int (*fn)(void*);
+};
+
+extern sBTRSRow_8938 D_004FA398[];
+extern float D_004A4580;
+extern float D_004A4584;
+extern float D_004A4588;
+extern float D_004A458C;
+extern float D_004A45AC;
+extern float D_004A3B28;
+extern float D_004A3B2C;
+extern int D_004A3AFC;
+extern "C" float func_0031C228(float);
+// Decides whether the trail starts a new segment this frame.
+extern "C" int func_002E86F0_8938(sBTrail_8938* self, float d) __asm__("func_002E86F0");
+
+// PORT: PS2-only VU0 inline asm (vector * scalar).
+static inline sBTV4_8938 btScale(const sBTV4_8938& v, float s)
+{
+    sBTV4_8938 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (a + b).
+static inline sBTV4_8938 btAdd(const sBTV4_8938& a, const sBTV4_8938& b)
+{
+    sBTV4_8938 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (a - b).
+static inline sBTV4_8938 btSub(const sBTV4_8938& a, const sBTV4_8938& b)
+{
+    sBTV4_8938 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (a += b). Assembled in noreorder mode: retail leaves the final sqc2 out of a
+// following branch delay slot.
+static inline void btAddEq(sBTV4_8938& a, const sBTV4_8938& b)
+{
+    __asm__(
+        ".set push\n"
+        ".set noreorder\n"
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        ".set pop\n"
+        : "=m"(a)
+        : "m"(a), "m"(b)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (4-component vector length).
+static inline float btLength(const sBTV4_8938& v)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %1, $vi22\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(v));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4-component dot product).
+static inline float btDot(const sBTV4_8938& a, const sBTV4_8938& b)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "lqc2      $vf5, %3\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf5\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "qmfc2.ni  %1, $vf4\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector divided by scalar).
+static inline sBTV4_8938 btDiv(const sBTV4_8938& v, float s)
+{
+    sBTV4_8938 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vdiv      Q, $vf0w, $vf3x\n"
+        "lqc2      $vf4, %2\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf4, $vf4, Q\n"
+        "sqc2      $vf4, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (normalize).
+static inline sBTV4_8938 btNormalize(const sBTV4_8938& v)
+{
+    sBTV4_8938 r;
+    __asm__(
+        "lqc2       $vf3, %1\n"
+        "vaddw.x    $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw  $vf4, $vf3, $vf3\n"
+        "vadday.x   ACC, $vf4, $vf4y\n"
+        "vmaddaz.x  ACC, $vf6, $vf4z\n"
+        "vmaddw.x   $vf4, $vf6, $vf4w\n"
+        "vrsqrt     Q, $vf0w, $vf4x\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf5, $vf3, Q\n"
+        "sqc2       $vf5, %0\n"
+        : "=m"(r)
+        : "m"(v)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (cross product, w = 0).
+static inline sBTV4_8938 btCross(const sBTV4_8938& a, const sBTV4_8938& b)
+{
+    sBTV4_8938 r;
+    __asm__(
+        "lqc2      $vf4, %1\n"
+        "lqc2      $vf5, %2\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vsub.w    $vf6, $vf6, $vf6\n"
+        "sqc2      $vf6, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only inline asm (float absolute value).
+static inline float btAbs(float x)
+{
+    float r;
+    __asm__("abs.s %0, %1" : "=f"(r) : "f"(x));
+    return r;
+}
+
+// PORT: g++ minimum operator (<?).
+static inline float btClamp(float v, float lo, float hi)
+{
+    float r;
+    if (v >= lo) {
+        r = v <? hi;
+    } else {
+        r = lo;
+    }
+    return r;
+}
+
+static inline float btAtan2(float y, float x)
+{
+    if (x == 0.0f) {
+        if (y == 0.0f)
+            return y;
+        if (y >= 0.0f)
+            return 1.5707963705062866f;
+        return -1.5707963705062866f;
+    }
+    float a = func_0031C228(y / x);
+    if (x < 0.0f) {
+        if (y > 0.0f)
+            a += 3.1415927410125732f;
+        else
+            a -= 3.1415927410125732f;
+    }
+    return a;
+}
+
+// PORT: the seed is reinterpreted as a float in [1,2) through memory (type pun).
+static inline float btRand()
+{
+    D_004A3AFC = ((D_004A3AFC * 0x18FCD + 0xE9507C) & 0x7FFFFF) | 0x3F800000;
+    return *(float*)&D_004A3AFC - 1.0f;
+}
+
+// A random value in [0, s).
+static inline float btRandScale(const float& s)
+{
+    return s * btRand();
+}
+
+// Bone matrix of the rider's model; off is the cRider field holding the bone index.
+static inline sBTMtx_8938* btBone(char* r, int off)
+{
+    return &((sBTMtx_8938*)*(char**)(*(char**)(r + 0x780) + 0x34))[*(int*)(r + off)];
+}
+
+static inline sBTV4_8938 btBoneRow(char* r, int off, int row)
+{
+    return btBone(r, off)->row[row];
+}
+
+static inline sBTV4_8938 btBonePos(char* r, int off)
+{
+    return btBone(r, off)->row[3];
+}
+
+static inline int btCanDraw(char* r)
+{
+    int ok = 0;
+    if (*(int*)(r + 0xAC4) != 0 && *(int*)(r + 0xAD0) == 0) ok = *(int*)(r + 0xAFC) != 0;
+    return ok;
+}
+
+static inline void btGrow(sBTrail_8938* self)
+{
+    if (self->count < kTrailNumSeg) self->count++;
+}
+
+// Updates the board trail: adds a segment at the board's current edges each frame.
+extern "C" void func_002E8938(sBTrail_8938* self)
+{
+    int prev = (self->head + kTrailNumSeg - 1) % kTrailNumSeg;
+    if (func_002E87E8((char**)self) == 0) {
+        if (self->state == 0) return;
+        if (self->state == 1) {
+            self->head = (self->head + kTrailNumSeg - 3) % kTrailNumSeg;
+            // Unused on this path; retail keeps the divisor load of its (removed) division check.
+            prev = (self->head + kTrailNumSeg - 1) % kTrailNumSeg;
+            int c = self->count - 3;
+            if (c < 0) c = 0;
+            self->count = c;
+        } else {
+            self->strip[2][prev].pos = self->strip[3][prev].pos = self->strip[0][prev].pos;
+            self->strip[5][prev].pos = self->strip[4][prev].pos = self->strip[1][prev].pos;
+            for (int i = 0; i < 6; i++) {
+                self->strip[i][self->head].pos = self->strip[1][prev].pos;
+                self->strip[i][self->head].pos.w = 1.0f;
+                self->strip[i][self->head].a = self->strip[1][prev].a = 0;
+                self->strip[i][self->head].r = self->strip[1][prev].r;
+                self->strip[i][self->head].g = self->strip[1][prev].g;
+                self->strip[i][self->head].b = self->strip[1][prev].b;
+            }
+        }
+        self->state = 0;
+        return;
+    }
+    if (self->state == 0) {
+        self->head = (self->head + 3) % kTrailNumSeg;
+        prev = (self->head + kTrailNumSeg - 1) % kTrailNumSeg;
+    }
+    self->lift = D_004A4588 - self->fade * D_004A458C;
+    sBTV4_8938 pts[4];
+    const sBTV4_8938& pos = btBoneRow(self->rider, 0x8A4, 3);
+    const sBTV4_8938& side = btBoneRow(self->rider, 0x8A4, 2);
+    const sBTV4_8938& fwd = btBoneRow(self->rider, 0x8A4, 0);
+    sBTV4_8938 a = btScale(fwd, 87.5f);
+    sBTV4_8938 b = btScale(side, 17.5f);
+    if (func_0011FE98(self->rider) == 0 || (btCanDraw(self->rider) && *(int*)(self->rider + 0xB00) != 0)) {
+        sBTV4_8938 left = btSub(pos, a);
+        float s = 0.0f;
+        sBTV4_8938 right = btAdd(pos, a);
+        if (*(int*)(self->rider + 0x330) != 0) {
+            int k = func_00312AA0(*(void**)(self->rider + 0x784), 2);
+            if (k >= 0x17 && k <= 0x1E) {
+                s = -1.0f;
+                if (*(int*)(self->rider + 0x320) != 0) s = 1.0f;
+            } else {
+                s = 1.0f;
+                if (*(int*)(self->rider + 0x320) != 0) s = -1.0f;
+            }
+        }
+        if (0.0f < s) {
+            btAddEq(left, btScale(fwd, s * 175.0f <? 140.0f));
+        } else if (s < 0.0f) {
+            btAddEq(right, btScale(fwd, s * 175.0f >? -140.0f));
+        }
+        pts[0] = btAdd(right, b);
+        pts[2] = btAdd(left, b);
+        pts[1] = btSub(right, b);
+        pts[3] = btSub(left, b);
+    } else {
+        char* r = self->rider;
+        pts[0] = btBonePos(r, 0x8B0);
+        pts[1] = btBonePos(r, 0x8B8);
+        if (*(int*)(r + 0x150) != 0) {
+            pts[2] = btBonePos(r, 0x918);
+            pts[3] = btBonePos(r, 0x8E8);
+        } else {
+            sBTV4_8938 left = btSub(pos, a);
+            pts[2] = btAdd(left, b);
+            pts[3] = btSub(left, b);
+        }
+    }
+    float speed = btLength(*(sBTV4_8938*)(self->rider + 0x1E0));
+    sBTV4_8938 dir;
+    if (speed < 0.01f) {
+        dir = self->lastDir;
+    } else {
+        dir = btDiv(*(sBTV4_8938*)(self->rider + 0x1E0), speed);
+    }
+    dir = btNormalize(btSub(dir, btScale(*(sBTV4_8938*)(self->rider + 0x370), btDot(dir, *(sBTV4_8938*)(self->rider + 0x370)))));
+    sBTV4_8938 across = btCross(dir, *(sBTV4_8938*)(self->rider + 0x370));
+    if (btDot(across, self->side) < 0.0f) {
+        across = btScale(across, -1.0f);
+    }
+    sBTV4_8938 d1 = btSub(pts[1], *(sBTV4_8938*)(self->rider + 0x460));
+    sBTV4_8938 d0 = btSub(pts[0], *(sBTV4_8938*)(self->rider + 0x460));
+    sBTV4_8938 d3 = btSub(pts[3], *(sBTV4_8938*)(self->rider + 0x460));
+    sBTV4_8938 d2 = btSub(pts[2], *(sBTV4_8938*)(self->rider + 0x460));
+    float s1 = btDot(d1, across);
+    float s0 = btDot(d0, across);
+    float s3 = btDot(d3, across);
+    float s2 = btDot(d2, across);
+    sBTV4_8938 top;
+    sBTV4_8938 bot;
+    if (s0 < s1 && s3 < s1 && s2 < s1) {
+        top = btSub(pts[1], btScale(*(sBTV4_8938*)(self->rider + 0x370), btDot(*(sBTV4_8938*)(self->rider + 0x370), d1) - D_004A3B28));
+    } else if (s1 < s0 && s3 < s0 && s2 < s0) {
+        top = btSub(pts[0], btScale(*(sBTV4_8938*)(self->rider + 0x370), btDot(*(sBTV4_8938*)(self->rider + 0x370), d0) - D_004A3B28));
+    } else if (s1 < s3 && s0 < s3 && s2 < s3) {
+        top = btSub(pts[3], btScale(*(sBTV4_8938*)(self->rider + 0x370), btDot(*(sBTV4_8938*)(self->rider + 0x370), d3) - D_004A3B28));
+    } else {
+        top = btSub(pts[2], btScale(*(sBTV4_8938*)(self->rider + 0x370), btDot(*(sBTV4_8938*)(self->rider + 0x370), d2) - D_004A3B28));
+    }
+    if (s1 < s0 && s1 < s3 && s1 < s2) {
+        bot = btSub(pts[1], btScale(*(sBTV4_8938*)(self->rider + 0x370), btDot(*(sBTV4_8938*)(self->rider + 0x370), d1) - D_004A3B28));
+    } else if (s0 < s1 && s0 < s3 && s0 < s2) {
+        bot = btSub(pts[0], btScale(*(sBTV4_8938*)(self->rider + 0x370), btDot(*(sBTV4_8938*)(self->rider + 0x370), d0) - D_004A3B28));
+    } else if (s3 < s1 && s3 < s0 && s3 < s2) {
+        bot = btSub(pts[3], btScale(*(sBTV4_8938*)(self->rider + 0x370), btDot(*(sBTV4_8938*)(self->rider + 0x370), d3) - D_004A3B28));
+    } else {
+        bot = btSub(pts[2], btScale(*(sBTV4_8938*)(self->rider + 0x370), btDot(*(sBTV4_8938*)(self->rider + 0x370), d2) - D_004A3B28));
+    }
+    sBTV4_8938 et = btSub(top, *(sBTV4_8938*)(self->rider + 0x460));
+    sBTV4_8938 eb = btSub(bot, *(sBTV4_8938*)(self->rider + 0x460));
+    float ft = btDot(et, dir);
+    float fb = btDot(eb, dir);
+    float st = btDot(et, across);
+    float sb = btDot(eb, across);
+    if (func_0011FE98(self->rider) == 2) {
+        top = btAdd(btAdd(*(sBTV4_8938*)(self->rider + 0x460), btScale(across, st * 0.75f)), btScale(*(sBTV4_8938*)(self->rider + 0x370), D_004A3B28));
+        bot = btAdd(btAdd(*(sBTV4_8938*)(self->rider + 0x460), btScale(across, sb * 0.75f)), btScale(*(sBTV4_8938*)(self->rider + 0x370), D_004A3B28));
+    }
+    self->strip[2][self->head].pos = top;
+    self->strip[0][self->head].pos = top;
+    self->strip[3][self->head].pos = top;
+    self->strip[4][self->head].pos = bot;
+    self->strip[1][self->head].pos = bot;
+    self->strip[5][self->head].pos = bot;
+    float ang = btAtan2(btAbs(ft), btAbs(st));
+    float k;
+    if (0.7853982448577881f < ang) {
+        k = btClamp(2.0f - ang * 1.2732393741607666f, 0.0f, 1.0f);
+    } else {
+        k = btClamp(ang * 1.2732393741607666f, 0.0f, 1.0f);
+    }
+    if (speed * 0.0036000001709908247f <= 1.0f) {
+        k *= speed * 0.0036000001709908247f;
+    }
+    sBTV4_8938 ground = btAdd(*(sBTV4_8938*)(self->rider + 0x460), btScale(*(sBTV4_8938*)(self->rider + 0x370), D_004A3B28));
+    sBTV4_8938 mid;
+    if (ft < fb) {
+        mid = btAdd(ground, btScale(dir, k * ft));
+    } else {
+        mid = btAdd(ground, btScale(dir, k * fb));
+    }
+    sBTV4_8938 p0 = btAdd(mid, btScale(across, st));
+    sBTV4_8938 p1 = btAdd(mid, btScale(across, sb));
+    sBTV4_8938 n = btNormalize(btSub(p1, p0));
+    sBTV4_8938 u1 = btScale(n, D_004A4580);
+    sBTV4_8938 u3 = btScale(btScale(n, D_004A4584), btAbs(*(float*)(self->rider + 0x454) <? 0.0f) + 10.0f);
+    sBTV4_8938 w = btScale(*(sBTV4_8938*)(self->rider + 0x370), self->lift);
+    sBTV4_8938 h = btScale(*(sBTV4_8938*)(self->rider + 0x370), *(float*)(self->rider + 0x454) <? 0.0f);
+    self->strip[2][prev].pos = btAdd(btAdd(btSub(p0, u3), h), h);
+    self->strip[0][prev].pos = btAdd(btSub(p0, btScale(u1, self->w1)), w);
+    self->strip[3][prev].pos = btAdd(p0, h);
+    self->strip[4][prev].pos = btAdd(p1, h);
+    self->strip[1][prev].pos = btAdd(btAdd(p1, btScale(u1, self->w2)), w);
+    self->strip[5][prev].pos = btAdd(btAdd(btAdd(p1, u3), h), h);
+    char* o = self->rider + 0x6C0;
+    sBTVEnt_8938* vt = *(sBTVEnt_8938**)o;
+    sBTCol_8938 c = D_004FA398[vt[7].fn(o + vt[7].delta)].col;
+    for (int i = 0; i < 6; i++) {
+        self->strip[i][self->head].a = self->strip[i][prev].a = (int)btClamp(c.a * 255.0f, 0.0f, 255.0f);
+        self->strip[i][self->head].r = self->strip[i][prev].r = (int)btClamp(c.r * 255.0f, 0.0f, 255.0f);
+        self->strip[i][self->head].g = self->strip[i][prev].g = (int)btClamp(c.g * 255.0f, 0.0f, 255.0f);
+        self->strip[i][self->head].b = self->strip[i][prev].b = (int)btClamp(c.b * 255.0f, 0.0f, 255.0f);
+    }
+    for (int i = 0; i < 6; i++) {
+        self->strip[i][self->head].pos.w = 1.0f;
+    }
+    sBTV4_8938 e0 = btSub(self->strip[0][self->head].pos, self->strip[0][prev].pos);
+    sBTV4_8938 e1 = btSub(self->strip[1][self->head].pos, self->strip[1][prev].pos);
+    int back0 = btDot(e0, dir) < 0.0f;
+    int back1 = btDot(e1, dir) < 0.0f;
+    if (back0) {
+        if (back1) {
+            self->strip[0][self->head].pos = self->strip[2][self->head].pos = self->strip[3][self->head].pos =
+                btAdd(self->strip[0][prev].pos, btScale(dir, D_004A3B2C));
+            self->strip[1][self->head].pos = self->strip[5][self->head].pos = self->strip[4][self->head].pos =
+                btAdd(self->strip[1][prev].pos, btScale(dir, D_004A3B2C));
+        } else {
+            self->strip[0][self->head].pos = self->strip[2][self->head].pos = self->strip[3][self->head].pos =
+                self->strip[1][self->head].pos;
+        }
+    } else if (back1) {
+        self->strip[1][self->head].pos = self->strip[5][self->head].pos = self->strip[4][self->head].pos =
+            self->strip[0][self->head].pos;
+    }
+    if (self->state == 0) {
+        int pp = (prev + kTrailNumSeg - 1) % kTrailNumSeg;
+        for (int i = 0; i < 6; i++) {
+            self->strip[i][pp].pos = self->strip[1][prev].pos;
+            self->strip[i][pp].r = self->strip[1][prev].r;
+            self->strip[i][pp].g = self->strip[1][prev].g;
+            self->strip[i][pp].b = self->strip[1][prev].b;
+            self->strip[i][pp].a = self->strip[i][prev].a = 0;
+        }
+        self->strip[2][prev].pos = self->strip[3][prev].pos = self->strip[0][prev].pos;
+        self->strip[5][prev].pos = self->strip[4][prev].pos = self->strip[1][prev].pos;
+        btGrow(self);
+        btGrow(self);
+        btGrow(self);
+        self->state = 1;
+    }
+    if (func_002E86F0_8938(self, btDot(dir, self->lastDir))) {
+        int h = self->head;
+        self->side = across;
+        self->w1 = btRandScale(D_004A45AC) + 1.0f;
+        self->w2 = btRandScale(D_004A45AC) + 1.0f;
+        self->head = (h + 1) % kTrailNumSeg;
+        btGrow(self);
+        for (int i = 0; i < 6; i++) {
+            self->strip[i][self->head].pos = self->strip[i][h].pos;
+            self->strip[i][self->head].a = self->strip[i][h].a;
+            self->strip[i][self->head].r = self->strip[i][h].r;
+            self->strip[i][self->head].g = self->strip[i][h].g;
+            self->strip[i][self->head].b = self->strip[i][h].b;
+        }
+        self->state = 2;
+    }
+    self->lastDir = dir;
+    self->flip = 1 - self->flip;
+}
+#endif
 
 //100%
 INCLUDE_ASM("visualfx/boardtrailfx", func_002EA480);
