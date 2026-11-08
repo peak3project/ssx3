@@ -2200,7 +2200,257 @@ extern "C" int func_0011A7A8(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/ridermetrix", func_0011A8C8);
+#ifdef SKIP_ASM
+struct sMetrixA8C8 {
+    int a0;          // 0x00
+    int a1;          // 0x04
+    int a2;          // 0x08
+    int a3;          // 0x0C
+    int a4;          // 0x10
+    char pad14[0x0C];
+    int s8;          // 0x20
+    float f9;        // 0x24
+    int s10;         // 0x28
+    float f11;       // 0x2C
+    char pad30[4];
+    float f13;       // 0x34
+    float f14;       // 0x38
+    char pad3c[0x24];
+    int arr[4];      // 0x60
+    int s28;         // 0x70
+    char pad74[8];
+    int s31;         // 0x7C
+    char pad80[0x12C];
+    char* rider;     // 0x1AC
+};
+
+struct sTrickBitsA8C8 {
+    unsigned int w0a : 3;
+    unsigned int w0b : 4;
+    unsigned int w0c : 3;
+    unsigned int w0d : 2;
+    unsigned int w0e : 4;
+    unsigned int w0f : 3;
+    unsigned int w0g : 3;
+    unsigned int w0h : 6;
+    unsigned int w0i : 4;
+    unsigned int w1a : 3;
+    unsigned int w1b : 7;
+    unsigned int w1c : 1;
+    unsigned int w1d : 7;
+    unsigned int w1e : 2;
+    unsigned int w1f : 4;
+    unsigned int w1g : 3;
+    unsigned int w1h : 5;
+};
+
+extern "C" void func_003E6448(void* dst, int value, int size);
+extern unsigned char D_0043D388[][11];
+extern unsigned char D_0043D4C8[][11];
+
+// Packs the trick that just ended (spins, flips, grabs, style) into an sTrickId;
+// returns nonzero when there is a trick to score.
+extern "C" int func_0011A8C8(void* self_, sTrickId* id, int stance, int alternate, int style, int flag)
+{
+    sMetrixA8C8* self = (sMetrixA8C8*)self_;
+    sTrickBitsA8C8* t = (sTrickBitsA8C8*)id;
+    func_003E6448(t, 0, 8);
+    if (self->s28 != 0) {
+        t->w0a = self->a3;
+        t->w1a = self->s28;
+        if (style != 0) {
+            t->w1g = 3;
+        }
+        return 1;
+    }
+    if (self->a0 != 0) {
+        self->f13 = -self->f13;
+    }
+    if (self->s8 == 4) {
+        self->f14 = -self->f14;
+    }
+    int ydeg = func_roundDegrees((int)(self->f13 * 57.295776f));
+    int xdeg = func_roundDegrees((int)(self->f14 * 57.295776f));
+    int xc = abs(xdeg / 360);
+    int yc = abs(ydeg / 180);
+    if (self->s10 != 0) {
+        if (yc >= 2) {
+            int v;
+            if (yc < 12) {
+                v = 13;
+                if (yc >= 6) {
+                    v = 14;
+                }
+            } else {
+                v = 15;
+            }
+            t->w1f = v;
+        } else if (yc == 1 && self->f11 >= 3.0f) {
+            int v;
+            if (self->s10 == 1) {
+                v = 11;
+                if (self->f11 < 12.0f) {
+                    v = 9;
+                    if (self->f11 < 9.0f) {
+                        v = 5;
+                        if (self->f11 >= 6.0f) {
+                            v = 7;
+                        }
+                    }
+                }
+            } else {
+                v = 12;
+                if (self->f11 < 12.0f) {
+                    v = 10;
+                    if (self->f11 < 9.0f) {
+                        v = 6;
+                        if (self->f11 >= 6.0f) {
+                            v = 8;
+                        }
+                    }
+                }
+            }
+            t->w1f = v;
+        } else {
+            if (self->s10 == 1) {
+                t->w1f = self->s8 == 0 ? 1 : 3;
+            } else {
+                t->w1f = self->s8 == 0 ? 2 : 4;
+            }
+            t->w0b = yc < 11 ? yc : 10;
+        }
+        return 1;
+    }
+    if (self->s8 != 0) {
+        if (self->f9 <= 50.0f) {
+            t->w0a = 5;
+        } else {
+            t->w0a = self->s8;
+            t->w0b = yc < 11 ? yc : 10;
+            if (*(int*)(self->rider + 0x324) != 0) {
+                if (self->s8 == 1) {
+                    t->w0a = 2;
+                } else if (self->s8 == 2) {
+                    t->w0a = 1;
+                }
+            }
+        }
+        return 1;
+    }
+    int p = yc;
+    int q = xc;
+    int n = 0;
+    while (xc > 0) {
+        xc--;
+        if (yc < 3) {
+            break;
+        }
+        yc -= 3;
+        n++;
+    }
+    xc = q;
+    yc = p;
+    if (ydeg > 0 || yc > 14) {
+        p = yc + 14;
+    }
+    if (xdeg < 0 || xc > 5) {
+        q = xc + 5;
+    }
+    int k = 0;
+    if (self->arr[0] != 0) {
+        do {
+            k++;
+        } while (k < 3 && self->arr[k] != 0);
+    }
+    if (self->a4 == 1) {
+        t->w0c = 5;
+    } else if (self->a4 == 2) {
+        t->w0c = 6;
+    } else if (self->a3 != 0) {
+        if (self->a0 != 0) {
+            t->w0c = 3;
+        } else {
+            t->w0c = 2;
+        }
+    } else if (self->a2 != 0) {
+        t->w0c = 4;
+    } else if (self->a0 != 0) {
+        t->w0c = 1;
+    }
+    if (p < 29 && q < 11) {
+        if (self->a1 != 0 && alternate != 0) {
+            t->w0h = D_0043D4C8[p][q];
+        } else {
+            t->w0h = D_0043D388[p][q];
+        }
+    } else {
+        func_003E6448(t, 0, 8);
+        t->w0h = 1;
+        return 1;
+    }
+    if (t->w0h == 0) {
+        if (yc > 0) {
+            if (ydeg > 0) {
+                t->w0d = 2;
+            } else {
+                t->w0d = 1;
+            }
+        }
+        if (xc == 0) {
+            t->w0e = yc;
+        }
+        t->w0f = xc;
+        if (xc > 0) {
+            if (n > 0 && n == xc) {
+                if (self->f14 > 0.0f) {
+                    t->w0g = 4;
+                } else {
+                    t->w0g = 3;
+                }
+            } else {
+                if (self->f14 > 0.0f) {
+                    t->w0g = 1;
+                } else {
+                    t->w0g = 2;
+                }
+            }
+        }
+    }
+    if (xc > 0 && yc != xc * 3 && yc < 15) {
+        t->w0i = yc;
+    }
+    if (flag == 1) {
+        t->w1g = 4;
+    } else if (flag == 2) {
+        t->w1g = 5;
+    } else if (style != 0) {
+        t->w1g = 3;
+    } else if (t->w0h == 0 && (n == 0 || t->w0i != 0)) {
+        if (stance != 0 && self->a0 == 0) {
+            t->w1g = 2;
+        } else if (yc == 0 && xc == 0 && k > 0) {
+            t->w1g = 1;
+        }
+    }
+    if (k > 0) {
+        t->w1b = self->arr[0];
+        if (k > 1) {
+            t->w1c = 1;
+            if (k == 2) {
+                t->w1d = self->arr[1];
+            } else {
+                t->w1d = 1;
+            }
+        }
+    }
+    if (self->s31 != 0) {
+        t->w1e = self->s31;
+    }
+    return xc > 0 || yc > 0 || k > 0 || self->s31 != 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ai/ridermetrix", func_0011B1A8);
