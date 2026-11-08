@@ -1328,7 +1328,313 @@ extern "C" void func_0016F068(const sXform_F068* t, t4Vector* p)
 }
 #endif
 
+//100%
 INCLUDE_ASM("camera/trigger/cameratriggerman", func_0016FBB8);
+#ifdef SKIP_ASM
+#include "bx/math3d.h"
+extern "C" void func_0031BE50(float* sout, float* cout, float x);
+
+extern t4Vector D_004FF140;
+extern t4Vector D_004FF150;
+extern t4Vector D_004FF160;
+extern t4Matrix D_004FF1A0;
+
+struct sVec3_FBB8 {
+    float x, y, z;
+    sVec3_FBB8() {}
+    sVec3_FBB8(float a, float b, float c) : x(a), y(b), z(c) {}
+};
+
+struct sVec4_FBB8 : t4Vector
+{
+    sVec4_FBB8() {}
+    sVec4_FBB8(const float& ax, const float& ay, const float& az, const float& aw) { x = ax; y = ay; z = az; w = aw; }
+    sVec4_FBB8(const sVec3_FBB8& v, const float& aw) { x = v.x; y = v.y; z = v.z; w = aw; }
+} __attribute__((aligned(16)));
+
+struct sMtx_FBB8;
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix multiply in place, d = b * d).
+static inline void vu0MulMatEq_FBB8(sMtx_FBB8* d, const sMtx_FBB8* b)
+{
+    __asm__ __volatile__(
+        "lqc2      $vf4, 0x0(%0)\n"
+        "lqc2      $vf5, 0x10(%0)\n"
+        "lqc2      $vf6, 0x20(%0)\n"
+        "lqc2      $vf7, 0x30(%0)\n"
+        "lqc2      $vf8, 0x0(%1)\n"
+        "lqc2      $vf9, 0x10(%1)\n"
+        "lqc2      $vf10, 0x20(%1)\n"
+        "lqc2      $vf11, 0x30(%1)\n"
+        "vmulax.xyzw ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw $vf12, $vf7, $vf8w\n"
+        "vmulax.xyzw ACC, $vf4, $vf9x\n"
+        "vmadday.xyzw ACC, $vf5, $vf9y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf9z\n"
+        "vmaddw.xyzw $vf13, $vf7, $vf9w\n"
+        "vmulax.xyzw ACC, $vf4, $vf10x\n"
+        "vmadday.xyzw ACC, $vf5, $vf10y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf10z\n"
+        "vmaddw.xyzw $vf14, $vf7, $vf10w\n"
+        "vmulax.xyzw ACC, $vf4, $vf11x\n"
+        "vmadday.xyzw ACC, $vf5, $vf11y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf11z\n"
+        "vmaddw.xyzw $vf15, $vf7, $vf11w\n"
+        "sqc2      $vf12, 0x0(%0)\n"
+        "sqc2      $vf13, 0x10(%0)\n"
+        "sqc2      $vf14, 0x20(%0)\n"
+        "sqc2      $vf15, 0x30(%0)\n"
+        :
+        : "r"(d), "r"(b)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix copy through VU0 registers).
+static inline void vu0Copy_FBB8(sMtx_FBB8* d, const sMtx_FBB8* s)
+{
+    __asm__ __volatile__(
+        "lqc2      $vf1, 0x0(%1)\n"
+        "lqc2      $vf2, 0x10(%1)\n"
+        "lqc2      $vf3, 0x20(%1)\n"
+        "lqc2      $vf4, 0x30(%1)\n"
+        "sqc2      $vf1, 0x0(%0)\n"
+        "sqc2      $vf2, 0x10(%0)\n"
+        "sqc2      $vf3, 0x20(%0)\n"
+        "sqc2      $vf4, 0x30(%0)\n"
+        :
+        : "r"(d), "r"(s)
+        : "memory");
+}
+
+struct sMtx_FBB8 {
+    float m[4][4];
+    sMtx_FBB8() {}
+    sMtx_FBB8(const sMtx_FBB8& o) { vu0Copy_FBB8(this, &o); }
+    sMtx_FBB8& operator=(const sMtx_FBB8& o)
+    {
+        vu0Copy_FBB8(this, &o);
+        return *this;
+    }
+    sMtx_FBB8& operator*=(const sMtx_FBB8& b)
+    {
+        vu0MulMatEq_FBB8(this, &b);
+        return *this;
+    }
+} __attribute__((aligned(16)));
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix times vector into the last matrix row).
+static inline void vu0MulVecRow3_FBB8(sMtx_FBB8* m, const t4Vector& v)
+{
+    __asm__ __volatile__(
+        "lqc2      $vf4, 0x0(%0)\n"
+        "lqc2      $vf5, 0x10(%0)\n"
+        "lqc2      $vf6, 0x20(%0)\n"
+        "lqc2      $vf7, 0x30(%0)\n"
+        "lqc2      $vf8, %1\n"
+        "vmulax.xyzw ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw $vf12, $vf7, $vf8w\n"
+        "sqc2      $vf12, 0x30(%0)\n"
+        :
+        : "r"(m), "m"(v)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix times vector, vector loaded first).
+static inline sVec4_FBB8 vu0MulVec2_FBB8(const sMtx_FBB8* m, const t4Vector& v)
+{
+    sVec4_FBB8 r;
+    __asm__(
+        "lqc2      $vf8, %2\n"
+        "lqc2      $vf4, 0x0(%1)\n"
+        "lqc2      $vf5, 0x10(%1)\n"
+        "lqc2      $vf6, 0x20(%1)\n"
+        "lqc2      $vf7, 0x30(%1)\n"
+        "vmulax.xyzw ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw $vf12, $vf7, $vf8w\n"
+        "sqc2      $vf12, %0\n"
+        : "=m"(r)
+        : "r"(m), "m"(v)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (scale matrix rows by the components of s).
+static inline void vu0ScaleRows_FBB8(sMtx_FBB8* d, const sMtx_FBB8* m, const t4Vector& s)
+{
+    __asm__ __volatile__(
+        "lqc2      $vf1, %2\n"
+        "lqc2      $vf4, 0x0(%1)\n"
+        "lqc2      $vf5, 0x10(%1)\n"
+        "lqc2      $vf6, 0x20(%1)\n"
+        "lqc2      $vf7, 0x30(%1)\n"
+        "vmulx.xyzw $vf8, $vf4, $vf1x\n"
+        "vmuly.xyzw $vf9, $vf5, $vf1y\n"
+        "vmulz.xyzw $vf10, $vf6, $vf1z\n"
+        "vmulw.xyzw $vf11, $vf7, $vf1w\n"
+        "sqc2      $vf8, 0x0(%0)\n"
+        "sqc2      $vf9, 0x10(%0)\n"
+        "sqc2      $vf10, 0x20(%0)\n"
+        "sqc2      $vf11, 0x30(%0)\n"
+        :
+        : "r"(d), "r"(m), "m"(s)
+        : "memory");
+}
+
+static inline sMtx_FBB8 scaled_FBB8(const sMtx_FBB8& m, const t4Vector& s)
+{
+    sMtx_FBB8 r;
+    vu0ScaleRows_FBB8(&r, &m, s);
+    return r;
+}
+
+struct sXform_FBB8 {
+    sVec3_FBB8 pos;     // 0x0
+    float rot[3];       // 0xC
+    sVec3_FBB8 size;    // 0x18
+    char pad_0x24[8];
+    sVec3_FBB8 p0;      // 0x2C
+    sVec3_FBB8 p1;      // 0x38
+};
+
+// Multiply by a rotation of `angle` about the unit axis `a` (Rodrigues).
+#define ROT_FBB8(R, a, angle) \
+    { \
+        const float* ax = a; \
+        float s, c; \
+        func_0031BE50(&s, &c, angle); \
+        float t = 1.0f - c; \
+        float x = ax[0]; \
+        float y = ax[1]; \
+        float z = ax[2]; \
+        float tx = t * x; \
+        float ty = t * y; \
+        float tz = t * z; \
+        float sx = s * x; \
+        float sy = s * y; \
+        float sz = s * z; \
+        R.m[0][0] = tx * x + c; \
+        R.m[1][0] = tx * y + sz; \
+        R.m[2][0] = tx * z - sy; \
+        R.m[0][1] = ty * x - sz; \
+        R.m[1][1] = ty * y + c; \
+        R.m[2][1] = ty * z + sx; \
+        R.m[0][2] = tz * x + sy; \
+        R.m[1][2] = tz * y - sx; \
+        R.m[2][2] = tz * z + c; \
+        R.m[3][0] = 0.0f; \
+        R.m[3][1] = 0.0f; \
+        R.m[3][2] = 0.0f; \
+        R.m[0][3] = 0.0f; \
+        R.m[1][3] = 0.0f; \
+        R.m[2][3] = 0.0f; \
+        R.m[3][3] = 1.0f; \
+    }
+
+// PORT: PS2-only VU0 inline asm (vector subtract).
+static inline t4Vector Sub_FBB8(const t4Vector& a, const t4Vector& b)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector add).
+static inline t4Vector Add_FBB8(const t4Vector& a, const t4Vector& b)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector times scalar).
+static inline t4Vector Scale_FBB8(const t4Vector& v, float s)
+{
+    t4Vector r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "o"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4-component dot product).
+static inline float Dot_FBB8(const t4Vector& a, const t4Vector& b)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "lqc2      $vf5, %3\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf5\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "qmfc2.ni  %1, $vf4\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// cCTBoundObjLine: move p to the closest point of the (transformed) line through p0 and p1.
+extern "C" void func_0016FBB8(const sXform_FBB8* t, t4Vector* p)
+{
+    sMtx_FBB8 M = (const sMtx_FBB8&)D_004FF1A0;
+    vu0MulVecRow3_FBB8(&M, sVec4_FBB8(t->pos, 1.0f));
+    {
+        sMtx_FBB8* m = &M;
+        sMtx_FBB8 R;
+        ROT_FBB8(R, &D_004FF140.x, t->rot[1]);
+        *m *= R;
+    }
+    {
+        sMtx_FBB8* m = &M;
+        sMtx_FBB8 R;
+        ROT_FBB8(R, &D_004FF150.x, t->rot[2]);
+        *m *= R;
+    }
+    {
+        sMtx_FBB8* m = &M;
+        sMtx_FBB8 R;
+        ROT_FBB8(R, &D_004FF160.x, t->rot[0]);
+        *m *= R;
+    }
+    M = scaled_FBB8(M, sVec4_FBB8(t->size.x, t->size.y, t->size.z, 1.0f));
+    sVec4_FBB8 e[2];
+    e[0] = vu0MulVec2_FBB8(&M, sVec4_FBB8(t->p0.x, t->p0.y, t->p0.z, 1.0f));
+    e[1] = vu0MulVec2_FBB8(&M, sVec4_FBB8(t->p1.x, t->p1.y, t->p1.z, 1.0f));
+    t4Vector d = Sub_FBB8(e[1], e[0]);
+    float k = Dot_FBB8(Sub_FBB8(*p, e[0]), d) / Dot_FBB8(d, d);
+    *p = Add_FBB8(e[0], Scale_FBB8(d, k));
+}
+#endif
 
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerman", func_00170240);
