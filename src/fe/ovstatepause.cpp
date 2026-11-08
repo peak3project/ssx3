@@ -255,7 +255,223 @@ extern "C" void func_0023D570_v(void* self, int mode) __asm__("func_0023D570");
 extern char D_004A2570[];
 extern char D_004A2578[];
 
+//100%
 INCLUDE_ASM("fe/ovstatepause", cOVState_PAUSE_OPTIONS_onCreateScreen);
+#ifdef SKIP_ASM
+// The game options record D_00535610 (0x288 bytes; the options interface, cBE_getInterface(be, 4), copies it by
+// value): a bitfield word of sound / HUD settings, then per-player bytes. Same layout as in fe/festateoptions.
+struct sGameOptions {
+    unsigned int sfxVol : 4;        // bits 0-3
+    unsigned int musicVol : 4;      // bits 4-7
+    unsigned int speechVol : 4;     // bits 8-11
+    unsigned int output : 2;        // bits 12-13
+    unsigned int pad14 : 2;
+    unsigned int f16 : 1;           // bit 16
+    unsigned int f17 : 1;           // bit 17
+    unsigned int f18 : 1;           // bit 18
+    unsigned int showHud : 1;       // bit 19
+    unsigned int f20 : 2;           // bits 20-21
+    unsigned int mode : 3;          // bits 22-24
+    unsigned int pad25 : 5;
+    unsigned int f30 : 2;           // bits 30-31
+    signed char f4;
+    signed char f5;
+    signed char f6;
+    char pad7[0x288 - 7];
+};
+extern sGameOptions D_00535610;
+
+struct sSlider_1F9188 {
+    char pad0[0x74];
+    int value;                      // 0x74
+    int max;                        // 0x78
+};
+
+extern "C" unsigned char cUIListBox_addEntryByStringID(void* box, int id, int idx);
+extern "C" int func_0039A768(void* self, int key, unsigned char* out);
+extern "C" void func_0039A7A8(void* self, int v);
+extern "C" void func_00287410(void* snd, int v);
+extern "C" void func_00287488(void* snd, int v);
+extern "C" void func_00287520(void* snd, int v);
+extern "C" void func_00287558(void* snd, int v);
+extern "C" void func_002875D0(void* snd, int v);
+extern "C" void func_002C26D0(unsigned short* dst, unsigned short* fmt, ...);
+extern "C" void func_00266F90(void* self, void* a, void* b);
+extern "C" void func_00266E88(void* self);
+extern "C" void func_00266E30(void* self);
+extern void* D_004A33F4;
+extern int D_00534B30[];
+extern sColour D_004C66C8;
+extern char D_0046F8D8[];
+extern char D_004A2498[];
+extern char D_0046F8E8[];
+extern char D_0046F8F8[];
+extern char D_0046F910[];
+extern char D_004A24A0[];
+extern char D_0046F920[];
+extern char D_0046F930[];
+extern char D_0046F940[];
+extern char D_0046F950[];
+extern char D_0046F960[];
+extern char D_004A24A8[];
+extern char D_0046F970[];
+extern char D_004A24B0[];
+extern char D_004A24B8[];
+extern char D_004A24C0[];
+extern char D_004A24C8[];
+extern char D_0046F980[];
+extern char D_0046F990[];
+extern char D_004A24D0[];
+extern char D_0046F9A0[];
+extern char D_004A24D8[];
+extern char D_0046F9B0[];
+
+static inline sGameOptions Cfg_1F9188()
+{
+    return D_00535610;
+}
+
+static inline unsigned short* lookupString_1F9188(char* name)
+{
+    char* g = *(char**)((char*)D_004A28A8 + 0x8C);
+    sVEntry<unsigned short*(void*, int)>* vt = *(sVEntry<unsigned short*(void*, int)>**)(g + 4);
+    char* t = g + vt[4].delta;
+    return vt[4].fn(t, GetHashValue32(name));
+}
+
+extern "C" void cOVState_PAUSE_OPTIONS_onCreateScreen(void* self)
+{
+    char* s = (char*)self;
+    unsigned char out;
+    void* eng = *(void**)(s + 0x10);
+    void* scr = cUIEngine_addScreenByHashName(eng, self, GetHashValue32(D_0046F8D8), 0);
+    *(void**)(s + 0x40) = scr;
+    if (scr != 0) {
+        cUIScreen_playFrame(scr, 0, 0);
+    }
+    func_0020A380(self);
+    cBE_getInterface_Fv(cBE_getBE(), 4);
+    void* lb = cUIScreen_getObjectByHashName(*(void**)(s + 0x40), GetHashValue32(D_004A2498));
+    if (lb != 0) {
+        cUIListBox_addEntryByStringID(lb, GetHashValue32(D_0046F8E8), 0);
+        cUIListBox_addEntryByStringID(lb, GetHashValue32(D_0046F8F8), 1);
+        cUIListBox_addEntryByStringID(lb, GetHashValue32(D_0046F910), 2);
+        if (func_0039A768(lb, Cfg_1F9188().f30, &out))
+            func_0039A7A8(lb, out);
+    }
+    lb = cUIScreen_getObjectByHashName(*(void**)(s + 0x40), GetHashValue32(D_004A24A0));
+    if (lb != 0) {
+        cUIListBox_addEntryByStringID(lb, GetHashValue32(D_0046F920), 0x3C);
+        cUIListBox_addEntryByStringID(lb, GetHashValue32(D_0046F930), 0x3D);
+        cUIListBox_addEntryByStringID(lb, GetHashValue32(D_0046F940), 0x3E);
+        char* race = *(char**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x84);
+        if (func_0039A768(lb, *(int*)(*(char**)(*(char**)(race + 4) + 0xA8) + 0x18), &out))
+            func_0039A7A8(lb, out);
+        void* t = cUIScreen_getObjectByHashName(*(void**)(s + 0x40), GetHashValue32(D_0046F950));
+        if (t != 0) {
+            unsigned short* fmt = lookupString_1F9188(D_0046F960);
+            if (fmt != 0) {
+                unsigned short buf[0x140];
+                func_002C26D0(buf, fmt, 1);
+                func_003A0E90(t, buf);
+            }
+        }
+    }
+    lb = cUIScreen_getObjectByHashName(*(void**)(s + 0x40), GetHashValue32(D_004A24A8));
+    if (lb != 0) {
+        cUIListBox_addEntryByStringID(lb, GetHashValue32(D_0046F920), 0x3C);
+        cUIListBox_addEntryByStringID(lb, GetHashValue32(D_0046F930), 0x3D);
+        cUIListBox_addEntryByStringID(lb, GetHashValue32(D_0046F940), 0x3E);
+        char* race = *(char**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x84);
+        if (*(unsigned int*)(race + 0x10) >= 2) {
+                if (func_0039A768(lb, *(int*)(*(char**)(*(char**)(race + 8) + 0xA8) + 0x18), &out))
+                func_0039A7A8(lb, out);
+        }
+        void* t = cUIScreen_getObjectByHashName(*(void**)(s + 0x40), GetHashValue32(D_0046F970));
+        if (t != 0) {
+            unsigned short* fmt = lookupString_1F9188(D_0046F960);
+            if (fmt != 0) {
+                unsigned short buf[0x140];
+                func_002C26D0(buf, fmt, 2);
+                func_003A0E90(t, buf);
+            }
+        }
+    }
+    sSlider_1F9188* sl = (sSlider_1F9188*)cUIScreen_getObjectByHashName(*(void**)(s + 0x40), GetHashValue32(D_004A24B0));
+    if (sl != 0) {
+        sl->max = 12;
+        sl->value = Cfg_1F9188().sfxVol;
+        func_00287410(func_0028B180(), Cfg_1F9188().sfxVol);
+    }
+    sl = (sSlider_1F9188*)cUIScreen_getObjectByHashName(*(void**)(s + 0x40), GetHashValue32(D_004A24B8));
+    if (sl != 0) {
+        sl->max = 12;
+        sl->value = Cfg_1F9188().speechVol;
+        func_00287488(func_0028B180(), Cfg_1F9188().speechVol);
+    }
+    sl = (sSlider_1F9188*)cUIScreen_getObjectByHashName(*(void**)(s + 0x40), GetHashValue32(D_004A24C0));
+    if (sl != 0) {
+        sl->max = 12;
+        sl->value = Cfg_1F9188().musicVol;
+        func_00287520(func_0028B180(), Cfg_1F9188().musicVol);
+    }
+    lb = cUIScreen_getObjectByHashName(*(void**)(s + 0x40), GetHashValue32(D_004A24C8));
+    if (lb != 0) {
+        cUIListBox_addEntryByStringID(lb, GetHashValue32(D_0046F980), 0);
+        cUIListBox_addEntryByStringID(lb, GetHashValue32(D_0046F990), 1);
+        unsigned char out;
+        if (func_0039A768(lb, Cfg_1F9188().f17, &out))
+            func_0039A7A8(lb, out);
+        func_00287558(func_0028B180(), Cfg_1F9188().f17 != 0);
+    }
+    lb = cUIScreen_getObjectByHashName(*(void**)(s + 0x40), GetHashValue32(D_004A24D0));
+    if (lb != 0) {
+        cUIListBox_addEntryByStringID(lb, GetHashValue32(D_0046F980), 0);
+        cUIListBox_addEntryByStringID(lb, GetHashValue32(D_0046F990), 1);
+        unsigned char out;
+        if (func_0039A768(lb, Cfg_1F9188().f16 & 1, &out))
+            func_0039A7A8(lb, out);
+        func_002875D0(func_0028B180(), Cfg_1F9188().f16 != 0);
+    }
+    cUIThing* o = (cUIThing*)cUIScreen_getObjectByHashName(*(void**)(s + 0x40), GetHashValue32(D_0046F9A0));
+    if (o != 0) {
+        o->setVisible(0);
+        o->setStatic(1);
+    }
+    cBE_getInterface_Fv(*(void**)((char*)D_004A28A8 + 0x78), 7);
+    if (D_00534B30[0] != 0) {
+        cUIThing* a = (cUIThing*)cUIScreen_getObjectByHashName(*(void**)(s + 0x40), GetHashValue32(D_0046F9A0));
+        cUIThing* b = (cUIThing*)cUIScreen_getObjectByHashName(*(void**)(s + 0x40), GetHashValue32(D_004A24D8));
+        cUIThing* c = (cUIThing*)cUIScreen_getObjectByHashName(*(void**)(s + 0x40), GetHashValue32(D_0046F9B0));
+        if (a != 0 && b != 0 && c != 0) {
+            a->setVisible(1);
+            a->setStatic(0);
+            b->setVisible(1);
+            b->setStatic(0);
+            c->setVisible(1);
+            c->setStatic(0);
+            sSlider_1F9188* sc = (sSlider_1F9188*)c;
+            sc->max = 10;
+            int cur;
+            int max;
+            func_00266F90(D_004A33F4, &cur, &max);
+            sc->value = cur / 10;
+            if (cur < 10)
+                func_00266E88(D_004A33F4);
+            else
+                func_00266E30(D_004A33F4);
+        }
+    } else {
+        cUIThing* b = (cUIThing*)cUIScreen_getObjectByHashName(*(void**)(s + 0x40), GetHashValue32(D_004A24D8));
+        if (b != 0) {
+            b->v25(1);
+            *(sColour*)((char*)b + 0x88) = D_004C66C8;
+            b->setStatic(1);
+            b->setVisible(0);
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/ovstatepause", func_001FA100);
