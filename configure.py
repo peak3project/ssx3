@@ -68,6 +68,7 @@ UNIT_CFLAGS = {
     "ai/control/handplantcontrol": "-fno-rtti",
     "seg/seg_1218": "-fno-rtti",
     "ai/rider": "-fno-rtti",  # same evidence (null typeinfo in D_00458338/D_00458360/D_00459BD0; func_00125EB8)  # same evidence (null typeinfo in D_004585F0/D_00458710; func_00108FA8)
+    "ai/computer": "-fno-rtti",  # same evidence (the cComp constructor func_0010FCD8 stores the shared D_00459B90 sub-vtable)
     "ealib/seg_2B4578": "-G0",
     "ealib/seg_2DCAE8": "-G0",
     # Library tail of .text (0x3EDF50-0x42E590), split by the same evidence: seg_2F0F40, seg_313F58 (C library:
