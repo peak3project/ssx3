@@ -3823,7 +3823,88 @@ cVbDtor001428F0::~cVbDtor001428F0()
 __asm__(".globl func_001428F0\n.type func_001428F0,@function\nfunc_001428F0 = _$_15cVbDtor001428F0\n.size func_001428F0,0x15C\n");
 #endif
 
+//100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_00142A50);
+#ifdef SKIP_ASM
+// The controller classes defined above are this class's bases; their destructors were inline in the original
+// (retail expands each one here), so these twins repeat the same layouts with in-class destructors. The matched
+// out-of-line copies above keep their own definitions. The retail TU was built without RTTI: every class shares
+// cRider's +0x6D0 vtable (D_00459B90), which g++ 2.95 only does with -fno-rtti.
+#define VB_INLINE_BASE(addr, Head)                                                                   \
+    class cVbIn##addr : public Head, virtual public cRiderVb_hpc {                                   \
+    public:                                                                                          \
+        virtual ~cVbIn##addr() {}                                                                    \
+    };
+#define VB_INLINE_BASE0(addr)                                                                        \
+    class cVbIn##addr : virtual public cRiderVb_hpc {                                                \
+    public:                                                                                          \
+        virtual ~cVbIn##addr() {}                                                                    \
+    };
+VB_INLINE_BASE(00140D80, cVbHead00140D80)
+VB_INLINE_BASE(00140EE0, cVbHead00140EE0)
+VB_INLINE_BASE0(001411C0)
+VB_INLINE_BASE(00141040, cVbHead00141040)
+VB_INLINE_BASE(00141320, cVbHead00141320)
+VB_INLINE_BASE0(001415C8)
+VB_INLINE_BASE(00141728, cVbHead00141728)
+VB_INLINE_BASE0(00141888)
+VB_INLINE_BASE0(001419E8)
+VB_INLINE_BASE(00141B48, cVbHead00141B48)
+VB_INLINE_BASE(00141CA8, cVbHead00141CA8)
+VB_INLINE_BASE(00141E08, cVbHead00141E08)
+VB_INLINE_BASE(00141F68, cVbHead00141F68)
+VB_INLINE_BASE(00142228, cVbHead00142228)
+VB_INLINE_BASE(00142630, cVbHead00142630)
+VB_INLINE_BASE(001424D0, cVbHead001424D0)
+VB_INLINE_BASE(001428F0, cVbHead001428F0)
+VB_INLINE_BASE(001420C8, cVbHead001420C8)
+VB_INLINE_BASE0(00142790)
+
+// Bases whose destructors live in other units (out of line there).
+#define VB_EXTERN_BASE(addr, n)                                                                      \
+    class cVbDtor##addr : virtual public cRiderVb_hpc {                                              \
+    public:                                                                                          \
+        char body[n];                                                                                \
+        virtual ~cVbDtor##addr();                                                                    \
+    };
+VB_EXTERN_BASE(00136AD0, 0x6C)
+VB_EXTERN_BASE(002DCDA0, 0xBC)
+VB_EXTERN_BASE(002DA8E8, 0xAC)
+VB_EXTERN_BASE(002E83F0, 0xEC)
+VB_EXTERN_BASE(002E64C0, 0x3AC)
+VB_EXTERN_BASE(002EAC60, 0x10C)
+VB_EXTERN_BASE(002EF530, 0x1C)
+VB_EXTERN_BASE(002D4A70, 0x4)
+VB_EXTERN_BASE(002E37D0, 0x3C)
+VB_EXTERN_BASE(002DF1C8, 0x12C)
+VB_EXTERN_BASE(002F0FE8, 0xAC)
+VB_EXTERN_BASE(002F6388, 0x0C)
+
+class cVbDtor00142A50
+    : public cVbIn00140D80, public cVbIn00140EE0, public cVbDtor00136AD0, public cVbIn001411C0,
+      public cVbIn00141040, public cVbIn00141320, public cVbIn001415C8, public cVbIn00141728,
+      public cVbIn00141888, public cVbIn001419E8, public cVbIn00141B48, public cVbIn00141CA8,
+      public cVbIn00141E08, public cVbIn00141F68, public cVbIn00142228, public cVbIn00142630,
+      public cVbIn001424D0, public cVbIn001428F0, public cVbIn001420C8, public cVbIn00142790,
+      public cVbDtor002DCDA0, public cVbDtor002DA8E8, public cVbDtor002E83F0, public cVbDtor002E64C0,
+      public cVbDtor002EAC60, public cVbDtor002EF530, public cVbDtor002D4A70, public cVbDtor002E37D0,
+      public cVbDtor002DF1C8, public cVbDtor002F0FE8, public cVbDtor002F6388 {
+public:
+    char pad[0xB8];
+    virtual ~cVbDtor00142A50();
+    // Own vtable D_00458710: a pure slot, then func_00111AC0 and func_00111D98.
+    virtual void vf00() = 0;
+    virtual void vf01(char* s);
+    virtual void vf02(char* s);
+    static void operator delete(void* p) { operator_delete((int*)p); }
+};
+
+cVbDtor00142A50::~cVbDtor00142A50()
+{
+}
+// PORT: the compiler names this dtor _$_15cVbDtor00142A50; expose it under the address-derived name.
+__asm__(".globl func_00142A50\n.type func_00142A50,@function\nfunc_00142A50 = _$_15cVbDtor00142A50\n.size func_00142A50,0x15A0\n");
+#endif
 
 //100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_00143FF0);
