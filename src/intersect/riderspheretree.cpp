@@ -2424,7 +2424,240 @@ extern "C" int func_0032E690(sRay_E690* self, float* bmin, float* bmax, sHit_E69
 }
 #endif
 
+//100%
 INCLUDE_ASM("intersect/riderspheretree", func_0032E9A0);
+#ifdef SKIP_ASM
+struct sLine_E9A0 {
+    char pad_0x00[0x60];
+    sSphereVec4 origin; // 0x60
+    sSphereVec4 dir;    // 0x70
+};
+
+// bicubic patch: one 4x4 coefficient matrix per coordinate
+struct sPatch_E9A0 {
+    char pad_0x00[0x40];
+    sSphereVec4 m[4][4]; // 0x40
+};
+
+struct sVec4_E9A0 : sSphereVec4 {
+    sVec4_E9A0(const float& a, const float& b, const float& c, const float& d)
+    {
+        x = a;
+        y = b;
+        z = c;
+        w = d;
+    }
+    // direction: w = 0
+    sVec4_E9A0(const float& a, const float& b, const float& c)
+    {
+        x = a;
+        y = b;
+        z = c;
+        w = 0.0f;
+    }
+};
+
+static inline float Elem_E9A0(const sSphereVec4& v, int i)
+{
+    return (&v.x)[i];
+}
+
+// component k of the four coefficient vectors
+static inline sVec4_E9A0 Column_E9A0(const sSphereVec4* c, int k)
+{
+    return sVec4_E9A0(Elem_E9A0(c[0], k), Elem_E9A0(c[1], k), Elem_E9A0(c[2], k), Elem_E9A0(c[3], k));
+}
+
+struct sVec3_E9A0 {
+    float x, y, z;
+    sVec3_E9A0() {}
+    sVec3_E9A0(const sSphereVec4& v)
+    {
+        x = v.x;
+        y = v.y;
+        z = v.z;
+    }
+};
+
+// 3x3 matrix, column-major
+struct sMat3_E9A0 {
+    float m[9];
+    sMat3_E9A0 operator*(float s) const
+    {
+        sMat3_E9A0 r;
+        r.m[0] = m[0] * s;
+        r.m[1] = m[1] * s;
+        r.m[2] = m[2] * s;
+        r.m[3] = m[3] * s;
+        r.m[4] = m[4] * s;
+        r.m[5] = m[5] * s;
+        r.m[6] = m[6] * s;
+        r.m[7] = m[7] * s;
+        r.m[8] = m[8] * s;
+        return r;
+    }
+};
+
+static inline sVec3_E9A0 operator*(const sMat3_E9A0& a, const sVec3_E9A0& v)
+{
+    sVec3_E9A0 r;
+    r.x = a.m[0] * v.x + a.m[3] * v.y + a.m[6] * v.z;
+    r.y = a.m[1] * v.x + a.m[4] * v.y + a.m[7] * v.z;
+    r.z = a.m[2] * v.x + a.m[5] * v.y + a.m[8] * v.z;
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector subtract).
+static inline sSphereVec4 vu0Sub_E9A0(const sSphereVec4& a, const sSphereVec4& b)
+{
+    sSphereVec4 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (cross product, w = 0).
+static inline sSphereVec4 vu0Cross_E9A0(const sSphereVec4& a, const sSphereVec4& b)
+{
+    sSphereVec4 r;
+    __asm__(
+        "lqc2      $vf4, %1\n"
+        "lqc2      $vf5, %2\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vsub.w    $vf6, $vf6, $vf6\n"
+        "sqc2      $vf6, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (normalize via rsqrt).
+static inline sSphereVec4 vu0Normalize_E9A0(const sSphereVec4& v)
+{
+    sSphereVec4 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vrsqrt    Q, $vf0w, $vf4x\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf5, $vf3, Q\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(v));
+    return r;
+}
+
+// Intersect the line with a bicubic patch: four Newton steps from (u, v). Writes the hit point and the
+// surface normal only if (u, v) stays inside the unit square.
+extern "C" void func_0032E9A0(sLine_E9A0* line, sPatch_E9A0* patch, float& u, float& v, sSphereVec4* outPos,
+                              sSphereVec4* outNrm)
+{
+    sSphereVec4* m0 = patch->m[0];
+    sSphereVec4* m1 = patch->m[1];
+    sSphereVec4* m2 = patch->m[2];
+    sSphereVec4* m3 = patch->m[3];
+    sSphereVec4 P;
+    sSphereVec4 c[4];
+    float v2 = v * v;
+    float v3 = v * v2;
+    float u2 = u * u;
+    float u3 = u * u2;
+    sVec4_E9A0 V(v3, v2, v, 1.0f);
+    sVec4_E9A0 U(u3, u2, u, 1.0f);
+    c[0] = mtxMulVec_9B90(m0, &U);
+    c[1] = mtxMulVec_9B90(m1, &U);
+    c[2] = mtxMulVec_9B90(m2, &U);
+    c[3] = mtxMulVec_9B90(m3, &U);
+    P = sVec4_E9A0(vu0Dot_E4D0(Column_E9A0(c, 0), V), vu0Dot_E4D0(Column_E9A0(c, 1), V),
+                   vu0Dot_E4D0(Column_E9A0(c, 2), V), 1.0f);
+    sVec4_E9A0 dV(3.0f * v2, 2.0f * v, 1.0f);
+    sVec4_E9A0 dU(3.0f * u2, 2.0f * u, 1.0f);
+    float dvx = vu0Dot_E4D0(dV, Column_E9A0(c, 0));
+    float dvy = vu0Dot_E4D0(dV, Column_E9A0(c, 1));
+    float dvz = vu0Dot_E4D0(dV, Column_E9A0(c, 2));
+    c[0] = mtxMulVec_9B90(m0, &dU);
+    c[1] = mtxMulVec_9B90(m1, &dU);
+    c[2] = mtxMulVec_9B90(m2, &dU);
+    c[3] = mtxMulVec_9B90(m3, &dU);
+    float dux = vu0Dot_E4D0(V, Column_E9A0(c, 0));
+    float duy = vu0Dot_E4D0(V, Column_E9A0(c, 1));
+    float duz = vu0Dot_E4D0(V, Column_E9A0(c, 2));
+    for (int i = 0; i < 4; i++) {
+        sVec3_E9A0 d(vu0Sub_E9A0(line->origin, P));
+        // Jacobian [dP/du dP/dv -dir], filled row by row
+        sMat3_E9A0 m;
+        m.m[0] = dux;
+        m.m[3] = dvx;
+        m.m[6] = -line->dir.x;
+        m.m[1] = duy;
+        m.m[4] = dvy;
+        m.m[7] = -line->dir.y;
+        m.m[2] = duz;
+        m.m[5] = dvz;
+        m.m[8] = -line->dir.z;
+        {
+            sMat3_E9A0 adj;
+            adj.m[0] = m.m[4] * m.m[8] - m.m[5] * m.m[7];
+            adj.m[1] = m.m[7] * m.m[2] - m.m[8] * m.m[1];
+            adj.m[2] = m.m[1] * m.m[5] - m.m[2] * m.m[4];
+            adj.m[3] = m.m[6] * m.m[5] - m.m[8] * m.m[3];
+            adj.m[4] = m.m[0] * m.m[8] - m.m[2] * m.m[6];
+            adj.m[5] = m.m[3] * m.m[2] - m.m[5] * m.m[0];
+            adj.m[6] = m.m[3] * m.m[7] - m.m[4] * m.m[6];
+            adj.m[7] = m.m[6] * m.m[1] - m.m[7] * m.m[0];
+            adj.m[8] = m.m[0] * m.m[4] - m.m[1] * m.m[3];
+            float det = m.m[0] * adj.m[0] + m.m[3] * adj.m[1] + m.m[6] * adj.m[2];
+            m = adj * (1.0f / det);
+        }
+        sVec3_E9A0 delta = m * d;
+        u += delta.x;
+        v += delta.y;
+        if (u < 0.0f || 1.0f < u || v < 0.0f || 1.0f < v) {
+            return;
+        }
+        v2 = v * v;
+        v3 = v * v2;
+        u2 = u * u;
+        u3 = u * u2;
+        V = sVec4_E9A0(v3, v2, v, 1.0f);
+        U = sVec4_E9A0(u3, u2, u, 1.0f);
+        c[0] = mtxMulVec_9B90(m0, &U);
+        c[1] = mtxMulVec_9B90(m1, &U);
+        c[2] = mtxMulVec_9B90(m2, &U);
+        c[3] = mtxMulVec_9B90(m3, &U);
+        P = sVec4_E9A0(vu0Dot_E4D0(Column_E9A0(c, 0), V), vu0Dot_E4D0(Column_E9A0(c, 1), V),
+                       vu0Dot_E4D0(Column_E9A0(c, 2), V), 1.0f);
+        dV = sVec4_E9A0(3.0f * v2, 2.0f * v, 1.0f);
+        dU = sVec4_E9A0(3.0f * u2, 2.0f * u, 1.0f);
+        dvx = vu0Dot_E4D0(dV, Column_E9A0(c, 0));
+        dvy = vu0Dot_E4D0(dV, Column_E9A0(c, 1));
+        dvz = vu0Dot_E4D0(dV, Column_E9A0(c, 2));
+        c[0] = mtxMulVec_9B90(m0, &dU);
+        c[1] = mtxMulVec_9B90(m1, &dU);
+        c[2] = mtxMulVec_9B90(m2, &dU);
+        c[3] = mtxMulVec_9B90(m3, &dU);
+        dux = vu0Dot_E4D0(V, Column_E9A0(c, 0));
+        duy = vu0Dot_E4D0(V, Column_E9A0(c, 1));
+        duz = vu0Dot_E4D0(V, Column_E9A0(c, 2));
+    }
+    sVec4_E9A0 du(dux, duy, duz);
+    sVec4_E9A0 dv(dvx, dvy, dvz);
+    sSphereVec4 n = vu0Normalize_E9A0(vu0Cross_E9A0(dv, du));
+    *outPos = P;
+    *outNrm = n;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("intersect/riderspheretree", func_0032F650);
