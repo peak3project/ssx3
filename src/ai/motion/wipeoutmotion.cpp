@@ -990,7 +990,343 @@ extern "C" void func_00137860(void* vself)
 #undef RIDER
 #endif
 
+//100%
 INCLUDE_ASM("ai/motion/wipeoutmotion", func_00137D18);
+#ifdef SKIP_ASM
+struct sHit_137D18 {
+    t4Vector pos;       // 0x00
+    t4Vector normal;    // 0x10
+    t4Vector v20;       // 0x20
+    float pad30[7];     // 0x30
+    int material;       // 0x4C
+    char* obj;          // 0x50
+    char* tri;          // 0x54
+    char pad58[0x28];   // 0x58
+} __attribute__((aligned(16)));
+
+// A point of a piecewise-linear curve.
+struct sCurvePt_137D18 { float x, y; };
+
+// Per-material surface settings (0xB0 bytes each).
+struct sMat_137D18 {
+    char pad00[0x18];
+    float f18;                  // 0x18
+    char pad1C[0x28];
+    int f44;                    // 0x44
+    char pad48[0x48];
+    sCurvePt_137D18 p[4];       // 0x90
+};
+
+struct sVEntH_137D18 { short delta; short index; void (*fn)(void*, void*, const t4Vector&); };
+
+extern "C" float func_00138960(void* self, char* hit, sVec4WG* dir);
+extern "C" int func_00311AE8(void*, int);
+extern "C" void func_00121AA0(void* rider, void* a, void* b, float x, float y);
+void func_00111AA0_137D18(void* self, void* a, void* b, int c, float x) __asm__("func_00111AA0__FPv");
+extern "C" int func_00116120(void* rider, int a, int b);
+extern "C" void cRider_updateOrientationImplicit(void*);
+extern char* D_004A28A8;
+extern t4Vector D_004FF160;
+
+// PORT: PS2-only VU0 inline asm (4-component vector length).
+static inline float vu0Length_137D18(const t4Vector& v)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %1, $vi22\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(v));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4-component dot product).
+static inline float vu0Dot_137D18(const t4Vector& a, const t4Vector& b)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "lqc2      $vf5, %3\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf5\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "qmfc2.ni  %1, $vf4\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector times scalar).
+static inline t4Vector vu0Scale_137D18(const t4Vector& v, float s)
+{
+    t4Vector r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "o"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector divided by scalar).
+static inline t4Vector vu0Div_137D18(const t4Vector& v, float s)
+{
+    t4Vector r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vdiv      Q, $vf0w, $vf3x\n"
+        "lqc2      $vf4, %2\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf4, $vf4, Q\n"
+        "sqc2      $vf4, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector subtract).
+static inline t4Vector vu0Sub_137D18(const t4Vector& a, const t4Vector& b)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector add).
+static inline t4Vector vu0Add_137D18(const t4Vector& a, const t4Vector& b)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (normalize via rsqrt).
+static inline t4Vector vu0Normalize_137D18(const t4Vector& v)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vrsqrt    Q, $vf0w, $vf4x\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf5, $vf3, Q\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(v)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (a += b).
+static inline void vu0AddEq_137D18(t4Vector& a, const t4Vector& b)
+{
+    __asm__(
+        "lqc2      $vf3, %0\n"
+        "lqc2      $vf4, %1\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "+m"(a)
+        : "m"(b));
+}
+
+// PORT: PS2-only VU0 inline asm (a -= b).
+static inline void vu0SubEq_137D18(t4Vector& a, const t4Vector& b)
+{
+    __asm__(
+        "lqc2      $vf3, %0\n"
+        "lqc2      $vf4, %1\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "+m"(a)
+        : "m"(b));
+}
+
+// PORT: PS2-only VU0 inline asm (v *= s).
+static inline void vu0ScaleEq_137D18(t4Vector& v, float s)
+{
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(v), "=&r"(t)
+        : "m"(v), "f"(s));
+}
+
+static inline float lerp_137D18(const sCurvePt_137D18& a, const sCurvePt_137D18& b, float x)
+{
+    float y0 = a.y;
+    x -= a.x;
+    return y0 + (b.y - y0) * x / (b.x - a.x);
+}
+
+static inline float curve_137D18(const sMat_137D18* c, float x)
+{
+    if (c->p[1].x < x)
+    {
+        if (c->p[2].x < x)
+        {
+            if (c->p[3].x < x)
+                return c->p[3].y;
+            return lerp_137D18(c->p[2], c->p[3], x);
+        }
+        return lerp_137D18(c->p[1], c->p[2], x);
+    }
+    if (x < c->p[0].x)
+        return c->p[0].y;
+    return lerp_137D18(c->p[0], c->p[1], x);
+}
+
+// PORT: <? (g++ min operator).
+static inline float clamp_137D18(float v, float lo, float hi)
+{
+    return lo <= v ? v <? hi : lo;
+}
+
+static inline sMat_137D18* materials_137D18()
+{
+    return *(sMat_137D18**)(*(char**)(D_004A28A8 + 0x84) + 0x44);
+}
+
+static inline short triFlags_137D18(char* t)
+{
+    return *(short*)(t + 0xA);
+}
+
+static inline t4Vector getFront_137D18(cRider* r)
+{
+    return r->mMatrix.row[1];
+}
+
+#define RIDER (*(cRider**)(self + 0x40))
+
+// Wipeout tumble: damps the spin, slides along the ground with surface friction, then re-probes the ground.
+extern "C" void func_00137D18(void* vself)
+{
+    char* self = (char*)vself;
+    float len = vu0Length_137D18(*(t4Vector*)(self + 0x30));
+    float vl = vu0Length_137D18(RIDER->mVelocity) * 0.012500000186264515f;
+    float dt = RIDER->unk_300 * 0.01666666753590107f;
+    float nl = len + (vl - len) * 5.0f * dt;
+    if (0.0010000000474974513f < len)
+        vu0ScaleEq_137D18(*(t4Vector*)(self + 0x30), nl / len);
+    sMat_137D18* mat = &materials_137D18()[RIDER->unk_438];
+    t4Vector v = vu0Sub_137D18(RIDER->mVelocity, RIDER->unk_3D0);
+    float vn = vu0Dot_137D18(v, RIDER->mGroundNormal);
+    t4Vector n = vu0Scale_137D18(RIDER->mGroundNormal, vn);
+    t4Vector tang = vu0Sub_137D18(v, n);
+    float tl = vu0Length_137D18(tang);
+    float fric = curve_137D18(mat, tl * 0.035999998450279236f) * 3.0f + 1.5f;
+    if (tl < 1111.111083984375f
+        && (RIDER->unk_150 != 0 || func_00311AE8(RIDER->mRiderAnim, 2) == 0x1D
+            || func_00311AE8(RIDER->mRiderAnim, 2) == 0x19)) {
+        float q = 1.0f - tl * 0.0009000000427477062f;
+        q *= q;
+        q *= q;
+        fric = q * 40.0f + (1.0f - q) * fric;
+    }
+    fric *= clamp_137D18(RIDER->mGroundNormal.z + 0.30000001192092896f, 0.0f, 1.0f);
+    if (1.0f / dt < fric)
+        fric = 1.0f / dt;
+    t4Vector grav = vu0Scale_137D18(D_004FF160, -1800.0f);
+    t4Vector drag = vu0Scale_137D18(tang, -fric);
+    t4Vector acc = vu0Add_137D18(grav, drag);
+    vu0AddEq_137D18(RIDER->mPosition, vu0Scale_137D18(RIDER->mVelocity, dt));
+    vu0AddEq_137D18(RIDER->mVelocity, vu0Scale_137D18(acc, dt));
+    float sp = vu0Length_137D18(RIDER->mVelocity);
+    if (3333.33349609375f < sp)
+        vu0ScaleEq_137D18(RIDER->mVelocity, 3333.33349609375f / sp);
+    t4Vector dir = vu0Normalize_137D18(vu0Add_137D18(getFront_137D18(RIDER), vu0Scale_137D18(RIDER->mVelocity, 0.0036000001709908247f)));
+    func_00121AA0(RIDER, &RIDER->mGroundNormal, &dir, RIDER->unk_300 * 2.0f, RIDER->unk_300 * 6.632251739501953f);
+    sHit_137D18 hit;
+    float d = func_00138960(self, (char*)&hit, (sVec4WG*)&RIDER->mGroundNormal);
+    if (0.0f <= d) {
+        RIDER->unk_3D0 = hit.v20;
+        RIDER->mGroundNormal = hit.normal;
+        RIDER->unk_438 = hit.material;
+        RIDER->unk_460 = hit.pos;
+        RIDER->unk_454 = vu0Dot_137D18(vu0Sub_137D18(RIDER->mPosition, hit.pos), RIDER->mGroundNormal);
+        float lim = RIDER->mAnimModel->unk_140.x * mat->f18;
+        float pen = vu0Dot_137D18(vu0Sub_137D18(RIDER->mPosition, hit.pos), hit.normal);
+        if (pen < -lim) {
+            float spd = vu0Length_137D18(hit.v20);
+            float vn2 = vu0Dot_137D18(RIDER->mVelocity, hit.normal);
+            if (vn2 < 0.0f)
+                vu0SubEq_137D18(RIDER->mVelocity, vu0Scale_137D18(hit.normal, vn2));
+            vu0SubEq_137D18(RIDER->mPosition, vu0Scale_137D18(hit.normal, pen + lim));
+            func_00111AA0_137D18(RIDER->mRiderHandler, &hit, &hit.normal, hit.material, spd);
+        } else if (pen < 0.0f) {
+            float spd = vu0Length_137D18(RIDER->mVelocity);
+            vu0AddEq_137D18(RIDER->mVelocity, vu0Scale_137D18(RIDER->mGroundNormal, dt * (pen * -2700.0f / lim - vu0Dot_137D18(RIDER->mVelocity, RIDER->mGroundNormal))));
+            func_00111AA0_137D18(RIDER->mRiderHandler, &hit, &hit.normal, hit.material, spd);
+        } else if (10.0f < pen) {
+            float vn3 = vu0Dot_137D18(RIDER->mVelocity, RIDER->mGroundNormal);
+            if (vn3 < 0.0f)
+                vu0SubEq_137D18(RIDER->mVelocity, vu0Scale_137D18(RIDER->mGroundNormal, vn3));
+            cAirPredictor_startLaunchIntoAir(RIDER->mAirPredictor, &RIDER->mPosition, &RIDER->mVelocity, 3333.33349609375f);
+            *(int*)(self + 0x4) = 1;
+        }
+        if (hit.obj != 0) {
+            char* o = *(char**)(hit.obj + 0xC);
+            if (o != 0) {
+                sVEntH_137D18* vt = *(sVEntH_137D18**)(o + 0xC);
+                vt[43].fn(o + vt[43].delta, &hit,
+                          vu0Div_137D18(vu0Add_137D18(vu0Sub_137D18(v, RIDER->mVelocity), RIDER->unk_3D0), dt));
+            }
+        }
+        sMat_137D18* ground = &materials_137D18()[hit.material];
+        if (ground->f44 != 0 || (hit.tri != 0 && (triFlags_137D18(hit.tri) & 2)))
+            func_00116120(RIDER, 0, 1);
+    } else {
+        cAirPredictor_startLaunchIntoAir(RIDER->mAirPredictor, &RIDER->mPosition, &RIDER->mVelocity, 3333.33349609375f);
+        *(int*)(self + 0x4) = 1;
+    }
+    cRider_updateOrientationImplicit(RIDER);
+}
+
+#undef RIDER
+#endif
 
 //100%
 INCLUDE_ASM("ai/motion/wipeoutmotion", func_00138640);
