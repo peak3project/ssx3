@@ -3391,7 +3391,388 @@ extern "C" sPartEmitter_A540* func_0037A540(void* a0, void* a1, void* a2, unsign
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/particle", func_0037A610);
+#ifdef SKIP_ASM
+extern char D_80[];
+extern char D_70[];
+extern char D_398[];
+extern int D_004A4510;
+extern int D_004A4530;
+
+// The render-state record as this function sees it: bit-field words (f0 bits 4..5, 6..9 mode, 20..27 alpha; f4 test,
+// layer, blend, ...; f8 bits 0..4 key, 10..28 depth; fC address) and two texture ids.
+struct sRS_A610 {
+    int f0;
+    int f4;
+    int f8;
+    int fC;
+    short tex;
+    short tex2;
+};
+
+struct sPtVtVF {
+    short delta;
+    short index;
+    void (*fn)(void*, float);
+};
+
+// One matrix list of a model chunk: count + bone indices.
+struct sMtxList_A610 {
+    int count;
+    int* index;
+};
+
+// A DMA reference: packet address + data (each data block starts with its qword count).
+struct sDmaRef_A610 {
+    unsigned int addr;
+    unsigned short* data;
+};
+
+struct sSub_A610 {
+    sDmaRef_A610* refs;
+    int count;
+};
+
+struct sChunk_A610 {
+    unsigned int flags;         // 0x0
+    int tex;                    // 0x4
+    short texSlot;              // 0x8
+    unsigned char alpha;        // 0xA
+    char pad_0xB;
+    int numSubs;                // 0xC
+    sSub_A610* subs;            // 0x10
+};
+
+struct sMdl_A610 {
+    char pad_0x0[0x20];
+    int chunkOfs;               // 0x20
+    char pad_0x24[0x3C - 0x24];
+    sMtxList_A610* lists;       // 0x3C
+    float* lodW;                // 0x40
+    char pad_0x44[0x4];
+    short numChunks;            // 0x48
+    char pad_0x4A[0x50 - 0x4A];
+    short numLods;              // 0x50
+};
+
+struct sGfx_A610 {
+    char pad_0x0[0xE84];
+    sRS_A610* top;                  // 0xE84
+    char pad_0xE88[0x10B0 - 0xE88];
+    int texSlots[(0x10D8 - 0x10B0) / 4];   // 0x10B0
+    sPtVtVF* vtable;                // 0x10D8
+    char pad_0x10DC[0x13E8 - 0x10DC];
+    t4Matrix* bones;                // 0x13E8
+    char pad_0x13EC[0x18F0 - 0x13EC];
+    sPtRing* ring;                  // 0x18F0
+    char pad_0x18F4[0x58A0 - 0x18F4];
+    sPtMatrix m58A0;                // 0x58A0
+    char pad_0x58E0[0x5920 - 0x58E0];
+    sPtQuadF q5920;                 // 0x5920
+    char pad_0x5930[0x5A00 - 0x5930];
+    unsigned int bufAddr;           // 0x5A00
+    char pad_0x5A04[0x6B90 - 0x5A04];
+    int texReady;                   // 0x6B90
+};
+
+extern "C" void func_0037CBC8_A610(void* self, int tex, int mode) __asm__("func_0037CBC8__FPv");
+
+// PORT: PS2-only VU0 inline asm (matrix * vector, clamp, depth read back from vi1).
+static inline int Depth_A610(sGfx_A610* self, t4Vector v)
+{
+    long r;
+    if (self->texReady == 0) {
+        func_0037D968(self);
+    }
+    __asm__ __volatile__(
+        "lqc2      $vf5, %1\n"
+        "lqc2      $vf10, %2\n"
+        "lqc2      $vf1, 0x0(%3)\n"
+        "lqc2      $vf2, 0x10(%3)\n"
+        "lqc2      $vf3, 0x20(%3)\n"
+        "lqc2      $vf4, 0x30(%3)\n"
+        "vmulax.xyzw ACC, $vf1, $vf10x\n"
+        "vmadday.xyzw ACC, $vf2, $vf10y\n"
+        "vmaddaz.xyzw ACC, $vf3, $vf10z\n"
+        "vmaddw.xyzw $vf11, $vf4, $vf10w\n"
+        "vmulw.w    $vf11, $vf11, $vf5w\n"
+        "vmaxx.w    $vf11, $vf11, $vf0x\n"
+        "vminix.w   $vf11, $vf11, $vf5x\n"
+        "vftoi0.xyzw $vf11, $vf11\n"
+        "vmtir      $vi1, $vf11w\n"
+        "cfc2.ni    %0, $vi1\n"
+        : "=&r"(r)
+        : "m"(self->q5920), "m"(v), "r"(&self->m58A0)
+        : "memory");
+    return (int)r;
+}
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix copy).
+static inline void CopyMtx_A610(void* dst, const void* src)
+{
+    __asm__ __volatile__(
+        "lqc2      $vf1, 0x0(%1)\n"
+        "lqc2      $vf2, 0x10(%1)\n"
+        "lqc2      $vf3, 0x20(%1)\n"
+        "lqc2      $vf4, 0x30(%1)\n"
+        "sqc2      $vf1, 0x0(%0)\n"
+        "sqc2      $vf2, 0x10(%0)\n"
+        "sqc2      $vf3, 0x20(%0)\n"
+        "sqc2      $vf4, 0x30(%0)\n"
+        :
+        : "r"(dst), "r"(src)
+        : "memory");
+}
+
+// Inline copy of func_00396C30: uploads the list's matrices and calls the skinning program.
+static inline void UploadMtx_A610(sMtxList_A610* list, t4Matrix* mats, unsigned long** cur)
+{
+    int n = list->count;
+    int* idx = list->index;
+    unsigned long* p = *cur;
+    p[0] = (n * 4 + 2) | 0x10000000;
+    p[1] = 0;
+    p[2] = (unsigned long)0x8000 << 45;
+    p[3] = ((unsigned long)(unsigned int)((n << 18) | 0x6C000011) << 32) | 0x1000101;
+    p += 4;
+    for (int i = 0; i < n; i++) {
+        CopyMtx_A610(p, &mats[idx[i]]);
+        p += 8;
+    }
+    p[0] = ((unsigned long)n << 32) | 0x600103FF;
+    p[1] = (unsigned long)(((unsigned int)D_80 >> 3) | 0x14000000) | ((unsigned long)(((unsigned int)D_70 >> 3) | 0x14000000) << 32);
+    p += 2;
+    *cur = p;
+}
+
+// Sets the width-bit field at shift in a render-state word.
+static inline void SetField_A610(int& w, int shift, int width, int v)
+{
+    int mask = ((1 << width) - 1) << shift;
+    w = (w & ~mask) | ((v << shift) & mask);
+}
+
+static inline void SetTest_A610(sGfx_A610* self)
+{
+    if (D_004A4530 == 0) {
+        SetField_A610(self->top->f4, 7, 5, 0x11);
+    } else {
+        SetField_A610(self->top->f4, 7, 5, 3);
+    }
+}
+
+static inline void SetTex_A610(sGfx_A610* self, int t)
+{
+    self->top->tex = t;
+}
+
+static inline void SetTex2_A610(sGfx_A610* self, int t)
+{
+    self->top->tex2 = t;
+}
+
+#define MIN_A610(a, b) ((a) < (b) ? (a) : (b))
+
+// PORT: PS2-only DMA/VIF packet build; uncached (0x30000000) pointers held in int.
+extern "C" void func_0037A610(sGfx_A610* self, sMdl_A610* mdl, char* base, int shadow)
+{
+    if (D_004A4510 == 0) {
+        self->top[1] = *self->top;
+        self->top++;
+        self->vtable[124].fn((char*)self + self->vtable[124].delta, 1.0f);
+        if (self->texReady == 0) {
+            func_0037D968(self);
+        }
+        int matIdx = 0;
+        sChunk_A610* chunk = (sChunk_A610*)(base + mdl->chunkOfs);
+        t4Matrix* bones = self->bones;
+        SetTex2_A610(self, self->texSlots[chunk->texSlot]);
+        SetField_A610(self->top->f0, 4, 2, 3);
+        int z = MIN_A610(0x400, Depth_A610(self, bones->row[3]) + 0x10);
+        if (shadow) {
+            SetField_A610(self->top->f0, 20, 8, 0);
+            SetField_A610(self->top->f4, 2, 5, 7);
+            SetTest_A610(self);
+            SetField_A610(self->top->f4, 0, 2, 2);
+            SetField_A610(self->top->f8, 10, 19, z);
+            SetField_A610(self->top->f4, 23, 2, 1);
+            SetField_A610(self->top->f4, 20, 2, 0);
+            SetField_A610(self->top->f4, 12, 8, 0x14);
+        }
+        for (int i = 0; i < mdl->numChunks; i++) {
+            func_0037CBC8_A610(self, chunk->tex, 3);
+            SetTex_A610(self, chunk->tex);
+            if (!shadow) {
+                if (chunk->flags & 0x8000) {
+                    SetField_A610(self->top->f4, 2, 5, 5);
+                    SetField_A610(self->top->f0, 20, 8, chunk->alpha);
+                    SetField_A610(self->top->f4, 7, 5, 0xC);
+                    SetField_A610(self->top->f4, 0, 2, 2);
+                    SetField_A610(self->top->f8, 10, 19, z);
+                    SetField_A610(self->top->f4, 23, 2, 1);
+                    SetField_A610(self->top->f4, 20, 2, 3);
+                    SetField_A610(self->top->f4, 12, 8, 0x5C);
+                } else {
+                    SetField_A610(self->top->f4, 2, 5, 1);
+                    SetField_A610(self->top->f0, 20, 8, 0);
+                    SetTest_A610(self);
+                    SetField_A610(self->top->f4, 0, 2, 0);
+                    SetField_A610(self->top->f8, 10, 19, 0);
+                    SetField_A610(self->top->f4, 23, 2, 1);
+                    SetField_A610(self->top->f4, 20, 2, 0);
+                    SetField_A610(self->top->f4, 12, 8, 0x14);
+                }
+            }
+            if (chunk->flags & 1) {
+                unsigned int buf = self->bufAddr;
+                unsigned long* p = (unsigned long*)(buf | 0x30000000);
+                sMtxList_A610* list = &mdl->lists[matIdx];
+                sSub_A610* send = chunk->subs + chunk->numSubs;
+                for (sSub_A610* s = chunk->subs; s != send; list++, s++) {
+                    UploadMtx_A610(list, bones, &p);
+                    p[0] = ((unsigned long)s->refs->addr << 32) | 0x50000000;
+                    p[1] = 0;
+                    p += 2;
+                }
+                unsigned int next = (unsigned int)p & 0x0FFFFFFF;
+                sPtRing* ring = self->ring;
+                self->bufAddr = next;
+                sRS_A610* rs = self->top;
+                if (ring->count < 0xA28) {
+                    rs->f8 = (rs->f8 & ~0x1F) | (*(int*)((char*)ring + 0x69CC4) & 0x1F);
+                    int key = *(int*)((char*)ring + 0x69CC0);
+                    sPtRingEnt* e = (sPtRingEnt*)((ring->count++ << 7) + ((unsigned int)ring->ents | 0x30000000));
+                    *(sRS_A610*)&e->rs = *rs;
+                    e->buf = buf;
+                    e->next = next;
+                    e->key = key;
+                    e->flag = 0;
+                }
+                self->bufAddr += 0x10;
+            } else if (chunk->flags & 0x100) {
+                unsigned int buf = self->bufAddr;
+                unsigned int prog = (unsigned int)D_398 >> 3;
+                unsigned long* p = (unsigned long*)(buf | 0x30000000);
+                int nlod = mdl->numLods;
+                float* w = mdl->lodW;
+                int found = 0;
+                for (int j = 0; j < nlod; j++) {
+                    if (w[j] > 0.01f) {
+                        found = 1;
+                        break;
+                    }
+                }
+                if (found) {
+                    // scale stays a variable: the target rematerialises its bits per branch arm and carries them in a register
+                    // into the second element (a literal folds into one 64-bit constant).
+                    float scale = 12800.0f;
+                    sMtxList_A610* list = &mdl->lists[matIdx];
+                    sSub_A610* send = chunk->subs + chunk->numSubs;
+                    for (sSub_A610* s = chunk->subs; s != send; list++, s++) {
+                        UploadMtx_A610(list, bones, &p);
+                        int n = s->count;
+                        sDmaRef_A610* r = s->refs;
+                        int even = (n & 1) == 0;
+                        for (int k = 0; k < n; k += 2, r++) {
+                            unsigned short* d1 = r->data;
+                            p[0] = ((unsigned long)r->addr << 32) | 0x50000000;
+                            p[1] = 0;
+                            p[2] = ((unsigned long)(unsigned int)d1 << 32) | 0x50000001;
+                            p[3] = 0;
+                            p[4] = (unsigned long)0x640180B4 << 32;
+                            if (w[0] < 0.0f) {
+                                p[5] = (unsigned long)*(int*)&scale << 32;
+                            } else {
+                                p[5] = (long)*(int*)&w[0] | ((unsigned long)*(int*)&scale << 32);
+                            }
+                            p += 6;
+                            if (even || k < n - 1) {
+                                r++;
+                            }
+                            unsigned short* d2 = r->data;
+                            p[0] = ((unsigned long)r->addr << 32) | 0x50000000;
+                            p[1] = 0;
+                            p[2] = ((unsigned long)(unsigned int)d2 << 32) | 0x50000001;
+                            p[3] = 0;
+                            p[4] = ((unsigned long)0x640180B4 << 32) | 0x11000000;
+                            if (w[0] < 0.0f) {
+                                p[5] = (unsigned long)*(int*)&scale << 32;
+                            } else {
+                                p[5] = (long)*(int*)&w[0] | ((unsigned long)*(int*)&scale << 32);
+                            }
+                            p += 6;
+                            for (int j = 1; j < nlod; j++) {
+                                d1 += (*d1 + 1) * 8;
+                                d2 += (*d2 + 1) * 8;
+                                if (w[j] > 0.01f) {
+                                    p[0] = ((unsigned long)(unsigned int)d1 << 32) | 0x50000001;
+                                    p[1] = 0;
+                                    p[2] = (unsigned long)0x640180B4 << 32;
+                                    p[3] = (long)*(int*)&w[j] | ((unsigned long)*(int*)&scale << 32);
+                                    p[4] = ((unsigned long)(unsigned int)d2 << 32) | 0x50000001;
+                                    p[5] = 0;
+                                    p[6] = (unsigned long)0x640180B4 << 32;
+                                    p[7] = (long)*(int*)&w[j] | ((unsigned long)*(int*)&scale << 32);
+                                    p += 8;
+                                }
+                            }
+                            p[0] = 0x10000001;
+                            p[1] = 0;
+                            p[2] = ((unsigned long)(prog | 0x14000000) << 32) | 0x11000000;
+                            p[3] = ((unsigned long)(prog | 0x14000000) << 32) | 0x11000000;
+                            p += 4;
+                        }
+                    }
+                } else {
+                    sMtxList_A610* list = &mdl->lists[matIdx];
+                    sSub_A610* send = chunk->subs + chunk->numSubs;
+                    for (sSub_A610* s = chunk->subs; s != send; list++, s++) {
+                        UploadMtx_A610(list, bones, &p);
+                        sDmaRef_A610* r = s->refs;
+                        sDmaRef_A610* end = r + s->count;
+                        p[0] = ((unsigned long)r->addr << 32) | 0x50000000;
+                        p[1] = 0;
+                        p += 2;
+                        for (r++; r != end; r++) {
+                            p[0] = ((unsigned long)r->addr << 32) | 0x50000001;
+                            p[1] = 0;
+                            p[2] = (unsigned long)0x11000000 << 32;
+                            p[3] = (unsigned long)(prog | 0x14000000) << 32;
+                            p += 4;
+                        }
+                        p[0] = 0x10000001;
+                        p[1] = 0;
+                        p[2] = (unsigned long)0x11000000 << 32;
+                        p[3] = (unsigned long)(prog | 0x14000000) << 32;
+                        p += 4;
+                    }
+                }
+                unsigned int next = (unsigned int)p & 0x0FFFFFFF;
+                sPtRing* ring = self->ring;
+                self->bufAddr = next;
+                sRS_A610* rs = self->top;
+                if (ring->count < 0xA28) {
+                    rs->f8 = (rs->f8 & ~0x1F) | (*(int*)((char*)ring + 0x69CC4) & 0x1F);
+                    int key = *(int*)((char*)ring + 0x69CC0);
+                    sPtRingEnt* e = (sPtRingEnt*)((ring->count++ << 7) + ((unsigned int)ring->ents | 0x30000000));
+                    *(sRS_A610*)&e->rs = *rs;
+                    e->buf = buf;
+                    e->next = next;
+                    e->key = key;
+                    e->flag = 0;
+                }
+                self->bufAddr += 0x10;
+            }
+            matIdx += chunk->numSubs;
+            chunk++;
+        }
+        self->top--;
+        SetField_A610(self->top->f0, 6, 4, 0);
+        SetField_A610(self->top->fC, 0, 30, 0);
+    }
+}
+#endif
 
 INCLUDE_ASM("render/particle", func_0037B548);
 
