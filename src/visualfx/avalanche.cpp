@@ -1,6 +1,344 @@
 #include "common.h"
 
+//100%
 INCLUDE_ASM("visualfx/avalanche", tActiveAvalancheNode_getFrameData);
+#ifdef SKIP_ASM
+struct sV4_5778 {
+    float x, y, z, w;
+    sV4_5778() {}
+    sV4_5778(float ax, float ay, float az, float aw) : x(ax), y(ay), z(az), w(aw) {}
+    sV4_5778(const struct sV3_5778& v);
+} __attribute__((aligned(16)));
+
+struct sV3_5778 {
+    float x, y, z;
+    sV3_5778() {}
+    sV3_5778(float ax, float ay, float az) : x(ax), y(ay), z(az) {}
+};
+
+inline sV4_5778::sV4_5778(const sV3_5778& v) : x(v.x), y(v.y), z(v.z), w(0.0f) {}
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix copy).
+static inline void CopyMatrix_5778(void* dst, const void* src)
+{
+    __asm__ __volatile__(
+        "lqc2      $vf1, 0x0(%1)\n"
+        "lqc2      $vf2, 0x10(%1)\n"
+        "lqc2      $vf3, 0x20(%1)\n"
+        "lqc2      $vf4, 0x30(%1)\n"
+        "sqc2      $vf1, 0x0(%0)\n"
+        "sqc2      $vf2, 0x10(%0)\n"
+        "sqc2      $vf3, 0x20(%0)\n"
+        "sqc2      $vf4, 0x30(%0)\n"
+        :
+        : "r"(dst), "r"(src)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix multiply, d = b * a).
+static inline void MulMatrix_5778(void* d, const void* a, const void* b)
+{
+    __asm__ __volatile__(
+        "lqc2      $vf4, 0x0(%1)\n"
+        "lqc2      $vf5, 0x10(%1)\n"
+        "lqc2      $vf6, 0x20(%1)\n"
+        "lqc2      $vf7, 0x30(%1)\n"
+        "lqc2      $vf8, 0x0(%2)\n"
+        "lqc2      $vf9, 0x10(%2)\n"
+        "lqc2      $vf10, 0x20(%2)\n"
+        "lqc2      $vf11, 0x30(%2)\n"
+        "vmulax.xyzw ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw $vf12, $vf7, $vf8w\n"
+        "vmulax.xyzw ACC, $vf4, $vf9x\n"
+        "vmadday.xyzw ACC, $vf5, $vf9y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf9z\n"
+        "vmaddw.xyzw $vf13, $vf7, $vf9w\n"
+        "vmulax.xyzw ACC, $vf4, $vf10x\n"
+        "vmadday.xyzw ACC, $vf5, $vf10y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf10z\n"
+        "vmaddw.xyzw $vf14, $vf7, $vf10w\n"
+        "vmulax.xyzw ACC, $vf4, $vf11x\n"
+        "vmadday.xyzw ACC, $vf5, $vf11y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf11z\n"
+        "vmaddw.xyzw $vf15, $vf7, $vf11w\n"
+        "sqc2      $vf12, 0x0(%0)\n"
+        "sqc2      $vf13, 0x10(%0)\n"
+        "sqc2      $vf14, 0x20(%0)\n"
+        "sqc2      $vf15, 0x30(%0)\n"
+        :
+        : "r"(d), "r"(a), "r"(b)
+        : "memory");
+}
+
+struct sMat_5778 {
+    sV4_5778 r0, r1, r2, r3;
+    sMat_5778() {}
+    sMat_5778(const sMat_5778& m) { CopyMatrix_5778(this, &m); }
+    sMat_5778& operator=(const sMat_5778& m) { CopyMatrix_5778(this, &m); return *this; }
+};
+
+// PORT: PS2-only VU0 inline asm (vector add).
+static inline sV4_5778 vAdd_5778(const sV4_5778& a, const sV4_5778& b)
+{
+    sV4_5778 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector add in place).
+static inline void vAddEq_5778(sV4_5778& a, const sV4_5778& b)
+{
+    __asm__(
+        "lqc2      $vf3, %0\n"
+        "lqc2      $vf4, %1\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "+m"(a)
+        : "m"(b)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (vector times scalar).
+static inline sV4_5778 vScale_5778(const sV4_5778& v, float s)
+{
+    sV4_5778 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+// PORT: sqrt.s (sqrtf without errno check)
+static inline float Sqrt_5778(float x)
+{
+    float r;
+    __asm__("sqrt.s %0, %1" : "=f"(r) : "f"(x));
+    return r;
+}
+
+static inline sV3_5778 Normalize_5778(const sV3_5778& v)
+{
+    float len = Sqrt_5778(v.x * v.x + v.y * v.y + v.z * v.z);
+    if (len != 0.0f) {
+        float inv = 1.0f / len;
+        return sV3_5778(v.x * inv, v.y * inv, v.z * inv);
+    }
+    return sV3_5778(v.x, v.y, v.z);
+}
+
+// Avalanche path data: 10 bytes per frame (30 frames per second):
+// signed velocity[3], unsigned colour[3], signed rotation axis[3], unsigned rotation angle.
+enum {
+    kAvFrameSize_5778 = 10,
+    kAvVel_5778 = 0,
+    kAvCol_5778 = 3,
+    kAvAxis_5778 = 6,
+    kAvRot_5778 = 9
+};
+
+struct sAvData_5778 {
+    char pad0[0xE0];
+    sV4_5778 pos;               // 0xE0
+    char padF0[0xFC - 0xF0];
+    char* frames;               // 0xFC
+    float length;               // 0x100, in frames
+    float f104;                 // 0x104
+    float f108;                 // 0x108
+    float rate;                 // 0x10C
+};
+
+struct sAvAct_5778 {
+    int frame;                  // 0x0
+    int pad4[3];
+    sV4_5778 pos;               // 0x10
+    sMat_5778 mat;              // 0x20
+    char pad60[0xB0 - 0x60];
+    float fB0;                  // 0xB0
+    float fB4;                  // 0xB4
+    char padB8[0xD0 - 0xB8];
+    char emitter[0x12C];        // 0xD0
+    float f1FC;                 // 0x1FC
+    char pad200[0x2E0 - 0x200];
+    sAvData_5778* data;         // 0x2E0
+    sAvAct_5778* next;          // 0x2E4
+    int f2E8;                   // 0x2E8
+    int emitting;               // 0x2EC
+};
+
+struct tFrameData_5778 {
+    sV4_5778 pos;               // 0x0
+    sV4_5778 colour;            // 0x10
+    sMat_5778 mat;              // 0x20
+};
+
+extern float D_004A3A64;
+extern float D_004A3AA8;
+extern sV4_5778 D_004FF120_5778 __asm__("D_004FF120");
+extern sV4_5778 D_004FF130_5778 __asm__("D_004FF130");
+extern sMat_5778 D_004FF1A0_5778 __asm__("D_004FF1A0");
+extern "C" void tActiveAvalancheNode_calculateScale(void* self, float t);
+// PORT: sine/cosine; the angle is set up first at both calls here (other units declare it (s, c, angle),
+// which uses the same registers), so it is declared angle-first under its own name.
+extern "C" void func_0031BE50_5778(float angle, float* s, float* c) __asm__("func_0031BE50");
+extern "C" void func_003717C0(float dt, void* emitter, sV4_5778* pos, sV4_5778* vel, sV4_5778* col, int on);
+
+// Rotates obj->mat by ANGLE about AXIS, keeping its translation (used on the active node and on the
+// returned frame data, which both keep their matrix in `mat`).
+template <class T>
+static inline void RotateFrame_5778(T* obj, const sV4_5778& axis, float angle)
+{
+    sMat_5778& m = obj->mat;
+    sMat_5778 saved = m;
+    sV4_5778 trans = saved.r3;
+    saved.r3 = D_004FF130_5778;
+    float s;
+    float c;
+    func_0031BE50_5778(angle, &s, &c);
+    float t = 1.0f - c;
+    float tx = t * axis.x;
+    float ty = t * axis.y;
+    float tz = t * axis.z;
+    float sx = s * axis.x;
+    float sy = s * axis.y;
+    float sz = s * axis.z;
+    obj->mat.r3.x = 0.0f;
+    obj->mat.r3.y = 0.0f;
+    obj->mat.r3.z = 0.0f;
+    obj->mat.r3.w = 1.0f;
+    obj->mat.r3 = trans;
+    obj->mat.r0.w = 0.0f;
+    obj->mat.r1.w = 0.0f;
+    obj->mat.r2.w = 0.0f;
+    obj->mat.r0.x = tx * axis.x + c;
+    obj->mat.r1.x = tx * axis.y + sz;
+    obj->mat.r2.x = tx * axis.z - sy;
+    obj->mat.r0.y = ty * axis.x - sz;
+    obj->mat.r1.y = ty * axis.y + c;
+    obj->mat.r2.y = ty * axis.z + sx;
+    obj->mat.r0.z = tz * axis.x + sy;
+    obj->mat.r1.z = tz * axis.y - sx;
+    obj->mat.r2.z = tz * axis.z + c;
+    MulMatrix_5778(&m, &m, &saved);
+}
+
+// Compiled-out (release) assert.
+#define ASSERT_5778(cond) do { } while (0)
+
+static inline float Min_5778(float a, float b)
+{
+    return a < b ? a : b;
+}
+
+static inline void Reset_5778(sAvAct_5778* self)
+{
+    self->frame = 0;
+    self->pos = self->data->pos;
+    self->mat = D_004FF1A0_5778;
+}
+
+// Steps the active node's path up to the frame at time t (emitting debris for the skipped frames while
+// it is emitting) and returns the interpolated position, colour and orientation at t.
+extern "C" tFrameData_5778 tActiveAvalancheNode_getFrameData(sAvAct_5778* self, float t)
+{
+    tActiveAvalancheNode_calculateScale(self, t);
+    float x = t * 30.0f;
+    int frame = (int)x;
+    float frac = x - (float)frame;
+    if (frame >= (int)self->data->length - 1) {
+        frac = 1.0f;
+        frame = (int)self->data->length - 2;
+    }
+    float ifrac = 1.0f - frac;
+    if (frame != self->frame) {
+        if (frame == 0) {
+            Reset_5778(self);
+        } else {
+            if (frame < self->frame) {
+                Reset_5778(self);
+            }
+            float time = 0.0f;
+            while (self->frame != frame) {
+                if (self->emitting) {
+                    while ((int)(time * 30.0f) == self->frame) {
+                        float ft = time * 30.0f;
+                        int i = (int)ft;
+                        float f = ft - (float)i;
+                        if (i >= (int)self->data->length - 1) {
+                            f = 1.0f;
+                            i = (int)self->data->length - 2;
+                        }
+                        float g = 1.0f - f;
+                        time = Min_5778(time + D_004A3A64 * self->data->rate, self->data->length * (1.0f / 30.0f));
+                        if (!(ft < self->data->length)) {
+                            break;
+                        }
+                        ASSERT_5778(i + 1 < (int)self->data->length);
+                        sV4_5778 pos = vAdd_5778(sV4_5778(self->data->frames[i * kAvFrameSize_5778 + kAvVel_5778] * f * 2.0f,
+                                                          self->data->frames[i * kAvFrameSize_5778 + kAvVel_5778 + 1] * f * 2.0f,
+                                                          self->data->frames[i * kAvFrameSize_5778 + kAvVel_5778 + 2] * f * 2.0f, 0.0f),
+                                                 self->pos);
+                        sV4_5778 col = vScale_5778(sV4_5778(((unsigned char)self->data->frames[i * kAvFrameSize_5778 + kAvCol_5778] * g +
+                                                             (unsigned char)self->data->frames[(i + 1) * kAvFrameSize_5778 + kAvCol_5778] * f) * (1.0f / 128.0f),
+                                                            ((unsigned char)self->data->frames[i * kAvFrameSize_5778 + kAvCol_5778 + 1] * g +
+                                                             (unsigned char)self->data->frames[(i + 1) * kAvFrameSize_5778 + kAvCol_5778 + 1] * f) * (1.0f / 128.0f),
+                                                            ((unsigned char)self->data->frames[i * kAvFrameSize_5778 + kAvCol_5778 + 2] * g +
+                                                             (unsigned char)self->data->frames[(i + 1) * kAvFrameSize_5778 + kAvCol_5778 + 2] * f) * (1.0f / 128.0f),
+                                                            self->fB4),
+                                                   D_004A3AA8);
+                        self->f1FC = self->fB4;
+                        func_003717C0(1.0f / 60.0f, self->emitter, &pos, &D_004FF120_5778, &col, ft < self->data->length);
+                    }
+                }
+                vAddEq_5778(self->pos, sV4_5778(self->data->frames[self->frame * kAvFrameSize_5778 + kAvVel_5778] * 2.0f,
+                                                self->data->frames[self->frame * kAvFrameSize_5778 + kAvVel_5778 + 1] * 2.0f,
+                                                self->data->frames[self->frame * kAvFrameSize_5778 + kAvVel_5778 + 2] * 2.0f, 0.0f));
+                sV4_5778 axis(Normalize_5778(sV3_5778(self->data->frames[self->frame * kAvFrameSize_5778 + kAvAxis_5778] * (1.0f / 127.0f),
+                                                      self->data->frames[self->frame * kAvFrameSize_5778 + kAvAxis_5778 + 1] * (1.0f / 127.0f),
+                                                      self->data->frames[self->frame * kAvFrameSize_5778 + kAvAxis_5778 + 2] * (1.0f / 127.0f))));
+                // The angle byte spans 0..120 degrees (2.0943951 rad) per frame.
+                RotateFrame_5778(self, axis, (unsigned char)self->data->frames[self->frame * kAvFrameSize_5778 + kAvRot_5778] * (2.0943951f * (1.0f / 255.0f)));
+                self->frame++;
+            }
+            self->emitting = 0;
+        }
+    }
+    tFrameData_5778 fd;
+    fd.pos = vAdd_5778(sV4_5778(self->data->frames[frame * kAvFrameSize_5778 + kAvVel_5778] * frac * 2.0f,
+                                self->data->frames[frame * kAvFrameSize_5778 + kAvVel_5778 + 1] * frac * 2.0f,
+                                self->data->frames[frame * kAvFrameSize_5778 + kAvVel_5778 + 2] * frac * 2.0f, 0.0f),
+                       self->pos);
+    fd.colour = vScale_5778(sV4_5778(((unsigned char)self->data->frames[frame * kAvFrameSize_5778 + kAvCol_5778] * ifrac +
+                                      (unsigned char)self->data->frames[(frame + 1) * kAvFrameSize_5778 + kAvCol_5778] * frac) * (1.0f / 128.0f),
+                                     ((unsigned char)self->data->frames[frame * kAvFrameSize_5778 + kAvCol_5778 + 1] * ifrac +
+                                      (unsigned char)self->data->frames[(frame + 1) * kAvFrameSize_5778 + kAvCol_5778 + 1] * frac) * (1.0f / 128.0f),
+                                     ((unsigned char)self->data->frames[frame * kAvFrameSize_5778 + kAvCol_5778 + 2] * ifrac +
+                                      (unsigned char)self->data->frames[(frame + 1) * kAvFrameSize_5778 + kAvCol_5778 + 2] * frac) * (1.0f / 128.0f),
+                                     self->fB4),
+                            D_004A3AA8);
+    fd.mat = self->mat;
+    sV4_5778 axis(Normalize_5778(sV3_5778(self->data->frames[frame * kAvFrameSize_5778 + kAvAxis_5778] * (1.0f / 127.0f),
+                                          self->data->frames[frame * kAvFrameSize_5778 + kAvAxis_5778 + 1] * (1.0f / 127.0f),
+                                          self->data->frames[frame * kAvFrameSize_5778 + kAvAxis_5778 + 2] * (1.0f / 127.0f))));
+    RotateFrame_5778(&fd, axis, frac * ((unsigned char)self->data->frames[frame * kAvFrameSize_5778 + kAvRot_5778] * 2.0943951f) * (1.0f / 255.0f));
+    return fd;
+}
+#endif
 
 //100%
 INCLUDE_ASM("visualfx/avalanche", func_002D6290);
