@@ -55,7 +55,8 @@ struct sNetState {
     int chan;                       // 0x008
     int port;                       // 0x00C
     float rate;                     // 0x010
-    char pad_0x014[0x32C - 0x14];
+    char pad_0x014[0x328 - 0x14];
+    int charID0;                    // 0x328
     int charID;                     // 0x32C
     char pad_0x330[0x4A8 - 0x330];
     sName7 name;                    // 0x4A8
@@ -2896,7 +2897,417 @@ extern "C" void func_0025FC70(void* self, int a1, int a2)
 }
 #endif
 
+//100%
 INCLUDE_ASM("dirtysock/tagsunk", func_0025FD50);
+#ifdef SKIP_ASM
+// One rider's race statistics (D_00534B30 + 0x330 / + 0x3DC).
+struct sRaceStats {
+    int f00;                        // 0x00
+    int f04;                        // 0x04
+    int f08;                        // 0x08
+    int pad_0x0C;
+    int f10;                        // 0x10
+    int f14;                        // 0x14
+    int f18;                        // 0x18
+    int pad_0x1C[2];
+    int f24;                        // 0x24
+    int f28;                        // 0x28
+    int f2C;                        // 0x2C
+    int f30;                        // 0x30
+    int f34;                        // 0x34
+    int f38;                        // 0x38
+    int f3C;                        // 0x3C
+    int f40;                        // 0x40
+    float f44;                      // 0x44
+    float f48;                      // 0x48
+    float f4C;                      // 0x4C
+    float f50;                      // 0x50
+    float f54;                      // 0x54
+    float f58;                      // 0x58
+    int pad_0x5C;
+    float f60;                      // 0x60
+    float f64;                      // 0x64
+    float f68;                      // 0x68
+    float f6C;                      // 0x6C
+    int f70;                        // 0x70
+    int f74;                        // 0x74
+    int f78;                        // 0x78
+    int f7C;                        // 0x7C
+    int f80;                        // 0x80
+    int f84;                        // 0x84
+    int pad_0x88[2];
+    int f90;                        // 0x90
+    int pad_0x94[2];
+    int f9C;                        // 0x9C
+    int pad_0xA0;
+    int fA4;                        // 0xA4
+    int fA8;                        // 0xA8
+};
+
+// The race-result state D_004A2EEC (rider 0 / rider 1 fields side by side).
+struct sRaceResult {
+    char pad_0x00[0xC];
+    int f0C;                        // 0x0C
+    int f10;                        // 0x10
+    int f14;                        // 0x14
+    int f18;                        // 0x18
+    int f1C;                        // 0x1C
+    int f20;                        // 0x20
+    int f24;                        // 0x24
+    int f28;                        // 0x28
+    int pad_0x2C;
+    int f30;                        // 0x30
+    int f34;                        // 0x34
+    int f38;                        // 0x38
+    int f3C;                        // 0x3C
+    char pad_0x40[0x9C - 0x40];
+    int f9C;                        // 0x9C
+    int fA0;                        // 0xA0
+    int fA4;                        // 0xA4
+    char pad_0xA8[0xB4 - 0xA8];
+    int fB4;                        // 0xB4
+};
+
+extern "C" int cDirtysock_tag_TagFieldSetEpoch(char* record, int len, char* name, unsigned int epoch);
+extern "C" int func_00144BE0(void* iface);
+// PORT: func_004139F8 is libgcc's __fixunssfsi (float -> unsigned); called by its address name.
+extern "C" unsigned int func_004139F8(float f);
+extern "C" void func_00268EF0(void* self, void* a1, int a2);
+extern signed char D_00535C12[];
+extern int D_005366A8[];
+extern int D_00536640[];
+extern char D_004A2F80[];
+extern char D_004A2F78[];
+extern char D_004A3278[];
+extern char D_004A3280[];
+extern char D_004A3288[];
+extern char D_00480920[];
+extern char D_00480930[];
+extern char D_00480940[];
+extern char D_00480950[];
+extern char D_00480960[];
+extern char D_00480970[];
+extern char D_004A3290[];
+extern char D_004A3298[];
+extern char D_004A32A0[];
+extern char D_004A32A8[];
+extern char D_00480980[];
+extern char D_00480990[];
+extern char D_004809A0[];
+extern char D_004A32B0[];
+extern char D_004A32B8[];
+extern char D_004A32C0[];
+extern char D_004A32C8[];
+extern char D_004A32D0[];
+extern char D_004809B0[];
+extern char D_004809C0[];
+extern char D_004A32D8[];
+extern char D_00480BE0[];
+extern char D_00480BF0[];
+extern char D_004A32E8[];
+extern char D_004A32F0[];
+extern char D_004A32F8[];
+extern char D_004A3300[];
+extern char D_004A3308[];
+extern char D_004809D0[];
+extern char D_004809E0[];
+extern char D_004809F0[];
+extern char D_00480A00[];
+extern char D_00480A10[];
+extern char D_00480A20[];
+extern char D_00480A30[];
+extern char D_00480A40[];
+extern char D_00480A50[];
+extern char D_00480A60[];
+extern char D_00480A70[];
+extern char D_00480A80[];
+extern char D_00480A90[];
+extern char D_00480AA0[];
+extern char D_00480AB0[];
+extern char D_00480AC0[];
+extern char D_00480AD0[];
+extern char D_00480AE0[];
+extern char D_00480AF0[];
+extern char D_00480B00[];
+extern char D_00480B10[];
+extern char D_00480B20[];
+extern char D_00480B30[];
+extern char D_00480B40[];
+extern char D_00480B50[];
+extern char D_00480B60[];
+extern char D_00480B70[];
+extern char D_00480B80[];
+extern char D_00480B90[];
+extern char D_00480BA0[];
+extern char D_00480BB0[];
+extern char D_00480BC0[];
+extern char D_00480BD0[];
+extern char D_00480C00[];
+extern char D_00480C10[];
+extern char D_00480C20[];
+extern char D_00480C30[];
+extern char D_00480C40[];
+extern char D_00480C50[];
+extern char D_00480C60[];
+extern char D_00480C70[];
+extern char D_00480C80[];
+extern char D_00480C90[];
+extern char D_00480CA0[];
+extern char D_00480CB0[];
+extern char D_00480CC0[];
+extern char D_00480CD0[];
+extern char D_00480CE0[];
+extern char D_00480CF0[];
+extern char D_00480D00[];
+extern char D_00480D10[];
+extern char D_00480D20[];
+extern char D_00480D30[];
+extern char D_00480D40[];
+extern char D_00480D50[];
+extern char D_00480D60[];
+extern char D_00480D70[];
+extern char D_00480D80[];
+extern char D_00480D90[];
+extern char D_00480DA0[];
+extern char D_00480DB0[];
+extern char D_00480DC0[];
+extern char D_00480DD0[];
+extern char D_00480DE0[];
+extern char D_00480DF0[];
+extern char D_00480E00[];
+extern char D_004A32E0[];
+extern char D_004A3310[];
+
+static inline sRaceResult* Race() { return (sRaceResult*)D_004A2EEC; }
+
+// 1 when the value is set.
+static inline int IsSet(int v)
+{
+    int r = 0;
+    if (v != 0)
+        r = 1;
+    return r;
+}
+
+// Time from the race start to a finish time (0 when not set).
+static inline int RaceTime(int end)
+{
+    int t = 0;
+    if (end != 0)
+        t = end - Race()->f34;
+    return t;
+}
+
+// self is a const parameter: its spill reloads are unchanging memory, so sched2 lets the message stores pass them.
+extern "C" void func_0025FD50(char* const self, int sendName, int idxA, int idxB, sRaceStats* statsA, sRaceStats* statsB)
+{
+    char buf[0x800];
+    if (*(int*)self == 0)
+        return;
+    void* iface = cBE_getInterface_Fv(cBE_getBE(), 0);
+    cBE_getInterface_Fv(*(void**)((char*)D_004A28A8 + 0x78), 7);
+    char* prof = *(char**)((char*)D_004A28A8 + 0xC0);
+    int quitA = 0;
+    int quitB = 0;
+    if (Race()->f18 != 0) {
+        if (Race()->f9C == 0)
+            quitA = 1;
+        else
+            quitB = 1;
+    }
+    int finA = 0;
+    int finB = 0;
+    if (Race()->fA0 == 0)
+        finA = 1;
+    if (Race()->fA4 == 0)
+        finB = 1;
+    int myIdx;
+    char* myName;
+    int myTime;
+    int myQuitTime;
+    int myDone;
+    int myOut;
+    sRaceStats* mine;
+    int myScore;
+    int oppIdx;
+    int oppChar;
+    int oppTime;
+    int oppQuitTime;
+    int oppOut;
+    int oppDone;
+    sRaceStats* opp;
+    int oppScore;
+    if (D_00534B30.chan != 0) {
+        myIdx = idxA;
+        myName = *(char**)(self + 0x90);
+        myTime = finA ? RaceTime(Race()->f38) : 0;
+        myQuitTime = quitA ? RaceTime(Race()->f38) : 0;
+        myDone = 0;
+        if (Race()->f10 != 0)
+            myDone = 1;
+        myOut = 0;
+        if (Race()->fA0 != 0)
+            myOut = 1;
+        mine = statsA;
+        myScore = Race()->f24;
+        oppIdx = idxB;
+        oppChar = D_00534B30.charID;
+        oppTime = finB ? RaceTime(Race()->f3C) : 0;
+        oppQuitTime = quitB ? RaceTime(Race()->f3C) : 0;
+        oppDone = 0;
+        if (Race()->f14 != 0)
+            oppDone = 1;
+        opp = statsB;
+        oppScore = Race()->f28;
+        oppOut = 0;
+        if (Race()->fA4 != 0)
+            oppOut = 1;
+    } else {
+        myIdx = idxB;
+        myName = *(char**)(self + 0x94);
+        myTime = finB ? RaceTime(Race()->f3C) : 0;
+        myQuitTime = quitB ? RaceTime(Race()->f3C) : 0;
+        myDone = 0;
+        if (Race()->f14 != 0)
+            myDone = 1;
+        myOut = 0;
+        if (Race()->fA4 != 0)
+            myOut = 1;
+        mine = statsB;
+        myScore = Race()->f28;
+        oppIdx = idxA;
+        oppChar = D_00534B30.charID0;
+        oppTime = finA ? RaceTime(Race()->f38) : 0;
+        oppQuitTime = quitA ? RaceTime(Race()->f38) : 0;
+        oppDone = 0;
+        if (Race()->f10 != 0)
+            oppDone = 1;
+        opp = statsA;
+        oppScore = Race()->f24;
+        oppOut = 0;
+        if (Race()->fA0 != 0)
+            oppOut = 1;
+    }
+    buf[0] = 0;
+    cDirtysock_tag_TagFieldSetEpoch(buf, 0x800, D_004A2F80, *(unsigned int*)(self + 0xA0));
+    cDirtysock_tag_TagFieldSetString(buf, 0x800, D_004A3278, myName);
+    if (sendName != 0)
+        cDirtysock_tag_TagFieldSetString(buf, 0x800, D_004A2F78, *(const char**)(self + 0x9C));
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_004A3280, Race()->f30);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_004A3288, Race()->f18);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480920, Race()->f9C);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480930, Race()->fB4);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480940, Race()->f1C);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480950, Race()->f20);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480960, myDone);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480970, oppDone);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_004A3290, myOut);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_004A3298, oppOut);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_004A32A0, IsSet(D_005366A8[myIdx]));
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_004A32A8, IsSet(D_005366A8[oppIdx]));
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480980, IsSet(*(int*)(prof + 0x9C)));
+    int mode = func_00144BE0(iface);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480990, mode);
+    int ranked = D_00535C12[0];
+    if (mode >= 0xE && mode <= 0x10) {
+        if (ranked == 4)
+            ranked = 0;
+        else
+            ranked = 1;
+    }
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_004809A0, ranked);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_004A32B0, Race()->f0C);
+    cDirtysock_tag_TagFieldSetString(buf, 0x800, D_004A32B8, *(const char**)(self + 0x90));
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_004A32C0, myTime);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_004A32C8, myScore);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_004A32D0, myQuitTime);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_004809B0, D_00534B30.charID0);
+    if (ranked == 0)
+        cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_004809C0, D_00536640[myIdx]);
+    else
+        cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_004A32D8, D_00536640[myIdx]);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_004809D0, mine->f00);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_004809E0, mine->f04);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_004809F0, mine->f08);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480A00, mine->f10);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480A10, mine->f14);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480A20, mine->f18);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480A30, mine->f24);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480A40, mine->f28);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480A50, mine->f2C);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480A60, mine->f30);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480A70, mine->f34);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480A80, mine->f38);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480A90, mine->f3C);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480AA0, mine->f40);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480AB0, func_004139F8(mine->f44));
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480AC0, func_004139F8(mine->f48));
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480AD0, func_004139F8(mine->f4C));
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480AE0, func_004139F8(mine->f50));
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480AF0, func_004139F8(mine->f54));
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480B00, func_004139F8(mine->f58));
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480B10, func_004139F8(mine->f60));
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480B20, func_004139F8(mine->f64));
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480B30, func_004139F8(mine->f68));
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480B40, func_004139F8(mine->f6C));
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480B50, mine->f70);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480B60, mine->f74);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480B70, mine->f78);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480B80, mine->f7C);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480B90, mine->f80);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480BA0, mine->f84);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480BB0, mine->f90);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_004A32E0, mine->f9C);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480BC0, mine->fA4);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480BD0, mine->fA8);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480BE0, oppChar);
+    if (ranked == 0)
+        cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480BF0, D_00536640[oppIdx]);
+    else
+        cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_004A32E8, D_00536640[oppIdx]);
+    cDirtysock_tag_TagFieldSetString(buf, 0x800, D_004A32F0, *(const char**)(self + 0x94));
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_004A32F8, oppTime);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_004A3300, oppScore);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_004A3308, oppQuitTime);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480C00, opp->f00);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480C10, opp->f04);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480C20, opp->f08);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480C30, opp->f10);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480C40, opp->f14);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480C50, opp->f18);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480C60, opp->f24);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480C70, opp->f28);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480C80, opp->f2C);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480C90, opp->f30);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480CA0, opp->f34);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480CB0, opp->f38);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480CC0, opp->f3C);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480CD0, opp->f40);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480CE0, func_004139F8(opp->f44));
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480CF0, func_004139F8(opp->f48));
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480D00, func_004139F8(opp->f4C));
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480D10, func_004139F8(opp->f50));
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480D20, func_004139F8(opp->f54));
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480D30, func_004139F8(opp->f58));
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480D40, func_004139F8(opp->f60));
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480D50, func_004139F8(opp->f64));
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480D60, func_004139F8(opp->f68));
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480D70, func_004139F8(opp->f6C));
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480D80, opp->f70);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480D90, opp->f74);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480DA0, opp->f78);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480DB0, opp->f7C);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480DC0, opp->f80);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480DD0, opp->f84);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480DE0, opp->f90);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_004A3310, opp->f9C);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480DF0, opp->fA4);
+    cDirtysock_tag_TagFieldSetNumber(buf, 0x800, D_00480E00, opp->fA8);
+    // PORT: function pointer passed through func_0025B608's int parameter.
+    func_0025B608(self, *(int*)self, 0x72616E6B, buf, (int)func_00268EF0, 20.0f);
+    postMsg(self, 0x100);
+}
+#endif
 
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00260C68);
