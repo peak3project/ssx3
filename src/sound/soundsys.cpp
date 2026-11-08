@@ -7340,7 +7340,312 @@ extern "C" void func_002A4E38(void* self, int flags)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/soundsys", func_002A4E88);
+#ifdef SKIP_ASM
+// A crowd position vector (16-byte aligned, empty ctor, component access by index).
+struct sCrowdVec {
+    float x, y, z, w;
+    sCrowdVec() {}
+    float& operator[](int i) { return (&x)[i]; }
+} __attribute__((aligned(16)));
+
+// cBankSys::SFX_Begin as the crowd code uses it: pushes a voice (cSndPlayOpts push + the a4 / a8 values) with
+// its mCloseOnEnd value as a parameter (the target keeps that 1 in a spilled pseudo that reload rematerialises
+// after the mDelay stores; with a literal it is a fresh li).
+static inline void crowdBegin(void* vself, int a, int b, int closeOnEnd)
+{
+    cBankSys* self = (cBankSys*)vself;
+    cBankManager* m = self->mgr;
+    cSndPlayOpts* s = &m->sub;
+    m->sub.cur++;
+    s->ch[m->sub.cur] = m->sub.def;
+    m->sub.tgt[m->sub.cur] = 0;
+    s->p34[m->sub.cur] = 0;
+    s->vals[m->sub.cur] = s->ch[m->sub.cur].vol;
+    s->p3C[m->sub.cur] = 0;
+    func_00416210((char*)s + m->sub.cur * 8 + 0x40, 0, 8);
+    s->p60[m->sub.cur] = 0;
+    s->p64[m->sub.cur] = 0;
+    s->p68[m->sub.cur] = 0;
+    s->p6C[m->sub.cur] = 0;
+    s->p70[m->sub.cur].f4 = 0;
+    s->p70[m->sub.cur].f0 = 100;
+    s->p70[m->sub.cur].f8 = 90;
+    s->p70[m->sub.cur].fC = 50;
+    s->p74[m->sub.cur] = 0;
+    s->p80[m->sub.cur] = 0;
+    s->p84[m->sub.cur] = 0;
+    s->p78[m->sub.cur] = 0x7F;
+    s->p7C[m->sub.cur] = closeOnEnd;
+    self->a4[self->mgr->sub.cur] = a;
+    self->a8[self->mgr->sub.cur] = b;
+}
+
+// The crowd sound object (sound/crowdsys.cpp in the prototype; member names from its asserts where known).
+struct sCrowdGrp4E88 {
+    int key;                 // 0x00
+    int handle;              // 0x04
+    int cnt;                 // 0x08
+    int pad0C;
+    sCrowdVec vec;            // 0x10
+    int idx;                 // 0x20
+    char pad24[0xC];
+};
+struct sCrowdSlot4E88 {
+    sCrowdVec* pCrowdObjectPos; // 0x00
+    int v4;                  // 0x04
+    sCrowdGrp4E88* grp;      // 0x08
+};
+struct sCrowd4E88 {
+    int mViewPort;           // 0x000
+    char pad4[0xC];
+    sCrowdVec vec10;          // 0x010
+    sCrowdSlot4E88 slots[15]; // 0x020
+    int count;               // 0x0D4
+    int fD8;                 // 0x0D8
+    char padDC[4];
+    sCrowdGrp4E88 groups[3]; // 0x0E0
+    int mode;                // 0x170
+    int handle;              // 0x174
+    int vol;                 // 0x178
+    int f17C;                // 0x17C
+    int state;               // 0x180
+    char pad184[8];
+    int f18C;                // 0x18C
+};
+// The voice func_002AD550 hands back (only its volume is set here).
+struct sCrowdVoice {
+    char pad0[0x64];
+    int vol;                 // 0x64
+};
+struct sCrowdVt4E88 { short delta; short index; int (*fn)(void*, int, int*, int*); };
+extern "C" int func_002A4CA0(sSndRandList* list);
+
+// func_002A4E88 is declared with a void* parameter further down (the crowd update loop).
+void func_002A4E88_c(sCrowd4E88* self) __asm__("func_002A4E88");
+void func_002A4E88_c(sCrowd4E88* self)
+{
+    if (self->count == 0) {
+        return;
+    }
+    int k = 0;
+    int bonus = 0;
+    sCrowdVec mean;
+    mean[0] = 0;
+    mean[1] = 0;
+    mean[2] = 0;
+    mean[3] = 0;
+    sCrowdVec chanPos[3];
+    int chanDist[3];
+    int chanSum[3];
+    int i;
+    for (i = 0; i < 3; i++) {
+        chanPos[i][0] = 0;
+        chanPos[i][1] = 0;
+        chanPos[i][2] = 0;
+        chanPos[i][3] = 0;
+        chanDist[i] = 0;
+        chanSum[i] = 0;
+    }
+    sCrowdSlot4E88* pCurrCrowdObjectInfo;
+    sCrowdGrp4E88* pCurrAmbientInfo;
+    do {
+        pCurrCrowdObjectInfo = &self->slots[k];
+        pCurrAmbientInfo = pCurrCrowdObjectInfo->grp;
+        k++;
+        if (pCurrCrowdObjectInfo->pCrowdObjectPos != 0) {
+            break;
+        }
+    } while (k < 15);
+    mean = *pCurrCrowdObjectInfo->pCrowdObjectPos;
+    int best = pCurrCrowdObjectInfo->v4;
+    chanPos[pCurrAmbientInfo->idx] = mean;
+    chanDist[pCurrAmbientInfo->idx] = pCurrCrowdObjectInfo->v4;
+    for (i = 1; i < self->count; i++) {
+        do {
+            pCurrCrowdObjectInfo = &self->slots[k];
+            pCurrAmbientInfo = pCurrCrowdObjectInfo->grp;
+            k++;
+            if (pCurrCrowdObjectInfo->pCrowdObjectPos != 0) {
+                break;
+            }
+        } while (k < 15);
+        float w = (float)pCurrCrowdObjectInfo->v4 / (float)(best + pCurrCrowdObjectInfo->v4);
+        mean[0] += ((*pCurrCrowdObjectInfo->pCrowdObjectPos)[0] - mean[0]) * w;
+        mean[1] += ((*pCurrCrowdObjectInfo->pCrowdObjectPos)[1] - mean[1]) * w;
+        mean[2] += ((*pCurrCrowdObjectInfo->pCrowdObjectPos)[2] - mean[2]) * w;
+        if (best < pCurrCrowdObjectInfo->v4) {
+            bonus += best >> 2;
+            best = pCurrCrowdObjectInfo->v4;
+        } else {
+            bonus += pCurrCrowdObjectInfo->v4 >> 2;
+        }
+        if (self->mode >= 2) {
+            w = (float)pCurrCrowdObjectInfo->v4 / (float)(chanDist[pCurrAmbientInfo->idx] + pCurrCrowdObjectInfo->v4);
+            chanPos[pCurrAmbientInfo->idx][0] += ((*pCurrCrowdObjectInfo->pCrowdObjectPos)[0] - chanPos[pCurrAmbientInfo->idx][0]) * w;
+            chanPos[pCurrAmbientInfo->idx][1] += ((*pCurrCrowdObjectInfo->pCrowdObjectPos)[1] - chanPos[pCurrAmbientInfo->idx][1]) * w;
+            chanPos[pCurrAmbientInfo->idx][2] += ((*pCurrCrowdObjectInfo->pCrowdObjectPos)[2] - chanPos[pCurrAmbientInfo->idx][2]) * w;
+            if (chanDist[pCurrAmbientInfo->idx] < pCurrCrowdObjectInfo->v4) {
+                chanSum[pCurrAmbientInfo->idx] += chanDist[pCurrAmbientInfo->idx] >> 2;
+                chanDist[pCurrAmbientInfo->idx] = pCurrCrowdObjectInfo->v4;
+            } else {
+                chanSum[pCurrAmbientInfo->idx] += pCurrCrowdObjectInfo->v4 >> 2;
+            }
+        }
+    }
+    best += bonus;
+    if (self->mode == 1) {
+        if (pCurrAmbientInfo->handle >= 0) {
+            sCrowdVec* pos = &pCurrAmbientInfo->vec;
+            pCurrAmbientInfo->vec = mean;
+            sCrowdVoice* h = (sCrowdVoice*)func_002AD550(&D_004A36F8->mgr->sub, pCurrAmbientInfo->handle, 1);
+            if (h == 0) {
+                crowdBegin(D_004A36F8, self->fD8, pCurrAmbientInfo->key, 1);
+                {
+                    cBankManager* m2 = D_004A36F8->mgr;
+                    m2->sub.tgt[m2->sub.cur] = pos;
+                }
+                {
+                    cBankManager* m2 = D_004A36F8->mgr;
+                    cSndPlayOpts* ss = &m2->sub;
+                    ss->vals[m2->sub.cur] = best;
+                    ss->ch[m2->sub.cur].vol = SND_MAX(0, SND_MIN(ss->vals[ss->cur], 0x7F));
+                }
+                {
+                    cBankManager* m2 = D_004A36F8->mgr;
+                    m2->sub.p3C[m2->sub.cur] = self->f17C;
+                }
+                {
+                    cBankManager* m2 = D_004A36F8->mgr;
+                    m2->sub.p74[m2->sub.cur] = 1;
+                }
+                OPTS_Callback(D_004A36F8->mgr, D_004A3700[0]);
+                {
+                    cBankManager* m2 = D_004A36F8->mgr;
+                    m2->sub.p60[m2->sub.cur] = (int)self;
+                }
+                {
+                    cBankManager* m2 = D_004A36F8->mgr;
+                    m2->sub.p7C[m2->sub.cur] = 0;
+                }
+                {
+                    cBankManager* m2 = D_004A36F8->mgr;
+                    m2->sub.p64[m2->sub.cur] = self->mViewPort;
+                }
+                pCurrAmbientInfo->handle = func_002906B8(D_004A36F8);
+            } else {
+                h->vol = best;
+            }
+        }
+    } else {
+        for (i = 0; i < 3; i++) {
+            pCurrAmbientInfo = &self->groups[i];
+            if (pCurrAmbientInfo->cnt != 0 && pCurrAmbientInfo->handle >= 0) {
+                sCrowdVec* pos = &pCurrAmbientInfo->vec;
+                pCurrAmbientInfo->vec = chanPos[pCurrAmbientInfo->idx];
+                sCrowdVoice* h = (sCrowdVoice*)func_002AD550(&D_004A36F8->mgr->sub, pCurrAmbientInfo->handle, 1);
+                if (h == 0) {
+                    crowdBegin(D_004A36F8, self->fD8, pCurrAmbientInfo->key, 1);
+                    {
+                        cBankManager* m2 = D_004A36F8->mgr;
+                        m2->sub.tgt[m2->sub.cur] = pos;
+                    }
+                    {
+                        cBankManager* m2 = D_004A36F8->mgr;
+                        cSndPlayOpts* ss = &m2->sub;
+                        ss->vals[m2->sub.cur] = chanDist[pCurrAmbientInfo->idx] + chanSum[pCurrAmbientInfo->idx];
+                        ss->ch[m2->sub.cur].vol = SND_MAX(0, SND_MIN(ss->vals[ss->cur], 0x7F));
+                    }
+                    {
+                        cBankManager* m2 = D_004A36F8->mgr;
+                        m2->sub.p3C[m2->sub.cur] = self->f17C;
+                    }
+                    {
+                        cBankManager* m2 = D_004A36F8->mgr;
+                        m2->sub.p74[m2->sub.cur] = 1;
+                    }
+                    {
+                        cBankManager* m2 = D_004A36F8->mgr;
+                        m2->sub.p64[m2->sub.cur] = self->mViewPort;
+                    }
+                    OPTS_Callback(D_004A36F8->mgr, D_004A3700[0]);
+                    {
+                        cBankManager* m2 = D_004A36F8->mgr;
+                        m2->sub.p60[m2->sub.cur] = (int)self;
+                    }
+                    {
+                        cBankManager* m2 = D_004A36F8->mgr;
+                        m2->sub.p7C[m2->sub.cur] = 0;
+                    }
+                    pCurrAmbientInfo->handle = func_002906B8(D_004A36F8);
+                } else {
+                    h->vol = chanDist[pCurrAmbientInfo->idx] + chanSum[pCurrAmbientInfo->idx];
+                }
+            }
+        }
+    }
+    int outA = 0x1000;
+    int outB = 0x1000;
+    if (self->state != 0) {
+        cBankSys* sys = D_004A36F8;
+        sCrowdVt4E88* vt = (sCrowdVt4E88*)sys->vptr;
+        int r = vt[2].fn((char*)sys + vt[2].delta, self->mViewPort, &outA, &outB);
+        if (r == 1 || r == 2) {
+            self->f18C = r;
+        }
+        if (self->state == 1 && r != 3) {
+            func_002A6848(self);
+            int e = func_002A4CA0((sSndRandList*)&D_004A36F8->ent[r].c);
+            if (e != 0) {
+                func_002A8450(D_004A36F8, self->fD8, e);
+                {
+                    cBankManager* m2 = D_004A36F8->mgr;
+                    m2->sub.tgt[m2->sub.cur] = &self->vec10;
+                }
+                {
+                    cBankManager* m2 = D_004A36F8->mgr;
+                    cSndPlayOpts* ss = &m2->sub;
+                    ss->vals[m2->sub.cur] = best * outB >> 12;
+                    ss->ch[m2->sub.cur].vol = SND_MAX(0, SND_MIN(ss->vals[ss->cur], 0x7F));
+                }
+                {
+                    cBankManager* m2 = D_004A36F8->mgr;
+                    m2->sub.p3C[m2->sub.cur] = self->f17C;
+                }
+                {
+                    cBankManager* m2 = D_004A36F8->mgr;
+                    m2->sub.p74[m2->sub.cur] = 1;
+                }
+                {
+                    cBankManager* m2 = D_004A36F8->mgr;
+                    m2->sub.p64[m2->sub.cur] = self->mViewPort;
+                }
+                self->handle = func_002A86B8(D_004A36F8);
+                if (self->handle >= 0) {
+                    self->state = 2;
+                }
+            }
+        }
+    }
+    if (self->handle >= 0) {
+        sCrowdVoice* h = (sCrowdVoice*)func_002AD550(&D_004A36F8->mgr->sub, self->handle, 2);
+        if (h == 0) {
+            func_002A6848(self);
+            self->f18C = 0;
+        } else {
+            int v = best;
+            if (self->state == 2) {
+                func_002ABE78(h, outA);
+                v = best * outB >> 12;
+            }
+            h->vol = v;
+        }
+    }
+    self->vol = best;
+    self->vec10 = mean;
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A5CD8);
