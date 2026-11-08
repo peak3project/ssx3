@@ -947,7 +947,8 @@ struct sPeakGoal {
     int kind;           // 0x08
     int f0C;
     int useTrackName;   // 0x10
-    char name[0x41];    // 0x14
+    char name[0x1E];    // 0x14
+    char help[0x23];    // 0x32 help-text key (func_00207430)
     char path[0x17];    // 0x55
 };
 extern sPeakGoal D_004781D0[3][4];
@@ -1530,7 +1531,271 @@ extern "C" void cUITemplate_MAP_showEventPath(void* tmpl, char* name)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/uitemplatemap", func_00207430);
+#ifdef SKIP_ASM
+void cUIText_setAsciiString(cUIText* text, const char* s);
+extern "C" void func_003A0D00(void* text, unsigned short* s);
+extern "C" int func_00145870(void* race, int track);
+extern "C" int func_00153520(void* mis, int a, int track);
+extern "C" int func_00153350(void* mis, int track);
+extern "C" int func_001542E0(void* mis, int track);
+extern "C" int func_001542A0(void* mis, int track);
+extern "C" int func_001550E8(void* stats, int a, int track, int kind);
+extern "C" const char* func_0020A1A8(int value);
+extern sPeakGoal D_00478D38[3][8];
+extern char D_004715B8[], D_004A2600[], D_004A26D0[], D_00471640[], D_00471650[], D_00471608[], D_004715D0[];
+extern char D_00471628[], D_004715E8[], D_004715F8[], D_00471668[], D_00471680[], D_00471698[], D_004A2590[];
+extern char D_004716B0[], D_0046E398[], D_0046E3A8[], D_004716C8[], D_0046E5F0[], D_004716D8[], D_004716E8[];
+extern char D_004716F8[], D_004A26D8[], D_00471710[], D_00471720[], D_00471738[], D_004A2398[], D_00471748[];
+extern char D_00471758[], D_00471770[], D_004A26E0[], D_00471780[], D_00471790[], D_004717A0[], D_004717B0[];
+extern char D_004A2108[], D_004A2138[];
+
+// The MAP template as this function sees it: per-event flags indexed [peak][mode][event].
+struct sMapTmpl_207430 {
+    char pad0[0x20];
+    int available[3][3][8];     // 0x20  challenge available (kT_HELPChalAvail)
+    int completed[3][3][8];     // 0x140 SE_check%d shown
+    char pad260[0x2CC - 0x260];
+    int popup;                  // 0x2CC
+    char pad2D0[0x2E8 - 0x2D0];
+    void* screen;               // 0x2E8
+    void* owner;                // 0x2EC
+};
+
+extern "C" void func_00207430(void* tmpl)
+{
+    sMapTmpl_207430* self = (sMapTmpl_207430*)tmpl;
+    char buf[200];
+    sPeakGoal g;
+    char name[32];
+    cUIThing* help = (cUIThing*)cUIScreen_getObjectByHashName(self->screen, GetHashValue32(D_00470578));
+    if (D_004A259C == 2)
+        help->setVisible(1);
+    void* mis = cBE_getInterface_Fv(cBE_getBE(), 10);
+    void* race = cBE_getInterface_Fv(cBE_getBE(), 0);
+    void* rew = cBE_getInterface_Fv(cBE_getBE(), 0xD);
+    void* stats = cBE_getInterface_Fv(cBE_getBE(), 8);
+    int ch = cBELibrary_getCharacterID(0);
+    if (self->popup != 0) {
+        cUIState_hideObjSafe(self->owner, D_004715B8);
+        cUIState_hideObjSafe(self->owner, D_004A2600);
+    } else {
+        cUIState_showObjSafe(self->owner, D_004715B8);
+        cUIState_showObjSafe(self->owner, D_004A2600);
+    }
+    if (D_004A259C == 2) {
+        cUIState_showObjSafe(self->owner, D_004A25D8);
+        if (D_004A2594 == 0) {
+            cUIState_showObjSafe(self->owner, D_00470558);
+        } else {
+            cUIState_showObjSafe(self->owner, D_00470548);
+        }
+    }
+    cUIText* title = (cUIText*)cUIScreen_getObjectByHashName(self->screen, GetHashValue32(D_004A25D8));
+    g = D_004781D0[0][0];
+    unsigned char b = 0;
+    switch (D_004A25A0) {
+    case 0: {
+        sprintf(name, D_004715D0, D_004A25A4 + 1);
+        b = ((char*)cUIScreen_getObjectByHashName(self->screen, GetHashValue32(name)))[0x95];
+        g = D_004781D0[D_004A25A4][b];
+        int cnt = 4;
+        if (D_004A25A4 == 2)
+            cnt = 3;
+        for (int i = 0; i < 8; i++) {
+            if (i < cnt && D_004A2594 >= 2) {
+                sprintf(buf, D_004715E8, i);
+                cUIState_showObjSafe(self->owner, buf);
+                sprintf(buf, D_004715F8, i);
+                if (self->completed[D_004A25A4][D_004A25A0][i])
+                    cUIState_showObjSafe(self->owner, buf);
+                else
+                    cUIState_hideObjSafe(self->owner, buf);
+            } else {
+                sprintf(buf, D_004715E8, i);
+                cUIState_hideObjSafe(self->owner, buf);
+                sprintf(buf, D_004715F8, i);
+                cUIState_hideObjSafe(self->owner, buf);
+            }
+        }
+        break;
+    }
+    case 1: {
+        sprintf(name, D_00471608, D_004A25A4 + 1);
+        b = ((char*)cUIScreen_getObjectByHashName(self->screen, GetHashValue32(name)))[0x95];
+        g = D_004786E0[D_004A25A4][b];
+        for (int i = 0; i < 8; i++) {
+            if (i < 5 && D_004A2594 >= 2) {
+                sprintf(buf, D_004715E8, i);
+                cUIState_showObjSafe(self->owner, buf);
+                sprintf(buf, D_004715F8, i);
+                if (self->completed[D_004A25A4][D_004A25A0][i])
+                    cUIState_showObjSafe(self->owner, buf);
+                else
+                    cUIState_hideObjSafe(self->owner, buf);
+            } else {
+                sprintf(buf, D_004715E8, i);
+                cUIState_hideObjSafe(self->owner, buf);
+                sprintf(buf, D_004715F8, i);
+                cUIState_hideObjSafe(self->owner, buf);
+            }
+        }
+        break;
+    }
+    case 2: {
+        sprintf(name, D_00471628, D_004A25A4 + 1);
+        b = ((char*)cUIScreen_getObjectByHashName(self->screen, GetHashValue32(name)))[0x95];
+        g = D_00478D38[D_004A25A4][b];
+        char obj[32];
+        for (int i = 0; i < 8; i++) {
+            sprintf(obj, D_004715F8, i);
+            cUIState_hideObjSafe(self->owner, obj);
+            sprintf(obj, D_004715E8, i);
+            cUIState_hideObjSafe(self->owner, obj);
+        }
+        break;
+    }
+    }
+    cUIText* o = (cUIText*)cUIScreen_getObjectByHashName(self->screen, GetHashValue32(D_004A26D0));
+    cUIText_setAsciiString(o, func_00144C60(race, g.track));
+    o = (cUIText*)cUIScreen_getObjectByHashName(self->screen, GetHashValue32(D_00471640));
+    unsigned int kind = g.kind;
+    if (g.track >= 17 && g.track <= 21) {
+        kind = 12;
+        if (D_004A259C == 2)
+            cUIText_setUnicodeStringByID((cUIText*)help, GetHashValue32(D_00471650));
+    } else {
+        if (func_004165A8(g.help, D_004A2560)) {
+            if (D_004A259C == 2)
+                cUIText_setUnicodeStringByID((cUIText*)help, GetHashValue32(g.help));
+        } else if (g.kind == 4) {
+            if (self->available[D_004A25A4][D_004A25A0][b])
+                cUIText_setUnicodeStringByID((cUIText*)help, GetHashValue32(D_00471668));
+            else
+                cUIText_setUnicodeStringByID((cUIText*)help, GetHashValue32(D_00471680));
+        } else if (g.kind == 5) {
+            if (self->available[D_004A25A4][D_004A25A0][b])
+                cUIText_setUnicodeStringByID((cUIText*)help, GetHashValue32(D_00471668));
+            else
+                cUIText_setUnicodeStringByID((cUIText*)help, GetHashValue32(D_00471698));
+        } else if (g.kind >= 6 && g.kind <= 8) {
+            if (self->available[D_004A25A4][D_004A25A0][b]) {
+                cUIText_setUnicodeStringByID((cUIText*)help, GetHashValue32(D_00471668));
+            } else {
+                unsigned short fmt[16];
+                unsigned short ev[300];
+                func_002C2540(fmt, D_004A2590);
+                func_002C26D0(ev, fmt, func_00144C60(race, g.track));
+                unsigned short loc[300];
+                func_002C2508(loc, Loc_5098(D_004716B0));
+                unsigned short text[300];
+                func_002C26D0(text, loc, ev);
+                func_003A0D00(help, text);
+            }
+        } else if (g.kind >= 9 && g.kind <= 11) {
+            if (self->available[D_004A25A4][D_004A25A0][b]) {
+                cUIText_setUnicodeStringByID((cUIText*)help, GetHashValue32(D_00471668));
+            } else {
+                unsigned short ev[300];
+                unsigned short fmt[16];
+                func_002C2540(fmt, D_004A26A0);
+                func_002C26D0(ev, fmt, func_00144C60(race, g.track));
+                unsigned short loc[300];
+                func_002C2508(loc, Loc_5098(D_004716B0));
+                unsigned short text[300];
+                func_002C26D0(text, loc, ev);
+                func_003A0D00(help, text);
+            }
+        }
+        if (kind == 12)
+            kind = func_00145870(race, g.track);
+    }
+    switch (kind) {
+    case 0:
+        cUIText_setUnicodeStringByID(o, GetHashValue32(D_0046E548));
+        cUIText_setUnicodeStringByID(title, GetHashValue32(D_0046E548));
+        break;
+    case 1:
+        cUIText_setUnicodeStringByID(o, GetHashValue32(D_0046E398));
+        cUIText_setUnicodeStringByID(title, GetHashValue32(D_0046E398));
+        break;
+    case 3:
+        cUIText_setUnicodeStringByID(o, GetHashValue32(D_0046E3A8));
+        cUIText_setUnicodeStringByID(title, GetHashValue32(D_0046E3A8));
+        break;
+    case 2:
+        cUIText_setUnicodeStringByID(o, GetHashValue32(D_004716C8));
+        cUIText_setUnicodeStringByID(title, GetHashValue32(D_004716C8));
+        break;
+    case 4:
+    case 5:
+        cUIText_setUnicodeStringByID(o, GetHashValue32(D_0046E5F0));
+        cUIText_setAsciiString(title, D_004A26D8);
+        break;
+    case 6:
+    case 7:
+    case 8:
+        cUIText_setUnicodeStringByID(o, GetHashValue32(D_004716D8));
+        cUIText_setAsciiString(title, D_004A26D8);
+        break;
+    case 9:
+    case 10:
+    case 11:
+        cUIText_setUnicodeStringByID(o, GetHashValue32(D_004716E8));
+        cUIText_setAsciiString(title, D_004A26D8);
+        break;
+    case 12:
+        cUIText_setUnicodeStringByID(o, GetHashValue32(D_004716F8));
+        cUIText_setUnicodeStringByID(title, GetHashValue32(D_004716F8));
+        break;
+    }
+    if (D_004A259C == 2)
+        cUITemplate_MAP_showEventPath(self, g.path);
+    if (D_004A25A0 == 2) {
+        o = (cUIText*)cUIScreen_getObjectByHashName(self->screen, GetHashValue32(D_00471710));
+        cUIText_setUnicodeStringByID(o, GetHashValue32(D_00471720));
+        o = (cUIText*)cUIScreen_getObjectByHashName(self->screen, GetHashValue32(D_00471738));
+        sprintf(buf, D_004A2398, func_00153520(mis, 0, g.track), func_00153350(mis, g.track));
+        cUIText_setAsciiString(o, buf);
+        o = (cUIText*)cUIScreen_getObjectByHashName(self->screen, GetHashValue32(D_00471748));
+        cUIText_setUnicodeStringByID(o, GetHashValue32(D_00471758));
+        o = (cUIText*)cUIScreen_getObjectByHashName(self->screen, GetHashValue32(D_00471770));
+        sprintf(buf, D_004A2398, func_001542E0(mis, g.track), func_001542A0(mis, g.track));
+        cUIText_setAsciiString(o, buf);
+        if (func_001542A0(mis, g.track) == 0)
+            cUIText_setAsciiString(o, D_004A26E0);
+    } else {
+        cUIState_showObjSafe(self->owner, D_00471710);
+        cUIState_showObjSafe(self->owner, D_00471738);
+        o = (cUIText*)cUIScreen_getObjectByHashName(self->screen, GetHashValue32(D_00471710));
+        cUIText_setUnicodeStringByID(o, GetHashValue32(D_00471780));
+        int medal = cBERewardInterface_getTrackMedal(rew, 0, ch, g.kind, g.track);
+        o = (cUIText*)cUIScreen_getObjectByHashName(self->screen, GetHashValue32(D_00471738));
+        if (medal != -1)
+            func_003A0E90(o, (unsigned short*)func_00204FF0(self, medal));
+        else
+            cUIText_setUnicodeStringByID(o, GetHashValue32(D_00471790));
+        cUIText* label = (cUIText*)cUIScreen_getObjectByHashName(self->screen, GetHashValue32(D_00471748));
+        cUIText* value = (cUIText*)cUIScreen_getObjectByHashName(self->screen, GetHashValue32(D_00471770));
+        if (D_004A25A0 == 0) {
+            cUIText_setUnicodeStringByID(label, GetHashValue32(D_004717A0));
+            int v = func_001550E8(stats, 0, g.track, g.kind);
+            cUIText_setAsciiString(value, func_0020A1A8(v));
+            if (v == 0)
+                cUIText_setAsciiString(value, D_004A2108);
+        } else {
+            cUIText_setUnicodeStringByID(label, GetHashValue32(D_004717B0));
+            int v = func_001550E8(stats, 0, g.track, g.kind);
+            char num[32];
+            sprintf(num, D_004A2138, v);
+            cUIText_setAsciiString(value, num);
+            if (v == 0)
+                cUIText_setAsciiString(value, D_004A2108);
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/uitemplatemap", func_002083D8);
