@@ -4510,7 +4510,413 @@ extern "C" int func_00164870(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("camera/camera", func_00164878);
+#ifdef SKIP_ASM
+extern int D_004A128C;
+extern "C" void* func_00168150(void* self);
+extern "C" float func_0031C128(float x);
+extern "C" void func_0031BE50(float* sout, float* cout, float x);
+// PORT: func_0031D738 is declared (void*, float, float) but forwards a second argument (the key count) in $a1.
+void func_0031D738_n(void* spline, int n, float a, float b) __asm__("func_0031D738__FPvff");
+extern "C" void func_0031D7E0(void* spline, float x, float y);
+extern "C" float func_0031DEE0(void* spline, float x);
+
+// PORT: PS2-only VU0 inline asm (a - b).
+static inline t4Vector Sub_164878(const t4Vector& a, const t4Vector& b)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (a + b).
+static inline t4Vector Add_164878(const t4Vector& a, const t4Vector& b)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (dst += b).
+static inline void AddEq_164878(t4Vector& dst, const t4Vector& b)
+{
+    __asm__(
+        "lqc2      $vf3, %0\n"
+        "lqc2      $vf4, %1\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "+m"(dst)
+        : "m"(b)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (dst -= b).
+static inline void SubEq_164878(t4Vector& dst, const t4Vector& b)
+{
+    __asm__(
+        "lqc2      $vf3, %0\n"
+        "lqc2      $vf4, %1\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "+m"(dst)
+        : "m"(b)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (v * s).
+static inline t4Vector Scale_164878(const t4Vector& v, float s)
+{
+    t4Vector r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (in-place v *= s).
+static inline void ScaleEq_164878(t4Vector& v, float s)
+{
+    int t;
+    __asm__(
+        "mfc1      %1, %2\n"
+        "lqc2      $vf4, %0\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "+m"(v), "=&r"(t)
+        : "f"(s)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (in-place v /= s).
+static inline void DivEq_164878(t4Vector& v, float s)
+{
+    int t;
+    __asm__(
+        "mfc1      %1, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vdiv      Q, $vf0w, $vf3x\n"
+        "lqc2      $vf4, %0\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf5, $vf4, Q\n"
+        "sqc2      $vf5, %0\n"
+        : "+m"(v), "=&r"(t)
+        : "f"(s)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (cross product, w = 0).
+static inline t4Vector Cross_164878(const t4Vector& a, const t4Vector& b)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf4, %1\n"
+        "lqc2      $vf5, %2\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vsub.w    $vf6, $vf6, $vf6\n"
+        "sqc2      $vf6, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4-component vector length).
+static inline float Length_164878(const t4Vector& v)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %1, $vi22\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(v));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4-component dot product).
+static inline float Dot_164878(const t4Vector& a, const t4Vector& b)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "lqc2      $vf5, %3\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf5\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "qmfc2.ni  %1, $vf4\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (rotate v by quaternion q).
+static inline t4Vector Rot_164878(const t4Vector& q, const t4Vector& v)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf4, %1\n"
+        "lqc2      $vf5, %2\n"
+        "vsub.w    $vf8, $vf8, $vf8\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vopmula.xyz ACC, $vf4, $vf6\n"
+        "vopmsub.xyz $vf7, $vf6, $vf4\n"
+        "vmulaw.xyz ACC, $vf5, $vf0w\n"
+        "vmaddaw.xyz ACC, $vf6, $vf4w\n"
+        "vmaddaw.xyz ACC, $vf6, $vf4w\n"
+        "vmaddaw.xyz ACC, $vf7, $vf0w\n"
+        "vmaddw.xyz $vf8, $vf7, $vf0w\n"
+        "sqc2      $vf8, %0\n"
+        : "=m"(r)
+        : "m"(q), "m"(v)
+        : "memory");
+    return r;
+}
+
+static inline void Normalize_164878(t4Vector& v)
+{
+    DivEq_164878(v, Length_164878(v));
+}
+
+// PORT: sqrt.s (sqrtf without errno check)
+static inline float Sqrt_164878(float x)
+{
+    float r;
+    __asm__("sqrt.s %0,%1" : "=f"(r) : "f"(x));
+    return r;
+}
+
+static inline float AngleBetween_164878(const t4Vector& a, const t4Vector& b)
+{
+    float l = Sqrt_164878(Dot_164878(a, a) * Dot_164878(b, b));
+    if (l < 0.0010000000474974513f)
+        return 0.0f;
+    float q = Dot_164878(a, b) / l;
+    float c;
+    if (q >= -1.0f)
+        c = q <? 1.0f;
+    else
+        c = -1.0f;
+    return 1.5707963705062866f - func_0031C128(c);
+}
+
+static inline float SmoothStep_164878(float t)
+{
+    float t2 = t * t;
+    float s = t2 * 3.0f - (t2 + t2) * t;
+    if (s > 1.0f)
+        s = 1.0f;
+    return s;
+}
+
+static inline t4Vector Project_164878(const t4Vector& v, const t4Vector& axis)
+{
+    return Scale_164878(axis, Dot_164878(v, axis) / Dot_164878(axis, axis));
+}
+
+static inline float EvalCurve_164878(char* curve, float t)
+{
+    D_004A128C = 1;
+    D_004A4DE0 = (int)curve;
+    return func_0031DEE0(curve, t);
+}
+
+#define MAX_164878(a, b) ((b) <= (a) ? (a) : (b))
+#define V_164878(off) (*(t4Vector*)(self + (off)))
+#define F_164878(off) (*(float*)(self + (off)))
+#define I_164878(off) (*(int*)(self + (off)))
+
+// The rotation by the given fraction of the swing angle (0x238) about the swing axis (0x130), as a quaternion.
+static inline sVec4 Rotation_164878(char* self, float f)
+{
+    float s, c;
+    func_0031BE50(&s, &c, f * F_164878(0x238) * 0.5f);
+    sVec4 r;
+    r.w = c;
+    r.x = s * V_164878(0x130).x;
+    r.y = s * V_164878(0x130).y;
+    r.z = s * V_164878(0x130).z;
+    return r;
+}
+
+// The length of the swing (seconds), set when it starts.
+static inline float& Duration_164878(char* self)
+{
+    return *(float*)(self + 0x230);
+}
+
+// Virtual calls on the tracked object at 0x30 (int / float / vector-pointer results), as in func_00162C78.
+static inline int GetInt_164878(char* self, int slot)
+{
+    char* o = *(char**)(self + 0x30);
+    sVEntry<int(void*)>* e = &(*(sVEntry<int(void*)>**)o)[slot];
+    return e->fn(o + e->delta);
+}
+
+static inline float GetFloat_164878(char* self, int slot)
+{
+    char* o = *(char**)(self + 0x30);
+    sVEntry<float(void*)>* e = &(*(sVEntry<float(void*)>**)o)[slot];
+    return e->fn(o + e->delta);
+}
+
+static inline const t4Vector* GetVec_164878(char* self, int slot)
+{
+    char* o = *(char**)(self + 0x30);
+    sVEntry<const t4Vector*(void*)>* e = &(*(sVEntry<const t4Vector*(void*)>**)o)[slot];
+    return e->fn(o + e->delta);
+}
+
+extern "C" void func_00164878_def(char* self, sCamInfo* info, float dur) __asm__("func_00164878");
+
+extern "C" void func_00164878_def(char* self, sCamInfo* info, float dur)
+{
+    D_004A128C = 0;
+    t4Vector d0 = Sub_164878(V_164878(0x20), V_164878(0x40));
+    t4Vector oldTarget = V_164878(0x40);
+    if (I_164878(0x2D0)) {
+        if (I_164878(0x2D8) == 0) {
+            F_164878(0x22C) += 0.01666666753590107f;
+            if (GetInt_164878(self, 19)) {
+                V_164878(0x110) = Sub_164878(V_164878(0x20), V_164878(0x40));
+                float len = Length_164878(V_164878(0x110));
+                Duration_164878(self) = MAX_164878(GetFloat_164878(self, 12) - F_164878(0x22C), 2.299999952316284f);
+                F_164878(0x23C) = dur;
+                F_164878(0x234) = 0.0f;
+                const t4Vector* up = GetVec_164878(self, 16);
+                t4Vector side = Cross_164878(D_004FF160, *up);
+                Normalize_164878(side);
+                if (Dot_164878(side, info->dir) < 0.0f)
+                    ScaleEq_164878(side, -1.0f);
+                ScaleEq_164878(side, len / Length_164878(side));
+                V_164878(0x120) = Sub_164878(V_164878(0x110), Scale_164878(Project_164878(V_164878(0x110), *up), 2.0f));
+                F_164878(0x128) = -F_164878(0x128);
+                if (Dot_164878(V_164878(0x120), V_164878(0x120)) <= 0.0f)
+                    V_164878(0x120) = side;
+                ScaleEq_164878(V_164878(0x120), 0.800000011920929f);
+                AddEq_164878(V_164878(0x120), Scale_164878(side, 0.20000000298023224f));
+                ScaleEq_164878(V_164878(0x120), len / Length_164878(V_164878(0x120)));
+                V_164878(0x150) = Project_164878(V_164878(0x120), *up);
+                t4Vector perp = Sub_164878(V_164878(0x120), V_164878(0x150));
+                if (Dot_164878(perp, perp) < 40000.0f) {
+                    perp.z = 0.0f;
+                    float pl = Length_164878(perp);
+                    if (1.0f < pl) {
+                        ScaleEq_164878(perp, 200.0f / pl);
+                        AddEq_164878(V_164878(0x120), perp);
+                        SubEq_164878(V_164878(0x120), Scale_164878(D_004FF160, 100.0f));
+                    }
+                }
+                V_164878(0x130) = Cross_164878(V_164878(0x110), V_164878(0x120));
+                Normalize_164878(V_164878(0x130));
+                F_164878(0x238) = AngleBetween_164878(V_164878(0x110), V_164878(0x120));
+                char* curve = self + 0x334;
+                func_0031D738_n(curve, 9, 0.0f, 0.0f);
+                func_0031D7E0(curve, 0.0f, 0.0f);
+                func_0031D7E0(curve, 0.125f, 0.0639725923538208f);
+                func_0031D7E0(curve, 0.25f, 0.30785250663757324f);
+                func_0031D7E0(curve, 0.375f, 0.5528385043144226f);
+                func_0031D7E0(curve, 0.5f, 0.6577425003051758f);
+                func_0031D7E0(curve, 0.625f, 0.728873610496521f);
+                func_0031D7E0(curve, 0.75f, 0.827086865901947f);
+                func_0031D7E0(curve, 0.875f, 0.9414384365081787f);
+                func_0031D7E0(curve, 1.0f, 1.0f);
+                I_164878(0x2D8) = 1;
+            }
+        }
+        if (I_164878(0x2D8)) {
+            F_164878(0x234) += 0.01666666753590107f;
+            if (F_164878(0x234) < Duration_164878(self)) {
+                float f = EvalCurve_164878(self + 0x334, F_164878(0x234) / Duration_164878(self));
+                sVec4 q = Rotation_164878(self, f);
+                V_164878(0x140) = Rot_164878(q, V_164878(0x110));
+                V_164878(0x160) = Scale_164878(V_164878(0x150), f);
+            }
+            float t = F_164878(0x234) / (Duration_164878(self) * 0.30000001192092896f);
+            t = (t <? 1.0f) >? 0.0f;
+            t = SmoothStep_164878(t);
+            V_164878(0x20) = Add_164878(Scale_164878(V_164878(0x20), 1.0f - t), Scale_164878(info->pos, t));
+            V_164878(0x40) = Add_164878(Sub_164878(V_164878(0x20), V_164878(0x140)), V_164878(0x160));
+        }
+    } else if (0.0f < F_164878(0x23C)) {
+        float v = (F_164878(0x23C) - 0.01666666753590107f) >? 0.0f;
+        float t = v / dur;
+        F_164878(0x23C) = v;
+        t = SmoothStep_164878(t);
+        t4Vector oldPos = V_164878(0x20);
+        V_164878(0x20) = Add_164878(Scale_164878(V_164878(0x20), 1.0f - t), Scale_164878(info->pos, t));
+        V_164878(0x40) = Add_164878(Scale_164878(V_164878(0x40), 1.0f - t),
+                                    Scale_164878(Add_164878(Sub_164878(info->pos, V_164878(0x140)), V_164878(0x160)), t));
+        V_164878(0x170) = Sub_164878(V_164878(0x20), V_164878(0x40));
+        V_164878(0x180) = Sub_164878(V_164878(0x20), oldPos);
+        F_164878(0x240) = F_164878(0x23C);
+        F_164878(0x244) = F_164878(0x23C);
+    }
+    if (I_164878(0x2D0) && 0.0f < F_164878(0x240) && 0.0f < F_164878(0x244)) {
+        float v = (F_164878(0x240) - 0.01666666753590107f) >? 0.0f;
+        float t = v / F_164878(0x244);
+        F_164878(0x240) = v;
+        t = SmoothStep_164878(t);
+        t4Vector d = Sub_164878(V_164878(0x20), V_164878(0x40));
+        t4Vector e = Add_164878(Scale_164878(V_164878(0x170), t), Scale_164878(d, 1.0f - t));
+        AddEq_164878(V_164878(0x20), Scale_164878(V_164878(0x180), t));
+        V_164878(0x40) = Sub_164878(V_164878(0x20), e);
+    }
+    t4Vector d = Sub_164878(V_164878(0x20), V_164878(0x40));
+    float l0 = Length_164878(d0);
+    float l = Length_164878(d);
+    float m = l0 * 0.6000000238418579f;
+    if (l < m) {
+        if (1.0f < l) {
+            ScaleEq_164878(d, m / l);
+            V_164878(0x40) = Sub_164878(V_164878(0x20), d);
+        } else {
+            V_164878(0x40) = oldTarget;
+        }
+    }
+    func_00168150(self);
+}
+#undef MAX_164878
+#undef V_164878
+#undef F_164878
+#undef I_164878
+#endif
 
 //100%
 INCLUDE_ASM("camera/camera", func_00165540);
