@@ -2222,7 +2222,106 @@ extern "C" int func_0032D440(void* self, sSphereVec4* a, sSphereVec4* b, sSphere
 }
 #endif
 
+//100%
 INCLUDE_ASM("intersect/riderspheretree", func_0032D470);
+#ifdef SKIP_ASM
+struct sLevel_D470 {
+    float scale;   // 0x0
+    float child;   // 0x4
+    int stride;    // 0x8
+};
+struct sGrid_D470 {
+    char pad0[0xC];
+    int maxLevel;         // 0xC
+    char pad10[0x10];
+    sLevel_D470* levels;  // 0x20
+    char pad24[4];
+    unsigned char* bits;  // 0x28
+};
+struct sTree_D470 {
+    sSphereVec4 dirs[8];   // 0x0
+    char pad80[0x10];
+    float unit;            // 0x90
+    float radius;          // 0x94
+    sGrid_D470* grid;      // 0x98
+    int order[8];          // 0x9C
+};
+
+// does the edge a + t*e (t in [0, |e|]) touch the sphere? w = centre - a, dd = |w|^2, rr = radius^2
+static inline bool EdgeHit_D470(const sSphereVec4& w, float dd, const sSphereVec4& e, float rr)
+{
+    float len = Length_A1C0(e);
+    float t = Dot_A1C0(w, e) / len;
+    if (t < 0.0f)
+        return false;
+    float h = dd - t * t;
+    if (rr < h)
+        return false;
+    if (len < t - Sqrt_A1C0(rr - h))
+        return false;
+    return true;
+}
+
+// PORT: here func_0032D440 also gets the sphere radius in $f12.
+extern "C" int func_0032D440_r(void* self, sSphereVec4* a, sSphereVec4* b, sSphereVec4* c, sSphereVec4* d, float r) __asm__("func_0032D440");
+
+// PORT: callers declare func_0032D470 with void* args and an int result; defined under an asm label.
+extern "C" void func_D470(sTree_D470* self, sSphereVec4* a1, sSphereVec4* a2, sSphereVec4* a3, sSphereVec4* dir,
+                          sSphereVec4* pos, int level, int off, sSphereVec4* out1, sSphereVec4* out2) __asm__("func_0032D470");
+
+extern "C" void func_D470(sTree_D470* self, sSphereVec4* a1, sSphereVec4* a2, sSphereVec4* a3, sSphereVec4* dir,
+                          sSphereVec4* pos, int level, int off, sSphereVec4* out1, sSphereVec4* out2)
+{
+    float dt = PlaneDist_A1C0(*dir, *pos, *a1);
+    float edge = self->grid->levels[level].scale * self->unit;
+    if (level == 0 && dt < 0.0f)
+        return;
+    if (!(dt < edge + self->radius))
+        return;
+    int leaf = 0;
+    int bits = self->grid->bits[off];
+    if (!(level < self->grid->maxLevel) || !(level < 3) || bits == 0)
+        leaf = 1;
+    sSphereVec4 d = Sub_A1C0(*pos, Scale_A1C0(*dir, dt));
+    if (!func_0032D440_r(self, a1, a2, a3, &d, edge)) {
+        if (leaf)
+            return;
+        if (edge < 20.0f)
+            return;
+        sSphereVec4 w = Sub_A1C0(*pos, *a1);
+        float rr = edge * edge;
+        float dd = Dot_A1C0(w, w);
+        if (rr < dd) {
+            if (!EdgeHit_D470(w, dd, Sub_A1C0(*a2, *a1), rr)) {
+                if (!EdgeHit_D470(w, dd, Sub_A1C0(*a3, *a1), rr)) {
+                    sSphereVec4 w1 = Sub_A1C0(*pos, *a2);
+                    float dd1 = Dot_A1C0(w1, w1);
+                    if (!EdgeHit_D470(w1, dd1, Sub_A1C0(*a3, *a2), rr))
+                        return;
+                }
+            }
+        }
+    }
+    if (!leaf) {
+        float fv = self->grid->levels[level + 1].child;
+        for (int i = 0; i < 8; i++) {
+            int idx = self->order[i];
+            if ((bits >> idx) & 1) {
+                sSphereVec4 s = Add_D028(*pos, Scale_A1C0(self->dirs[idx], fv));
+                func_D470(self, a1, a2, a3, dir, &s, level + 1, (idx + 1) * self->grid->levels[level].stride + off, out1, out2);
+            }
+        }
+        return;
+    }
+    float fv = dt - edge;
+    if (fv < self->radius) {
+        sSphereVec4 n = Scale_A1C0(*dir, -fv);
+        *out1 = n;
+        *out2 = d;
+        self->radius = fv;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("intersect/riderspheretree", func_0032DA40);
