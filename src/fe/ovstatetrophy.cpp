@@ -783,7 +783,450 @@ extern "C" void func_0020EDA0(sTrophyBox_EDA0* self, char* rider)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/ovstatetrophy", func_0020FB40);
+#ifdef SKIP_ASM
+// The render device's 2D state block (as in fe/ovstatehud and render/lightman).
+struct sGs_FB40 {
+    unsigned int w0;
+    unsigned int f4_0 : 2;
+    unsigned int f4_2 : 5;
+    unsigned int f4_7 : 5;
+    unsigned int f4_12 : 8;
+    unsigned int f4_20 : 2;
+    unsigned int f4_22 : 1;
+    unsigned int f4_23 : 2;
+    unsigned int f4_25 : 7;
+    int w8;
+    unsigned int wC;
+    unsigned int f10 : 16;
+    unsigned int f10hi : 16;
+    // Replace the bits under mask (bits 5..9 of word 8 = the primitive/alpha mode).
+    void SetBits(int mask, int bits) { int w = w8 & ~mask; w8 = w | bits; }
+    void SetPrim(int t) { SetBits(0x3E0, t << 5); }
+};
+
+struct sPos_FB40 {
+    float x, y, z, w;
+    void Set(float x_, float y_, float z_, float w_) { x = x_; y = y_; z = z_; w = w_; }
+} __attribute__((aligned(16)));
+
+struct sVert_FB40 {
+    float u, v, q, f0C;
+    int r, g, b, a;
+    sPos_FB40 pos;
+    sVert_FB40() {}
+};
+
+class cGfx_FB40 {
+public:
+    char pad[0xE84];
+    sGs_FB40* stateTop;
+    char padE88[0x10D8 - 0xE88];
+    void PushState() { stateTop[1] = stateTop[0]; stateTop++; }
+    virtual void v0(); virtual void v1(); virtual void v2(); virtual void v3();
+    virtual void v4(); virtual void v5(); virtual void v6(); virtual void v7();
+    virtual void v8(); virtual void v9(); virtual void v10(); virtual void v11();
+    virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15();
+    virtual void v16(); virtual void v17(); virtual void v18(); virtual void v19();
+    virtual void v20(); virtual void v21(); virtual void v22(); virtual void v23();
+    virtual void v24(); virtual void v25(); virtual void v26(); virtual void v27();
+    virtual void v28(); virtual void v29();
+    virtual void Begin2D();
+    virtual void End2D();
+    virtual void v32();
+    virtual void SetTexture(void*);
+    virtual void v34(); virtual void v35(); virtual void v36(); virtual void v37();
+    virtual void v38(); virtual void v39(); virtual void v40(); virtual void v41();
+    virtual void v42(); virtual void v43(); virtual void v44(); virtual void v45();
+    virtual void v46(); virtual void v47(); virtual void v48(); virtual void v49();
+    virtual void v50(); virtual void v51(); virtual void v52(); virtual void v53();
+    virtual void v54(); virtual void v55(); virtual void v56(); virtual void v57();
+    virtual void v58(); virtual void v59(); virtual void v60(); virtual void v61();
+    virtual void v62(); virtual void v63(); virtual void v64(); virtual void v65();
+    virtual void v66(); virtual void v67(); virtual void v68(); virtual void v69();
+    virtual void DrawPrims(int n, sVert_FB40* v, int flags);
+};
+extern cGfx_FB40* D_004A289C_FB40 __asm__("D_004A289C");
+extern sGs_FB40 D_00501420_FB40 __asm__("D_00501420");
+extern char D_004FF1A0[];
+
+// The rider's cBeing interface (rider + 0x6C0), slots in the prototype's order (as in seg/seg_1FBE38).
+struct t4Vector;
+struct t4Matrix;
+struct tInstanceRecord;
+class cBeing_FB40 {
+public:
+    virtual ~cBeing_FB40();
+    virtual const t4Vector* getVelocity() const;
+    virtual int isIntersecting(tInstanceRecord* rec) const;
+    virtual void applyBoost(const t4Vector& impulse);
+    virtual const t4Vector* getPosition() const;
+    virtual const t4Matrix* getTransform() const;
+    virtual int getAIIndex() const;
+    virtual bool isHuman() const;
+};
+
+struct sTex_FB40 {
+    int handle;     // 0x00
+    char pad4[8];
+    int GetHandle() { return handle; }
+    float v0;       // 0x0C
+    float u0;       // 0x10
+    float u1;       // 0x14
+    float v1;       // 0x18
+};
+// Trophy-room icon table (func_0020EB50 loads the textures): name hash, icon size, texture.
+struct sIcon_FB40 {
+    int name;
+    float w;
+    float h;
+    sTex_FB40* tex;
+};
+extern sIcon_FB40 D_004C8C58_FB40[] __asm__("D_004C8C58");
+
+struct sSlot_FB40 {
+    int active;
+    int seg;
+    float dist;
+    float pos;
+    float rel;
+    int relValid;
+};
+extern sSlot_FB40 D_004C8BC8_FB40[6] __asm__("D_004C8BC8");
+
+struct sMarker_FB40 {
+    int type;
+    float dist;
+};
+
+struct sTrophyBox_FB40 {
+    char pad[0x20];
+    float x, y, w, h;   // 0x20
+    float scale;        // 0x30
+    int last;           // 0x34
+};
+
+extern int D_004A275C;
+extern char* D_004A2758;
+extern int D_005308D0[];
+
+// The race (D_004A28A8->0x84->0xC; as in seg/seg_1FBE38): rider objects at 0x28, rider count at 0x78.
+struct sRace_FB40 {
+    char pad[0x28];
+    char* riders[6];    // 0x28
+    char* players[12];  // 0x40
+    char pad70[0x8];
+    int count;          // 0x78
+};
+
+static inline float limitStep_FB40(float v, float prev, float lim)
+{
+    float dd = v - prev;
+    if (dd > lim)
+        v = prev + lim;
+    else if (dd < -lim)
+        v = prev - lim;
+    return v;
+}
+
+extern "C" void func_0020FB40(sTrophyBox_FB40* self, char* rider, int right)
+{
+    if (D_004A2760 != 0)
+        return;
+    if (D_004A275C == 0)
+        return;
+    if (rider == 0)
+        return;
+    sMarker_FB40* markers = (sMarker_FB40*)D_004A2758;
+    char* course = D_004A2750;
+    if (course == 0)
+        return;
+    int me = ((cBeing_FB40*)(rider + 0x6C0))->getAIIndex();
+    sRace_FB40* race = *(sRace_FB40**)(*(char**)((char*)D_004A28A8 + 0x84) + 0xC);
+    float myDist = D_004C8BC8_FB40[me].dist;
+    float myPos = D_004C8BC8_FB40[me].pos;
+    int n = race->count;
+    for (int i = 0; i < 6; i++) {
+        if (self->last != me)
+            D_004C8BC8_FB40[i].relValid = 0;
+        if (i < n) {
+            float d = D_004C8BC8_FB40[i].pos - myPos;
+            if (d < -2000.0f)
+                d = -2000.0f;
+            else if (d > 2000.0f)
+                d = 2000.0f;
+            if (D_004C8BC8_FB40[i].relValid != 0)
+                d = limitStep_FB40(d, D_004C8BC8_FB40[i].rel, 46.29629898071289f);
+            D_004C8BC8_FB40[i].rel = d;
+            D_004C8BC8_FB40[i].relValid = 1;
+        }
+    }
+    sVert_FB40 v[4];
+    for (int i = 0; i < 4; i++) {
+        v[i].r = 0x80;
+        v[i].g = 0x80;
+        v[i].b = 0x80;
+        v[i].a = 0x80;
+        v[i].q = 1.0f;
+    }
+    float x = self->x;
+    if (right == 0)
+        x += self->w;
+    D_004A289C_FB40->Begin2D();
+    D_004A289C_FB40->PushState();
+    *D_004A289C_FB40->stateTop = D_00501420_FB40;
+    D_004A289C_FB40->stateTop->f4_23 = 2;
+    D_004A289C_FB40->stateTop->f4_20 = 0;
+    D_004A289C_FB40->stateTop->f4_12 = 0x14;
+    D_004A289C_FB40->stateTop->f4_2 = 5;
+    D_004A289C_FB40->SetTexture(D_004FF1A0);
+
+    sTex_FB40* tex = D_004C8C58_FB40[0].tex;
+    float top = self->y;
+    float bottom = top + self->h;
+    float lo = myDist - 5000.0f;
+    float hi = lo + 10000.0f;
+    sPos_FB40 p;
+    v[0].u = tex->u0;
+    v[0].v = tex->v0;
+    v[1].u = tex->u1;
+    v[1].v = tex->v0;
+    v[2].u = tex->u0;
+    v[2].v = tex->v1;
+    v[3].u = tex->u1;
+    v[3].v = tex->v1;
+    p.x = x - 2.7497661113739014f;
+    p.y = bottom;
+    p.z = 0.0f;
+    p.w = 1.0f;
+    v[0].pos = p;
+    p.x = x + 2.7497661113739014f;
+    p.y = bottom;
+    p.z = 0.0f;
+    p.w = 1.0f;
+    v[1].pos = p;
+    p.x = x - 2.7497661113739014f;
+    p.y = top;
+    p.z = 0.0f;
+    p.w = 1.0f;
+    v[2].pos = p;
+    p.x = x + 2.7497661113739014f;
+    p.y = top;
+    p.z = 0.0f;
+    p.w = 1.0f;
+    v[3].pos = p;
+    D_004A289C_FB40->stateTop->SetPrim(9);
+    *(short*)((char*)D_004A289C_FB40->stateTop + 0x10) = tex->GetHandle();
+    D_004A289C_FB40->DrawPrims(4, v, 0);
+
+    float topFade = top + 60.0f;
+    float bottomFade = bottom - 60.0f;
+    for (int i = 0; i < n; i++) {
+        float d = D_004C8BC8_FB40[i].dist;
+        if (d < lo)
+            continue;
+        if (d > hi)
+            continue;
+        int prim = 0xC;
+        int icon = 8;
+        float y = bottom - (d - lo) * self->scale;
+        if (me != i) {
+            char* r = race->riders[i];
+            if (((cBeing_FB40*)(r + 0x6C0))->isHuman()) {
+                prim = 0xD;
+                icon = 10;
+            } else {
+                prim = 0xE;
+                icon = 9;
+            }
+        }
+        sIcon_FB40* e = &D_004C8C58_FB40[icon];
+        sTex_FB40* t = e->tex;
+        float y0 = y - e->h * 0.5f;
+        float y1 = y + e->h * 0.5f;
+        if (y0 <= top)
+            continue;
+        if (bottom <= y1)
+            continue;
+        float a = 1.0f;
+        if (y0 < topFade)
+            a = 1.0f - (topFade - y0) * 0.01666666753590107f;
+        else if (y1 > bottomFade)
+            a = 1.0f - (y1 - bottomFade) * 0.01666666753590107f;
+        if (a < 0.0f)
+            a = 0.0f;
+        float u0 = t->u0;
+        float u1 = t->u1;
+        if (right == 0) {
+            u0 = t->u1;
+            u1 = t->u0;
+        }
+        int alpha = (int)(a * 128.0f);
+        int k;
+        for (k = 0; k < 4; k++)
+            v[k].a = alpha;
+        v[0].u = u0;
+        v[0].v = t->v0;
+        v[1].u = u1;
+        v[1].v = t->v0;
+        v[2].u = u0;
+        v[2].v = t->v1;
+        v[3].u = u1;
+        v[3].v = t->v1;
+        if (right != 0) {
+            p.x = x;
+            p.y = y0;
+            p.z = 0.0f;
+            p.w = 1.0f;
+            v[0].pos = p;
+            p.x = x + e->w;
+            p.y = y0;
+            p.z = 0.0f;
+            p.w = 1.0f;
+            v[1].pos = p;
+            p.x = x;
+            p.y = y1;
+            p.z = 0.0f;
+            p.w = 1.0f;
+            v[2].pos = p;
+            p.x = x + e->w;
+            p.y = y1;
+            p.z = 0.0f;
+            p.w = 1.0f;
+            v[3].pos = p;
+        } else {
+            p.x = x - e->w;
+            p.y = y0;
+            p.z = 0.0f;
+            p.w = 1.0f;
+            v[0].pos = p;
+            p.x = x;
+            p.y = y0;
+            p.z = 0.0f;
+            p.w = 1.0f;
+            v[1].pos = p;
+            p.x = x - e->w;
+            p.y = y1;
+            p.z = 0.0f;
+            p.w = 1.0f;
+            v[2].pos = p;
+            p.x = x;
+            p.y = y1;
+            p.z = 0.0f;
+            p.w = 1.0f;
+            v[3].pos = p;
+        }
+        D_004A289C_FB40->stateTop->SetPrim(prim);
+        *(short*)((char*)D_004A289C_FB40->stateTop + 0x10) = t->GetHandle();
+        D_004A289C_FB40->DrawPrims(4, v, 0);
+    }
+
+    for (int i = 0; i < 4; i++)
+        v[i].a = 0x80;
+    if (*(int*)(course + 8) != 0) {
+        int show = 1;
+        if ((D_005308D0[0] >> 9) & 1) {
+            if (*(int*)(*(char**)((char*)D_004A28A8 + 0xC0) + 0x88) != 0)
+                show = 0;
+        }
+        for (int i = 0; i < *(int*)(course + 8); i++) {
+            float d = markers[i].dist;
+            if (d < lo)
+                continue;
+            if (d > hi)
+                continue;
+            if (markers[i].type == 1 && !show)
+                continue;
+            sIcon_FB40* e = &D_004C8C58_FB40[markers[i].type + 5];
+            sTex_FB40* t = e->tex;
+            float hw = e->w * 0.5f;
+            float hh = e->h * 0.5f;
+            float y = bottom - (d - lo) * self->scale;
+            float y0 = y - hh;
+            float y1 = y + hh;
+            if (y0 <= top)
+                continue;
+            if (bottom <= y1)
+                continue;
+            float a = 1.0f;
+            if (y0 < topFade)
+                a = 1.0f - (topFade - y0) * 0.01666666753590107f;
+            else if (y1 > bottomFade)
+                a = 1.0f - (y1 - bottomFade) * 0.01666666753590107f;
+            if (a < 0.0f)
+                a = 0.0f;
+            float u0 = t->u0;
+            float u1 = t->u1;
+            if (right != 0)
+                u0 = (u0 + u1) * 0.5f;
+            else
+                u1 = (u0 + u1) * 0.5f;
+            v[0].u = u0;
+            v[0].v = t->v0;
+            v[1].u = u1;
+            v[1].v = t->v0;
+            v[2].u = u0;
+            v[2].v = t->v1;
+            v[3].u = u1;
+            v[3].v = t->v1;
+            int alpha = (int)(a * 128.0f);
+            int k;
+            for (k = 0; k < 4; k++)
+                v[k].a = alpha;
+            if (right != 0) {
+                p.x = x;
+                p.y = y0;
+                p.z = 0.0f;
+                p.w = 1.0f;
+                v[0].pos = p;
+                p.x = x + hw;
+                p.y = y0;
+                p.z = 0.0f;
+                p.w = 1.0f;
+                v[1].pos = p;
+                p.x = x;
+                p.y = y1;
+                p.z = 0.0f;
+                p.w = 1.0f;
+                v[2].pos = p;
+                p.x = x + hw;
+                p.y = y1;
+                p.z = 0.0f;
+                p.w = 1.0f;
+                v[3].pos = p;
+            } else {
+                p.x = x - hw;
+                p.y = y0;
+                p.z = 0.0f;
+                p.w = 1.0f;
+                v[0].pos = p;
+                p.x = x;
+                p.y = y0;
+                p.z = 0.0f;
+                p.w = 1.0f;
+                v[1].pos = p;
+                p.x = x - hw;
+                p.y = y1;
+                p.z = 0.0f;
+                p.w = 1.0f;
+                v[2].pos = p;
+                p.x = x;
+                p.y = y1;
+                p.z = 0.0f;
+                p.w = 1.0f;
+                v[3].pos = p;
+            }
+            D_004A289C_FB40->stateTop->SetPrim(0xB);
+            *(short*)((char*)D_004A289C_FB40->stateTop + 0x10) = t->GetHandle();
+            D_004A289C_FB40->DrawPrims(4, v, 0);
+        }
+    }
+    D_004A289C_FB40->stateTop--;
+    D_004A289C_FB40->End2D();
+    self->last = me;
+}
+#endif
 
 struct sPad16 { char x; int pad[3]; };
 extern sPad16 D_004C8BC8;
