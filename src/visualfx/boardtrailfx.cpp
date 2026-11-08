@@ -1427,7 +1427,137 @@ extern "C" void func_002EADD0(sTrail_2EADD0* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("visualfx/boardtrailfx", func_002EB198);
+#ifdef SKIP_ASM
+struct sRS_EB198 {
+    unsigned int f0_0 : 2;
+    unsigned int f0_2 : 2;
+    unsigned int f0_4 : 28;
+    unsigned int f4_0 : 2;
+    unsigned int f4_2 : 5;
+    unsigned int f4_7 : 5;
+    unsigned int f4_12 : 8;
+    unsigned int f4_20 : 2;
+    unsigned int f4_22 : 1;
+    unsigned int f4_23 : 2;
+    unsigned int f4_25 : 7;
+    unsigned int f8_0 : 5;
+    unsigned int f8_5 : 5;
+    unsigned int f8_10 : 19;
+    unsigned int f8_29 : 3;
+    short fC;
+    short fE;
+    short f10;
+    short f12;
+};
+extern sRS_EB198 D_00501420;
+
+struct sV4_EB198 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+struct sVtx_EB198 {
+    float s, t, q, pad;
+    int c[4];
+    sV4_EB198 pos;
+    sVtx_EB198() {}
+};
+
+struct sSlot_EB198 {
+    sV4_EB198 v[4];
+};
+
+struct sTrail_EB198 {
+    char* rider;            // 0x00
+    int pad4[2];
+    int count;              // 0x0C
+    int cur;                // 0x10
+    int pad14[3];
+    sSlot_EB198 slots[3];   // 0x20
+    sV4_EB198 e0;           // 0xE0
+    sV4_EB198 f0;           // 0xF0
+};
+
+struct sVE71_EB198 {
+    short delta;
+    short index;
+    void (*fn)(void*, int, sVtx_EB198*, int);
+};
+
+#define TOP_EB198 ((sRS_EB198*)D_004A289C->top)
+
+static inline int GetF1048_EB198(sRenderCtx_A480* ctx) { return *(int*)((char*)ctx + 0x1048); }
+
+static inline void SetF10_EB198(short& f, int v) { f = v; }
+
+static inline void SetF4_22_EB198(sRS_EB198* rs, int v) { rs->f4_22 = v; }
+
+static inline void AddVert_EB198(sVtx_EB198* v, float s, float t, const sV4_EB198& col, const sV4_EB198& pos)
+{
+    v->c[0] = (int)(col.y * 255.0f);
+    v->c[1] = (int)(col.z * 255.0f);
+    v->c[2] = (int)(col.w * 255.0f);
+    v->c[3] = (int)(col.x * 128.0f);
+    v->q = 1.0f;
+    v->pos = pos;
+    v->s = s;
+    v->t = t;
+}
+
+extern "C" void func_002EB198(sTrail_EB198* self)
+{
+    if (self->count < 2) {
+        return;
+    }
+    push_A480(D_004A289C);
+    *TOP_EB198 = D_00501420;
+    SetF10_EB198(TOP_EB198->f10, GetF1048_EB198(D_004A289C));
+    TOP_EB198->f0_2 = 3;
+    TOP_EB198->f4_23 = 0;
+    TOP_EB198->f4_20 = 0;
+    TOP_EB198->f4_12 = 0x14;
+    TOP_EB198->f4_0 = 2;
+    TOP_EB198->f8_10 = 0;
+    TOP_EB198->f8_5 = 7;
+    TOP_EB198->f4_2 = 7;
+    SetF4_22_EB198(TOP_EB198, 1);
+    sVtx_EB198 verts[4][7];
+    int counts[4];
+    sV4_EB198 col;
+    for (int i = 0; i < 4; i++) {
+        counts[i] = 0;
+    }
+    col.x = 1.0f;
+    col.y = 1.0f;
+    col.z = 1.0f;
+    col.w = 1.0f;
+    AddVert_EB198(&verts[1][counts[1]++], 0.5f, 0.0f, col, self->f0);
+    AddVert_EB198(&verts[3][counts[3]++], 0.5f, 0.0f, col, self->e0);
+    for (int i = 0; i < self->count; i++) {
+        int sl = (self->cur + i) % 3;
+        col.x = 0.5f;
+        col.y = 0.5f;
+        col.z = 0.5f;
+        col.w = 0.5f;
+        float t = 1.0f - (float)i / (float)(self->count - 1);
+        AddVert_EB198(&verts[0][counts[0]++], 0.0f, t, col, self->slots[sl].v[0]);
+        AddVert_EB198(&verts[0][counts[0]++], 1.0f, t, col, self->slots[sl].v[1]);
+        AddVert_EB198(&verts[1][counts[1]++], 1.0f, t, col, self->slots[sl].v[1]);
+        AddVert_EB198(&verts[1][counts[1]++], 0.0f, t, col, self->slots[sl].v[2]);
+        AddVert_EB198(&verts[2][counts[2]++], 0.0f, t, col, self->slots[sl].v[2]);
+        AddVert_EB198(&verts[2][counts[2]++], 1.0f, t, col, self->slots[sl].v[3]);
+        AddVert_EB198(&verts[3][counts[3]++], 1.0f, t, col, self->slots[sl].v[3]);
+        AddVert_EB198(&verts[3][counts[3]++], 0.0f, t, col, self->slots[sl].v[0]);
+    }
+    for (int k = 0; k < 4; k++) {
+        char* ctx = (char*)D_004A289C;
+        sVE71_EB198* vt = *(sVE71_EB198**)(ctx + 0x10D8);
+        vt[71].fn(ctx + vt[71].delta, counts[k], verts[k], 0);
+    }
+    pop_A480(D_004A289C);
+}
+#endif
 
 //100%
 INCLUDE_ASM("visualfx/boardtrailfx", func_002EB8F0);
