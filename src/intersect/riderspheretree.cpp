@@ -719,7 +719,53 @@ extern "C" int func_0032A1C0_typed(sNode_A1C0* self, sSphereVec4* v0, sSphereVec
 }
 #endif
 
+//100%
 INCLUDE_ASM("intersect/riderspheretree", func_0032AA28);
+#ifdef SKIP_ASM
+extern "C" int func_0032AA28_typed(sNode_A1C0* self, sSphereVec4* v0, sSphereVec4* v1, sSphereVec4* v2,
+                                   sSphereVec4* n, sSphereVec4* outA, sSphereVec4* outB) __asm__("func_0032AA28");
+extern "C" int func_0032AA28_typed(sNode_A1C0* self, sSphereVec4* v0, sSphereVec4* v1, sSphereVec4* v2,
+                                   sSphereVec4* n, sSphereVec4* outA, sSphereVec4* outB)
+{
+    float r;
+    float dist;
+    sSphereVec4 nn = *n;
+    dist = PlaneDist_A1C0(nn, self->pos, *v0);
+    r = self->r;
+    if (r < __builtin_fabsf(dist))
+        return 0;
+    if (dist < 0.0f) {
+        dist = -dist;
+        nn = Scale_A1C0(nn, -1.0f);
+    }
+    sSphereVec4 p = Sub_A1C0(self->pos, Scale_A1C0(nn, dist));
+    if (!SphereTri_A1C0(self->pos, r, v0, v1, v2, &p))
+        return 0;
+    if (self->flags == 0) {
+        *outA = Scale_A1C0(nn, r - dist);
+        *outB = p;
+        return 1;
+    }
+    float best = 10000000000.0f;
+    for (int i = 0; i < self->count; i++) {
+        if (!(self->flags & (1 << i)))
+            continue;
+        dist = PlaneDist_A1C0(nn, self->e[i].pos, *v0);
+        r = self->e[i].r;
+        if (!(dist < r))
+            continue;
+        if (!(dist < best))
+            continue;
+        p = Sub_A1C0(self->e[i].pos, Scale_A1C0(nn, dist));
+        if (SphereTri_A1C0(self->e[i].pos, r, v0, v1, v2, &p)) {
+            *outA = Scale_A1C0(nn, r - dist);
+            *outB = p;
+            best = dist;
+        }
+    }
+    return best != 10000000000.0f;
+}
+#endif
 
 //100%
 INCLUDE_ASM("intersect/riderspheretree", func_0032B2B8);
