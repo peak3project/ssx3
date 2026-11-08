@@ -5367,7 +5367,190 @@ extern "C" void func_001656B0(char* self, float base, float spread, float r)
 }
 #endif
 
+//100%
 INCLUDE_ASM("camera/camera", func_00165938);
+#ifdef SKIP_ASM
+// Uniform float in [0, 1) built from the random mantissa bits.
+static inline float randf_165938()
+{
+    union {
+        int i;
+        float f;
+    } u;
+    u.i = (BXrand() & 0x7FFFFF) | 0x3F800000;
+    return u.f - 1.0f;
+}
+
+static inline float RandRange_165938(float lo, float hi)
+{
+    return lo + (hi - lo) * randf_165938();
+}
+
+// Smooth (3t^2 - 2t^3) ramp: 0 below lo, 1 above hi, in between eased on t = x / hi
+// (the callers always start the ramp at lo = 0).
+static inline float SmoothStep_165938(float lo, float hi, float x)
+{
+    if (x >= lo) {
+        if (x <= hi) {
+            float t = x / hi;
+            float sq = t * t;
+            float e = 3.0f * sq - 2.0f * t * sq;
+            if (e > 1.0f) {
+                e = 1.0f;
+            }
+            return e;
+        }
+        return 1.0f;
+    }
+    return 0.0f;
+}
+
+static inline float Lerp_165938(const float& a, const float& b, float k)
+{
+    return k * b + (1.0f - k) * a;
+}
+
+// PORT: PS2-only VU0 inline asm (a - b).
+static inline sVec4 Sub_165938(const sVec4& a, const sVec4& b)
+{
+    sVec4 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4-component vector length).
+static inline float Length_165938(const sVec4& v)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %1, $vi22\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(v));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector times scalar).
+static inline sVec4 Scale_165938(const sVec4& v, float s)
+{
+    sVec4 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+// Camera shake update: re-rolls each axis's target when its timer runs out, eases between the
+// previous and new targets and adds the result (scaled by the fade-out and distance) to the position.
+extern "C" void func_00165938(char* self, int flag, int sel, float base, float spread, float r)
+{
+    if (flag) {
+        *(float*)(self + 0x2B4) = 0.0f;
+    } else if (*(int*)(self + 0x2EC)) {
+        *(float*)(self + 0x2B4) = 2.0f;
+    }
+    *(int*)(self + 0x2EC) = flag;
+    if (*(float*)(self + 0x2B4) > 0.0f) {
+        // PORT: g++ `>?` (max) operator.
+        *(float*)(self + 0x2B4) = (*(float*)(self + 0x2B4) - 0.01666666753590107f) >? 0.0f;
+    }
+    float scale;
+    if (*(float*)(self + 0x2B4) > 0.0f) {
+        scale = *(float*)(self + 0x2B4) * 0.5f;
+    } else {
+        scale = 1.0f;
+    }
+    if (!flag && !(*(float*)(self + 0x2B4) > 0.0f)) {
+        return;
+    }
+    *(float*)(self + 0x278) += 0.01666666753590107f;
+    *(float*)(self + 0x27C) += 0.01666666753590107f;
+    *(float*)(self + 0x280) += 0.01666666753590107f;
+    if (*(float*)(self + 0x278) > *(float*)(self + 0x254)) {
+        *(float*)(self + 0x254) = base + spread * randf_165938();
+        *(float*)(self + 0x26C) = *(float*)(self + 0x260);
+        *(float*)(self + 0x260) = RandRange_165938(-r, r);
+        *(float*)(self + 0x278) -= *(float*)(self + 0x254);
+    }
+    if (*(float*)(self + 0x27C) > *(float*)(self + 0x258)) {
+        *(float*)(self + 0x258) = base + spread * randf_165938();
+        *(float*)(self + 0x270) = *(float*)(self + 0x264);
+        *(float*)(self + 0x264) = RandRange_165938(-r, r);
+        *(float*)(self + 0x27C) -= *(float*)(self + 0x258);
+    }
+    float rz = r * 1.600000023841858f;
+    if (*(float*)(self + 0x280) > *(float*)(self + 0x25C)) {
+        *(float*)(self + 0x25C) = base + spread * randf_165938();
+        *(float*)(self + 0x274) = *(float*)(self + 0x268);
+        *(float*)(self + 0x268) = RandRange_165938(-rz, rz);
+        *(float*)(self + 0x280) -= *(float*)(self + 0x25C);
+    }
+    rz *= 0.5f;
+    float base2 = base * 0.5f;
+    float spread2 = spread * 0.5f;
+    float r2 = r * 0.5f;
+    if (*(float*)(self + 0x2A8) > *(float*)(self + 0x284)) {
+        *(float*)(self + 0x284) = base2 + spread2 * randf_165938();
+        *(float*)(self + 0x29C) = *(float*)(self + 0x290);
+        *(float*)(self + 0x290) = RandRange_165938(-r2, r2);
+        *(float*)(self + 0x2A8) -= *(float*)(self + 0x284);
+    }
+    if (*(float*)(self + 0x2AC) > *(float*)(self + 0x288)) {
+        *(float*)(self + 0x288) = base2 + spread2 * randf_165938();
+        *(float*)(self + 0x2A0) = *(float*)(self + 0x294);
+        *(float*)(self + 0x294) = RandRange_165938(-r2, r2);
+        *(float*)(self + 0x2AC) -= *(float*)(self + 0x288);
+    }
+    if (*(float*)(self + 0x2B0) > *(float*)(self + 0x28C)) {
+        *(float*)(self + 0x28C) = base2 + spread2 * randf_165938();
+        *(float*)(self + 0x2A4) = *(float*)(self + 0x298);
+        *(float*)(self + 0x298) = RandRange_165938(-rz, rz);
+        *(float*)(self + 0x2B0) -= *(float*)(self + 0x28C);
+    }
+    float k0 = SmoothStep_165938(0.0f, *(float*)(self + 0x254), *(float*)(self + 0x278));
+    float k1 = SmoothStep_165938(0.0f, *(float*)(self + 0x258), *(float*)(self + 0x27C));
+    float k2 = SmoothStep_165938(0.0f, *(float*)(self + 0x25C), *(float*)(self + 0x280));
+    float k3 = SmoothStep_165938(0.0f, *(float*)(self + 0x284), *(float*)(self + 0x2A8));
+    float k4 = SmoothStep_165938(0.0f, *(float*)(self + 0x288), *(float*)(self + 0x2AC));
+    float k5 = SmoothStep_165938(0.0f, *(float*)(self + 0x28C), *(float*)(self + 0x2B0));
+    float x = Lerp_165938(*(float*)(self + 0x26C), *(float*)(self + 0x260), k0);
+    float y = Lerp_165938(*(float*)(self + 0x270), *(float*)(self + 0x264), k1);
+    float z = Lerp_165938(*(float*)(self + 0x274), *(float*)(self + 0x268), k2);
+    x += Lerp_165938(*(float*)(self + 0x29C), *(float*)(self + 0x290), k3);
+    y += Lerp_165938(*(float*)(self + 0x2A0), *(float*)(self + 0x294), k4);
+    z += Lerp_165938(*(float*)(self + 0x2A4), *(float*)(self + 0x298), k5);
+    float amp;
+    if (sel && Length_165938(Sub_165938(*(sVec4*)(self + 0x20), *(sVec4*)(self + 0x40))) <= 150.0f) {
+        amp = Length_165938(Sub_165938(*(sVec4*)(self + 0x20), *(sVec4*)(self + 0x40))) * 0.1f;
+    } else {
+        amp = 15.0f;
+    }
+    *(sVec4*)(self + 0x20) += Scale_165938(sVec4(x, y, z, 0.0f), scale * amp);
+}
+#endif
 
 //100%
 INCLUDE_ASM("camera/camera", func_00166228);
