@@ -274,9 +274,12 @@ struct sRace {
     char pad_0x0[0x28];
     cRider_1218* riders[1];     // 0x28
 };
+struct sNashTree;
 struct sGame {
     char pad_0x0[0xC];
     sRace* race;                // 0xC
+    char pad_0x10[0x10];
+    sNashTree* nash;            // 0x20: the world's nash cell tree
 };
 // The game singleton (D_004A28A8).
 struct sApp {
@@ -1159,7 +1162,228 @@ extern "C" void func_00101A28(sList_1A28* list, sNode_1A28* node, int recurse)
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_1218", func_00101B60);
+#ifdef SKIP_ASM
+// ai/focusbox.cpp: the focus box update (prototype asserts: NumFocusInstances, numfocusinstances <
+// arraysize(focusinstances), numunfocusinstances < arraysize(unfocusinstances)).
+// nash::CellKey: a cell's level (log2 of its size) and integer coordinates.
+struct sNashKey {
+    int level;
+    int x;
+    int y;
+    int z;
+};
+
+// One root of the nash cell tree: its key and its cell (nash::Cell = sNode_1A28: eight children, then the
+// instance list).
+struct sNashRoot {
+    sNashKey key;
+    sNode_1A28* cell;
+};
+
+struct sNashTree {
+    sNashRoot roots[8];
+};
+
+// An axis-aligned focus box (the empty ctor leaves the dead `li 5; li -1` of g++'s array-ctor loop).
+struct sFocusBox {
+    t4Vector min;
+    t4Vector max;
+    sFocusBox() {}
+};
+
+// An instance record in a cell's list (tInstanceRecord): 0x100 = in focus, 0x200 = the focus pass parity.
+struct tFocusRec {
+    tFocusRec* next;
+    int f4;
+    unsigned int flags;
+};
+
+// The instances func_00101A28 collects.
+struct sFocusList {
+    int n;
+    tFocusRec* items[512];
+};
+
+// One focus instance: the position it follows and that position at the last update.
+struct sFocusInst {
+    const t4Vector* pos;
+    int pad[3];
+    t4Vector last;
+};
+
+struct sFocusBoxes {
+    int NumFocusInstances;              // 0x0
+    int pad4[3];
+    sFocusInst inst[6];                 // 0x10
+    int lastTime;                       // 0xD0
+    int parity;                         // 0xD4
+    int numInstances;                   // 0xD8
+    tFocusRec* instances[512];          // 0xDC
+};
+
+struct InstanceCompare {
+};
+
+extern t4Vector D_004A61E0;
+extern "C" void func_00101A28_1B60(sFocusList* list, const sNode_1A28* node, int recurse) __asm__("func_00101A28");
+extern "C" void func_003E6574(void* dst, void* src, int size);
+extern "C" void func_0013FAD8(tFocusRec** first, tFocusRec** last, tFocusRec** out, const InstanceCompare& cmp);
+extern "C" void func_0030A460(int, tFocusRec*);
+extern "C" void func_0030A3A0(int, tFocusRec*);
+
+struct FocusCallback;
+// Retail's out-of-line copy of FocusCallback::operator() (matched in ai/control/handplantcontrol); the
+// recursion inside the inline operator goes to it.
+extern "C" void func_00144368_1B60(const FocusCallback* cb, const sNode_1A28* cell, const sNashKey* key) __asm__("func_00144368");
+
+// FocusCallback: collects the instances of every cell that touches one of the focus boxes.
+struct FocusCallback {
+    sFocusList* list;
+    sFocusBox* boxes;
+    int count;
+
+    void operator()(const sNode_1A28& cell, const sNashKey& key) const
+    {
+        int i = 0;
+        for (;;) {
+            if (i == count) {
+                return;
+            }
+            union { int i; float f; } u;
+            u.i = (key.level + 0x7F) << 23;
+            float s = u.f;
+            int ok = 0;
+            if (((float)key.x - 0.2f) * s <= boxes[i].max.x && ((float)key.y - 0.2f) * s <= boxes[i].max.y && ((float)key.z - 0.2f) * s <= boxes[i].max.z
+                && boxes[i].min.x <= ((float)(key.x + 1) + 0.2f) * s && boxes[i].min.y <= ((float)(key.y + 1) + 0.2f) * s && boxes[i].min.z <= ((float)(key.z + 1) + 0.2f) * s) {
+                ok = 1;
+            }
+            if (ok) {
+                goto found;
+            }
+            i++;
+        }
+    found:
+        int leaf = key.level < 14;
+        func_00101A28_1B60(list, &cell, leaf);
+        if (leaf) {
+            return;
+        }
+        if (key.level == 11) {
+            return;
+        }
+        sNashKey k;
+        k.level = key.level - 1;
+        k.x = key.x * 2;
+        k.y = key.y * 2;
+        k.z = key.z * 2;
+        if (cell.kids[0]) func_00144368_1B60(this, cell.kids[0], &k);
+        k.x++;
+        if (cell.kids[4]) func_00144368_1B60(this, cell.kids[4], &k);
+        k.y++;
+        if (cell.kids[6]) func_00144368_1B60(this, cell.kids[6], &k);
+        k.x--;
+        if (cell.kids[2]) func_00144368_1B60(this, cell.kids[2], &k);
+        k.z++;
+        if (cell.kids[3]) func_00144368_1B60(this, cell.kids[3], &k);
+        k.x++;
+        if (cell.kids[7]) func_00144368_1B60(this, cell.kids[7], &k);
+        k.y--;
+        if (cell.kids[5]) func_00144368_1B60(this, cell.kids[5], &k);
+        k.x--;
+        if (cell.kids[1]) func_00144368_1B60(this, cell.kids[1], &k);
+    }
+};
+
+// Visit root k of the tree (same shape as intersect/worldsphtree's visit helpers: the root's address is
+// taken before the test).
+static inline void Visit(const FocusCallback& cb, const sNashTree* tree, int k)
+{
+    const sNashRoot* r = &tree->roots[k];
+    if (tree->roots[k].cell) {
+        cb(*r->cell, r->key);
+    }
+}
+
+extern "C" void func_00101B60(sFocusBoxes* self)
+{
+    sFocusList list;
+    list.n = 0;
+    int moved = 0;
+    sFocusBox boxes[6];
+    for (int i = 0; i < self->NumFocusInstances; i++) {
+        t4Vector p = *self->inst[i].pos;
+        boxes[i].min = Sub(p, D_004A61E0);
+        boxes[i].max = Add(p, D_004A61E0);
+        if (Len(Sub(self->inst[i].last, p)) >= 2000.0f) {
+            moved = 1;
+        }
+    }
+    if (!moved && self->lastTime >= 0 && func_001298C8() - self->lastTime < 20) {
+        return;
+    }
+    if (self->NumFocusInstances != 0) {
+        sNashTree* tree = D_004A28A8->game->nash;
+        FocusCallback cb;
+        cb.list = &list;
+        cb.boxes = boxes;
+        cb.count = self->NumFocusInstances;
+        Visit(cb, tree, 0);
+        Visit(cb, tree, 1);
+        Visit(cb, tree, 2);
+        Visit(cb, tree, 3);
+        Visit(cb, tree, 4);
+        Visit(cb, tree, 5);
+        Visit(cb, tree, 6);
+        Visit(cb, tree, 7);
+    }
+    self->lastTime = func_001298C8();
+    for (int i = 0; i < self->NumFocusInstances; i++) {
+        t4Vector p = *self->inst[i].pos;
+        self->inst[i].last = p;
+    }
+    tFocusRec* focusinstances[256];
+    tFocusRec* unfocusinstances[256];
+    int numfocusinstances = 0;
+    int numunfocusinstances = 0;
+    self->parity ^= 1;
+    for (int i = 0; i < list.n; i++) {
+        tFocusRec* r = list.items[i];
+        if (!(r->flags & 0x100)) {
+            focusinstances[numfocusinstances++] = r;
+            r->flags |= 0x100;
+        }
+        if (self->parity) {
+            r->flags &= ~0x200;
+        } else {
+            r->flags |= 0x200;
+        }
+    }
+    for (int i = 0; i < self->numInstances; i++) {
+        tFocusRec* r = self->instances[i];
+        if (((r->flags & 0x200) == 0) != self->parity) {
+            unfocusinstances[numunfocusinstances++] = r;
+            r->flags &= ~0x100;
+        }
+    }
+    self->numInstances = list.n;
+    func_003E6574(self->instances, list.items, list.n << 2);
+    tFocusRec* sorted[256];
+    if (numunfocusinstances) {
+        func_0013FAD8(unfocusinstances, unfocusinstances + numunfocusinstances, sorted, InstanceCompare());
+        for (int i = 0; i < numunfocusinstances; i++) {
+            func_0030A460(D_004A3DD8, sorted[i]);
+        }
+    }
+    if (numfocusinstances) {
+        func_0013FAD8(focusinstances, focusinstances + numfocusinstances, sorted, InstanceCompare());
+        for (int i = 0; i < numfocusinstances; i++) {
+            func_0030A3A0(D_004A3DD8, sorted[i]);
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_1218", func_001032C0);
