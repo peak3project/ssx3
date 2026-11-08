@@ -251,11 +251,11 @@ struct cPS2GraphicsMan {
     float xmin;                     // 0x6B70
     float ymin;                     // 0x6B74
     float zmin;                     // 0x6B78
-    char pad_0x6B7C[4];
+    float wmin;                     // 0x6B7C
     float xmax;                     // 0x6B80
     float ymax;                     // 0x6B84
     float zmax;                     // 0x6B88
-    char pad_0x6B8C[4];
+    float wmax;                     // 0x6B8C
     int texReady;                   // 0x6B90
 };
 
@@ -5989,7 +5989,175 @@ extern "C" int func_00383770(void *arg0, int arg1, int arg2, int arg3, int arg4,
 #endif
 
 INCLUDE_ASM("render/particle", func_00383808);
+//100%
 INCLUDE_ASM("render/particle", func_00383A10);
+#ifdef SKIP_ASM
+struct sClipPt_3A10 {
+    float x, y, z, w;
+};
+
+// Clip vertex: three quadwords (texture coords, colour, position); the colour quadword holds integers.
+struct sClipVtx_3A10 {
+    float st[4];                    // 0x00
+    float col[4];                   // 0x10: integer channels r, g, b, a
+    float pos[4];                   // 0x20
+};
+
+// Integer view of colour channel k of a vertex.
+#define VTXCOL_3A10(v, k) (*(unsigned int*)&(v).col[k])
+
+// Clips the line ivert[0]-ivert[1] (projected points iproj, outcodes ioutcode) against the view volume.
+// Returns 0 when the line is completely outside.
+extern "C" int func_00383A10(cPS2GraphicsMan* self, sClipVtx_3A10* ivert, sClipPt_3A10* iproj, int* ioutcode)
+{
+    int code = ioutcode[0] | ioutcode[1];
+    if (code & 0x20) {
+        float t = (iproj[0].w - self->wmin) / (iproj[0].w - iproj[1].w);
+        int i = (ioutcode[0] & 0x20) == 0;
+        float dx = iproj[0].x - iproj[1].x;
+        float dy = iproj[0].y - iproj[1].y;
+        float tt = t * iproj[1].w / self->wmin;
+        iproj[i].x = iproj[0].x - t * dx;
+        iproj[i].y = iproj[0].y - t * dy;
+        iproj[i].z = self->zmin;
+        iproj[i].w = self->wmin;
+        ivert[i].st[0] = ivert[0].st[0] + tt * (ivert[1].st[0] - ivert[0].st[0]);
+        ivert[i].st[1] = ivert[0].st[1] + tt * (ivert[1].st[1] - ivert[0].st[1]);
+        VTXCOL_3A10(ivert[i], 0) = (int)(VTXCOL_3A10(ivert[0], 0) + tt * (VTXCOL_3A10(ivert[1], 0) - VTXCOL_3A10(ivert[0], 0)));
+        VTXCOL_3A10(ivert[i], 1) = (int)(VTXCOL_3A10(ivert[0], 1) + tt * (VTXCOL_3A10(ivert[1], 1) - VTXCOL_3A10(ivert[0], 1)));
+        VTXCOL_3A10(ivert[i], 2) = (int)(VTXCOL_3A10(ivert[0], 2) + tt * (VTXCOL_3A10(ivert[1], 2) - VTXCOL_3A10(ivert[0], 2)));
+        VTXCOL_3A10(ivert[i], 3) = (int)(VTXCOL_3A10(ivert[0], 3) + tt * (VTXCOL_3A10(ivert[1], 3) - VTXCOL_3A10(ivert[0], 3)));
+        ioutcode[i] = 0;
+        if (iproj[i].x < self->xmin)
+            ioutcode[i] = 2;
+        if (iproj[i].x > self->xmax)
+            ioutcode[i] |= 1;
+        if (iproj[i].y < self->ymin)
+            ioutcode[i] |= 8;
+        if (iproj[i].y > self->ymax)
+            ioutcode[i] |= 4;
+        if (ioutcode[0] & ioutcode[1])
+            return 0;
+        code = ioutcode[0] | ioutcode[1];
+    }
+    if (code & 0x10) {
+        float t = (iproj[0].w - self->wmax) / (iproj[0].w - iproj[1].w);
+        int i = (ioutcode[0] & 0x10) == 0;
+        float dx = iproj[0].x - iproj[1].x;
+        float dy = iproj[0].y - iproj[1].y;
+        float tt = t * iproj[1].w / self->wmax;
+        iproj[i].x = iproj[0].x - t * dx;
+        iproj[i].y = iproj[0].y - t * dy;
+        iproj[i].z = self->zmax;
+        iproj[i].w = self->wmax;
+        ivert[i].st[0] = ivert[0].st[0] + tt * (ivert[1].st[0] - ivert[0].st[0]);
+        ivert[i].st[1] = ivert[0].st[1] + tt * (ivert[1].st[1] - ivert[0].st[1]);
+        VTXCOL_3A10(ivert[i], 0) = (int)(VTXCOL_3A10(ivert[0], 0) + tt * (VTXCOL_3A10(ivert[1], 0) - VTXCOL_3A10(ivert[0], 0)));
+        VTXCOL_3A10(ivert[i], 1) = (int)(VTXCOL_3A10(ivert[0], 1) + tt * (VTXCOL_3A10(ivert[1], 1) - VTXCOL_3A10(ivert[0], 1)));
+        VTXCOL_3A10(ivert[i], 2) = (int)(VTXCOL_3A10(ivert[0], 2) + tt * (VTXCOL_3A10(ivert[1], 2) - VTXCOL_3A10(ivert[0], 2)));
+        VTXCOL_3A10(ivert[i], 3) = (int)(VTXCOL_3A10(ivert[0], 3) + tt * (VTXCOL_3A10(ivert[1], 3) - VTXCOL_3A10(ivert[0], 3)));
+        ioutcode[i] = 0;
+        if (iproj[i].x < self->xmin)
+            ioutcode[i] = 2;
+        if (iproj[i].x > self->xmax)
+            ioutcode[i] |= 1;
+        if (iproj[i].y < self->ymin)
+            ioutcode[i] |= 8;
+        if (iproj[i].y > self->ymax)
+            ioutcode[i] |= 4;
+        if (ioutcode[0] & ioutcode[1])
+            return 0;
+        code = ioutcode[0] | ioutcode[1];
+    }
+    if (code & 8) {
+        float t = (iproj[0].y - self->ymin) / (iproj[0].y - iproj[1].y);
+        int i = (ioutcode[0] & 8) == 0;
+        float dx = iproj[0].x - iproj[1].x;
+        float dz = iproj[0].z - iproj[1].z;
+        float dw = iproj[0].w - iproj[1].w;
+        iproj[i].x = iproj[0].x - t * dx;
+        iproj[i].y = self->ymin;
+        iproj[i].z = iproj[0].z - t * dz;
+        iproj[i].w = iproj[0].w - t * dw;
+        ivert[i].st[0] = ivert[0].st[0] + t * (ivert[1].st[0] - ivert[0].st[0]);
+        ivert[i].st[1] = ivert[0].st[1] + t * (ivert[1].st[1] - ivert[0].st[1]);
+        VTXCOL_3A10(ivert[i], 0) = (int)(VTXCOL_3A10(ivert[0], 0) + t * (VTXCOL_3A10(ivert[1], 0) - VTXCOL_3A10(ivert[0], 0)));
+        VTXCOL_3A10(ivert[i], 1) = (int)(VTXCOL_3A10(ivert[0], 1) + t * (VTXCOL_3A10(ivert[1], 1) - VTXCOL_3A10(ivert[0], 1)));
+        VTXCOL_3A10(ivert[i], 2) = (int)(VTXCOL_3A10(ivert[0], 2) + t * (VTXCOL_3A10(ivert[1], 2) - VTXCOL_3A10(ivert[0], 2)));
+        VTXCOL_3A10(ivert[i], 3) = (int)(VTXCOL_3A10(ivert[0], 3) + t * (VTXCOL_3A10(ivert[1], 3) - VTXCOL_3A10(ivert[0], 3)));
+        ioutcode[i] = 0;
+        if (iproj[i].x < self->xmin)
+            ioutcode[i] = 2;
+        if (iproj[i].x > self->xmax)
+            ioutcode[i] |= 1;
+        if (ioutcode[0] & ioutcode[1])
+            return 0;
+        code = ioutcode[0] | ioutcode[1];
+    }
+    if (code & 4) {
+        float t = (iproj[0].y - self->ymax) / (iproj[0].y - iproj[1].y);
+        int i = (ioutcode[0] & 4) == 0;
+        float dx = iproj[0].x - iproj[1].x;
+        float dz = iproj[0].z - iproj[1].z;
+        float dw = iproj[0].w - iproj[1].w;
+        iproj[i].x = iproj[0].x - t * dx;
+        iproj[i].y = self->ymax;
+        iproj[i].z = iproj[0].z - t * dz;
+        iproj[i].w = iproj[0].w - t * dw;
+        ivert[i].st[0] = ivert[0].st[0] + t * (ivert[1].st[0] - ivert[0].st[0]);
+        ivert[i].st[1] = ivert[0].st[1] + t * (ivert[1].st[1] - ivert[0].st[1]);
+        VTXCOL_3A10(ivert[i], 0) = (int)(VTXCOL_3A10(ivert[0], 0) + t * (VTXCOL_3A10(ivert[1], 0) - VTXCOL_3A10(ivert[0], 0)));
+        VTXCOL_3A10(ivert[i], 1) = (int)(VTXCOL_3A10(ivert[0], 1) + t * (VTXCOL_3A10(ivert[1], 1) - VTXCOL_3A10(ivert[0], 1)));
+        VTXCOL_3A10(ivert[i], 2) = (int)(VTXCOL_3A10(ivert[0], 2) + t * (VTXCOL_3A10(ivert[1], 2) - VTXCOL_3A10(ivert[0], 2)));
+        VTXCOL_3A10(ivert[i], 3) = (int)(VTXCOL_3A10(ivert[0], 3) + t * (VTXCOL_3A10(ivert[1], 3) - VTXCOL_3A10(ivert[0], 3)));
+        ioutcode[i] = 0;
+        if (iproj[i].x < self->xmin)
+            ioutcode[i] = 2;
+        if (iproj[i].x > self->xmax)
+            ioutcode[i] |= 1;
+        if (ioutcode[0] & ioutcode[1])
+            return 0;
+        code = ioutcode[0] | ioutcode[1];
+    }
+    if (code & 2) {
+        float t = (iproj[0].x - self->xmin) / (iproj[0].x - iproj[1].x);
+        int i = (ioutcode[0] & 2) == 0;
+        float dy = iproj[0].y - iproj[1].y;
+        float dz = iproj[0].z - iproj[1].z;
+        float dw = iproj[0].w - iproj[1].w;
+        iproj[i].x = self->xmin;
+        iproj[i].y = iproj[0].y - t * dy;
+        iproj[i].z = iproj[0].z - t * dz;
+        iproj[i].w = iproj[0].w - t * dw;
+        ivert[i].st[0] = ivert[0].st[0] + t * (ivert[1].st[0] - ivert[0].st[0]);
+        ivert[i].st[1] = ivert[0].st[1] + t * (ivert[1].st[1] - ivert[0].st[1]);
+        VTXCOL_3A10(ivert[i], 0) = (int)(VTXCOL_3A10(ivert[0], 0) + t * (VTXCOL_3A10(ivert[1], 0) - VTXCOL_3A10(ivert[0], 0)));
+        VTXCOL_3A10(ivert[i], 1) = (int)(VTXCOL_3A10(ivert[0], 1) + t * (VTXCOL_3A10(ivert[1], 1) - VTXCOL_3A10(ivert[0], 1)));
+        VTXCOL_3A10(ivert[i], 2) = (int)(VTXCOL_3A10(ivert[0], 2) + t * (VTXCOL_3A10(ivert[1], 2) - VTXCOL_3A10(ivert[0], 2)));
+        VTXCOL_3A10(ivert[i], 3) = (int)(VTXCOL_3A10(ivert[0], 3) + t * (VTXCOL_3A10(ivert[1], 3) - VTXCOL_3A10(ivert[0], 3)));
+        ioutcode[i] = 0;
+    }
+    if (code & 1) {
+        float t = (iproj[0].x - self->xmax) / (iproj[0].x - iproj[1].x);
+        int i = (ioutcode[0] & 1) == 0;
+        float dy = iproj[0].y - iproj[1].y;
+        float dz = iproj[0].z - iproj[1].z;
+        float dw = iproj[0].w - iproj[1].w;
+        iproj[i].x = self->xmax;
+        iproj[i].y = iproj[0].y - t * dy;
+        iproj[i].z = iproj[0].z - t * dz;
+        iproj[i].w = iproj[0].w - t * dw;
+        ivert[i].st[0] = ivert[0].st[0] + t * (ivert[1].st[0] - ivert[0].st[0]);
+        ivert[i].st[1] = ivert[0].st[1] + t * (ivert[1].st[1] - ivert[0].st[1]);
+        VTXCOL_3A10(ivert[i], 0) = (int)(VTXCOL_3A10(ivert[0], 0) + t * (VTXCOL_3A10(ivert[1], 0) - VTXCOL_3A10(ivert[0], 0)));
+        VTXCOL_3A10(ivert[i], 1) = (int)(VTXCOL_3A10(ivert[0], 1) + t * (VTXCOL_3A10(ivert[1], 1) - VTXCOL_3A10(ivert[0], 1)));
+        VTXCOL_3A10(ivert[i], 2) = (int)(VTXCOL_3A10(ivert[0], 2) + t * (VTXCOL_3A10(ivert[1], 2) - VTXCOL_3A10(ivert[0], 2)));
+        VTXCOL_3A10(ivert[i], 3) = (int)(VTXCOL_3A10(ivert[0], 3) + t * (VTXCOL_3A10(ivert[1], 3) - VTXCOL_3A10(ivert[0], 3)));
+        ioutcode[i] = 0;
+    }
+    return 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/particle", func_00384D98);
