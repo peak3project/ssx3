@@ -6699,7 +6699,683 @@ extern "C" void func_00133128(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/ai", func_00133308);
+#ifdef SKIP_ASM
+extern "C" int func_00116120(void* rider, int a, int b);
+extern "C" int func_00107578(void* rider, int on);
+extern "C" int func_00106848(void*);
+extern "C" int func_001352A8(void* self, int c, int flag);
+extern "C" void func_00114130(void* rider, int a, int b);
+int func_00312AA0(void* self, int i);
+extern "C" int func_00135BE0(void* self);
+extern "C" void func_001158B8(void* rider, void* a, void* b, float c, float d);
+extern "C" void func_00135B30(void* self, float a, float b);
+extern "C" float func_00119C98(void* self, int v);
+extern "C" void func_0010E098(void*, int, float);
+extern "C" void* cBE_getBE();
+// PORT: cBE_getInterface__Fv is called with (be, kind) here; bind the 2-arg form to that symbol.
+void* cBE_getInterface_Fv(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" float func_001495A8(void* self, int rider, int value);
+extern "C" float func_0031C228(float x);
+extern "C" float func_00119898(void* self, float x);
+extern "C" float func_001198D8(void* self, float x);
+extern "C" int func_00311AE8(void*, int);
+extern "C" int func_00312AE8(void* self, int i);
+extern "C" float func_00312790(char* self, int a1);
+extern "C" int cRiderAnimBase_play(void* self, int anim, int flags, float blend);
+extern float D_004A4C90;
+extern float D_004A4C94;
+// Max spin/flip rates: computed once by the static initialiser (func_0013FB20) and read as
+// unchanging memory here (the reciprocal loads float above the channel stores).
+extern const float D_004A4C98;
+extern const float D_004A4C9C;
+extern float D_004A4CA0;
+extern float D_004A4CA4;
+extern float D_004A4CA8;
+extern float D_004A4CAC;
+
+struct sSpinCtl_133308
+{
+    int mode;           // 0x00
+    int f04;            // 0x04
+    int f08;            // 0x08
+    int state;          // 0x0C
+    float desFlip;      // 0x10
+    float desSpin;      // 0x14
+    float curFlip;      // 0x18
+    float curSpin;      // 0x1C
+    float totSpin;      // 0x20
+    float totFlip;      // 0x24
+    float spinVel;      // 0x28
+    float flipVel;      // 0x2C
+    float spinAcc;      // 0x30
+    float flipAcc;      // 0x34
+    float spinSpeed;    // 0x38
+    float flipSpeed;    // 0x3C
+    float f40;          // 0x40
+    int f44;            // 0x44
+    float spinHold;     // 0x48
+    float flipHold;     // 0x4C
+    float stickAngle;   // 0x50
+    float idle;         // 0x54
+    cRider* rider;      // 0x58
+};
+
+#define SPINRATE_133308(r) (*(float*)&(r)->unk_2DC)
+#define FLIPRATE_133308(r) (*(float*)&(r)->unk_2E0)
+
+// PORT: PS2-only inline asm (float absolute value), as an SDK math-header fabsf would.
+static inline float aiAbs_133308(float x)
+{
+    float r;
+    __asm__("abs.s %0, %1" : "=f"(r) : "f"(x));
+    return r;
+}
+
+static inline float aiAtan2_133308(float y, float x)
+{
+    if (x == 0.0f)
+    {
+        if (y == 0.0f) return y;
+        if (y >= 0.0f) return 1.5707963705062866f;
+        return -1.5707963705062866f;
+    }
+    float r = func_0031C228(y / x);
+    if (x < 0.0f)
+    {
+        if (y > 0.0f) r += 3.1415927410125732f;
+        else r -= 3.1415927410125732f;
+    }
+    return r;
+}
+
+// How far the current angle may trail the target turn before a new turn can be queued.
+static inline float aiTurnLimit_133308(float turn)
+{
+    return turn - D_004A4C94;
+}
+
+static inline float aiTarget_133308(float in, const float& max, const float& cur)
+{
+    if (in < 0.0f) return -max;
+    if (in <= 0.0f) return cur;
+    return max;
+}
+
+// PORT: g++ `<?` (min) operator.
+static inline float aiClamp_133308(float v, float lo, float hi)
+{
+    if (v >= lo) return v <? hi;
+    return lo;
+}
+
+static inline float aiApproach_133308(float cur, float target, float step)
+{
+    if (target + step < cur) return cur - step;
+    if (cur < target - step) return cur + step;
+    return target;
+}
+
+// Fraction of the full turn rate to use: ramps down over the last tenth of the way to the target speed.
+static inline float aiTurnScale_133308(float dist, float max)
+{
+    return aiClamp_133308(dist * 10.0f / max, 0.10000000149011612f, 1.0f);
+}
+
+static inline bool aiIsGrinding_133308(cRider* r)
+{
+    int st = *(int*)((char*)r->mAirPredictor + 0xAC);
+    return st == 1 || st == 3;
+}
+
+// PORT: g++ `>?` (max) operator.
+static inline float aiSpeed_133308(float dist, float base)
+{
+    float t = dist * 0.15915492177009583f;
+    float s = t * 4.999992370605469f + (1.0f - t) * 7.500268936157227f;
+    return s >? base;
+}
+
+static inline float aiSign_133308(float a, float b)
+{
+    if (a >= b)
+    {
+        if (a > b) return 1.0f;
+        return 0.0f;
+    }
+    return -1.0f;
+}
+
+static inline int aiDir8_133308(float ang, int back, int r3, int r2, int r1, int l3, int l2, int l1, int fwd)
+{
+    if (aiAbs_133308(ang) > 2.7488937377929688f) return back;
+    if (ang > 1.9634956121444702f) return r3;
+    if (ang > 1.1780973672866821f) return r2;
+    if (ang > 0.39269912242889404f) return r1;
+    if (ang < -1.9634956121444702f) return l3;
+    if (ang < -1.1780973672866821f) return l2;
+    if (ang < -0.39269912242889404f) return l1;
+    return fwd;
+}
+
+static inline void aiSetFalloff_133308(float& rate, float r, float sp)
+{
+    float v;
+    if (r <= 1.0f)
+        v = sp * (r * 0.800000011920929f + (1.0f - 0.800000011920929f));
+    else
+        v = sp;
+    rate = v;
+}
+
+static inline void aiSetChannel_133308(cRider* r, int i, float rate, float target)
+{
+    r->unk_1F0[i].rate = rate;
+    r->unk_1F0[i].target = target;
+}
+
+extern "C" void func_00133308(sSpinCtl_133308* self, int* input)
+{
+    if (func_00116120(self->rider, (*input >> 12) & 1, 0))
+        return;
+    if ((*input & 0x2000) && self->state == 3 &&
+        func_00107578(self->rider, ((input[1] << 20) >> 26) * 0.032258063554763794f > 0.5f))
+        return;
+    if (func_00106848(self->rider))
+        return;
+
+    float flip = ((input[1] << 26) >> 26) * 0.032258063554763794f;
+    float spin = ((input[0] << 2) >> 26) * 0.032258063554763794f;
+    int trick = ((signed char*)input)[2];
+    float flipAdj = ((input[1] << 20) >> 26) * 0.032258063554763794f;
+    float spinAdj = ((input[1] << 14) >> 26) * 0.032258063554763794f;
+
+    if (self->mode == 0)
+    {
+        if (*input & 0x8000)
+        {
+            if (spinAdj != 0.0f || flipAdj != 0.0f)
+                self->mode = 2;
+        }
+    }
+    else if (spin != 0.0f || flip != 0.0f)
+    {
+        self->mode = 0;
+    }
+    if (self->mode == 2)
+    {
+        if (*input & 0x8000)
+            trick = -1;
+        else
+            self->mode = 1;
+    }
+    if (self->mode == 1 || self->mode == 2)
+    {
+        if (spinAdj == 0.0f && flipAdj == 0.0f && self->idle > 0.30000001192092896f)
+            self->mode = 0;
+        if (spin == 0.0f)
+            spin = spinAdj;
+        if (flip == 0.0f)
+            flip = flipAdj;
+        spinAdj = flipAdj = 0.0f;
+    }
+
+    int busy = func_001352A8(self, trick, (*input >> 14) & 1);
+    if (!busy && self->mode == 3)
+        self->mode = 0;
+
+    *(int*)((char*)self->rider + 0x330) = 0;
+    float maxFlip = D_004A4C9C;
+    int dir = (input[1] << 12) >> 30;
+    float d;
+    switch (dir)
+    {
+    case 1:
+        d = 1.0f;
+        break;
+    default:
+        d = 0.0f;
+        break;
+    case -1:
+        d = -1.0f;
+        break;
+    }
+    if (d != 0.0f)
+    {
+        flipAdj = d;
+        maxFlip = D_004A4CA0;
+        if (self->flipVel < 0.0f || (self->flipVel == 0.0f && flipAdj < 0.0f))
+            *(int*)((char*)self->rider + 0x330) = 2;
+        else
+            *(int*)((char*)self->rider + 0x330) = 1;
+    }
+    func_00114130(self->rider, 0, 0);
+
+    int state0 = self->state;
+    if (busy)
+    {
+        spinAdj = flipAdj = 0.0f;
+        if (self->mode == 0)
+            self->mode = 3;
+    }
+    else if (state0 == 3)
+    {
+        if (func_00312AA0(self->rider->mRiderAnim, 2) != 0x120 && !func_00135BE0(self) &&
+            (spin != 0.0f || flip != 0.0f))
+        {
+            func_001158B8(self->rider, &flip, &spin, 0.7853982448577881f, 0.0f);
+            func_00135B30(self, flip, spin);
+            self->spinAcc = 0.0f;
+            self->flipAcc = 0.0f;
+            self->spinSpeed = 4.499661445617676f;
+            SPINRATE_133308(self->rider) = 4.499661445617676f;
+            self->flipSpeed = 2.99977445602417f;
+            FLIPRATE_133308(self->rider) = 2.99977445602417f;
+            self->state = 0;
+            func_0010E098(self->rider, 1,
+                          func_00119C98(self->rider->mMetrix, self->rider->unk_320 != self->rider->unk_324));
+        }
+    }
+
+    if (self->state == 0)
+    {
+        if (self->desSpin == 0.0f && self->desFlip == 0.0f)
+        {
+            spin = 0.0f;
+            flip = 0.0f;
+            if (self->curSpin == 0.0f && self->curFlip == 0.0f)
+                self->state = 3;
+        }
+        else if (aiAbs_133308(self->curSpin - self->desSpin) < aiTurnLimit_133308(3.1415929794311523f) &&
+                 aiAbs_133308(self->curFlip - self->desFlip) < aiTurnLimit_133308(6.283185958862305f))
+        {
+            self->state = 1;
+        }
+        else if (spin == 0.0f && flip == 0.0f)
+        {
+            self->desSpin = 0.0f;
+            self->desFlip = 0.0f;
+        }
+    }
+    else if (self->state == 1)
+    {
+        if (spin == 0.0f && flip == 0.0f)
+        {
+            self->idle += 0.01666666753590107f;
+            float ds = self->desSpin;
+            if (aiAbs_133308(ds - self->curSpin) > 3.1415929794311523f)
+            {
+                if (ds < 0.0f)
+                    ds += 3.1415929794311523f;
+                else
+                    ds -= 3.1415929794311523f;
+            }
+            float df = self->desFlip;
+            if (aiAbs_133308(df - self->curFlip) > 6.283185958862305f)
+            {
+                if (df < 0.0f)
+                    df += 6.283185958862305f;
+                else
+                    df -= 6.283185958862305f;
+            }
+            float tol = 0.0f;
+            if (self->idle > 0.30000001192092896f)
+            {
+                self->desSpin = ds;
+                self->desFlip = df;
+                tol = D_004A4C90;
+            }
+            if (aiAbs_133308(ds - self->curSpin) <= tol && aiAbs_133308(df - self->curFlip) <= tol)
+                self->state = 2;
+        }
+        else
+        {
+            self->idle = 0.0f;
+            if (spin == 0.0f)
+                self->spinHold = 0.0f;
+            else
+                self->spinHold += 0.01666666753590107f;
+            if (flip == 0.0f)
+                self->flipHold = 0.0f;
+            else
+                self->flipHold += 0.01666666753590107f;
+
+            {
+                float& des = self->desSpin;
+                if (aiAbs_133308(self->curSpin - des) <= D_004A4C90)
+                {
+                    float th = (des == 0.0f) ? 0.20000000298023224f : 0.0f;
+                    if (self->spinHold > th)
+                    {
+                        float n;
+                        if (des == 0.0f)
+                        {
+                            self->f44 = 1;
+                            n = (spin < 0.0f) ? -3.1415929794311523f : 3.1415929794311523f;
+                        }
+                        else
+                            n = (des < 0.0f) ? des - 3.1415929794311523f : des + 3.1415929794311523f;
+                        des = n;
+                        if (aiAbs_133308(self->desSpin) > D_004A4CA4)
+                            self->spinSpeed = (self->spinSpeed * 0.7999517321586609f) >? 2.9995594024658203f;
+                    }
+                }
+            }
+            {
+                float& des = self->desFlip;
+                if (aiAbs_133308(self->curFlip - des) <= D_004A4C90)
+                {
+                    float th = (des == 0.0f) ? 0.20000000298023224f : 0.0f;
+                    if (self->flipHold > th)
+                    {
+                        float n;
+                        if (des == 0.0f)
+                        {
+                            self->f44 = 1;
+                            n = (flip < 0.0f) ? -6.283185958862305f : 6.283185958862305f;
+                        }
+                        else
+                            n = (des < 0.0f) ? des - 6.283185958862305f : des + 6.283185958862305f;
+                        des = n;
+                        if (aiAbs_133308(self->desFlip) > D_004A4CA8)
+                            self->flipSpeed = (self->flipSpeed * 0.6399227976799011f) >? 2.9995594024658203f;
+                    }
+                }
+            }
+            if (busy)
+                self->f44 = 1;
+        }
+    }
+    else if (self->state == 2)
+    {
+        self->mode = 0;
+        spin = 0.0f;
+        flip = 0.0f;
+        if (self->curSpin == self->desSpin && self->curFlip == self->desFlip)
+        {
+            self->curSpin = 0.0f;
+            self->state = 3;
+            self->desSpin = 0.0f;
+            self->curFlip = 0.0f;
+            self->desFlip = 0.0f;
+            self->f44 = 0;
+        }
+        else if (!busy && func_00312AA0(self->rider->mRiderAnim, 2) != 0x120)
+        {
+            func_00135BE0(self);
+        }
+        else if (self->desFlip != self->curFlip)
+        {
+            if ((self->curFlip < 0.0f && flipAdj > 0.0f) || (self->curFlip > 0.0f && flipAdj < 0.0f))
+                flipAdj = -flipAdj;
+        }
+    }
+
+    float k1 = 1.0f / (func_001495A8(cBE_getInterface_Fv(cBE_getBE(), 3), self->rider->mAIIndex,
+                                     self->rider->unk_B34) * 0.349495530128479f + 1.0f);
+    float k2 = func_001495A8(cBE_getInterface_Fv(cBE_getBE(), 3), self->rider->mAIIndex,
+                             self->rider->unk_B34) * 0.5002591609954834f + 1.0f;
+    if (flip == 0.0f && spin == 0.0f)
+        self->stickAngle = 1.0000000150474662e+30f;
+    else
+        self->stickAngle = aiAtan2_133308(flip, spin);
+
+    if (self->desSpin == self->curSpin)
+    {
+        SPINRATE_133308(self->rider) = 0.0f;
+    }
+    else if (spin * self->desSpin < 0.0f)
+    {
+        SPINRATE_133308(self->rider) = self->spinSpeed <? k1 * 2.000131845474243f;
+    }
+    else
+    {
+        if (spin != 0.0f)
+        {
+            SPINRATE_133308(self->rider) = self->spinSpeed;
+        }
+        else
+        {
+            float diff = self->curSpin - self->desSpin;
+            float sp = self->spinSpeed;
+            if (flip == 0.0f)
+                sp = aiSpeed_133308(aiAbs_133308(diff), sp);
+            float r = aiAbs_133308(diff) / D_004A4C90;
+            aiSetFalloff_133308(SPINRATE_133308(self->rider), r, sp);
+        }
+        SPINRATE_133308(self->rider) *= k2;
+        if (self->rider->unk_2EC > 0.0f)
+            SPINRATE_133308(self->rider) *= 1.9997502565383911f;
+    }
+
+    if (self->desFlip == self->curFlip)
+    {
+        FLIPRATE_133308(self->rider) = 0.0f;
+    }
+    else if (flip * self->desFlip < 0.0f)
+    {
+        FLIPRATE_133308(self->rider) = self->flipSpeed <? k1 * 2.000131845474243f;
+    }
+    else
+    {
+        if (flip != 0.0f)
+        {
+            FLIPRATE_133308(self->rider) = self->flipSpeed;
+        }
+        else
+        {
+            float diff = self->curFlip - self->desFlip;
+            float sp = self->flipSpeed;
+            if (spin == 0.0f)
+                sp = aiSpeed_133308(aiAbs_133308(diff), sp);
+            float r = aiAbs_133308(diff) / D_004A4C90;
+            aiSetFalloff_133308(FLIPRATE_133308(self->rider), r, sp);
+        }
+        FLIPRATE_133308(self->rider) *= k2;
+        if (self->rider->unk_2EC > 0.0f)
+            FLIPRATE_133308(self->rider) *= 1.9997502565383911f;
+    }
+
+    if (aiAbs_133308(spinAdj) < 0.20000000298023224f)
+        spinAdj = 0.0f;
+    if (aiAbs_133308(flipAdj) < 0.20000000298023224f)
+        flipAdj = 0.0f;
+
+    float spin0 = self->curSpin;
+    float flip0 = self->curFlip;
+
+    {
+        float tgt = aiTarget_133308(spinAdj, D_004A4C98, self->spinVel);
+        float vel = self->spinVel;
+        self->spinVel = aiApproach_133308(vel, tgt, (aiAbs_133308(spinAdj) * 0.5f + 0.5f) *
+                                                    (aiTurnScale_133308(aiAbs_133308(tgt - vel), D_004A4C98) * 0.04999711737036705f));
+        float cs = self->curSpin;
+        float ds = self->desSpin;
+        if (cs < ds)
+            self->curSpin = ds <? cs + self->spinVel - vel;
+        else if (ds < cs)
+            self->curSpin = ds >? cs + self->spinVel - vel;
+        float old = self->curSpin;
+        float n = aiApproach_133308(old, self->desSpin, SPINRATE_133308(self->rider) * 0.01666666753590107f);
+        self->curSpin = n;
+        self->totSpin += n - old;
+    }
+    {
+        float tgt = aiTarget_133308(flipAdj, maxFlip, self->flipVel);
+        if (tgt > 0.0f)
+            tgt = D_004A4CAC <? tgt;
+        float vel = self->flipVel;
+        self->flipVel = aiApproach_133308(vel, tgt, (aiAbs_133308(flipAdj) * 0.5f + 0.5f) *
+                                                    (aiTurnScale_133308(aiAbs_133308(tgt - vel), D_004A4C9C) * 0.05000609531998634f));
+        float cf = self->curFlip;
+        float df = self->desFlip;
+        if (cf < df)
+            self->curFlip = df <? cf + self->flipVel - vel;
+        else if (df < cf)
+            self->curFlip = df >? cf + self->flipVel - vel;
+        float old = self->curFlip;
+        float n = aiApproach_133308(old, self->desFlip, FLIPRATE_133308(self->rider) * 0.01666666753590107f);
+        self->curFlip = n;
+        self->totFlip += n - old;
+    }
+    self->spinAcc += self->curSpin - spin0;
+    self->flipAcc += self->curFlip - flip0;
+
+    float v = self->spinAcc;
+    if (self->rider->unk_324)
+        v = -v;
+    func_0010E098(self->rider, 1, func_00119898(self->rider->mMetrix, v));
+    func_0010E098(self->rider, 1, func_001198D8(self->rider->mMetrix, self->flipAcc));
+
+    int cur = func_00312AA0(self->rider->mRiderAnim, 2);
+    int anim = cur;
+    aiSetChannel_133308(self->rider, 14, 0.1666666716337204f, self->spinVel * (1.0f / D_004A4C98));
+    aiSetChannel_133308(self->rider, 13, 0.1666666716337204f, self->flipVel * (1.0f / D_004A4C9C));
+
+    if (!busy && cur != 0x120)
+    {
+        if (self->spinVel != 0.0f || self->flipVel != 0.0f)
+        {
+            if (func_00311AE8(self->rider->mRiderAnim, 2) != 9)
+            {
+                cRider* rd = self->rider;
+                float x = rd->unk_1F0[14].cur;
+                if (rd->unk_320)
+                    x = -x;
+                float ang = aiAtan2_133308(rd->unk_1F0[13].cur, x);
+                anim = aiDir8_133308(ang, 0x129, 0x12A, 0x12B, 0x12C, 0x130, 0x12F, 0x12E, 0x12D);
+            }
+        }
+        else if (state0 == 3 && (self->state == 0 || self->state == 1))
+        {
+            float ang;
+            if (self->rider->unk_320)
+                ang = aiAtan2_133308(flip, -spin);
+            else
+                ang = aiAtan2_133308(flip, spin);
+            anim = aiDir8_133308(ang, 0x10E, 0x112, 0x110, 0x111, 0x114, 0x10F, 0x113, 0x10D);
+            float s = func_001495A8(cBE_getInterface_Fv(cBE_getBE(), 3), self->rider->mAIIndex,
+                                    self->rider->unk_B34);
+            cRider* rd = self->rider;
+            float t = (s * 0.5002591609954834f + 1.0f) * (FLIPRATE_133308(rd) >? SPINRATE_133308(rd)) *
+                      0.14284929633140564f;
+            *(float*)((char*)rd->mRiderAnim + 0x1C) = t;
+        }
+        else if (self->state == 0 && self->desSpin == 0.0f && self->desFlip == 0.0f)
+        {
+            anim = 0x11F;
+        }
+        else if (self->state == 1)
+        {
+            if (self->f44 && func_00311AE8(self->rider->mRiderAnim, 2) == 2 &&
+                !(self->curSpin == self->desSpin && self->curFlip == self->desFlip) &&
+                (func_00312AE8(self->rider->mRiderAnim, 2) || anim == 0x11F))
+            {
+                float y = aiSign_133308(self->desFlip, self->curFlip);
+                float x = aiSign_133308(self->desSpin, self->curSpin);
+                float ang;
+                if (self->rider->unk_320)
+                    ang = aiAtan2_133308(y, -x);
+                else
+                    ang = aiAtan2_133308(y, x);
+                anim = aiDir8_133308(ang, 0x126, 0x126, 0x125, 0x125, 0x128, 0x128, 0x127, 0x127);
+            }
+        }
+        else if (state0 != 2 && self->state == 2)
+        {
+            switch (anim)
+            {
+            case 0x10D:
+            case 0x116:
+            case 0x11B:
+            case 0x121:
+                anim = 0x132;
+                break;
+            case 0x10E:
+            case 0x117:
+            case 0x11C:
+            case 0x122:
+                anim = 0x133;
+                break;
+            case 0x10F:
+            case 0x11D:
+            case 0x123:
+                anim = 0x134;
+                break;
+            case 0x110:
+            case 0x118:
+            case 0x119:
+            case 0x11E:
+            case 0x124:
+                anim = 0x135;
+                break;
+            case 0x111:
+            case 0x125:
+                anim = 0x136;
+                break;
+            case 0x112:
+            case 0x126:
+                anim = 0x137;
+                break;
+            case 0x113:
+            case 0x127:
+                anim = 0x138;
+                break;
+            case 0x114:
+            case 0x128:
+                anim = 0x139;
+                break;
+            default:
+                anim = 0x11F;
+                break;
+            }
+            if (anim == cur)
+                return;
+            float len = func_00312790((char*)self->rider->mRiderAnim, anim);
+            float dS = aiAbs_133308(self->curSpin - self->desSpin);
+            float dF = aiAbs_133308(self->curFlip - self->desFlip);
+            float t = dS / aiSpeed_133308(dS, self->spinSpeed);
+            float tF = dF / aiSpeed_133308(dF, self->flipSpeed);
+            if (t < tF)
+                t = tF;
+            if (self->rider->unk_2EC > 0.0f)
+                t *= 0.5000624656677246f;
+            t *= 1.0f / (func_001495A8(cBE_getInterface_Fv(cBE_getBE(), 3), self->rider->mAIIndex,
+                                      self->rider->unk_B34) * 0.5002591609954834f + 1.0f);
+            float rate = 2.0f;
+            if (t > 0.0010000000474974513f)
+                rate = len / t;
+            *(float*)((char*)self->rider->mRiderAnim + 0x1C) = rate <? 2.0f;
+        }
+        else
+        {
+            if (aiIsGrinding_133308(self->rider))
+            {
+                float dur = *(float*)((char*)self->rider->mAirPredictor + 0x98) - *(float*)((char*)self->rider->mAirPredictor + 0xA0);
+                float len = func_00312790((char*)self->rider->mRiderAnim, 0x131);
+                if (anim == 0x11F && len >= dur)
+                {
+                    float r = 1.0f;
+                    if (dur > 0.0010000000474974513f)
+                        r = len / dur;
+                    anim = 0x131;
+                    *(float*)((char*)self->rider->mRiderAnim + 0x1C) = r <? 2.0f;
+                }
+                else if (anim == 0x131 && len < dur)
+                {
+                    anim = 0x11F;
+                }
+            }
+        }
+    }
+    if (anim != cur)
+    {
+        cRiderAnimBase_play(self->rider->mRiderAnim, anim, 0, -1.0f);
+        *(float*)((char*)self->rider->mRiderAnim + 0x1C) = 1.0f;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ai/ai", func_00134CB0);
