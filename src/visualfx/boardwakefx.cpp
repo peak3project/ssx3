@@ -3809,7 +3809,168 @@ extern "C" void func_002E66B8(sWake_66B8* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("visualfx/boardwakefx", func_002E6C08);
+#ifdef SKIP_ASM
+// Speed-boost trail (visualfx/speedboostfx.cpp in the prototype): a ring of segments, each with its length and
+// the two edge points of the trail.
+enum { kSpeedBoostTrailMaxNumSegs = 30 };
+
+struct t3Vector_6C08 {
+    float x, y, z;
+    t3Vector_6C08() {}
+    t3Vector_6C08(float ax, float ay, float az) : x(ax), y(ay), z(az) {}
+};
+
+struct sSBSeg_6C08 {
+    float len;              // 0x00
+    t3Vector_6C08 a;        // 0x04
+    t3Vector_6C08 b;        // 0x10
+};
+
+struct sSpeedBoost_6C08 {
+    char* rider;            // 0x000 (virtual base)
+    float maxLen;           // 0x004
+    float f8;               // 0x008
+    float fC;               // 0x00C
+    float phase;            // 0x010
+    int numSegs;            // 0x014
+    float totalLen;         // 0x018
+    int f1C;                // 0x01C
+    t4Vector lastPos;       // 0x020
+    int head;               // 0x030
+    char pad34[0xC];
+    t4Vector normal;        // 0x040
+    sSBSeg_6C08 segs[kSpeedBoostTrailMaxNumSegs]; // 0x050
+};
+
+// PORT: PS2-only VU0 inline asm (cross product, w = 0).
+static inline t4Vector vu0Cross_6C08(const t4Vector& a, const t4Vector& b)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf4, %1\n"
+        "lqc2      $vf5, %2\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vsub.w    $vf6, $vf6, $vf6\n"
+        "sqc2      $vf6, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+#define MAX_6C08(a, b) ((a) > (b) ? (a) : (b))
+
+static inline t4Vector boneRow_6C08(char* o, int k)
+{
+    return ((t4Vector*)(*(char**)(*(char**)(o + 0x780) + 0x30) + (*(int*)(o + 0x8A4) << 6)))[k];
+}
+
+// PORT: func_002E66B8 declares this with its own view of the object; bound by asm label.
+extern "C" void func_002E6C08_sb(sSpeedBoost_6C08* self) __asm__("func_002E6C08");
+extern "C" void func_002E6C08_sb(sSpeedBoost_6C08* self)
+{
+    if (self->maxLen > 0.0f || self->totalLen > 0.0f) {
+        if (vu0Length(*(t4Vector*)(self->rider + 0x1E0)) > 0.0f) {
+            if (self->numSegs == kSpeedBoostTrailMaxNumSegs) {
+                self->totalLen -= self->segs[(self->head + kSpeedBoostTrailMaxNumSegs - 1) % kSpeedBoostTrailMaxNumSegs].len;
+            } else {
+                self->numSegs++;
+            }
+            self->head = (self->head + kSpeedBoostTrailMaxNumSegs - 1) % kSpeedBoostTrailMaxNumSegs;
+            char* sub = self->rider + 0x6C0;
+            sVEntry<t4Vector*(void*)>* vt = *(sVEntry<t4Vector*(void*)>**)sub;
+            t4Vector pos = *vt[kRiderVt_getPosition].fn(sub + vt[kRiderVt_getPosition].delta);
+            t4Vector bpos = boneRow_6C08(self->rider, 3);
+            t4Vector up = boneRow_6C08(self->rider, 2);
+            t4Vector side = boneRow_6C08(self->rider, 0);
+            if (*(int*)(self->rider + 0x320) != 0) {
+                side = vu0Scale(side, -1.0f);
+            }
+            float len;
+            if (self->numSegs >= 2) {
+                len = vu0Length(vu0Sub(pos, self->lastPos));
+            } else {
+                len = 0.0f;
+            }
+            self->lastPos = pos;
+            self->segs[self->head].len = 0.0f;
+            self->segs[(self->head + 1) % kSpeedBoostTrailMaxNumSegs].len = len;
+            self->totalLen += len;
+            t4Vector p0 = vu0Sub(vu0Add(bpos, vu0Scale(side, 75.0f)), vu0Scale(up, 17.5f));
+            t4Vector p1 = vu0Add(vu0Add(bpos, vu0Scale(side, 75.0f)), vu0Scale(up, 17.5f));
+            t4Vector p2 = vu0Sub(vu0Sub(bpos, vu0Scale(side, 75.0f)), vu0Scale(up, 17.5f));
+            t4Vector p3 = vu0Add(vu0Sub(bpos, vu0Scale(side, 75.0f)), vu0Scale(up, 17.5f));
+            float dir = 0.0f;
+            if (*(int*)(self->rider + 0x330) != 0) {
+                int s = func_00312AA0(*(void**)(self->rider + 0x784), 2);
+                if ((s >= 23 && s <= 28) || s == 37 || s == 38) {
+                    dir = 1.0f;
+                } else {
+                    dir = -1.0f;
+                }
+            }
+            if (dir > 0.0f) {
+                vu0AddEq(p2, vu0Scale(vu0Scale(side, 150.0f), dir));
+                vu0AddEq(p3, vu0Scale(vu0Scale(side, 150.0f), dir));
+            } else if (dir < 0.0f) {
+                vu0AddEq(p0, vu0Scale(vu0Scale(side, 150.0f), dir));
+                vu0AddEq(p1, vu0Scale(vu0Scale(side, 150.0f), dir));
+            }
+            t4Vector n = vu0Cross_6C08(*(t4Vector*)(self->rider + 0x1E0), *(t4Vector*)(self->rider + 0x370));
+            if (vu0Dot(n, self->normal) < 0.0f) {
+                n = vu0Scale(n, -1.0f);
+            }
+            self->normal = n;
+            t4Vector d0 = vu0Sub(p0, *(t4Vector*)(self->rider + 0x460));
+            t4Vector d1 = vu0Sub(p1, *(t4Vector*)(self->rider + 0x460));
+            t4Vector d2 = vu0Sub(p2, *(t4Vector*)(self->rider + 0x460));
+            t4Vector d3 = vu0Sub(p3, *(t4Vector*)(self->rider + 0x460));
+            float k0 = vu0Dot(d0, n);
+            float k1 = vu0Dot(d1, n);
+            float k2 = vu0Dot(d2, n);
+            float k3 = vu0Dot(d3, n);
+            float sc = 1.0f / MAX_6C08(fsAbs(k0), MAX_6C08(fsAbs(k1), MAX_6C08(fsAbs(k2), fsAbs(k3))));
+            k0 *= sc;
+            k1 *= sc;
+            k2 *= sc;
+            k3 *= sc;
+            t4Vector lo;
+            t4Vector hi;
+            if (k0 < k1 && k0 < k2 + 0.5f && k0 < k3 + 0.5f) {
+                lo = vu0Sub(p0, vu0Scale(*(t4Vector*)(self->rider + 0x370), vu0Dot(*(t4Vector*)(self->rider + 0x370), d0) - 10.0f));
+            } else if (k1 < k0 && k1 < k2 + 0.5f && k1 < k3 + 0.5f) {
+                lo = vu0Sub(p1, vu0Scale(*(t4Vector*)(self->rider + 0x370), vu0Dot(*(t4Vector*)(self->rider + 0x370), d1) - 10.0f));
+            } else if (k2 < k0 && k2 < k1 && k2 < k3) {
+                lo = vu0Sub(p2, vu0Scale(*(t4Vector*)(self->rider + 0x370), vu0Dot(*(t4Vector*)(self->rider + 0x370), d2) - 10.0f));
+            } else {
+                lo = vu0Sub(p3, vu0Scale(*(t4Vector*)(self->rider + 0x370), vu0Dot(*(t4Vector*)(self->rider + 0x370), d3) - 10.0f));
+            }
+            if (k1 <= k0 && k2 - 0.5f <= k0 && k3 - 0.5f <= k0) {
+                hi = vu0Sub(p0, vu0Scale(*(t4Vector*)(self->rider + 0x370), vu0Dot(*(t4Vector*)(self->rider + 0x370), d0) - 10.0f));
+            } else if (k0 <= k1 && k2 - 0.5f <= k1 && k3 - 0.5f <= k1) {
+                hi = vu0Sub(p1, vu0Scale(*(t4Vector*)(self->rider + 0x370), vu0Dot(*(t4Vector*)(self->rider + 0x370), d1) - 10.0f));
+            } else if (k0 <= k2 && k1 <= k2 && k3 <= k2) {
+                hi = vu0Sub(p2, vu0Scale(*(t4Vector*)(self->rider + 0x370), vu0Dot(*(t4Vector*)(self->rider + 0x370), d2) - 10.0f));
+            } else {
+                hi = vu0Sub(p3, vu0Scale(*(t4Vector*)(self->rider + 0x370), vu0Dot(*(t4Vector*)(self->rider + 0x370), d3) - 10.0f));
+            }
+            self->segs[self->head].a = t3Vector_6C08(lo.x, lo.y, lo.z);
+            self->segs[self->head].b = t3Vector_6C08(hi.x, hi.y, hi.z);
+        }
+    }
+    int minSegs = 0;
+    if (self->maxLen > 1.0f) {
+        minSegs = 3;
+    }
+    while (self->numSegs > minSegs && self->totalLen > self->maxLen) {
+        self->totalLen -= self->segs[(self->head + self->numSegs - 1) % kSpeedBoostTrailMaxNumSegs].len;
+        self->numSegs--;
+    }
+}
+#endif
 
 INCLUDE_ASM("visualfx/boardwakefx", func_002E7A10);
 
