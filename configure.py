@@ -53,6 +53,9 @@ UNIT_CFLAGS = {
     # EA media library (AV::/RCMP:: streaming, MPEG-2 decoder) after wscriptcache.cpp, whose last function is its
     # global ctor at 0x3ADDA0: no $gp users, li.s through $at (func_003AE780), small globals in .bss.
     "ealib/seg_2AEDC0": "-G0",
+    # Built without RTTI: retail vtable headers are {delta, 0} and every cRider-derived class shares cRider's +0x6D0
+    # sub-vtable D_00459B90, which g++ 2.95 only does with -fno-rtti (func_00142A50; whole unit unchanged, 2026-11-08).
+    "ai/control/handplantcontrol": "-fno-rtti",
     "ealib/seg_2B4578": "-G0",
     "ealib/seg_2DCAE8": "-G0",
     # Library tail of .text (0x3EDF50-0x42E590), split by the same evidence: seg_2F0F40, seg_313F58 (C library:
