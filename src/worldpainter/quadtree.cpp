@@ -2194,7 +2194,451 @@ extern "C" int func_002C55C0(void* self, int a1)
 }
 #endif
 
+//100%
 INCLUDE_ASM("worldpainter/quadtree", func_002C55D8);
+#ifdef SKIP_ASM
+// PORT: func_0040A360 is sceMcSync(mode, cmd, result); declared later in the unit without a result type
+extern "C" int func_0040A360_55D8(int mode, int* cmd, int* result) __asm__("func_0040A360");
+extern "C" int func_002C63E8(void* self, unsigned int a1);
+// PORT: the unit defines func_002C6280 later with its own class type
+extern "C" void func_002C6280_55D8(void* self) __asm__("func_002C6280");
+extern "C" void func_002C6848(void* self);
+extern "C" void func_002C69A0(void* self);
+extern "C" void func_002C6A28(void* self);
+extern "C" void func_002C6A88(void* self);
+extern "C" void func_002C6B00(void* self);
+extern "C" void func_002C6B78(void* self);
+extern "C" void func_002C6BF8(void* self);
+extern "C" void func_002C6C88(void* self);
+extern "C" void func_002C6D18(void* self);
+extern "C" int func_003DF980(int h);
+// PORT: memset; this caller ignores the result
+extern "C" void func_003E6448_v(void* dst, int c, int n) __asm__("func_003E6448");
+extern "C" int ASYNCFILE_release(int h, int* a, int* b);
+extern int D_004A3938;
+extern int D_004A393C;
+extern int D_004A3944;
+extern short D_005377B8[];
+extern int D_00487450[];
+
+struct sMcDateTime_55D8 {
+    unsigned char resv2;
+    unsigned char sec;
+    unsigned char min;
+    unsigned char hour;
+    unsigned char day;
+    unsigned char month;
+    unsigned short year;
+};
+
+class cMemCard_55D8 {
+public:
+    // vptr at 0x0; slot N at vtable offset N*8
+    virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04(); virtual void v05();
+    virtual void v06(); virtual void v07(); virtual void v08(); virtual void v09(); virtual void v10();
+    virtual void v11(); virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15();
+    virtual void v16(); virtual void v17(); virtual void v18(); virtual void v19(); virtual void v20();
+    virtual void v21(); virtual void v22(); virtual void v23(); virtual void v24(); virtual void v25();
+    virtual void v26(); virtual void v27(); virtual void v28(); virtual void v29(); virtual void v30();
+    virtual void v31(); virtual void v32(); virtual void v33(); virtual void v34(); virtual void v35();
+    virtual void v36(); virtual void v37(); virtual void v38(); virtual void v39();
+    virtual void v40(int idx); // 0x140
+    virtual void v41(); virtual void v42(); virtual void v43(); virtual void v44(); virtual void v45();
+    virtual void v46(); virtual void v47(); virtual void v48(); virtual void v49(); virtual void v50();
+    virtual void v51(); virtual void v52(); virtual void v53(); virtual void v54(); virtual void v55();
+    virtual void v56(); virtual void v57(); virtual void v58(); virtual void v59(); virtual void v60();
+    virtual void v61(); virtual void v62(); virtual void v63(); virtual void v64(); virtual void v65();
+    virtual void v66();
+    virtual int v67(int idx); // 0x218
+    virtual void v68(); virtual void v69(); virtual void v70(); virtual void v71(); virtual void v72();
+    virtual int v73(); // 0x248
+};
+
+struct sMcTblGetDir_55D8 {
+    sMcDateTime_55D8 create;
+    sMcDateTime_55D8 modify;
+    unsigned int size;
+    unsigned short attr;
+    unsigned short resv1;
+    unsigned int resv2;
+    unsigned int pdaAplNo;
+    unsigned char name[32];
+};
+
+struct sSaveEntry_55D8 {
+    int a;          // 0x00
+    int b;          // 0x04
+    int c;          // 0x08
+    char name[0x40]; // 0x0C
+    char title[0x22]; // 0x4C
+    sMcDateTime_55D8 modify; // 0x6E
+    char pad76[2];
+};
+
+
+struct sMemCard_55D8 : public cMemCard_55D8 {
+    int f04;                        // 0x004 state
+    int f08;                        // 0x008
+    int f0C;                        // 0x00C port
+    int f10;                        // 0x010
+    int f14;                        // 0x014
+    int f18;                        // 0x018
+    int f1C;                        // 0x01C
+    int f20;                        // 0x020
+    int f24;                        // 0x024
+    int f28;                        // 0x028
+    int f2C;                        // 0x02C
+    int f30;                        // 0x030
+    int f34;                        // 0x034
+    int f38;                        // 0x038
+    int f3C;                        // 0x03C
+    int f40;                        // 0x040
+    int f44;                        // 0x044
+    int f48;                        // 0x048
+    int f4C;                        // 0x04C
+    int f50;                        // 0x050
+    int f54;                        // 0x054
+    char f58[0x21];                 // 0x058
+    char f79[0x40];                 // 0x079
+    char fB9[0x40];                 // 0x0B9
+    char fF9[0x40];                 // 0x0F9
+    char f139[0x43];                // 0x139
+    sQTLevel levels[2];             // 0x17C
+    sSaveEntry_55D8 entries[6];     // 0x1A4
+    char pad474[0xC];
+    sMcTblGetDir_55D8 info;         // 0x480
+    sMcTblGetDir_55D8 dir[64];      // 0x4C0
+};
+
+extern "C" void func_002C55D8(sMemCard_55D8* self)
+{
+    if (self->levels[self->f0C].f0C == 0) {
+        self->f50 = 0;
+        self->f54 = 0;
+        func_003E6448_v(self->entries, 0, 0x2D0);
+    }
+    self->f3C = 1;
+    if (self->f40 != 0) {
+        int cmd;
+        D_004A3940 = 0;
+        cmd = 0;
+        if (func_0040A360_55D8(1, &cmd, &D_004A3940) == 0) {
+            return;
+        }
+        // Two separate result tests with identical arms: retail keeps both compares (li -1; beq / li -2; bne) into one
+        // cross-jumped copy of the store, which neither `||` (folded to a range check) nor a switch reproduces.
+        if (D_004A3940 == -1) {
+            self->levels[self->f10].f10 = 1;
+        } else if (D_004A3940 == -2) {
+            self->levels[self->f10].f10 = 1;
+        }
+        if ((D_004A3940 >= -19 && D_004A3940 <= -11) || (D_004A3940 >= -49 && D_004A3940 <= -40) ||
+            (D_004A3940 >= -59 && D_004A3940 <= -50) || (D_004A3940 >= -79 && D_004A3940 <= -70)) {
+            D_004A3940 = -10;
+        }
+        if (func_002C63E8(self, D_004A3940) == 0) {
+            if (D_004A3938 != 2) {
+                D_004A3940 = -10002;
+            } else if (D_004A3944 == 0) {
+                D_004A3940 = -2;
+            }
+        }
+        self->f40 = 0;
+        self->levels[self->f10].f08 = D_004A3940;
+        self->levels[self->f10].f00 = D_004A3938;
+        self->levels[self->f10].f04 = (void*)D_004A393C;
+        self->levels[self->f10].f0C = D_004A3944;
+    }
+    switch (self->f04) {
+    case 2: case 6: case 8: case 9: case 0xA: case 0xB: case 0xC: case 0xD: case 0xE: case 0xF:
+    case 0x12: case 0x16: case 0x17: case 0x18: case 0x1C: case 0x1D: case 0x1E: case 0x23:
+    case 0x24: case 0x25: case 0x26: case 0x27: case 0x29: case 0x2A: case 0x2B: case 0x2D:
+    case 0x2E: case 0x2F: case 0x31: case 0x32: case 0x33: case 0x36: case 0x37: case 0x38:
+    case 0x39: case 0x3A: case 0x3B: case 0x3D: case 0x40: case 0x42: case 0x44: case 0x46:
+    case 0x48: case 0x4A: case 0x4C: case 0x4E:
+        self->f3C = 0;
+        D_004A3940 = 0;
+        if (func_0040A360_55D8(1, 0, &D_004A3940) == 0) {
+            return;
+        }
+        self->f3C = 1;
+        if (D_004A3940 == -1) {
+            self->levels[self->f0C].f10 = 1;
+        }
+        int err = D_004A3940;
+        if (err < 0) {
+            int st = self->f04;
+            if (st != 0x24 && !(st >= 0x36 && st <= 0x3B)) {
+                if (st >= 8 && st <= 0xF && err != -1 && func_002C63E8(self, err) == 0) {
+                    self->v40(self->f28);
+                    func_002C48C0(self, 0x10);
+                    return;
+                }
+            } else if (err == -4) {
+                D_004A3940 = 0;
+            }
+            if (D_004A3940 < 0) {
+                if (self->f04 == 0x23 || self->f04 == 7) {
+                    func_002C52D8(self);
+                }
+                if (self->f04 == 0x13) {
+                    self->f1C = -1;
+                }
+                func_002C48C0(self, 1);
+                return;
+            }
+        }
+        self->levels[self->f0C].f08 = 0;
+        break;
+    }
+    if (self->f44 != 0) {
+        self->f44 = 0;
+        func_002C48C0(self, 0x1E);
+        return;
+    }
+    if (self->f48 != 0) {
+        self->f48 = 0;
+        func_002C48C0(self, 0x18);
+        return;
+    }
+    switch (self->f04) {
+    case 2:
+        D_004A3940 = 0;
+        if (func_0040A360_55D8(1, 0, &D_004A3940) == 0) {
+            return;
+        }
+        if (D_004A3940 == -1) {
+            self->levels[self->f0C].f10 = 1;
+        }
+        break;
+    case 3:
+        func_002C48C0(self, 4);
+        break;
+    case 5:
+        if (self->v73() == 0) {
+            func_002C4210(self);
+            return;
+        }
+        break;
+    case 0x22:
+        if (self->v73() == 0) {
+            func_002C42B0(self);
+            return;
+        }
+        break;
+    case 6: {
+        self->f50 = self->f14;
+        func_003E6448_v(self->entries, 0, 0x2D0);
+        for (int i = 0; i < self->f14; i++) {
+            unsigned char c = '1' + i;
+            for (int j = 0; j < self->f50; j++) {
+                int len = strlen((char*)self->dir[j].name);
+                if (len != 0 && self->dir[j].name[len - 1] == c) {
+                    strcpy(self->entries[i].name, (char*)self->dir[j].name);
+                    break;
+                }
+            }
+        }
+        D_004A3940 = 0;
+        func_002C48C0(self, 7);
+        return;
+    }
+    case 8:
+        self->f18 = D_004A3940;
+        func_002C48C0(self, 0xA);
+        return;
+    case 0xA:
+        func_002C2268(self, self->entries[self->f28].title, D_005377B8);
+        func_002C48C0(self, 9);
+        return;
+    case 9:
+        func_002C48C0(self, 0xB);
+        return;
+    case 0xB:
+        if (self->info.size != self->f24) {
+            self->v40(self->f28);
+            func_002C48C0(self, 0x10);
+        }
+        self->entries[self->f28].modify = self->info.modify;
+        func_002C48C0(self, 0xC);
+        return;
+    case 0xC: case 0xD: case 0xE: {
+        int slot = slotOf_48C0(self->f04, 0xD, 0xE);
+        if (self->info.size != D_00487450[slot]) {
+            func_002C5570(self, self->f28);
+            func_002C48C0(self, 0x10);
+            return;
+        }
+    }
+    case 0xF: case 0x10:
+        while (++self->f28 < self->f14) {
+            if (self->v67(self->f28)) {
+                sprintf(self->f79, D_004A3948, self->entries[self->f28].name, D_00487460);
+                func_002C48C0(self, 8);
+                return;
+            }
+        }
+    case 7:
+        func_002C6280_55D8(self);
+        break;
+    case 0x23:
+        if (D_004A3940 != 1) {
+            func_002C52D8(self);
+        }
+        D_004A3940 = 0;
+        break;
+    case 0x11:
+        if (self->levels[self->f0C].f0C == 0) {
+            func_002C4388(self);
+            return;
+        }
+        break;
+    case 0x13:
+        if (self->v73() == 0) {
+            func_002C4410(self);
+            return;
+        }
+        break;
+    case 0x28: case 0x2C: case 0x30:
+        if (func_003DF980(self->f38) != 1) {
+            return;
+        }
+        self->f30 = 0;
+        self->f34 = 0;
+        ASYNCFILE_release(self->f38, &self->f30, &self->f34);
+        func_002C48C0(self, self->f04 + 1);
+        return;
+    case 0x16: case 0x1C: case 0x25: case 0x29: case 0x2D: case 0x31:
+        self->f18 = D_004A3940;
+        func_002C48C0(self, self->f04 + 1);
+        return;
+    case 0x14:
+        if (self->v73() == 0) {
+            func_002C48C0(self, 0x24);
+            return;
+        }
+        break;
+    case 0x1B:
+        if (self->v73() == 0) {
+            func_002C48C0(self, 0x1C);
+            return;
+        }
+        break;
+    case 0x37: case 0x38:
+        func_002C48C0(self, 0x3A);
+        return;
+    case 0x24: case 0x26: case 0x27: case 0x2A: case 0x2E: case 0x32: case 0x36: case 0x39: case 0x3A:
+        func_002C48C0(self, self->f04 + 1);
+        return;
+    case 0x15:
+        if (self->v73() == 0) {
+            func_002C48C0(self, 0x16);
+            return;
+        }
+        break;
+    case 0x17:
+        func_002C48C0(self, 0x34);
+        return;
+    case 0x1D:
+        if (D_004A3940 != self->f20) {
+            D_004A3940 = -10001;
+            func_002C48C0(self, 1);
+            return;
+        }
+        func_002C48C0(self, 0x35);
+        return;
+    case 0x19:
+        self->f3C = 0;
+        self->entries[self->f1C].b = 0;
+        self->entries[self->f1C].a = 0;
+        self->entries[self->f1C].c = 0;
+        strcpy(self->entries[self->f1C].name, self->fB9);
+        strcpy(self->entries[self->f1C].title, self->f58);
+        break;
+    case 0x3C:
+        if (self->v73() == 0) {
+            func_002C6848(self);
+            return;
+        }
+        break;
+    case 0x3D:
+        self->f54 = D_004A3940;
+        break;
+    case 0x3F:
+        if (self->v73() == 0) {
+            func_002C69A0(self);
+            return;
+        }
+        break;
+    case 0x49:
+        if (self->v73() == 0 && self->f18 >= 0) {
+            func_002C6A28(self);
+            return;
+        }
+        break;
+    case 0x41:
+        if (self->v73() == 0 && self->f18 >= 0) {
+            func_002C6A88(self);
+            return;
+        }
+        break;
+    case 0x47:
+        if (self->v73() == 0 && self->f18 >= 0) {
+            func_002C6B00(self);
+            return;
+        }
+        break;
+    case 0x43:
+        if (self->v73() == 0 && self->f18 >= 0) {
+            func_002C6B78(self);
+            return;
+        }
+        break;
+    case 0x45:
+        if (self->v73() == 0 && self->f18 >= 0) {
+            func_002C6BF8(self);
+            return;
+        }
+        break;
+    case 0x4B:
+        if (self->v73() == 0) {
+            func_002C6C88(self);
+            return;
+        }
+        break;
+    case 0x4D:
+        if (self->v73() == 0) {
+            func_002C6D18(self);
+            return;
+        }
+        break;
+    case 0x40:
+        self->f04 = 0;
+        self->f18 = D_004A3940;
+        break;
+    case 0x4A:
+        self->f04 = 0;
+        self->f18 = -1;
+        break;
+    case 0x42: case 0x44: case 0x46: case 0x48:
+        self->f04 = 0;
+        break;
+    case 0: case 0x4E:
+        break;
+    case 0x34: case 0x35:
+        return;
+    }
+    if (func_002C51D0_impl((sQTState*)(void*)self, self->f0C) == -10 || func_002C51D0_impl((sQTState*)(void*)self, self->f0C) == -1) {
+        func_002C5250((sQTState*)(void*)self);
+    }
+    if (func_002C51D0_impl((sQTState*)(void*)self, self->f0C) == -10 || func_002C51D0_impl((sQTState*)(void*)self, self->f0C) == -2) {
+        func_002C5278(self);
+    }
+    if (self->f04 != 0) {
+        func_002C48C0(self, 0);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("worldpainter/quadtree", func_002C6128);
