@@ -3639,7 +3639,239 @@ extern "C" void func_002B2850(sBMSrc** src, cBankManager*** dst)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/bankmonitor", func_002B28C0);
+#ifdef SKIP_ASM
+extern void* D_004A37E8;
+extern char D_004A3570[];
+extern char D_004A37F0[];
+extern char D_004A37F8[];
+extern char D_004A3800[];
+extern char D_004A3808[];
+extern char D_00483470[];
+extern char D_00483480[];
+extern char D_004A3810[];
+extern char D_00483490[];
+extern char D_004834A0[];
+extern char D_004834B0[];
+extern char D_004834C0[];
+extern char D_004834D0[];
+extern char D_004834E0[];
+extern char D_004834F0[];
+extern char D_00483500[];
+extern char D_00483510[];
+extern char D_00483520[];
+extern char D_00483530[];
+extern char D_00483540[];
+extern char D_004A3818[];
+extern char D_00483550[];
+extern char D_004A3820[];
+extern char D_00483560[];
+extern char D_004A3828[];
+extern char D_004A3830[];
+extern const char D_00483448[];
+extern const char D_00483458[];
+extern "C" int func_002A7BF8(void* parser, const char* name);
+extern "C" char* func_002A7B08(void* parser);
+extern "C" int func_002A80D8(void* parser, const char* key, int* out);
+extern "C" int func_002A8070(void* parser, const char* key, float* out);
+
+// One song's configuration (func_002B1A98 ctor, 0xAC bytes).
+struct sSongCfg28C0 {
+    char name[0x20];            // 0x00
+    char file[0x20];            // 0x20
+    int numBankData;            // 0x40
+    char bankData[1][0x20];     // 0x44
+};
+struct sBank28C0 {
+    int p0;
+    char* ents[0x40];
+};
+
+struct sLoc28C0 {
+    char parser[0x810];
+    char buf[0x20];
+    int iA;
+    int iB;
+    int iC;
+    float fD;
+};
+
+// One row of the per-song grid (sSpeechMon::grid).
+static inline int* Row_28C0(int (*g)[5], int i)
+{
+    return g[i];
+}
+
+// The music system's constructor (sound/musicsys.cpp in the July 2003 prototype): reads the song list.
+// PORT: g++ 2.95 constructor of a class with virtual bases (stack vtable this-adjust fix-ups written out by hand).
+extern "C" char* func_002B28C0(char* self, int inchrg, int a2, int a3, int heap)
+{
+    if (inchrg) {
+        char* vb = self + 0x5448;
+        char* vb2 = self + 0x5F20;
+        *(char**)(self + 0x5F20) = self + 0x5450;
+        *(char**)self = vb2;
+        *(char**)(self + 0x5628) = vb;
+        func_002ADE88(vb, heap);
+        cBankManager_cBankManager(*(void**)(self + 0x5F20), 0, a2, heap);
+        cStreamSys_cStreamSys(*(void**)self, 0, a2, a3, heap);
+    }
+    *(const sSndVtbl4**)(*(char**)(**(char***)self + 0x1D8) + 4) = &D_00483928;
+    *(void***)(**(char***)self + 0xAB0) = D_00483B48;
+    *(const sSndVtbl7**)(**(char***)self + 0x1D4) = &D_00483948;
+    if (inchrg == 0) {
+        sSndVtbl4 t1 = D_00483928;
+        *(sSndVtbl4**)(*(char**)(**(char***)self + 0x1D8) + 4) = &t1;
+        char* base1 = *(char**)(**(char***)self + 0x1D8) - 0x5448;
+        int d1 = self - base1;
+        t1.e[1].delta = D_00483928.e[1].delta + d1;
+        sSndVtbl7 t2 = D_00483948;
+        *(sSndVtbl7**)(**(char***)self + 0x1D4) = &t2;
+        char* base2 = **(char***)self - 0x5450;
+        int d2 = self - base2;
+        t2.e[1].delta = D_00483948.e[1].delta + d2;
+    }
+    *(int*)(self + 0x3E4) = 0;
+    *(int*)(self + 0x3E8) = 0;
+    *(void***)(self + 0x5440) = D_004838F8;
+    *(int*)(self + 0x3EC) = 0;
+    *(int*)(self + 0x3F0) = 0;
+    *(long*)(self + 0x3F8) = 0;
+    *(int*)(self + 0x408) = 0;
+    *(int*)(self + 0x418) = 0;
+    *(int*)(self + 0x5438) = 0;
+    *(int*)(self + 0x543C) = 0;
+    D_004A37EC = (void***)self;
+    *(char**)(self + 0x5434) = new (D_00483448, 0, 0) char[0x6400];
+    sBank28C0* sv = (sBank28C0*)self;
+    int i = 0;
+    do {
+        int* e = Row_28C0(((sSpeechMon*)self)->grid, i);
+        for (int j = 4; j >= 0; j--)
+            e[j] = 0;
+        i++;
+    } while (i < 0x40);
+    {
+        int* e = (int*)(self + 0x920);
+        for (int j = 4; j >= 0; j--)
+            e[j] = 0;
+    }
+    for (int p = 0; p < 0x1900; p += 0x64) {
+        self[p + 0x934] = D_004A35A8[0];
+        self[p + 0x2234] = D_004A35A8[0];
+        self[p + 0x3B34] = D_004A35A8[0];
+    }
+    sLoc28C0 L;
+    func_002A77F8(L.parser, D_004A37E8, 0x100);
+    *(int*)(L.parser + 8) = *(int*)(L.parser + 4);
+    if (func_002A7BF8(L.parser, D_004A3570) != 0) {
+        while (func_002A7F90(L.parser) == 0) {
+            func_002A7DA0(L.parser);
+            func_002A7FF8(L.parser, D_004828C0, self + 0x104);
+        }
+    }
+    *(int*)(L.parser + 8) = *(int*)(L.parser + 4);
+    *(int*)(self + 0x3E4) = 0;
+    *(int*)(self + 0x3EC) = 0;
+    while (*(int*)(self + 0x3E4) < 0x40) {
+        char* tok = func_002A7B08(L.parser);
+        if (tok == 0)
+            break;
+        if (func_0041AA88(tok, D_004A3570) == 0)
+            continue;
+        // The song's bit is built in a variable: the target keeps its li 1 in the loop while the
+        // other constants (100) are hoisted.
+        long bit = 1;
+        bit <<= *(int*)(self + 0x3E4);
+        *(long*)(self + 0x3F8) |= bit;
+        strcpy(self + (*(int*)(self + 0x3E4) * 0xB + 0x124), tok);
+        sv->ents[*(int*)(self + 0x3E4)] = (char*)func_002B1A98(cMemMan_alloc(0xAC, D_00483458, 0, 0));
+        while (func_002A7F90(L.parser) == 0) {
+            char* key = func_002A7DA0(L.parser);
+            if (func_0041AA88(key, D_004A37F0) == 0) {
+                func_002A7FF8(L.parser, D_004A37F0, self + (*(int*)(self + 0x3E4) * 100 + 0x934));
+            } else if (func_0041AA88(key, D_004A37F8) == 0) {
+                func_002A7FF8(L.parser, D_004A37F8, self + (*(int*)(self + 0x3E4) * 100 + 0x2234));
+            } else if (func_0041AA88(key, D_004A3800) == 0) {
+                func_002A7FF8(L.parser, D_004A3800, self + (*(int*)(self + 0x3E4) * 100 + 0x3B34));
+            } else if (func_0041AA88(key, D_004A3808) == 0) {
+                func_002A80D8(L.parser, D_004A3808, &L.iA);
+                if (L.iA == 1)
+                    *(int*)(self + 0x3EC) += 1;
+            } else if (func_0041AA88(key, D_00483470) == 0) {
+                func_002A80D8(L.parser, D_00483470, &L.iB);
+                if (L.iB < 5)
+                    ((sSpeechMon*)self)->grid[((sSpeechMon*)self)->count][L.iB] = 1;
+            } else if (func_0041AA88(key, D_00483480) == 0) {
+                func_002A7FF8(L.parser, D_00483480, L.buf);
+                strcpy(sv->ents[*(int*)(self + 0x3E4)], L.buf);
+            } else if (func_0041AA88(key, D_004A3810) == 0) {
+                func_002A7FF8(L.parser, D_004A3810, L.buf);
+                strcpy(sv->ents[*(int*)(self + 0x3E4)] + 0x20, L.buf);
+            } else if (func_0041AA88(key, D_00483490) == 0) {
+                func_002A7FF8(L.parser, D_00483490, L.buf);
+                strcpy(((sSongCfg28C0*)sv->ents[*(int*)(self + 0x3E4)])->bankData[((sSongCfg28C0*)sv->ents[*(int*)(self + 0x3E4)])->numBankData], L.buf);
+                ((sSongCfg28C0*)sv->ents[*(int*)(self + 0x3E4)])->numBankData++;
+            } else if (func_0041AA88(key, D_004834A0) == 0) {
+                func_002A80D8(L.parser, D_004834A0, &L.iC);
+                *(int*)(sv->ents[*(int*)(self + 0x3E4)] + 0x64) = L.iC;
+            } else if (func_0041AA88(key, D_004834B0) == 0) {
+                func_002A80D8(L.parser, D_004834B0, &L.iC);
+                *(int*)(sv->ents[*(int*)(self + 0x3E4)] + 0x68) = L.iC;
+            } else if (func_0041AA88(key, D_004834C0) == 0) {
+                func_002A80D8(L.parser, D_004834C0, &L.iC);
+                *(int*)(sv->ents[*(int*)(self + 0x3E4)] + 0x6C) = L.iC;
+            } else if (func_0041AA88(key, D_004834D0) == 0) {
+                func_002A80D8(L.parser, D_004834D0, &L.iC);
+                *(int*)(sv->ents[*(int*)(self + 0x3E4)] + 0x70) = L.iC;
+            } else if (func_0041AA88(key, D_004834E0) == 0) {
+                func_002A80D8(L.parser, D_004834E0, &L.iC);
+                *(int*)(sv->ents[*(int*)(self + 0x3E4)] + 0x74) = L.iC;
+            } else if (func_0041AA88(key, D_004834F0) == 0) {
+                func_002A80D8(L.parser, D_004834F0, &L.iC);
+                *(int*)(sv->ents[*(int*)(self + 0x3E4)] + 0x78) = L.iC;
+            } else if (func_0041AA88(key, D_00483500) == 0) {
+                func_002A80D8(L.parser, D_00483500, &L.iC);
+                *(int*)(sv->ents[*(int*)(self + 0x3E4)] + 0x7C) = L.iC;
+            } else if (func_0041AA88(key, D_00483510) == 0) {
+                func_002A80D8(L.parser, D_00483510, &L.iC);
+                *(int*)(sv->ents[*(int*)(self + 0x3E4)] + 0x80) = L.iC;
+            } else if (func_0041AA88(key, D_00483520) == 0) {
+                func_002A80D8(L.parser, D_00483520, &L.iC);
+                *(int*)(sv->ents[*(int*)(self + 0x3E4)] + 0x84) = L.iC;
+            } else if (func_0041AA88(key, D_00483530) == 0) {
+                func_002A80D8(L.parser, D_00483530, &L.iC);
+                *(int*)(sv->ents[*(int*)(self + 0x3E4)] + 0x88) = L.iC;
+            } else if (func_0041AA88(key, D_00483540) == 0) {
+                func_002A80D8(L.parser, D_00483540, &L.iC);
+                *(int*)(sv->ents[*(int*)(self + 0x3E4)] + 0x8C) = L.iC;
+            } else if (func_0041AA88(key, D_004A3818) == 0) {
+                func_002A8070(L.parser, D_004A3818, &L.fD);
+                *(float*)(sv->ents[*(int*)(self + 0x3E4)] + 0x90) = L.fD;
+            } else if (func_0041AA88(key, D_00483550) == 0) {
+                func_002A80D8(L.parser, D_00483550, &L.iC);
+                *(int*)(sv->ents[*(int*)(self + 0x3E4)] + 0x98) = L.iC;
+            } else if (func_0041AA88(key, D_004A3820) == 0) {
+                func_002A80D8(L.parser, D_004A3820, &L.iC);
+                *(int*)(sv->ents[*(int*)(self + 0x3E4)] + 0x9C) = L.iC;
+            } else if (func_0041AA88(key, D_00483560) == 0) {
+                func_002A80D8(L.parser, D_00483560, &L.iC);
+                *(int*)(sv->ents[*(int*)(self + 0x3E4)] + 0x94) = L.iC;
+            } else if (func_0041AA88(key, D_004A3828) == 0) {
+                func_002A80D8(L.parser, D_004A3828, &L.iC);
+                *(int*)(sv->ents[*(int*)(self + 0x3E4)] + 0xA0) = L.iC;
+            } else if (func_0041AA88(key, D_004A3830) == 0) {
+                func_002A80D8(L.parser, D_004A3830, &L.iC);
+                *(int*)(sv->ents[*(int*)(self + 0x3E4)] + 0xA4) = L.iC;
+            }
+        }
+        *(int*)(self + 0x3E4) += 1;
+    }
+    func_002A7890(L.parser, 2);
+    return self;
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002B3398);
