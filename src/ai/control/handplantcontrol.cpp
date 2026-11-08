@@ -936,7 +936,456 @@ extern "C" void func_0013ADC0(char* self, t4Vector* v)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_0013AF28);
+#ifdef SKIP_ASM
+extern "C" int func_00334680(void* world, t4Vector* from, void* hit, int flags, float radius);
+extern "C" int func_001086B8(void* rider, t4Vector* tgt, t4Vector* dir);
+extern "C" void* cBE_getBE();
+extern "C" void* cBE_getInterface__Fv(void* be, int kind);
+extern "C" float func_00149208(void* self, int rider, int value);
+extern "C" t4Vector func_0013BD80(char* p, const t4Vector& n);
+extern "C" void func_0031BE50(float* s, float* c, float angle);
+extern "C" void func_00121AA0(void* rider, void* a, void* b, float x, float y);
+extern "C" void cRider_updateOrientationImplicit(void*);
+int func_0011FEE8(void* rider);
+
+// Function-local static `gravity(0, 0, -980, 0)` and its init guard, spelled out as globals. The guard
+// is a separate scalar at 0x004A4C04 (splat only names D_004A4C00; a D_004A4C00[] view schedules differently).
+extern int D_004A4C04;
+extern t4Vector D_004A5E50;
+
+// The surface record a world hit points at (id at 0, flags at 0x1C).
+struct sSurf_AF28 {
+    unsigned int id;
+    char pad04[0x18];
+    int flags;                  // 0x1C
+};
+
+// World ray/sphere hit record filled by func_00334680 (0x80 bytes).
+struct sHit_AF28 {
+    t4Vector pos;               // 0x00
+    t4Vector nrm;               // 0x10
+    t4Vector v20;               // 0x20
+    char pad30[0x1C];
+    int mat;                    // 0x4C
+    char* obj;                  // 0x50
+    int pad54;
+    sSurf_AF28* surf;           // 0x58
+    char pad5C[0x24];
+} __attribute__((aligned(16)));
+
+// PORT: PS2-only VU0 inline asm (4-component vector length).
+static inline float Len_AF28(const t4Vector& v)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %1, $vi22\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(v));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4-component dot product).
+static inline float Dot_AF28(const t4Vector& a, const t4Vector& b)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "lqc2      $vf5, %3\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf5\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "qmfc2.ni  %1, $vf4\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector times scalar).
+static inline t4Vector Scale_AF28(const t4Vector& v, float s)
+{
+    t4Vector r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (in-place vector times scalar).
+static inline void ScaleEq_AF28(t4Vector& v, float s)
+{
+    int t;
+    __asm__(
+        "mfc1      %1, %2\n"
+        "lqc2      $vf4, %0\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "+m"(v), "=&r"(t)
+        : "f"(s)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (vector divided by scalar).
+static inline t4Vector Div_AF28(const t4Vector& v, float s)
+{
+    t4Vector r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vdiv      Q, $vf0w, $vf3x\n"
+        "lqc2      $vf4, %2\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf4, $vf4, Q\n"
+        "sqc2      $vf4, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector add).
+static inline t4Vector Add_AF28(const t4Vector& a, const t4Vector& b)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (a += b).
+static inline void AddEq_AF28(t4Vector& a, const t4Vector& b)
+{
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(a)
+        : "m"(a), "m"(b)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (vector subtract).
+static inline t4Vector Sub_AF28(const t4Vector& a, const t4Vector& b)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (cross product, w = 0).
+static inline t4Vector Cross_AF28(const t4Vector& a, const t4Vector& b)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf4, %1\n"
+        "lqc2      $vf5, %2\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vsub.w    $vf6, $vf6, $vf6\n"
+        "sqc2      $vf6, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (normalize via rsqrt).
+static inline t4Vector Normalize_AF28(const t4Vector& v)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vrsqrt    Q, $vf0w, $vf4x\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf5, $vf3, Q\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(v)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2 FPU abs.s via inline asm; use fabsf off-PS2.
+static inline float Abs_AF28(float x)
+{
+    float r;
+    __asm__("abs.s %0,%1" : "=f"(r) : "f"(x));
+    return r;
+}
+
+// PORT: `<?` is the g++ minimum operator (EE min.s).
+static inline float Clamp_AF28(float v, float lo, float hi)
+{
+    return (v >= lo) ? (v <? hi) : lo;
+}
+
+// PORT: `<?` / `>?` are the g++ minimum / maximum operators (EE min.s / max.s).
+static inline float Min_AF28(float a, float b)
+{
+    return a <? b;
+}
+
+static inline float Max_AF28(float a, float b)
+{
+    return a >? b;
+}
+
+static inline float ClampAbs_AF28(float v, const float& lim)
+{
+    return Clamp_AF28(v, -lim, lim);
+}
+
+static inline float Approach_AF28(float cur, float target, float step)
+{
+    float r;
+    if (target + step < cur)
+        r = cur - step;
+    else if (cur < target - step)
+        r = cur + step;
+    else
+        r = target;
+    return r;
+}
+
+static inline t4Vector side_AF28(char* p) { return *(t4Vector*)(*(char**)(p + 0x50) + 0x1A0); }
+static inline t4Vector fwd_AF28(char* p) { return *(t4Vector*)(*(char**)(p + 0x50) + 0x1B0); }
+static inline t4Vector up_AF28(char* p) { return *(t4Vector*)(*(char**)(p + 0x50) + 0x1C0); }
+
+// Virtual slots of the hit object's handler (int f46(), void f42(hit), void f43(hit, const t4Vector&)).
+typedef sVEntry<int(void*)> sVE46_AF28;
+typedef sVEntry<void(void*, void*)> sVE42_AF28;
+typedef sVEntry<void(void*, void*, const t4Vector&)> sVE43_AF28;
+
+// v * k, but never below lo (the threshold is where v * k reaches lo).
+static inline float ScaleAtLeast_AF28(float v, float k, float lo)
+{
+    float r = lo;
+    if (!(v < lo / k))
+        r = v * k;
+    return r;
+}
+#define RIDER_AF28 (*(char**)(self + 0x50))
+
+extern "C" void func_0013AF28(char* self)
+{
+    if (func_0011FEE8(RIDER_AF28) == 0xC)
+        *(float*)(self + 0x1C) = 0.0f;
+    char* r = RIDER_AF28;
+    float len = Len_AF28(*(t4Vector*)(r + 0x1E0));
+    if (*(float*)(r + 0x2E4) < len)
+        ScaleEq_AF28(*(t4Vector*)(r + 0x1E0), *(float*)(r + 0x2E4) / len);
+    float dt = *(float*)(RIDER_AF28 + 0x300) * 0.01666666753590107f;
+    *(int*)(self + 0x20) = 1;
+    *(int*)(RIDER_AF28 + 0x5AC) = 0;
+    char* r2 = RIDER_AF28;
+    t4Vector* pt = (t4Vector*)(*(char**)(*(char**)(r2 + 0x780) + 0x2C) + (*(int*)(r2 + 0x8A0) << 5));
+    sHit_AF28 hit;
+    if (func_00334680(*(void**)(r2 + 0x860), pt, &hit, 1, 300.0f)) {
+        if (hit.obj) {
+            char* h = *(char**)(hit.obj + 0xC);
+            if (h) {
+                sVE46_AF28* vt = *(sVE46_AF28**)(h + 0xC);
+                if (vt[46].fn(h + vt[46].delta))
+                    *(int*)(RIDER_AF28 + 0x5AC) = 1;
+            }
+        }
+        if (hit.surf)
+            *(unsigned int*)(self + 0x24) = hit.surf->id;
+        else
+            *(unsigned int*)(self + 0x24) = 0xFFFFFFFF;
+        if (hit.obj) {
+            char* h = *(char**)(hit.obj + 0xC);
+            if (h) {
+                sVE42_AF28* vt = *(sVE42_AF28**)(h + 0xC);
+                vt[42].fn(h + vt[42].delta, &hit);
+            }
+        }
+        *(int*)(RIDER_AF28 + 0x438) = hit.mat;
+        *(t4Vector*)(RIDER_AF28 + 0x460) = hit.pos;
+        *(t4Vector*)(RIDER_AF28 + 0x3D0) = hit.v20;
+        char* r3 = RIDER_AF28;
+        float spd = ScaleAtLeast_AF28(Len_AF28(*(t4Vector*)(r3 + 0x1E0)), 0.0009000000427477062f, 0.5f);
+        float spd2 = spd * spd;
+        if (*(float*)(self + 0x14) < 0.6000000238418579f)
+            *(float*)(r3 + 0x25C) = 2.0f;
+        if (func_001086B8(RIDER_AF28, &hit.pos, &hit.nrm)) {
+            *(int*)(self + 0x20) = 0;
+            *(float*)(self + 0x14) += dt;
+            t4Vector v = Sub_AF28(*(t4Vector*)(RIDER_AF28 + 0x1E0), *(t4Vector*)(RIDER_AF28 + 0x3D0));
+            float dn = Dot_AF28(v, hit.nrm);
+            if (dn < 0.0f) {
+                dn = -dn;
+                ScaleEq_AF28(hit.nrm, -1.0f);
+            }
+            *(t4Vector*)self = hit.nrm;
+            t4Vector rel = Sub_AF28(hit.pos, *pt);
+            float lim = dt * 1000.0f;
+            float side = Dot_AF28(side_AF28(self), rel);
+            float up = Dot_AF28(rel, up_AF28(self));
+            up = ClampAbs_AF28(up, lim);
+            AddEq_AF28(*(t4Vector*)(RIDER_AF28 + 0x110), Scale_AF28(up_AF28(self), up));
+            t4Vector nv = Scale_AF28(hit.nrm, dn);
+            float k30 = dt * 30.0f;
+            float vl = Len_AF28(v);
+            v = Add_AF28(Scale_AF28(nv, k30), Scale_AF28(v, 1.0f - k30));
+            float nl = Len_AF28(v);
+            if (nl > 0.0010000000474974513f)
+                ScaleEq_AF28(v, vl / nl);
+            *(t4Vector*)(RIDER_AF28 + 0x1E0) = Add_AF28(v, *(t4Vector*)(RIDER_AF28 + 0x3D0));
+            if (D_004A4C04 == 0) {
+                D_004A5E50.x = 0.0f;
+                D_004A5E50.y = 0.0f;
+                D_004A5E50.z = -980.0f;
+                D_004A5E50.w = 0.0f;
+                D_004A4C04 = 1;
+            }
+            t4Vector acc = Sub_AF28(Scale_AF28(hit.nrm, Dot_AF28(D_004A5E50, hit.nrm)), Scale_AF28(nv, 0.0f));
+            float m = *(float*)(RIDER_AF28 + 0x2FC);
+            if (m > 0.0f)
+                AddEq_AF28(acc, Scale_AF28(hit.nrm, m * (dn > 0.0f ? 2450.0f : -2450.0f)));
+            if (hit.obj) {
+                char* h = *(char**)(hit.obj + 0xC);
+                if (h) {
+                    sVE43_AF28* vt = *(sVE43_AF28**)(h + 0xC);
+                    vt[43].fn(h + vt[43].delta, &hit, Sub_AF28(D_004A5E50, Scale_AF28(nv, 0.0f)));
+                }
+            }
+            AddEq_AF28(*(t4Vector*)(RIDER_AF28 + 0x1E0), Scale_AF28(acc, dt));
+            AddEq_AF28(*(t4Vector*)(RIDER_AF28 + 0x110), Scale_AF28(*(t4Vector*)(RIDER_AF28 + 0x1E0), dt));
+            float ang = Clamp_AF28(spd, 0.5f, 2.0f) * 180.0f;
+            float turn = (up_AF28(self).z < 0.0f ? -*(float*)(RIDER_AF28 + 0x22C) : *(float*)(RIDER_AF28 + 0x22C)) * ang;
+            int steep = Abs_AF28(hit.nrm.z) > 0.92f;
+            float k;
+            if (*(float*)(self + 0x14) < 0.6000000238418579f || steep) {
+                k = -5.0f;
+            } else {
+                k = 0.30000001192092896f;
+                int st = *(int*)(RIDER_AF28 + 0x328);
+                if (st == 3 || st == 4)
+                    k = 1.7999999523162842f;
+                int grab = hit.surf && (hit.surf->flags & 4);
+                if (grab)
+                    k = k + k;
+                else if (Abs_AF28(side) < 2.5f)
+                    k = Min_AF28(k, -1.0f);
+                k *= 1.0f / (func_00149208(cBE_getInterface__Fv(cBE_getBE(), 3), *(int*)(RIDER_AF28 + 0x86C), *(int*)(RIDER_AF28 + 0xB34)) * 1.650076150894165f + 1.0f);
+            }
+            float s2 = side;
+            if (k >= 0.0f)
+                s2 = Clamp_AF28(side, -20.0f, 20.0f);
+            turn -= s2 * (k * Clamp_AF28(1.0f / spd2, 1.0f, 4.0f));
+            int flip = up_AF28(self).z < 0.0f && Abs_AF28(side) < 20.0f;
+            if (flip) {
+                if (side > 0.0f)
+                    turn = Min_AF28(turn, -360.0f);
+                else
+                    turn = Max_AF28(turn, 360.0f);
+            }
+            AddEq_AF28(*(t4Vector*)(RIDER_AF28 + 0x110), Scale_AF28(side_AF28(self), turn * dt));
+            float target, roll;
+            int st2 = *(int*)(RIDER_AF28 + 0x328);
+            if (st2 == 3 || st2 == 4) {
+                float lean = Clamp_AF28(side * 0.014285714365541935f, -1.0f, 1.0f);
+                *(float*)(self + 0x18) = lean;
+                target = lean * 0.523598849773407f;
+                roll = ClampAbs_AF28(*(float*)(self + 0x1C), 0.698131799697876f);
+            } else {
+                float lean = Clamp_AF28(side * 0.03333333507180214f, -1.0f, 1.0f);
+                *(float*)(self + 0x18) = lean;
+                target = lean * 0.349065899848938f;
+                roll = ClampAbs_AF28(*(float*)(self + 0x1C), 0.349065899848938f);
+            }
+            if (up_AF28(self).z < 0.0f)
+                target = -target;
+            float a = Approach_AF28(*(float*)(self + 0x10), target, dt * 300.0f);
+            *(float*)(self + 0x10) = a;
+            float s, c;
+            func_0031BE50(&s, &c, a);
+            t4Vector dir = func_0013BD80(self, hit.nrm);
+            *(t4Vector*)(RIDER_AF28 + 0x370) = dir;
+            t4Vector cr = Cross_AF28(dir, hit.nrm);
+            t4Vector v2 = Add_AF28(Scale_AF28(dir, c), Scale_AF28(cr, s));
+            float s1, c1;
+            func_0031BE50(&s1, &c1, roll);
+            t4Vector v3 = Sub_AF28(Scale_AF28(cr, c1), Scale_AF28(hit.nrm, s1));
+            t4Vector axis = Normalize_AF28(Cross_AF28(v3, v2));
+            float f = Dot_AF28(axis, fwd_AF28(self)) * 0.5f + 0.5f;
+            char* r4 = RIDER_AF28;
+            func_00121AA0(r4, &v2, &axis, (f * 15.0f + (1.0f - f)) * *(float*)(r4 + 0x300), 10000000000.0f);
+        } else {
+            t4Vector d = Sub_AF28(*pt, hit.pos);
+            t4Vector dirn;
+            float dl = Len_AF28(d);
+            if (dl < 0.0010000000474974513f) {
+                dirn = hit.nrm;
+            } else {
+                dirn = Div_AF28(d, dl);
+                if (Abs_AF28(Dot_AF28(dirn, hit.nrm)) > 0.5f)
+                    dirn = hit.nrm;
+            }
+            float vd = Dot_AF28(*(t4Vector*)(RIDER_AF28 + 0x1E0), dirn);
+            if (vd < 0.0f) {
+                char* r5 = RIDER_AF28;
+                float vl = Len_AF28(*(t4Vector*)(r5 + 0x1E0));
+                if (vl < 0.0010000000474974513f) {
+                    dirn = hit.nrm;
+                } else {
+                    t4Vector p = Sub_AF28(dirn, Scale_AF28(*(t4Vector*)(r5 + 0x1E0), vd / vl));
+                    float pl = Len_AF28(p);
+                    if (pl > 0.0010000000474974513f)
+                        dirn = Div_AF28(p, pl);
+                    else
+                        dirn = Div_AF28(*(t4Vector*)(RIDER_AF28 + 0x1E0), vl);
+                }
+            }
+            AddEq_AF28(*(t4Vector*)(RIDER_AF28 + 0x1E0), Scale_AF28(dirn, 277.77777099609375f));
+        }
+    }
+    cRider_updateOrientationImplicit(RIDER_AF28);
+}
+#endif
 
 //100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_0013BD80);

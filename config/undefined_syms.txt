@@ -10,3 +10,8 @@ D_0 = 0x0;
    and never names the symbols. */
 D_00504A00 = 0x504A00;
 D_00504B80 = 0x504B80;
+
+/* ai/control/handplantcontrol (func_0013AF28): the function-local static's init guard, one word after the static
+   at D_004A4C00. splat only names D_004A4C00 and addresses the guard as D_004A4C00 + 4; the source needs the guard
+   as its own scalar global. */
+D_004A4C04 = 0x4A4C04;
