@@ -3472,7 +3472,28 @@ void sti_003400D8(int init, int prio)
 }
 #endif
 
+//100%
 INCLUDE_ASM("intersect/worldsphtree", func_00340970);
+#ifdef SKIP_ASM
+// The July 2003 prototype names this function tAIFwdDiff::tAIFwdDiff() (an out-of-line copy of the inline ctor).
+struct tAIFwdDiffElem {
+    float v;
+    tAIFwdDiffElem() {}
+};
+class tAIFwdDiff {
+public:
+    tAIFwdDiffElem a[10][10];
+    tAIFwdDiffElem b[9][9];
+    tAIFwdDiffElem c[3][3];
+    tAIFwdDiff();
+};
+
+tAIFwdDiff::tAIFwdDiff()
+{
+}
+// PORT: the compiler names this ctor __10tAIFwdDiff; expose it under the address-derived name.
+__asm__(".globl func_00340970\n.type func_00340970,@function\nfunc_00340970 = __10tAIFwdDiff\n.size func_00340970,0x98\n");
+#endif
 
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_00340A08__FPv);
