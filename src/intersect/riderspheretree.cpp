@@ -531,7 +531,193 @@ extern "C" int func_00329F98(sNode_9F98* a, sNode_9F98* b, sSphereVec4* outA, sS
 }
 #endif
 
+//100%
 INCLUDE_ASM("intersect/riderspheretree", func_0032A1C0);
+#ifdef SKIP_ASM
+struct sElem_A1C0 {
+    sSphereVec4 pos;    // 0x00
+    float r;            // 0x10
+    char pad_0x14[0xC];
+};
+
+struct sNode_A1C0 {
+    char pad_0x00[0x10];
+    sSphereVec4 pos;    // 0x10
+    float r;            // 0x20
+    char pad_0x24[0x4];
+    unsigned int flags; // 0x28
+    int count;          // 0x2C
+    sElem_A1C0 e[1];    // 0x30
+};
+
+// PORT: this caller passes a tolerance in $f12 that the unit's 4-arg func_0032B6A8 never reads;
+// bind the 5-arg form to the same symbol.
+extern "C" int func_0032B6A8_tol(sSphereVec4* a, sSphereVec4* b, sSphereVec4* c, sSphereVec4* d, float tol) __asm__("func_0032B6A8");
+
+// PORT: PS2-only VU0 inline asm (a - b).
+static inline sSphereVec4 Sub_A1C0(const sSphereVec4& a, const sSphereVec4& b)
+{
+    sSphereVec4 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (v * s).
+static inline sSphereVec4 Scale_A1C0(const sSphereVec4& v, float s)
+{
+    sSphereVec4 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4-component dot product).
+static inline float Dot_A1C0(const sSphereVec4& a, const sSphereVec4& b)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "lqc2      $vf5, %3\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf5\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "qmfc2.ni  %1, $vf4\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector length).
+static inline float Length_A1C0(const sSphereVec4& v)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %1, $vi22\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(v));
+    return r;
+}
+
+// PORT: sqrt.s (sqrtf without errno check)
+static inline float Sqrt_A1C0(float v)
+{
+    float r;
+    __asm__("sqrt.s %0, %1" : "=f"(r) : "f"(v));
+    return r;
+}
+
+// signed distance of c from the plane through o with normal n
+static inline float PlaneDist_A1C0(const sSphereVec4& n, const sSphereVec4& c, const sSphereVec4& o)
+{
+    sSphereVec4 d = Sub_A1C0(c, o);
+    return Dot_A1C0(n, d);
+}
+
+// does the edge a + t*e (t in [0, |e|]) touch the sphere? w = centre - a, dd = |w|^2, rr = radius^2
+static inline int EdgeHit_A1C0(const sSphereVec4& w, float dd, const sSphereVec4& e, float rr)
+{
+    float len = Length_A1C0(e);
+    float t = Dot_A1C0(w, e) / len;
+    if (t < 0.0f)
+        return 0;
+    float h = dd - t * t;
+    if (rr < h)
+        return 0;
+    if (len < t - Sqrt_A1C0(rr - h))
+        return 0;
+    return 1;
+}
+
+// sphere (c, r) against triangle v0 v1 v2; p is c projected onto the triangle's plane
+static inline int SphereTri_A1C0(const sSphereVec4& c, float r, sSphereVec4* v0, sSphereVec4* v1,
+                                 sSphereVec4* v2, sSphereVec4* p)
+{
+    if (func_0032B6A8_tol(v0, v1, v2, p, 9.999999747378752e-05f))
+        return 1;
+    sSphereVec4 w = Sub_A1C0(c, *v0);
+    float rr = r * r;
+    float dd = Dot_A1C0(w, w);
+    if (dd < rr)
+        return 1;
+    if (EdgeHit_A1C0(w, dd, Sub_A1C0(*v1, *v0), rr))
+        return 1;
+    if (EdgeHit_A1C0(w, dd, Sub_A1C0(*v2, *v0), rr))
+        return 1;
+    sSphereVec4 w1 = Sub_A1C0(c, *v1);
+    float dd1 = Dot_A1C0(w1, w1);
+    if (EdgeHit_A1C0(w1, dd1, Sub_A1C0(*v2, *v1), rr))
+        return 1;
+    return 0;
+}
+
+extern "C" int func_0032A1C0_typed(sNode_A1C0* self, sSphereVec4* v0, sSphereVec4* v1, sSphereVec4* v2,
+                                   sSphereVec4* n, sSphereVec4* outA, sSphereVec4* outB) __asm__("func_0032A1C0");
+extern "C" int func_0032A1C0_typed(sNode_A1C0* self, sSphereVec4* v0, sSphereVec4* v1, sSphereVec4* v2,
+                                   sSphereVec4* n, sSphereVec4* outA, sSphereVec4* outB)
+{
+    float r;
+    float dist;
+    dist = PlaneDist_A1C0(*n, self->pos, *v0);
+    r = self->r;
+    if (r < __builtin_fabsf(dist))
+        return 0;
+    sSphereVec4 p = Sub_A1C0(self->pos, Scale_A1C0(*n, dist));
+    if (!SphereTri_A1C0(self->pos, r, v0, v1, v2, &p))
+        return 0;
+    if (self->flags == 0) {
+        *outA = Scale_A1C0(*n, r - dist);
+        *outB = p;
+        return 1;
+    }
+    float best = 10000000000.0f;
+    for (int i = 0; i < self->count; i++) {
+        if (!(self->flags & (1 << i)))
+            continue;
+        dist = PlaneDist_A1C0(*n, self->e[i].pos, *v0);
+        r = self->e[i].r;
+        if (!(__builtin_fabsf(dist) < r))
+            continue;
+        if (!(dist < best))
+            continue;
+        p = Sub_A1C0(self->e[i].pos, Scale_A1C0(*n, dist));
+        if (SphereTri_A1C0(self->e[i].pos, r, v0, v1, v2, &p)) {
+            *outA = Scale_A1C0(*n, r - dist);
+            *outB = p;
+            best = dist;
+        }
+    }
+    return best != 10000000000.0f;
+}
+#endif
 
 INCLUDE_ASM("intersect/riderspheretree", func_0032AA28);
 
