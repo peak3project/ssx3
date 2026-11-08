@@ -691,7 +691,433 @@ extern "C" void func_00117C28(sMetrix17C28* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/ridermetrix", func_00117FE0);
+#ifdef SKIP_ASM
+extern "C" void func_00117AE8(void* self, int a, const char* b, float c, int d);
+extern "C" int func_00117908(void* self);
+extern "C" int func_00117948(void* self);
+extern "C" int func_00119310(void* self, int points);
+extern "C" void* func_0028B180();
+extern "C" void func_0029A7D8(void* audio, void* rider, int n);
+extern "C" void func_0029B3C0(void* audio, void* rider);
+extern "C" void func_0029B0E0(void* audio, void* rider);
+extern "C" void func_00299638(void* audio, void* rider);
+extern "C" void func_002997B8(void* audio, void* rider);
+extern "C" float func_0012F118(void* p, int* out);
+extern "C" float func_001360C8(void* p, int* out);
+extern "C" float func_00135F70(void* p, int* out);
+extern "C" float func_00136100(void* p);
+extern "C" float func_00136168(void* p);
+extern "C" int func_001298C8();
+extern "C" float func_0031C040(float x);
+extern "C" int func_00150960(void* a, void* b);
+extern "C" void* cBE_getBE();
+void* cBE_getInterface(void* be, int kind) __asm__("cBE_getInterface__Fv");
+int func_0011FEE8(void* rider);
+// Same functions as func_001171A8 / func_00117B88 above: the float comes before the last int in the
+// original prototypes (seg_14B10 / func_00117718), which decides the argument evaluation order.
+extern "C" void func_001171A8_7FE0(void* slot, int type, int value, float f, int arg) __asm__("func_001171A8");
+extern "C" void func_00117B88_7FE0(void* self, int type, int value, float duration, int arg) __asm__("func_00117B88");
+extern char D_00457820[]; // "STALLED!"
+extern char D_00457830[]; // "OFF-AXIS!"
+extern char D_00457840[]; // "INVERTED!"
+extern char D_00457850[]; // "LATE SPIN!"
+extern char D_00457860[]; // "LATE FLIP!"
+
+// PORT: PS2-only inline asm (EE cvt.w.s truncates in the FPU; the C cast goes through a GPR).
+static inline float truncF_7FE0(float x)
+{
+    float t;
+    __asm__("cvt.w.s %0,%1\n\tcvt.s.w %0,%0" : "=f"(t) : "f"(x));
+    return t;
+}
+
+// PORT: PS2-only abs.s asm helper (fabsf off-PS2).
+static inline float abs_7FE0(float x)
+{
+    float r;
+    __asm__("abs.s %0,%1" : "=f"(r) : "f"(x));
+    return r;
+}
+
+struct sMetrixSlot_7FE0 {
+    int type;       // 0x00 (0x34 = unused)
+    float duration; // 0x04
+    float elapsed;  // 0x08 (elapsed / duration = displayed fraction)
+    int arg;        // 0x0C
+    int f10;        // 0x10
+    int value;      // 0x14
+    char pad_0x18[0x84];
+};
+
+struct sVtEnt_7FE0 {
+    short delta;
+    short index;
+    void* (*fn)(void*);
+};
+
+struct sBeing_7FE0 {
+    sVtEnt_7FE0* vtbl;
+};
+
+struct sHandler_7FE0 {
+
+    char pad_0x000[0x1F0];
+    char sub1F0[0x40];      // 0x1F0
+    char sub230[0x90];      // 0x230
+    int f2C0;               // 0x2C0
+    char pad_0x2C4[0x6C];
+    float f330;             // 0x330
+};
+
+struct sRider_7FE0 {
+    char pad_0x000[0x2F0];
+    float f2F0;             // 0x2F0
+    int f2F4;               // 0x2F4
+    float f2F8;             // 0x2F8
+    char pad_0x2FC[0x8];
+    int f304;               // 0x304
+    char pad_0x308[0x3B8];
+    sBeing_7FE0 being;      // 0x6C0
+    char pad_0x6C4[0xB8];
+    sHandler_7FE0* handler; // 0x77C
+};
+
+struct sRiderMetrix_7FE0 {
+    char pad_0x000[0x14];
+    float mult;             // 0x14
+    char pad_0x018[0x4];
+    float f1C;              // 0x1C
+    char pad_0x020[0x34];
+    int f54;                // 0x54
+    char pad_0x058[0x4];
+    int f5C;                // 0x5C
+    char pad_0x060[0x24];
+    int points;             // 0x84
+    char pad_0x088[0x14];
+    int comboCount;         // 0x9C
+    int comboScore;         // 0xA0
+    float comboTimer;       // 0xA4
+    char pad_0x0A8[0xF0];
+    int total;              // 0x198
+    char pad_0x19C[0x10];
+    sRider_7FE0* rider;     // 0x1AC
+    sMetrixSlot_7FE0* slots; // 0x1B0
+};
+
+static inline bool handlerInMode_7FE0(const sHandler_7FE0* h, int mode)
+{
+    return h->f2C0 == mode;
+}
+
+static inline bool slotIsFree_7FE0(const sMetrixSlot_7FE0& s)
+{
+    return s.type == 0x34;
+}
+
+// Moves cur towards target by at most step.
+static inline float approach_7FE0(float target, float cur, float step)
+{
+    float r;
+    if (target + step < cur)
+        r = cur - step;
+    else if (cur < target - step)
+        r = cur + step;
+    else
+        r = target;
+    return r;
+}
+
+
+static inline int approachI_7FE0(int target, int cur, int step)
+{
+    if (target + step < cur)
+        return cur - step;
+    if (cur < target - step)
+        return cur + step;
+    return target;
+}
+
+extern "C" void func_00117FE0(void* self_)
+{
+    sRiderMetrix_7FE0* self = (sRiderMetrix_7FE0*)self_;
+    if (self->slots == 0)
+        return;
+    int pts = func_00117948(self);
+    if (pts > 0) {
+        func_00117B88_7FE0(self, 1, pts, -1.0f, func_00119310(self, pts));
+        func_0029A7D8(func_0028B180(), self->rider, pts);
+    }
+    if (func_0011FEE8(self->rider) == 8 && !handlerInMode_7FE0(self->rider->handler, 3))
+        func_001171A8_7FE0(&self->slots[11], 11, 0, self->rider->handler->f330 <? 1.0f, 0);
+    else
+        func_001179E0(self, 11);
+    func_001179E0(self, 0x10);
+    func_001179E0(self, 0x11);
+    func_001179E0(self, 0x12);
+    func_001179E0(self, 0x13);
+    func_001179E0(self, 0x14);
+    func_001179E0(self, 0x15);
+    func_001179E0(self, 0x16);
+    func_001179E0(self, 0x17);
+    if (func_0011FEE8(self->rider) != 2 && func_0011FEE8(self->rider) != 5) {
+        func_001179E0(self, 0xC);
+        func_001179E0(self, 0xD);
+        func_001179E0(self, 0xF);
+        func_001179E0(self, 0xE);
+    } else {
+        int noHeading = 0;
+        float heading;
+        if (func_0011FEE8(self->rider) == 2)
+            heading = func_0012F118(self->rider->handler->sub1F0, &noHeading);
+        else
+            heading = func_001360C8(self->rider->handler->sub230, &noHeading);
+        if (noHeading) {
+            func_001179E0(self, 0xD);
+        } else {
+            float wobble = func_0031C040((float)func_001298C8() * 0.10471976548433304f);
+            float v = heading * 0.15915493667125702f + wobble * 0.029999999329447746f;
+            if (v < 0.0f)
+                v += 1.0f;
+            if (!slotIsFree_7FE0(self->slots[13])) {
+                float cur = self->slots[13].elapsed / self->slots[13].duration;
+                float d = cur - v;
+                if (0.5f < d) {
+                    v = approach_7FE0(v, cur - 1.0f, 0.03333333507180214f);
+                    if (v < 0.0f)
+                        v += 1.0f;
+                } else if (d < -0.5f) {
+                    v = approach_7FE0(v, cur + 1.0f, 0.03333333507180214f);
+                    if (1.0f < v)
+                        v -= 1.0f;
+                } else {
+                    v = approach_7FE0(v, cur, 0.03333333507180214f);
+                }
+            }
+            func_001171A8_7FE0(&self->slots[13], 13, 0, v, 0);
+        }
+        if (func_0011FEE8(self->rider) == 2) {
+            if (noHeading)
+                func_001179E0(self, 0xC);
+            else
+                func_00117B88_7FE0(self, 0xC, 0, -1.0f, 0);
+        } else {
+            int noPitch = 0;
+            float pitch = func_00135F70(self->rider->handler->sub230, &noPitch);
+            if (noPitch) {
+                func_001179E0(self, 0xC);
+                func_001179E0(self, 0xD);
+                func_001179E0(self, 0xF);
+                func_001179E0(self, 0xE);
+            } else {
+                func_00117B88_7FE0(self, 0xC, 0, -1.0f, 0);
+                int id;
+                int n1 = 0x34;
+                int n2 = 0x34;
+                int n3 = 0x34;
+                int n4 = 0x34;
+                if (2.7488937377929688f < abs_7FE0(pitch)) {
+                    id = 0x10;
+                } else if (1.9634956121444702f < pitch) {
+                    id = 0x17;
+                    n1 = 0x15;
+                    n2 = 0x16;
+                    n3 = 0x11;
+                    n4 = 0x10;
+                } else if (1.1780973672866821f < pitch) {
+                    id = 0x16;
+                } else if (0.39269912242889404f < pitch) {
+                    id = 0x15;
+                    n1 = 0x17;
+                    n2 = 0x16;
+                    n3 = 0x13;
+                    n4 = 0x14;
+                } else if (pitch < -1.9634956121444702f) {
+                    id = 0x11;
+                    n1 = 0x13;
+                    n2 = 0x12;
+                    n3 = 0x17;
+                    n4 = 0x10;
+                } else if (pitch < -1.1780973672866821f) {
+                    id = 0x12;
+                } else if (pitch < -0.39269912242889404f) {
+                    id = 0x13;
+                    n1 = 0x11;
+                    n2 = 0x12;
+                    n3 = 0x15;
+                    n4 = 0x14;
+                } else {
+                    id = 0x14;
+                }
+                float a = func_00136100(self->rider->handler->sub230);
+                float b = func_00136168(self->rider->handler->sub230);
+                func_001171A8_7FE0(&self->slots[id], id, 0, 1.0f, 0);
+                if (n1 != 0x34)
+                    func_001171A8_7FE0(&self->slots[n1], n1, 0, a, 1);
+                if (n2 != 0x34)
+                    func_001171A8_7FE0(&self->slots[n2], n2, 0, a, 1);
+                if (n3 != 0x34)
+                    func_001171A8_7FE0(&self->slots[n3], n3, 0, b, 2);
+                if (n4 != 0x34)
+                    func_001171A8_7FE0(&self->slots[n4], n4, 0, b, 2);
+                int prev = 0;
+                if (!slotIsFree_7FE0(self->slots[14]))
+                    prev = self->slots[14].arg;
+                int kind = 0;
+                if (noHeading == 0) {
+                    float diff = pitch - heading;
+                    float q = diff * 0.15915493667125702f + 0.5f;
+                    float qi = truncF_7FE0(q);
+                    if (q < qi)
+                        qi -= 1.0f;
+                    diff -= qi * 6.2831854820251465f;
+                    float grade = 0.0f;
+                    if (2.7488937377929688f < abs_7FE0(diff)) {
+                        func_00117AE8(self, 0xE, D_00457820, -1.0f, 1);
+                        kind = 1;
+                        if (2.7488937377929688f < abs_7FE0(pitch) || abs_7FE0(pitch) < 0.39269912242889404f) {
+                            grade = 1.0f;
+                        } else {
+                            grade = 2.0f;
+                            if (1.1780973672866821f < abs_7FE0(pitch) && abs_7FE0(pitch) < 1.9634956121444702f)
+                                grade = 5.0f;
+                        }
+                    } else if (1.1780973672866821f < abs_7FE0(diff)) {
+                        float m = diff * pitch;
+                        if ((0.0f < m && 1.5707964897155762f < abs_7FE0(pitch)) || (m < 0.0f && abs_7FE0(pitch) < 1.5707964897155762f)) {
+                            if (0.10000000149011612f < b) {
+                                func_00117AE8(self, 0xE, D_00457830, -1.0f, 2);
+                                grade = 3.0f;
+                                kind = 2;
+                            }
+                        } else if (0.10000000149011612f < a) {
+                            func_00117AE8(self, 0xE, D_00457840, -1.0f, 3);
+                            grade = 2.0f;
+                            kind = 3;
+                        }
+                    } else if (0.39269912242889404f < abs_7FE0(diff)) {
+                        if (abs_7FE0(heading) < 0.7853982448577881f || 2.3561947345733643f < abs_7FE0(heading)) {
+                            func_00117AE8(self, 0xE, D_00457850, -1.0f, 4);
+                            grade = 1.0f;
+                            kind = 4;
+                        } else {
+                            grade = 2.0f;
+                            func_00117AE8(self, 0xE, D_00457860, -1.0f, 5);
+                            kind = 5;
+                        }
+                    }
+                    if (grade == 0.0f) {
+                        func_001179E0(self, 0xF);
+                        func_001179E0(self, 0xE);
+                    } else {
+                        func_00117B88_7FE0(self, 0xF, (int)grade, -1.0f, 0);
+                        self->f1C += grade * 0.0008333333535119891f;
+                        if (kind != prev) {
+                            int n = func_00117908(self);
+                            int sum = self->points + n;
+                            func_001171A8_7FE0(&self->slots[2], 2, sum, 0.0f, n);
+
+                        }
+                    }
+                }
+            }
+        }
+    }
+    float speed;
+    if (slotIsFree_7FE0(self->slots[5])) {
+        speed = self->rider->f2F8;
+    } else {
+        float base = self->rider->f2F8;
+        float v;
+        if (self->rider->f304 != 3)
+            v = base + self->mult;
+        else
+            v = base;
+        speed = approach_7FE0(v <? 1.0f, self->slots[5].elapsed / self->slots[5].duration, 0.01666666753590107f);
+    }
+    float speed2;
+    if (slotIsFree_7FE0(self->slots[6]))
+        speed2 = self->rider->f2F8;
+    else
+        speed2 = approach_7FE0(self->rider->f2F8, self->slots[6].elapsed / self->slots[6].duration, 0.01666666753590107f);
+    func_001171A8_7FE0(&self->slots[5], 5, 0, speed, 0);
+    func_001171A8_7FE0(&self->slots[6], 6, 0, speed2, 0);
+    if (self->rider->f2F4 == 0) {
+        func_001179E0(self, 8);
+    } else {
+        if (slotIsFree_7FE0(self->slots[8]))
+            func_001171A8_7FE0(&self->slots[8], 8, 0, 0.0f, 0);
+        int n = (self->rider->f2F4 <? 10) - 1;
+        float x = (float)n * 0.1111111119389534f;
+        float f = approach_7FE0(x <? 1.0f, self->slots[8].elapsed / self->slots[8].duration, 0.0066666672937572f);
+        func_001171A8_7FE0(&self->slots[8], 8, 0, f, n);
+    }
+    int room = 10 - (self->rider->f2F4 <? 10);
+    if ((self->f5C != 0 || self->f54 != 0) && room > 0) {
+        int c = self->f54;
+        if (self->f5C != 0)
+            c++;
+        c = c <? room;
+        if (slotIsFree_7FE0(self->slots[10])) {
+            func_001171A8_7FE0(&self->slots[10], 10, 0, 0.0f, 0);
+            func_0029B0E0(func_0028B180(), self->rider);
+        }
+        float x = (float)c * 0.1111111119389534f;
+        float f = approach_7FE0(x <? 1.0f, self->slots[10].elapsed / self->slots[10].duration, 0.01666666753590107f);
+
+        func_001171A8_7FE0(&self->slots[10], 10, 0, f, c);
+    } else {
+        if (!slotIsFree_7FE0(self->slots[10]))
+            func_0029B3C0(func_0028B180(), self->rider);
+        func_001179E0(self, 10);
+    }
+    if (slotIsFree_7FE0(self->slots[9])) {
+        if (0.0f < self->rider->f2F0) {
+            func_001171A8_7FE0(&self->slots[9], 9, 0, 0.0f, 0);
+            func_00299638(func_0028B180(), self->rider);
+        }
+    } else {
+        float cur = self->slots[9].elapsed / self->slots[9].duration;
+        if (cur == 1.0f && self->rider->f2F0 == 0.0f) {
+            func_001179E0(self, 9);
+            func_002997B8(func_0028B180(), self->rider);
+        } else {
+            func_001171A8_7FE0(&self->slots[9], 9, 0, approach_7FE0(1.0f - self->rider->f2F0 * 0.05000000074505806f, cur, 0.01666666753590107f), self->rider->f2F4 <? 11);
+        }
+    }
+    func_001171A8_7FE0(&self->slots[7], 7, self->total, 0.0f, 0);
+    if (!slotIsFree_7FE0(self->slots[3])) {
+        int shown = self->slots[3].value;
+        float cur = self->slots[3].elapsed / self->slots[3].duration;
+        func_001171A8_7FE0(&self->slots[3], 3, approachI_7FE0(self->comboScore, shown, 70), approach_7FE0(1.0f, cur, 0.01666666753590107f), self->comboCount);
+
+        if (self->comboTimer < 0.0f)
+            self->slots[3].f10 = 4;
+        else
+            self->slots[3].f10 = (int)(self->comboTimer * 3.266666889190674f);
+    }
+    int n = func_00117908(self);
+    int sum = self->points + n;
+    if (!slotIsFree_7FE0(self->slots[2])) {
+        func_001171A8_7FE0(&self->slots[2], 2, sum,
+            self->slots[2].value - self->slots[2].arg == self->points ? approach_7FE0(1.0f, self->slots[2].elapsed / self->slots[2].duration, 0.01666666753590107f) : 0.0f, n);
+
+    } else if (sum > 0) {
+        func_001171A8_7FE0(&self->slots[2], 2, sum, 0.0f, n);
+    }
+    void* itf = cBE_getInterface(cBE_getBE(), 0xB);
+    sBeing_7FE0* being = &self->rider->being;
+    sVtEnt_7FE0* vt = being->vtbl;
+    int res = func_00150960(itf, vt[7].fn((char*)being + vt[7].delta));
+    func_001171A8_7FE0(&self->slots[25], 25, res, 0.0f, 0);
+    if (!slotIsFree_7FE0(self->slots[4])) {
+        int shown = self->slots[4].value;
+        func_001171A8_7FE0(&self->slots[4], 4, shown, approach_7FE0(1.0f, self->slots[4].elapsed / self->slots[4].duration, 0.01666666753590107f), 0);
+    }
+
+}
+#endif
 
 //100%
 INCLUDE_ASM("ai/ridermetrix", func_00118FF8);
