@@ -811,7 +811,289 @@ void func_003F17C8(int* p, int a, int b) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F0F40", func_003F17D8);
+#ifdef SKIP_ASM
+extern char D_00496BA0[];
+extern char D_00496BB8[];
+extern char D_004A4B80[];
+extern char D_004A4B58[];
+extern char D_004A4B88[];
+extern char D_004A4AE0[];
+extern int D_004A4AE8[];
+extern char D_004A4B68[];
+extern char D_004A4B90[];
+extern int func_003F5D88(int);
+extern void f17_5908(int) __asm__("func_003F5908");
+extern int func_003F5638(int, int, int);
+extern int func_003F5A70(int, int*, int*, char**);
+extern int func_003F5C38(int, int, int, int, int);
+extern int func_003F5738(int);
+extern int func_003F5910(int, int, int, int, int);
+extern int func_003EE560(int, int);
+extern int func_003EE620(int);
+extern int f17_EED08(int, char*) __asm__("func_003EED08");
+extern int func_00415FC8(void*, void*, int);
+extern int cDirtysock_tag_TagFieldGetNumber(const char* data, int defval);
+extern char* strcpy(char* d, const char* s);
+extern int strlen(const char* s);
+extern void* memset(void*, int, unsigned int);
+struct Ev_17D8 {
+    int kind;
+    int type;
+    int arg;
+    char* data;
+};
+struct Obj_17D8 {
+    int f0;
+    int addr;
+    int (*poll)(struct Obj_17D8*);
+    void (*destroy)(struct Obj_17D8*);
+};
+struct Conn_17D8;
+typedef void (*Cb_17D8)(struct Conn_17D8*, struct Ev_17D8*, int);
+struct Req_17D8 {
+    int kind;
+    int seq;
+    unsigned int timeout;
+    int ctx;
+    Cb_17D8 cb;
+};
+struct Conn_17D8 {
+    struct Obj_17D8* obj;
+    int sess;
+    int state;
+    unsigned int timeout;
+    int port;
+    int f14;
+    int f18;
+    char pad1C[0x2C0 - 0x1C];
+    unsigned int f2C0;
+    char pad2C4[0x394 - 0x2C4];
+    char auth[0x4A4 - 0x394];
+    int names;
+    int roster;
+    int admnCtx;
+    Cb_17D8 admnCb;
+    int rostCtx;
+    Cb_17D8 rostCb;
+    int rostCount;
+    int stateCtx;
+    Cb_17D8 stateCb;
+    struct Req_17D8 req[3];
+    int f504;
+    int f508;
+};
+typedef struct { char b[0xB8]; } Ent_17D8;
+void func_003F17D8(struct Conn_17D8* self) {
+    char name[0x20];
+    struct Ev_17D8 ev;
+    Ent_17D8 old;
+    char* data;
+    int done;
+    unsigned int now;
+    int i;
+    int flags;
+    int id;
+    char* ent;
+
+    now = func_003F5D88(self->sess);
+    f17_5908(self->sess);
+    memset(&ev, 0, sizeof(ev));
+    if (self->stateCb != 0 && self->obj != 0) {
+        i = self->obj->poll(self->obj);
+        if (i != 0) {
+            if (i > 0) {
+                func_003F5638(self->sess, self->obj->addr, self->port);
+                func_003EFED0((char*)self, D_00496BA0, self->obj->addr, self->port);
+                func_003F00D8((int*)self, 0x41555448, (int)self->auth);
+            }
+            if (i < 0) {
+                func_003F0610((int*)self, 2);
+                self->stateCb = 0;
+            }
+            self->obj->destroy(self->obj);
+            self->obj = 0;
+        }
+    }
+    if (self->timeout != 0 && self->timeout < now) {
+        func_003F0610((int*)self, 3);
+        self->stateCb = 0;
+    }
+    if (self->state == 5) {
+        if (self->f2C0 != 0 && now >= self->f2C0) {
+            func_003F0568((char*)self);
+        }
+    }
+    if (self->state == 5) {
+        for (i = 0; i < 3; i++) {
+            if (self->req[i].cb != 0 && self->req[i].timeout != 0 && self->req[i].timeout < now) {
+                func_003F5738(self->sess);
+                func_003F0610((int*)self, 6);
+                break;
+            }
+        }
+    }
+    if (self->state == 6 || self->state == 3) {
+        for (i = 0; i < 3; i++) {
+            if (self->req[i].cb != 0) {
+                ev.kind = self->req[i].kind;
+                ev.arg = -4;
+                self->req[i].cb(self, &ev, self->req[i].ctx);
+                self->req[i].cb = 0;
+            }
+        }
+    }
+    while (func_003F5A70(self->sess, &ev.type, &ev.arg, &data) >= 0) {
+        done = 0;
+        ev.data = data;
+        if (self->f508 != 0) {
+            func_003EFF40((int*)self, D_004A4B80, (int*)&ev);
+        }
+        if (ev.type == -1) {
+            if (ev.arg == -1) {
+                func_003F0610((int*)self, 5);
+            }
+            if (ev.type == -1 && ev.arg == (int)0xFEFEFEFE) {
+                func_003F0610((int*)self, 6);
+            }
+        }
+        if (ev.type == 0x50494E47) {
+            func_003F5910(self->sess, 0x50494E47, ev.arg, (int)ev.data, -1);
+        }
+        if (ev.type == 0x41555448) {
+            ev.kind = 0x61757468;
+            self->stateCb(self, &ev, self->stateCtx);
+            self->timeout = 0;
+            if (ev.arg != 0) {
+                func_003F0B50((struct S07A0*)self);
+            }
+        }
+        if (ev.type == 0x52454356 && self->admnCb != 0) {
+            func_003F0198((char*)self, (int*)&ev);
+        }
+        if (ev.type == 0x53454E44 && self->req[2].cb != 0) {
+            ev.kind = 0x73656E64;
+            self->req[2].cb(self, &ev, self->req[2].ctx);
+            self->req[2].cb = 0;
+        }
+        if (ev.type == 0x41444D4E && self->admnCb != 0) {
+            ev.kind = 0x61646D6E;
+            self->admnCb(self, &ev, self->admnCtx);
+        }
+        if (ev.type == 0x52474554) {
+            if (cDirtysock_tag_TagFieldGetNumber(cDirtysock_tag_TagFieldFind(ev.data, D_004A4B58), 0) == 2) {
+                self->rostCount = cDirtysock_tag_TagFieldGetNumber(cDirtysock_tag_TagFieldFind(ev.data, D_004A4B88), 0);
+                done = self->rostCount == 0;
+            }
+        }
+        if (ev.type == 0x524F5354 && self->roster != 0) {
+            flags = 4;
+            id = cDirtysock_tag_TagFieldGetNumber(cDirtysock_tag_TagFieldFind(ev.data, D_004A4B58), 0);
+            if (id != 1) flags = 0;
+            if (id == 2) flags = 0x200;
+            if (flags == 0x200) {
+                if (--self->rostCount == 0) done = 1;
+            }
+            cDirtysock_tag_TagFieldGetString(cDirtysock_tag_TagFieldFind(ev.data, D_004A4AE0), name, 0x20, (char*)D_004A4AE8);
+            func_003F0150(name);
+            if (self->f18 != 0 || strchr(name, '.') == 0) {
+                id = func_003EEC88(self->names, (int)name);
+                if (id == 0) {
+                    if ((unsigned int)strlen(name) < 0x20) {
+                        ent = (char*)func_002591E8(0xB8);
+                        func_00416210(ent, 0, 0xB8);
+                        strcpy(ent, name);
+                        id = func_003EE320(self->roster, (int)ent);
+                        func_003EEB30(self->names, (int)ent, id);
+                    }
+                }
+                if (id != 0) {
+                    ent = (char*)func_003EE468(self->roster, id);
+                    if (ent != 0) {
+                        cDirtysock_tag_TagFieldGetString(cDirtysock_tag_TagFieldFind(ev.data, D_004A4B68), ent + 0x20, 0x20, (char*)D_004A4AE8);
+                        if (flags != 0) {
+                            *(int*)(ent + 0xA8) = (*(int*)(ent + 0xA8) | flags) & ~0x100000;
+                        }
+                    }
+                }
+            }
+        }
+        if (ev.type == 0x50474554 && self->roster != 0) {
+            cDirtysock_tag_TagFieldGetString(cDirtysock_tag_TagFieldFind(ev.data, D_004A4AE0), name, 0x20, (char*)D_004A4AE8);
+            func_003F0150(name);
+            id = func_003EEC88(self->names, (int)name);
+            if (id != 0) {
+                ent = (char*)func_003EE468(self->roster, id);
+                old = *(Ent_17D8*)ent;
+                func_003F02D0((char*)self, (char*)&ev, ent);
+                if (func_00415FC8(&old, ent, 0xB8) != 0) {
+                    func_003EE600(self->roster, 1);
+                    func_003EFED0((char*)self, D_00496BB8, ent, ent[0xA7], ent + 0x40, ent + 0x54, ent + 0xA4);
+                }
+            }
+        }
+        if (ev.type == 0x52414444 && self->roster != 0) {
+            ev.kind = 0x61646475;
+            id = cDirtysock_tag_TagFieldGetNumber(cDirtysock_tag_TagFieldFind(ev.data, D_004A4B58), 0);
+            for (i = 0; (ent = (char*)func_003EE560(self->roster, i)) != 0; i++) {
+                if ((*(int*)(ent + 0xA8) & 0x10000) && *(int*)(ent + 0xAC) == id) {
+                    if (ev.arg != 0) {
+                        if (self->req[0].cb != 0) {
+                            ev.arg = -2;
+                            ev.data = ent;
+                            self->req[0].cb(self, &ev, self->req[0].ctx);
+                        }
+                        func_003EE480(self->roster, f17_EED08(self->names, ent));
+                        func_00259210(ent);
+                    } else {
+                        cDirtysock_tag_TagFieldGetString(cDirtysock_tag_TagFieldFind(ev.data, D_004A4B90), name, 0x20, (char*)D_004A4AE8);
+                        func_003F0150(name);
+                        if (name[0] != 0 && (unsigned int)strlen(name) < 0x20) {
+                            int k = f17_EED08(self->names, ent);
+                            cDirtysock_tag_TagFieldDupl(ent, 0x20, name);
+                            func_003EEB30(self->names, (int)ent, k);
+                        }
+                        if (self->req[0].cb != 0) {
+                            ev.arg = 0;
+                            ev.data = ent;
+                            self->req[0].cb(self, &ev, self->req[0].ctx);
+                        }
+                        *(int*)(ent + 0xAC) = 0;
+                        *(int*)(ent + 0xA8) ^= 0x10000;
+                    }
+                    break;
+                }
+            }
+            func_003EE600(self->roster, 1);
+        }
+        if (ev.type == 0x5244454C && self->req[1].cb != 0) {
+            if (cDirtysock_tag_TagFieldGetNumber(cDirtysock_tag_TagFieldFind(ev.data, D_004A4B58), 0) == self->req[1].seq) {
+                ev.kind = 0x64656C75;
+                self->req[1].cb(self, &ev, self->req[1].ctx);
+                self->req[1].cb = 0;
+            }
+        }
+        if (done != 0) {
+            if (self->rostCb != 0) {
+                ev.kind = 0x656E6472;
+                ev.type = 0;
+                ev.arg = 0;
+                ev.data = 0;
+                self->rostCb(self, &ev, self->rostCtx);
+            }
+        }
+        func_003F5C38(self->sess, 0, 0, 0, 0);
+    }
+    if (self->rostCb != 0 && func_003EE620(self->roster) > 0) {
+        ev.kind = 0x726F7374;
+        ev.type = 0;
+        ev.arg = 0;
+        ev.data = (char*)self->roster;
+        self->rostCb(self, &ev, self->rostCtx);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F0F40", func_003F2220);
