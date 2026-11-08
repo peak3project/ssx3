@@ -5309,7 +5309,120 @@ void func_003BD9C0(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003BDE08);
+#ifdef SKIP_ASM
+extern void func_003C0640(void *, void *, float);
+
+void func_003BDE08(int ch) {
+    struct sAC68Blk *blk;
+    unsigned char *sf;
+    unsigned char *out;
+    unsigned short *q;
+    unsigned char *b;
+    float x;
+    int i;
+    int n;
+    int idx;
+
+    blk = D_0050AC68->f84[ch];
+    f03E0_D5B8(D_0050AC6C, D_0050AC6C->fA20);
+    sf = blk->f04;
+    for (i = 0; i < 24; i++) {
+        x = D_0050AC6C->fA20[i] * D_0050AC68->f0C[i];
+        if (x < 4.0f) {
+            idx = D_0044DD38_D5B8[(int)x];
+        } else {
+            n = (int)((float)*(int *)&x * 6.5246462099821656e-07f) - 0x2B8;
+            idx = n + 1;
+            if (x < (float)D_0044C760_D5B8[n]) {
+                idx = n;
+            }
+        }
+        blk->f04[i] = idx;
+    }
+    out = D_0050AC68->f08 + (ch * 0xAC + 0x11C);
+    q = D_0050AC6C->fA00;
+    for (i = 0; i < 5; i++) {
+        func_003C0564(D_0050AC6C->f000[i], q, 1.0f / (float)D_0044C760_D5B8[sf[i]]);
+        out[1] = out[1] & 0xf8 | q[0] >> 7;
+        out[0] = q[0] << 1 | q[1] >> 9;
+        out[3] = q[1] >> 1;
+        out[2] = q[1] << 7 | q[2] >> 3;
+        out[5] = q[2] << 5 | q[3] >> 5;
+        out[4] = q[3] << 3 | q[4] >> 7;
+        out[7] = q[4] << 1 | q[5] >> 9;
+        out[6] = q[5] >> 1;
+        out[9] = q[5] << 7 | q[6] >> 3;
+        out[8] = q[6] << 5 | q[7] >> 5;
+        out[0xB] = out[0xB] & 7 | q[7] << 3;
+        out[0x35D] = out[0x35D] & 0xf8 | q[8] >> 7;
+        out[0x35C] = q[8] << 1 | q[9] >> 9;
+        out[0x35F] = q[9] >> 1;
+        out[0x35E] = q[9] << 7 | q[10] >> 3;
+        out[0x361] = q[10] << 5 | q[11] >> 5;
+        out[0x360] = q[11] << 3 | q[12] >> 7;
+        out[0x363] = q[12] << 1 | q[13] >> 9;
+        out[0x362] = q[13] >> 1;
+        out[0x365] = q[13] << 7 | q[14] >> 3;
+        out[0x364] = q[14] << 5 | q[15] >> 5;
+        out[0x367] = out[0x367] & 7 | q[15] << 3;
+        out += 10;
+    }
+    b = (unsigned char *)q;
+    for (; i < 14; i++) {
+        func_003C05E0(D_0050AC6C->f000[i], q, 1.0f / (float)D_0044C760_D5B8[sf[i]]);
+        out[1] = out[1] & 0xf8 | b[0] >> 5;
+        out[0] = b[0] << 3 | b[1] >> 5;
+        out[3] = b[1] << 3 | b[2] >> 5;
+        out[2] = b[2] << 3 | b[3] >> 5;
+        out[5] = b[3] << 3 | b[4] >> 5;
+        out[4] = b[4] << 3 | b[5] >> 5;
+        out[7] = b[5] << 3 | b[6] >> 5;
+        out[6] = b[6] << 3 | b[7] >> 5;
+        out[9] = out[9] & 7 | b[7] << 3;
+        out[0x35D] = out[0x35D] & 0xf8 | b[8] >> 5;
+        out[0x35C] = b[8] << 3 | b[9] >> 5;
+        out[0x35F] = b[9] << 3 | b[10] >> 5;
+        out[0x35E] = b[10] << 3 | b[11] >> 5;
+        out[0x361] = b[11] << 3 | b[12] >> 5;
+        out[0x360] = b[12] << 3 | b[13] >> 5;
+        out[0x363] = b[13] << 3 | b[14] >> 5;
+        out[0x362] = b[14] << 3 | b[15] >> 5;
+        out[0x365] = out[0x365] & 7 | b[15] << 3;
+        out += 8;
+    }
+    for (; i < 24; i += 2) {
+        func_003C0640(D_0050AC6C->f000[i], q, 1.0f / (float)D_0044C760_D5B8[sf[i]]);
+        out[1] = out[1] & 0xf8 | b[0] >> 2;
+        out[0] = b[0] << 6 | b[1] << 1 | b[2] >> 4;
+        out[3] = b[2] << 4 | b[3] >> 1;
+        out[2] = b[3] << 7 | b[4] << 2 | b[5] >> 3;
+        out[5] = b[6] | b[5] << 5;
+        out[4] = out[4] & 7 | b[7] << 3;
+        out[0x35D] = out[0x35D] & 0xf8 | b[8] >> 2;
+        out[0x35C] = b[8] << 6 | b[9] << 1 | b[10] >> 4;
+        out[0x35F] = b[10] << 4 | b[11] >> 1;
+        out[0x35E] = b[11] << 7 | b[12] << 2 | b[13] >> 3;
+        out[0x361] = b[14] | b[13] << 5;
+        out[0x360] = out[0x360] & 7 | b[15] << 3;
+        func_003C0640(D_0050AC6C->f000[i + 1], q, 1.0f / (float)D_0044C760_D5B8[sf[i + 1]]);
+        out[4] = out[4] & 0xf8 | b[0] >> 2;
+        out[7] = b[0] << 6 | b[1] << 1 | b[2] >> 4;
+        out[6] = b[2] << 4 | b[3] >> 1;
+        out[9] = b[3] << 7 | b[4] << 2 | b[5] >> 3;
+        out[8] = b[6] | b[5] << 5;
+        out[0xB] = out[0xB] & 7 | b[7] << 3;
+        out[0x360] = out[0x360] & 0xf8 | b[8] >> 2;
+        out[0x363] = b[8] << 6 | b[9] << 1 | b[10] >> 4;
+        out[0x362] = b[10] << 4 | b[11] >> 1;
+        out[0x365] = b[11] << 7 | b[12] << 2 | b[13] >> 3;
+        out[0x364] = b[14] | b[13] << 5;
+        out[0x367] = out[0x367] & 7 | b[15] << 3;
+        out += 10;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003BE6E0);
