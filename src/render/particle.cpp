@@ -1469,7 +1469,280 @@ extern "C" void* func_00372B30(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/particle", func_00372B78);
+#ifdef SKIP_ASM
+// cBezierCache (render/beziercache.cpp): per patch order (4x4, 6x6, 8x8 control points) a record cache with a free
+// list, point / uv grids, a normal cache with its own free list, and the cubic basis tables.
+void* operator new[](unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+
+struct sBzRec_2B78 {
+    int f0;
+    int f4;
+    int f8;                     // -1 = free
+};
+
+struct sBzV3_2B78 {
+    float x, y, z;
+    sBzV3_2B78() {}
+};
+
+struct sBzV2_2B78 {
+    float u, v;
+    sBzV2_2B78() {}
+};
+
+struct sBzPts4_2B78 { sBzV3_2B78 p[4][4]; };
+struct sBzPts6_2B78 { sBzV3_2B78 p[6][6]; };
+struct sBzPts8_2B78 { sBzV3_2B78 p[8][8]; };
+struct sBzUV4_2B78 { sBzV2_2B78 p[4][4]; };
+struct sBzUV6_2B78 { sBzV2_2B78 p[6][6]; };
+struct sBzUV8_2B78 { sBzV2_2B78 p[8][8]; };
+
+struct sBzCache_2B78 {
+    int cacheSize[3];               // 0x000
+    sBzRec_2B78* m4x4CacheRecord;   // 0x00C
+    sBzRec_2B78* m6x6CacheRecord;   // 0x010
+    sBzRec_2B78* m8x8CacheRecord;   // 0x014
+    sBzRec_2B78* records[3];        // 0x018
+    int* freeBuf4;                  // 0x024
+    int* freeBuf6;                  // 0x028
+    int* freeBuf8;                  // 0x02C
+    int* freeList[3];               // 0x030
+    int freeListSP[3];              // 0x03C
+    sBzPts4_2B78* pts4;             // 0x048
+    sBzPts6_2B78* pts6;             // 0x04C
+    sBzPts8_2B78* pts8;             // 0x050
+    sBzUV4_2B78* uvA4;              // 0x054
+    sBzUV6_2B78* uvA6;              // 0x058
+    sBzUV8_2B78* uvA8;              // 0x05C
+    sBzUV4_2B78* uvB4;              // 0x060
+    sBzUV6_2B78* uvB6;              // 0x064
+    sBzUV8_2B78* uvB8;              // 0x068
+    int pad06C;
+    t4Vector basis4[4];             // 0x070
+    t4Vector basis6[6];             // 0x0B0
+    t4Vector basis8[8];             // 0x110
+    t4Vector* basis[3];             // 0x190
+    int order[3];                   // 0x19C
+    int nrmCacheSize[3];            // 0x1A8
+    sBzPts4_2B78* nrm4;             // 0x1B4
+    sBzPts6_2B78* nrm6;             // 0x1B8
+    sBzPts8_2B78* nrm8;             // 0x1BC
+    int* nrmFreeBuf4;               // 0x1C0
+    int* nrmFreeBuf6;               // 0x1C4
+    int* nrmFreeBuf8;               // 0x1C8
+    int* nrmFreeList[3];            // 0x1CC
+    int nrmFreeListSP[3];           // 0x1D8
+    int pad1E4[3];
+    t4Vector dbasis4[4];            // 0x1F0
+    t4Vector dbasis6[6];            // 0x230
+    t4Vector dbasis8[8];            // 0x290
+    t4Vector* dbasis[3];            // 0x310
+};
+
+extern char D_00492728[];
+extern char D_00492738[];
+extern char D_00492748[];
+extern char D_00492758[];
+extern char D_00492768[];
+extern char D_00492778[];
+extern char D_00492788[];
+extern char D_00492798[];
+extern char D_004927A8[];
+extern char D_004927B8[];
+extern char D_004927C8[];
+extern char D_004927D8[];
+extern char D_004927E8[];
+extern char D_004927F8[];
+extern char D_00492808[];
+extern char D_00492818[];
+extern char D_00492828[];
+extern char D_00492838[];
+extern char D_00492848[];
+extern char D_00492858[];
+extern char D_00492868[];
+
+extern "C" void func_00372B78(sBzCache_2B78* self, int n4, int n6, int n8, int nn4, int nn6, int nn8)
+{
+    int i, k;
+    float t;
+
+    self->cacheSize[0] = n4;
+    self->cacheSize[1] = n6;
+    self->cacheSize[2] = n8;
+    self->m4x4CacheRecord = new (D_00492728, 0, 0) sBzRec_2B78[n4];
+    self->m6x6CacheRecord = new (D_00492738, 0, 0) sBzRec_2B78[n6];
+    self->m8x8CacheRecord = new (D_00492748, 0, 0) sBzRec_2B78[n8];
+    self->records[0] = self->m4x4CacheRecord;
+    self->records[1] = self->m6x6CacheRecord;
+    self->records[2] = self->m8x8CacheRecord;
+    func_003E6448(self->m4x4CacheRecord, 0, n4 * sizeof(sBzRec_2B78));
+    func_003E6448(self->m6x6CacheRecord, 0, n6 * sizeof(sBzRec_2B78));
+    func_003E6448(self->m8x8CacheRecord, 0, n8 * sizeof(sBzRec_2B78));
+
+    self->freeBuf4 = new (D_00492758, 0, 0) int[n4];
+    self->freeBuf6 = new (D_00492768, 0, 0) int[n6];
+    self->freeBuf8 = new (D_00492778, 0, 0) int[n8];
+    self->freeList[0] = self->freeBuf4;
+    self->freeList[1] = self->freeBuf6;
+    self->freeList[2] = self->freeBuf8;
+    self->freeListSP[0] = 0;
+    self->freeListSP[1] = 0;
+    self->freeListSP[2] = 0;
+    for (i = 0; i < n4; i++)
+        self->freeList[0][self->freeListSP[0]++] = i;
+    for (i = 0; i < n6; i++)
+        self->freeList[1][self->freeListSP[1]++] = i;
+    for (i = 0; i < n8; i++)
+        self->freeList[2][self->freeListSP[2]++] = i;
+
+    {
+        sBzPts4_2B78*& r = self->pts4;
+        r = new (D_00492788, 0, 0) sBzPts4_2B78[n4];
+    }
+    {
+        sBzPts6_2B78*& r = self->pts6;
+        r = new (D_00492798, 0, 0) sBzPts6_2B78[n6];
+    }
+    {
+        sBzPts8_2B78*& r = self->pts8;
+        r = new (D_004927A8, 0, 0) sBzPts8_2B78[n8];
+    }
+    {
+        sBzUV4_2B78*& r = self->uvA4;
+        r = new (D_004927B8, 0, 0) sBzUV4_2B78[n4];
+    }
+    {
+        sBzUV6_2B78*& r = self->uvA6;
+        r = new (D_004927C8, 0, 0) sBzUV6_2B78[n6];
+    }
+    {
+        sBzUV8_2B78*& r = self->uvA8;
+        r = new (D_004927D8, 0, 0) sBzUV8_2B78[n8];
+    }
+    {
+        sBzUV4_2B78*& r = self->uvB4;
+        r = new (D_004927E8, 0, 0) sBzUV4_2B78[n4];
+    }
+    {
+        sBzUV6_2B78*& r = self->uvB6;
+        r = new (D_004927F8, 0, 0) sBzUV6_2B78[n6];
+    }
+    {
+        sBzUV8_2B78*& r = self->uvB8;
+        r = new (D_00492808, 0, 0) sBzUV8_2B78[n8];
+    }
+
+    for (i = 0; i < 4; i++) {
+        t4Vector b;
+        t = i * 0.33333334f;
+        b.x = t * t * t;
+        b.y = t * t;
+        b.z = t;
+        b.w = 1.0f;
+        self->basis4[i] = b;
+    }
+    for (i = 0; i < 6; i++) {
+        t4Vector b;
+        t = i * 0.2f;
+        b.x = t * t * t;
+        b.y = t * t;
+        b.z = t;
+        b.w = 1.0f;
+        self->basis6[i] = b;
+    }
+    for (i = 0; i < 8; i++) {
+        t4Vector b;
+        t = i * 0.14285715f;
+        b.x = t * t * t;
+        b.y = t * t;
+        b.z = t;
+        b.w = 1.0f;
+        self->basis8[i] = b;
+    }
+    self->basis[0] = self->basis4;
+    self->basis[1] = self->basis6;
+    self->basis[2] = self->basis8;
+    self->order[0] = 4;
+    self->order[1] = 6;
+    self->order[2] = 8;
+    self->nrmCacheSize[0] = nn4;
+    self->nrmCacheSize[1] = nn6;
+    self->nrmCacheSize[2] = nn8;
+
+    for (k = 0; k < 3; k++) {
+        int j;
+        for (j = 0; j < self->cacheSize[k]; j++)
+            self->records[k][j].f8 = -1;
+    }
+
+    if (nn4 > 0)
+        {
+        sBzPts4_2B78*& r = self->nrm4;
+        r = new (D_00492818, 0, 0) sBzPts4_2B78[nn4];
+    }
+    if (nn6 > 0)
+        {
+        sBzPts6_2B78*& r = self->nrm6;
+        r = new (D_00492828, 0, 0) sBzPts6_2B78[nn6];
+    }
+    if (nn8 > 0)
+        {
+        sBzPts8_2B78*& r = self->nrm8;
+        r = new (D_00492838, 0, 0) sBzPts8_2B78[nn8];
+    }
+    if (nn4 > 0)
+        self->nrmFreeBuf4 = new (D_00492848, 0, 0) int[nn4];
+    if (nn6 > 0)
+        self->nrmFreeBuf6 = new (D_00492858, 0, 0) int[nn6];
+    if (nn8 > 0)
+        self->nrmFreeBuf8 = new (D_00492868, 0, 0) int[nn8];
+    self->nrmFreeList[0] = self->nrmFreeBuf4;
+    self->nrmFreeList[1] = self->nrmFreeBuf6;
+    self->nrmFreeList[2] = self->nrmFreeBuf8;
+    self->nrmFreeListSP[0] = 0;
+    self->nrmFreeListSP[1] = 0;
+    self->nrmFreeListSP[2] = 0;
+    for (i = 0; i < nn4; i++)
+        self->nrmFreeList[0][self->nrmFreeListSP[0]++] = i;
+    for (i = 0; i < nn6; i++)
+        self->nrmFreeList[1][self->nrmFreeListSP[1]++] = i;
+    for (i = 0; i < nn8; i++)
+        self->nrmFreeList[2][self->nrmFreeListSP[2]++] = i;
+
+    for (i = 0; i < 4; i++) {
+        t4Vector b;
+        t = i * 0.33333334f;
+        b.x = t * (t * 3.0f);
+        b.y = t + t;
+        b.z = 1.0f;
+        b.w = 0.0f;
+        self->dbasis4[i] = b;
+    }
+    for (i = 0; i < 6; i++) {
+        t4Vector b;
+        t = i * 0.2f;
+        b.x = t * (t * 3.0f);
+        b.y = t + t;
+        b.z = 1.0f;
+        b.w = 0.0f;
+        self->dbasis6[i] = b;
+    }
+    for (i = 0; i < 8; i++) {
+        t4Vector b;
+        t = i * 0.14285715f;
+        b.x = t * (t * 3.0f);
+        b.y = t + t;
+        b.z = 1.0f;
+        b.w = 0.0f;
+        self->dbasis8[i] = b;
+    }
+    self->dbasis[0] = self->dbasis4;
+    self->dbasis[1] = self->dbasis6;
+    self->dbasis[2] = self->dbasis8;
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/particle", func_003737D0);
