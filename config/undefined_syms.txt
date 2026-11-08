@@ -15,3 +15,7 @@ D_00504B80 = 0x504B80;
    at D_004A4C00. splat only names D_004A4C00 and addresses the guard as D_004A4C00 + 4; the source needs the guard
    as its own scalar global. */
 D_004A4C04 = 0x4A4C04;
+
+/* ai/control/handplantcontrol (func_0013FB20): an 8-byte index object {id:8, val:24} in the gp region, addressed
+   by splat only as D_004A4C00 + 8; the static initialiser stores it as its own object. */
+D_004A4C08 = 0x4A4C08;
