@@ -369,7 +369,477 @@ extern "C" void* func_001E9A30(void* arg0, int a1)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/ovstatehud", cOVStateHUD1P_onCreateScreen);
+#ifdef SKIP_ASM
+extern "C" void* func_00398380(void* self, int id);
+extern "C" int func_003983F0(void* self, int key);
+extern "C" void func_001F10F8(void* self, float* out, float* pos, float* size, float* scale, int alignX, int alignY, int flags);
+extern "C" void func_0020EB50(void* self, void* screen, void* rect);
+extern "C" void func_003DCA40(unsigned short* dst, const char* src);
+extern "C" void func_003DC9F8(unsigned short* dst, const unsigned short* fmt, ...);
+unsigned int BXrand();
+extern void* D_004A28A8;
+extern char D_004A2108[];
+extern char D_004A21F0[];
+extern char D_004A20D0[];
+extern char D_004A21F8[];
+extern char D_004A2200[];
+extern char D_004A2208[];
+extern char D_004A2210[];
+extern char D_004A2218[];
+extern char D_004A2220[];
+extern char D_004A2228[];
+extern char D_004A2230[];
+extern char D_004A2238[];
+extern char D_004A2240[];
+extern char D_004A2248[];
+extern char D_004A2250[];
+extern char D_004A2258[];
+extern char D_004A2260[];
+extern char D_004A2268[];
+extern char D_004A2270[];
+extern char D_004A2278[];
+extern char D_0046EAB8[];
+extern char D_0046EAC8[];
+extern char D_0046EAD8[];
+extern int D_004C88D8[26];
+extern int D_004C8940[5][3];
+extern char* D_004A21E4;
+extern char* D_004A21EC;
+extern char* D_004A21D0[2];
+extern char* D_004A21D8;
+extern sVec2f D_004A4F50;
+extern sVec2f D_004A4F58;
+
+struct t2Vector {
+    float x, y;
+    t2Vector() {}
+    t2Vector(float x_, float y_) : x(x_), y(y_) {}
+};
+
+// HUD element layout record (0x24 bytes, const tables in .rodata).
+struct sHudElem_9AD0 {
+    short x, y;         // 0x00
+    short w, h;         // 0x04
+    float sx, sy;       // 0x08
+    float col[4];       // 0x10
+    char alignX;        // 0x20
+    char alignY;        // 0x21
+    char blend;         // 0x22
+};
+extern const sHudElem_9AD0 D_00477000;
+extern const sHudElem_9AD0 D_00477B40;
+extern const sHudElem_9AD0 D_00476940;
+extern const sHudElem_9AD0 D_00477480;
+extern const sHudElem_9AD0 D_00477048;
+extern const sHudElem_9AD0 D_00477B88;
+void getElemPos_9AD0(const sHudElem_9AD0* e, t2Vector* out) __asm__("func_001E91F8");
+void getElemSize_9AD0(const sHudElem_9AD0* e, t2Vector* out, void* def) __asm__("func_001E9220");
+void getElemScale_9AD0(const sHudElem_9AD0* e, t2Vector* out) __asm__("func_001E9290__FPvT0");
+
+struct tARGB_9AD0 {
+    float r, g, b, a;
+    tARGB_9AD0() {}
+    tARGB_9AD0(float r_, float g_, float b_, float a_) : r(r_), g(g_), b(b_), a(a_) {}
+};
+
+struct tRect_9AD0 {
+    float x, y, w, h;
+};
+
+struct sUIItem_9AD0 {
+    int handle;     // 0x00
+    int f04;
+    int f08;
+    float y0;           // 0x0C
+    float x0;           // 0x10
+    float x1;           // 0x14
+    float y1;           // 0x18
+    float getX0() const { return x0; }
+    float getY0() const { return y0; }
+    float getX1() const { return x1; }
+    float getY1() const { return y1; }
+};
+
+struct sTok_9AD0 {
+    int hash;       // 0x00
+    int name;       // 0x04
+    int tex;        // 0x08
+    float width;    // 0x0C
+    float height;   // 0x10
+    t2Vector uv0;   // 0x14
+    t2Vector uv1;   // 0x1C
+};
+extern sTok_9AD0 D_004C8980_9AD0[] __asm__("D_004C8980");
+
+class cBeing_9AD0 {
+public:
+    virtual ~cBeing_9AD0();
+    virtual const void* getVelocity() const;
+    virtual int isIntersecting(void* rec) const;
+    virtual void applyBoost(const void* impulse);
+    virtual const void* getPosition() const;
+    virtual const void* getTransform() const;
+    virtual int getAIIndex() const;
+};
+
+struct sRiderPanel {
+    int aiIndex;        // 0x00
+    int rider;          // 0x04
+    char trophy[0x3C];  // 0x08
+    int f44;            // 0x44
+    float f48;          // 0x48
+    float f4C;          // 0x4C
+    int f50;            // 0x50
+    tARGB_9AD0 col;     // 0x54
+    float f64;          // 0x64
+    float f68;          // 0x68
+    int f6C;            // 0x6C
+    float f70;          // 0x70
+    int f74;            // 0x74
+    float f78;          // 0x78
+    int f7C;            // 0x7C
+    int f80;            // 0x80
+    int f84;            // 0x84
+    int f88;            // 0x88
+};
+
+struct sSlot_9AD0 {
+    int pad0[3];
+    int id;
+    int pad10[2];
+};
+
+struct tBarConfig {
+    float scale;
+    int count;
+};
+
+struct sGameOpts_9AD0 {
+    unsigned int flags;         // 0x000: bits 22-24 = language
+    char pad[0x284];
+};
+extern sGameOpts_9AD0 D_00535610;
+
+// One screen dimension in pixels, set from the unsigned value the renderer reports.
+// (The stores are aggregate-member stores: the target schedules the D_004A289C reload above them.)
+struct sScreenDim_9AD0 {
+    float pixels;
+    void set(unsigned int v) { pixels = v; }
+};
+struct sHUD1P {
+    char pad0[0xC];
+    int hash;                   // 0x00C
+    char* engine;               // 0x010
+    char pad14[0x48 - 0x14];
+    sRiderPanel panels[2];      // 0x048
+    int f160, f164, f168;       // 0x160
+    float w16C, w170, w174, w178; // 0x16C
+    int f17C, f180, f184, f188; // 0x17C
+    unsigned f18C;              // 0x18C
+    float f190;                 // 0x190
+    int f194, f198;             // 0x194
+    char pad19C[0x3A4 - 0x19C];
+    int f3A4, f3A8;             // 0x3A4
+    char pad3AC[0x3B4 - 0x3AC];
+    unsigned f3B4;              // 0x3B4
+    char pad3B8[0x3C0 - 0x3B8];
+    float f3C0;                 // 0x3C0
+    int f3C4, f3C8, f3CC;       // 0x3C4
+    float f3D0;                 // 0x3D0
+    char pad3D4[0x3E0 - 0x3D4];
+    sSlot_9AD0 slots[3];        // 0x3E0
+    int bank428;                // 0x428
+    void* font;                 // 0x42C
+    char* fontName;             // 0x430
+    void* w434, *w438, *w43C, *w440; // 0x434
+    void* w444[11];             // 0x444
+    void* w470;                 // 0x470
+    int mode;                   // 0x474
+    sScreenDim_9AD0 scrW, scrH; // 0x478
+    char pad480[0x490 - 0x480];
+    unsigned f490;              // 0x490
+    void* icons[26];            // 0x494
+    void* boost[5][3];          // 0x4FC
+    void* w538;                 // 0x538
+    tBarConfig bars[4];         // 0x53C
+    int rnd;                    // 0x55C
+    char box560[0x14C];         // 0x560
+    char box6AC[0x14C];         // 0x6AC
+    char box7F8[0x14C];         // 0x7F8
+    char pad944[0xA44 - 0x944];
+    int fA44;                   // 0xA44
+    char padA48[0xB48 - 0xA48];
+    char boxB48[0x14C];         // 0xB48
+    float fC94;                 // 0xC94
+};
+
+class cGfx_9AD0 {
+public:
+    char pad[0xF50];
+    int mode;           // 0xF50
+};
+
+
+static inline void* findElem_9AD0(char* engine, char* name)
+{
+    int hash = GetHashValue32(name);
+    return func_00398380(engine + 0x58, hash);
+}
+static inline int findFont_9AD0(void* bank, char* name) { return func_003983F0(bank, GetHashValue32(name)); }
+
+struct sRace_9AD0 {
+    char pad0[0x40];
+    char* riders[15];       // 0x40
+    int numRiders;          // 0x7C
+};
+static inline sRace_9AD0* getRace_9AD0() { return *(sRace_9AD0**)(*(char**)((char*)D_004A28A8 + 0x84) + 0xC); }
+
+// Segment count of a vertical bar: one 23-pixel segment per 23 pixels of height d above the base (rounded).
+static inline void calcBarSegments_9AD0(int& n, float d)
+{
+    if (d > 23.0f) {
+        n = (int)(d * (1.0f / 23.0f));
+        if (((float)n + 0.5f) * 23.0f < d) {
+            n++;
+        }
+    } else {
+        n = 1;
+    }
+}
+
+// A vertical bar of 23-pixel segments over a 54-pixel base: segment count and scale for an element height h.
+static inline void setupVertBar_9AD0(tBarConfig* b, const float& h)
+{
+    calcBarSegments_9AD0(b->count, h - 54.0f);
+    b->scale = h / ((float)b->count * 23.0f + 54.0f);
+}
+
+// Localised string by name from the game's text table (D_004A28A8 + 0x8C; vptr at 0x4, slot 4 = lookup by hash).
+static inline unsigned short* getLocString_9AD0(char* id)
+{
+    char* o = *(char**)((char*)D_004A28A8 + 0x8C);
+    sVEntry<unsigned short*(void*, int)>* vt = *(sVEntry<unsigned short*(void*, int)>**)(o + 4);
+    o += vt[4].delta;
+    int h = GetHashValue32(id);
+    return vt[4].fn(o, h);
+}
+
+extern "C" void cOVStateHUD1P_onCreateScreen(void* vself)
+{
+    sHUD1P* self = (sHUD1P*)vself;
+    self->hash = GetHashValue32(D_004A20D0);
+    sTok_9AD0* t = D_004C8980_9AD0;
+    while (t->hash != 0) {
+        sUIItem_9AD0* it = (sUIItem_9AD0*)func_00398380(self->engine + 0x58, t->name);
+        t->tex = it->handle;
+        t->uv0 = t2Vector(it->getX0(), it->getY0());
+        t->uv1 = t2Vector(it->getX1(), it->getY1());
+        t++;
+    }
+    self->f3C4 = 0x50;
+    self->f3B4 = 0xF0000000;
+    self->f3D0 = -1.0f;
+    self->f3C0 = -1.0f;
+    self->f3C8 = 0;
+    self->f190 = -1.0f;
+    self->f194 = 0;
+    self->f198 = 0;
+    self->f3A4 = 0;
+    self->f3A8 = 0;
+    self->fA44 = 0;
+    self->fC94 = -1.0f;
+    self->f3CC = 0;
+    for (int i = 0; i < 2; i++) {
+        self->panels[i].f44 = -1;
+        self->panels[i].aiIndex = -1;
+        self->panels[i].rider = -1;
+        self->panels[i].f48 = 1.0f;
+        self->panels[i].f4C = -1.0f;
+        tARGB_9AD0 white;
+        white.r = 1.0f;
+        white.g = 1.0f;
+        white.b = 1.0f;
+        white.a = 1.0f;
+        self->panels[i].col = white;
+        self->panels[i].f64 = -1.0f;
+        self->panels[i].f68 = 0.5f;
+        self->panels[i].f6C = -1;
+        self->panels[i].f70 = -1.0f;
+        self->panels[i].f74 = 0;
+        self->panels[i].f78 = -1.0f;
+        self->panels[i].f80 = 0;
+        self->panels[i].f84 = 0;
+        self->panels[i].f88 = 0;
+        self->panels[i].f7C = 0;
+    }
+    self->f160 = 0;
+    self->f164 = 0;
+    self->f168 = 0;
+    for (int i = 0; i < 3; i++) {
+        self->slots[i].id = -1;
+    }
+    signed char n = 0;
+    for (int i = 0; i < getRace_9AD0()->numRiders; i++) {
+        char* r = getRace_9AD0()->riders[i];
+        if (*(int*)(*(char**)(r + 0x18) + 0x87C) != 0) {
+            self->panels[n].rider = i;
+            self->panels[n].aiIndex = ((cBeing_9AD0*)(*(char**)(r + 0x18) + 0x6C0))->getAIIndex();
+            n++;
+        }
+    }
+    tRect_9AD0 scr;
+    scr.x = 0.0f;
+    scr.y = 0.0f;
+    scr.w = 640.0f;
+    scr.h = 480.0f;
+    if (n == 1) {
+        t2Vector a;
+        t2Vector size;
+        t2Vector sc;
+        getElemPos_9AD0(&D_00477000, &a);
+        getElemSize_9AD0(&D_00477000, &size, 0);
+        getElemScale_9AD0(&D_00477000, &sc);
+        size.x *= sc.x;
+        size.y *= sc.y;
+        t2Vector p;
+        p.x = 1.0f;
+        p.y = 1.0f;
+        sc = p;
+        func_001F10F8(self, &p.x, &a.x, &size.x, &sc.x, D_00477000.alignX, D_00477000.alignY, 0);
+        tRect_9AD0 r;
+        r.x = p.x;
+        r.y = p.y;
+        r.w = size.x;
+        r.h = size.y;
+        func_0020EB50(self->panels[0].trophy, &scr, &r);
+        func_0020EB50(self->panels[1].trophy, &scr, &r);
+    } else {
+        t2Vector a;
+        t2Vector size;
+        t2Vector sc;
+        getElemPos_9AD0(&D_00477B40, &a);
+        getElemSize_9AD0(&D_00477B40, &size, 0);
+        getElemScale_9AD0(&D_00477B40, &sc);
+        size.x *= sc.x;
+        size.y *= sc.y;
+        t2Vector p;
+        p.x = 1.0f;
+        p.y = 1.0f;
+        sc = p;
+        func_001F10F8(self, &p.x, &a.x, &size.x, &sc.x, D_00477B40.alignX, D_00477B40.alignY, 0);
+        tRect_9AD0 r0;
+        r0.x = p.x;
+        r0.y = p.y;
+        r0.w = size.x;
+        r0.h = size.y;
+        func_0020EB50(self->panels[0].trophy, &scr, &r0);
+        func_001F10F8(self, &p.x, &a.x, &size.x, &sc.x, D_00477B40.alignX, D_00477B40.alignY, 1);
+        tRect_9AD0 r1;
+        r1.x = p.x;
+        r1.y = p.y;
+        r1.w = size.x;
+        r1.h = size.y;
+        func_0020EB50(self->panels[1].trophy, &scr, &r1);
+    }
+    cBE_getInterface_Fv(cBE_getBE(), 4);
+    self->bank428 = findFont_9AD0(*(void**)(self->engine + 8), D_004A21F0);
+    self->font = (void*)findFont_9AD0(*(void**)(self->engine + 8), D_004A21F8);
+    self->w440 = findElem_9AD0(self->engine, D_004A2200);
+    self->w43C = findElem_9AD0(self->engine, D_004A2208);
+    self->w438 = findElem_9AD0(self->engine, D_004A2210);
+    self->w434 = findElem_9AD0(self->engine, D_004A2218);
+    self->w470 = findElem_9AD0(self->engine, D_004A2220);
+    for (int i = 0; i < 26; i++) {
+        self->icons[i] = func_00398380(self->engine + 0x58, D_004C88D8[i]);
+    }
+    cGfx_9AD0* gfx = (cGfx_9AD0*)D_004A289C;
+    self->mode = gfx->mode;
+    self->f490 = 0xDEEDDEED;
+    {
+        sVEntry<unsigned int(void*, int)>* vt = *(sVEntry<unsigned int(void*, int)>**)(D_004A289C + 0x10D8);
+        self->scrW.set(vt[56].fn(D_004A289C + vt[56].delta, self->mode));
+    }
+    {
+        sVEntry<unsigned int(void*, int)>* vt = *(sVEntry<unsigned int(void*, int)>**)(D_004A289C + 0x10D8);
+        self->scrH.set(vt[57].fn(D_004A289C + vt[57].delta, self->mode));
+    }
+    self->w444[0] = findElem_9AD0(self->engine, D_004A2210);
+    self->w444[1] = findElem_9AD0(self->engine, D_004A2208);
+    self->w444[2] = findElem_9AD0(self->engine, D_004A2200);
+    self->w444[3] = findElem_9AD0(self->engine, D_004A2228);
+    self->w444[4] = findElem_9AD0(self->engine, D_004A2230);
+    self->w444[5] = findElem_9AD0(self->engine, D_004A2238);
+    self->w444[6] = findElem_9AD0(self->engine, D_004A2240);
+    self->w444[7] = findElem_9AD0(self->engine, D_004A2248);
+    self->w444[8] = findElem_9AD0(self->engine, D_004A2250);
+    self->w444[9] = findElem_9AD0(self->engine, D_004A2258);
+    self->w444[10] = findElem_9AD0(self->engine, D_004A2260);
+    for (int i = 0; i < 5; i++) {
+        for (int j = 0; j < 3; j++) {
+            self->boost[i][j] = func_00398380(self->engine + 0x58, D_004C8940[i][j]);
+        }
+    }
+    self->w538 = findElem_9AD0(self->engine, D_004A2268);
+    {
+    t2Vector a;
+    getElemSize_9AD0(&D_00476940, &a, 0);
+    setupVertBar_9AD0(&self->bars[0], a.y);
+    getElemSize_9AD0(&D_00477480, &a, 0);
+    setupVertBar_9AD0(&self->bars[1], a.y);
+    getElemSize_9AD0(&D_00477048, &a, 0);
+    self->bars[2].count = 1;
+    self->bars[2].scale = 1.0f;
+    a.x -= 23.0f;
+    if (a.x - 18.0f < 0.0f) {
+        self->bars[2].count = 0;
+        self->bars[2].scale = a.x * (1.0f / 18.0f);
+    }
+    getElemSize_9AD0(&D_00477B88, &a, 0);
+    self->bars[3].count = 1;
+    self->bars[3].scale = 1.0f;
+    a.x -= 23.0f;
+    if (a.x - 18.0f < 0.0f) {
+        self->bars[3].count = 0;
+        self->bars[3].scale = a.x * (1.0f / 18.0f);
+    }
+    }
+    {
+    sGameOpts_9AD0 opts = D_00535610;
+    switch ((opts.flags >> 22) & 7) {
+    case 0:
+    case 2:
+        self->fontName = D_004A21E4;
+        break;
+    case 1:
+    case 3:
+        self->fontName = D_004A21EC;
+        break;
+    }
+    }
+    self->w16C = func_00391FB0(self->font, self->fontName, 0, 0, 1.0f, 1.0f);
+    self->w170 = func_00391FB0(self->font, D_004A2270, 0, 0, 1.0f, 1.0f);
+    self->w174 = func_00391FB0(self->font, D_004A2108, 0, 0, 1.0f, 1.0f);
+    self->w178 = (self->w170 - func_00391FB0(self->font, D_004A2278, 0, 0, 1.0f, 1.0f)) * 0.25f;
+    self->f17C = 0;
+    self->f180 = 0;
+    self->f184 = 0;
+    self->f188 = 0;
+    self->f18C = 0xFFFFFFFF;
+    self->rnd = BXrand() & 1;
+    func_001E94E0(self->box560, D_004A21D0[self->rnd], self->bank428, &D_004A4F50);
+    func_001E94E0(self->box6AC, D_004A21D8, self->bank428, &D_004A4F50);
+    func_001E94E0(self->box7F8, D_004A21D8, self->bank428, &D_004A4F50);
+    unsigned short fmt[32];
+    func_003DCA40(fmt, D_0046EAB8);
+    unsigned short* name = getLocString_9AD0(D_0046EAC8);
+    unsigned short* skip = getLocString_9AD0(D_0046EAD8);
+    unsigned short buf[32];
+    func_003DC9F8(buf, fmt, name, skip);
+    func_001E9540(self->boxB48, buf, self->bank428, &D_004A4F58);
+}
+#endif
 
 INCLUDE_ASM("fe/ovstatehud", func_001EA930);
 
