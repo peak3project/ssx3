@@ -1376,7 +1376,411 @@ extern "C" void func_00334850(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("intersect/worldsphtree", func_00334888);
+#ifdef SKIP_ASM
+// 4x4 matrix with an empty ctor and a VU0 copy (through vf1..vf4).
+struct sWsMat_4888 {
+    t4Vector row[4];
+    sWsMat_4888() {}
+    // PORT: PS2-only VU0 inline asm (4x4 matrix copy through VU0 registers).
+    sWsMat_4888(const sWsMat_4888& s)
+    {
+        __asm__ __volatile__(
+            "lqc2      $vf1, 0x0(%1)\n"
+            "lqc2      $vf2, 0x10(%1)\n"
+            "lqc2      $vf3, 0x20(%1)\n"
+            "lqc2      $vf4, 0x30(%1)\n"
+            "sqc2      $vf1, 0x0(%0)\n"
+            "sqc2      $vf2, 0x10(%0)\n"
+            "sqc2      $vf3, 0x20(%0)\n"
+            "sqc2      $vf4, 0x30(%0)\n"
+            :
+            : "r"(this), "r"(&s)
+            : "memory");
+    }
+};
+
+// A bone of an instance's skeleton (16 bytes): parent index, collision mesh, local matrix.
+struct sWsBone_4888 {
+    int parent;         // 0x0
+    char* mesh;         // 0x4
+    int pad08;
+    sWsMat_4888* mat;   // 0xC
+};
+
+struct sWsBoneTbl_4888 {
+    int pad00;
+    int count;              // 0x4
+    sWsBone_4888* bones;    // 0x8
+};
+
+// Per-bone part record of an instance definition (12 bytes).
+struct sWsPart_4888 {
+    char pad00[0xA];
+    short id;           // 0xA
+};
+
+struct sWsInstDef_4888 {
+    int type;                   // 0x0
+    int pad04[3];
+    sWsPart_4888 parts[1];      // 0x10
+};
+
+// A world instance: collision object, world matrix, skeleton, scale, definition.
+struct sWsInst_4888 {
+    char pad00[0xC];
+    sWsVObj* obj;               // 0xC
+    sWsMat_4888 mat;            // 0x10
+    char pad50[0x30];
+    sWsBoneTbl_4888* tbl;       // 0x80
+    float scale;                // 0x84
+    sWsInstDef_4888* def;       // 0x88
+};
+
+// A triangle hit record (0x80 bytes; empty ctor).
+struct sWsHit_4888 {
+    t4Vector pos;       // 0x00
+    t4Vector nrm;       // 0x10
+    t4Vector v20;       // 0x20
+    t4Vector v30;       // 0x30
+    float dist;         // 0x40
+    int type;           // 0x44
+    void* tri;          // 0x48
+    int id;             // 0x4C
+    void* inst;         // 0x50
+    void* obj;          // 0x54
+    int f58;            // 0x58
+    int bone;           // 0x5C
+    int pad60[8];
+    sWsHit_4888() {}
+} __attribute__((aligned(16)));
+
+// The query object (vtable at 0x50).
+struct sWsQuery_4888 {
+    char pad00[0x50];
+    sWsVtSlot* vt;              // 0x50
+};
+
+typedef int (*Test_4888)(void*);
+typedef int (*Query_4888)(void*, void*, void*, int, int);
+typedef sWsMat_4888* (*GetMat_4888)(void*, void*);
+typedef void (*SetXf_4888)(void*, float, sWsMat_4888*);
+typedef void (*Reset_4888)(void*);
+typedef int (*Tris_4888)(void*, void*, void*, sWsHit_4888*, int);
+typedef int (*Hit_4888)(void*, void*, void*);
+typedef int (*Mesh_4888)(void*, void*, sWsHit_4888*, int);
+
+extern void* D_004A47B8;
+void* func_003A6CC8_4888(void* self, void* a1) __asm__("func_003A6CC8__FPvT0");
+void* func_003A6CD8_4888(void* self, void* a1) __asm__("func_003A6CD8__FPvT0");
+extern "C" void* func_003A6CE8(void* self, int a1);
+void* func_003A6D00_4888(void* self, int a1) __asm__("func_003A6D00__FPvi");
+// PORT: callers pass the hit capacity as a fifth argument the function never reads.
+extern "C" int func_0032C0F8_cap(void* self, void* mesh, int flag, sWsHit_4888* out, int cap) __asm__("func_0032C0F8");
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix multiply, d = b * a).
+static inline void vu0MulMat_4888(sWsMat_4888* d, const sWsMat_4888* a, const sWsMat_4888* b)
+{
+    __asm__ __volatile__(
+        "lqc2      $vf4, 0x0(%1)\n"
+        "lqc2      $vf5, 0x10(%1)\n"
+        "lqc2      $vf6, 0x20(%1)\n"
+        "lqc2      $vf7, 0x30(%1)\n"
+        "lqc2      $vf8, 0x0(%2)\n"
+        "lqc2      $vf9, 0x10(%2)\n"
+        "lqc2      $vf10, 0x20(%2)\n"
+        "lqc2      $vf11, 0x30(%2)\n"
+        "vmulax.xyzw ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw $vf12, $vf7, $vf8w\n"
+        "vmulax.xyzw ACC, $vf4, $vf9x\n"
+        "vmadday.xyzw ACC, $vf5, $vf9y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf9z\n"
+        "vmaddw.xyzw $vf13, $vf7, $vf9w\n"
+        "vmulax.xyzw ACC, $vf4, $vf10x\n"
+        "vmadday.xyzw ACC, $vf5, $vf10y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf10z\n"
+        "vmaddw.xyzw $vf14, $vf7, $vf10w\n"
+        "vmulax.xyzw ACC, $vf4, $vf11x\n"
+        "vmadday.xyzw ACC, $vf5, $vf11y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf11z\n"
+        "vmaddw.xyzw $vf15, $vf7, $vf11w\n"
+        "sqc2      $vf12, 0x0(%0)\n"
+        "sqc2      $vf13, 0x10(%0)\n"
+        "sqc2      $vf14, 0x20(%0)\n"
+        "sqc2      $vf15, 0x30(%0)\n"
+        :
+        : "r"(d), "r"(a), "r"(b)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix copy through VU0 registers).
+static inline void vu0CopyMat_4888(sWsMat_4888* d, const sWsMat_4888* s)
+{
+    __asm__ __volatile__(
+        "lqc2      $vf1, 0x0(%1)\n"
+        "lqc2      $vf2, 0x10(%1)\n"
+        "lqc2      $vf3, 0x20(%1)\n"
+        "lqc2      $vf4, 0x30(%1)\n"
+        "sqc2      $vf1, 0x0(%0)\n"
+        "sqc2      $vf2, 0x10(%0)\n"
+        "sqc2      $vf3, 0x20(%0)\n"
+        "sqc2      $vf4, 0x30(%0)\n"
+        :
+        : "r"(d), "r"(s)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (vector * matrix, row-vector convention).
+static inline t4Vector vu0MtxMul_4888(const sWsMat_4888* m, const t4Vector& v)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2         $vf8, %1\n"
+        "lqc2         $vf4, 0x0(%2)\n"
+        "lqc2         $vf5, 0x10(%2)\n"
+        "lqc2         $vf6, 0x20(%2)\n"
+        "lqc2         $vf7, 0x30(%2)\n"
+        "vmulax.xyzw  ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw  $vf12, $vf7, $vf8w\n"
+        "sqc2         $vf12, %0\n"
+        : "=m"(r)
+        : "m"(v), "r"(m)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (d = v * s).
+static inline void vu0ScaleVector_4888(t4Vector& d, const t4Vector& v, float s)
+{
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(d), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+}
+
+// d = v * s
+static inline void ScaleTo_4888(t4Vector& d, const t4Vector& v, float s)
+{
+    vu0ScaleVector_4888(d, v, s);
+}
+
+// v * s
+static inline t4Vector Scale_4888(const t4Vector& v, float s)
+{
+    t4Vector r;
+    ScaleTo_4888(r, v, s);
+    return r;
+}
+
+// A vector built from four floats.
+struct sVecK_4888 : public t4Vector {
+    sVecK_4888(float ax, float ay, float az, float aw)
+    {
+        x = ax;
+        y = ay;
+        z = az;
+        w = aw;
+    }
+};
+
+// Component-wise product.
+static inline sVecK_4888 MulVec_4888(const t4Vector& a, const t4Vector& b)
+{
+    return sVecK_4888(a.x * b.x, a.y * b.y, a.z * b.z, a.w * b.w);
+}
+
+static inline t4Vector Row_4888(const sWsMat_4888& m, int i)
+{
+    return m.row[i];
+}
+
+// In-place inverse of a rigid transform: transpose the rotation, rotate the negated translation back.
+static inline void InvertOrtho_4888(sWsMat_4888& m)
+{
+    float f;
+    f = m.row[0].y;
+    m.row[0].y = m.row[1].x;
+    m.row[1].x = f;
+    f = m.row[0].z;
+    m.row[0].z = m.row[2].x;
+    m.row[2].x = f;
+    f = m.row[1].z;
+    m.row[1].z = m.row[2].y;
+    m.row[2].y = f;
+    t4Vector v = Scale_4888(Row_4888(m, 3), -1.0f);
+    v.w = 0.0f;
+    v = vu0MtxMul_4888(&m, v);
+    v.w = 1.0f;
+    m.row[3] = v;
+}
+
+// Part record i of an instance definition.
+static inline sWsPart_4888* GetPart_4888(sWsInstDef_4888* def, int i)
+{
+    return &def->parts[i];
+}
+
+// Collects the triangle hits of instance `node` against query q into buf (mode 1: unnamed parts only, mode 2: named
+// parts only); bone matrices come from the instance's animated object or are built here from the skeleton.
+extern "C" int func_4888(sWsQuery_4888* q, sWsInst_4888* node, sWsHit_4888* buf, int cap, int mode) __asm__("func_00334888");
+extern "C" int func_4888(sWsQuery_4888* q, sWsInst_4888* node, sWsHit_4888* buf, int cap, int mode)
+{
+    if (node->obj != 0) {
+        sWsVtSlot* vt = node->obj->vt;
+        if (((Test_4888)vt[38].fn)((char*)node->obj + vt[38].delta)) {
+            sWsVtSlot* vt2 = node->obj->vt;
+            return ((Query_4888)vt2[39].fn)((char*)node->obj + vt2[39].delta, q, buf, cap, mode);
+        }
+    }
+    int type = node->def->type;
+    if (type != 3 && type != 1 && type != 2)
+        return 0;
+    sWsVObj* obj = node->obj;
+    sWsMat_4888 mats[24];
+    sWsMat_4888* pMat = &node->mat;
+    int useLocal = 1;
+    sWsMat_4888* boneMats = mats;
+    if (obj != 0) {
+        sWsVtSlot* vt = obj->vt;
+        if (((Test_4888)vt[26].fn)((char*)obj + vt[26].delta)) {
+            useLocal = 0;
+            sWsVtSlot* vt2 = obj->vt;
+            boneMats = ((GetMat_4888)vt2[28].fn)((char*)obj + vt2[28].delta, node);
+        } else {
+            sWsVtSlot* vt2 = obj->vt;
+            pMat = ((GetMat_4888)vt2[25].fn)((char*)obj + vt2[25].delta, node);
+        }
+    }
+    sWsBoneTbl_4888* tbl = node->tbl;
+    sWsBone_4888* bone = tbl->bones;
+    float s = node->scale;
+    t4Vector scl;
+    scl.x = s;
+    scl.y = s;
+    scl.z = s;
+    scl.w = 1.0f;
+    int n = 0;
+    sWsMat_4888* m = boneMats;
+    for (int i = 0, k = 0; i < tbl->count; i++, bone++, m++) {
+        if (useLocal) {
+            int parent = bone->parent;
+            if (parent != -1) {
+                sWsMat_4888 t2;
+                sWsMat_4888 a;
+                t4Vector res;
+                t4Vector r3;
+                sWsMat_4888* lm = bone->mat;
+                res = lm->row[0];
+                a.row[0] = res;
+                res = lm->row[1];
+                a.row[1] = res;
+                res = lm->row[2];
+                a.row[2] = res;
+                r3 = lm->row[3];
+                res.x = r3.x * scl.x;
+                res.y = r3.y * scl.y;
+                res.z = r3.z * scl.z;
+                res.w = r3.w * scl.w;
+                a.row[3] = res;
+                sWsMat_4888 t;
+                sWsMat_4888* pt2 = &t2;
+                sWsMat_4888* pt = &t;
+                vu0MulMat_4888(pt, &mats[parent], &a);
+                vu0CopyMat_4888(pt2, pt);
+                vu0CopyMat_4888(&mats[i], pt2);
+            } else {
+                sWsMat_4888 t2;
+                sWsMat_4888 a;
+                t4Vector res;
+                t4Vector r3;
+                sWsMat_4888* lm = bone->mat;
+                res = lm->row[0];
+                a.row[0] = res;
+                res = lm->row[1];
+                a.row[1] = res;
+                res = lm->row[2];
+                a.row[2] = res;
+                r3 = lm->row[3];
+                res.x = r3.x * scl.x;
+                res.y = r3.y * scl.y;
+                res.z = r3.z * scl.z;
+                res.w = r3.w * scl.w;
+                a.row[3] = res;
+                sWsMat_4888 t;
+                sWsMat_4888* pt2 = &t2;
+                sWsMat_4888* pt = &t;
+                vu0MulMat_4888(pt, pMat, &a);
+                vu0CopyMat_4888(pt2, pt);
+                vu0CopyMat_4888(&mats[i], pt2);
+            }
+        }
+        if (bone->mesh == 0)
+            continue;
+        if (mode == 2) {
+            if (GetPart_4888(node->def, i)->id == -1) {
+                if (type != 2)
+                    k++;
+                continue;
+            }
+        } else if (mode == 1) {
+            if (GetPart_4888(node->def, i)->id != -1) {
+                if (type != 2)
+                    k++;
+                continue;
+            }
+        }
+        sWsHit_4888 ii[64];
+        sWsMat_4888 inv = *m;
+        InvertOrtho_4888(inv);
+        int inum = 0;
+        void* tri = 0;
+        ((SetXf_4888)q->vt[1].fn)((char*)q + q->vt[1].delta, 1.0f / node->scale, &inv);
+        if (type == 2) {
+            inum = ((Tris_4888)q->vt[7].fn)((char*)q + q->vt[7].delta, bone->mesh, bone->mesh + 0xC, ii, 64);
+        } else {
+            if (((Hit_4888)q->vt[9].fn)((char*)q + q->vt[9].delta, bone->mesh, bone->mesh + 0xC)) {
+                if (type == 3) {
+                    tri = func_003A6CE8(func_003A6CD8_4888(D_004A47B8, node), k);
+                    inum = ((Mesh_4888)q->vt[6].fn)((char*)q + q->vt[6].delta, tri, ii, 64);
+                } else {
+                    inum = func_0032C0F8_cap(q, func_003A6D00_4888(func_003A6CC8_4888(D_004A47B8, node), k),
+                                             *(int*)(bone->mesh + 0x18) & 1, ii, 64);
+                }
+            }
+            k++;
+        }
+        ((Reset_4888)q->vt[2].fn)((char*)q + q->vt[2].delta);
+        for (int j = 0; j < inum; j++) {
+            ii[j].nrm = vu0MtxMul_4888(m, ii[j].nrm);
+            buf[n] = ii[j];
+            buf[n].pos = vu0MtxMul_4888(m, MulVec_4888(buf[n].pos, scl));
+            buf[n].type = 1;
+            buf[n].inst = node;
+            buf[n].bone = i;
+            buf[n].id = -1;
+            buf[n].tri = tri;
+            buf[n].v20 = *D_004FF120;
+            buf[n].v30 = *D_004FF120;
+            buf[n].obj = 0;
+            if (GetPart_4888(node->def, i)->id != -1)
+                buf[n].id = GetPart_4888(node->def, i)->id;
+            n++;
+        }
+    }
+    return n;
+}
+#endif
 
 INCLUDE_ASM("intersect/worldsphtree", func_00335128);
 
