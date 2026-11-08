@@ -111,6 +111,7 @@ class cRiderVbBC_btf : public cRiderVbB_btf, public cRiderVbC_btf { public: };
 class cRiderVbPad_btf { public: char pad[0x6C0]; } __attribute__((aligned(16)));
 class cRiderVb_btf : public cRiderVbPad_btf, public cRiderVbA_btf, public cRiderVbBC_btf {
 public:
+    cRiderVb_btf();
     virtual ~cRiderVb_btf();
 };
 void operator_delete(int* p);
@@ -1264,7 +1265,32 @@ extern "C" void func_002EAA28(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("visualfx/boardtrailfx", func_002EAAE0);
+#ifdef SKIP_ASM
+void func_002EADC0(void* self);
+struct cBtfIn_2EAAE0 {
+    char data[0x10];
+    cBtfIn_2EAAE0() {}
+};
+class cBtf_2EAAE0 : virtual public cRiderVb_btf {
+public:
+    char pad04[0xC];
+    cBtfIn_2EAAE0 a[3][4];
+    char pad[0x34];
+    cBtf_2EAAE0();
+    virtual ~cBtf_2EAAE0();
+};
+
+cBtf_2EAAE0::cBtf_2EAAE0()
+{
+    func_002EADC0(this);
+}
+// PORT: cRiderVb_btf stands in for cRider; its constructor is the retail cRider_cRider.
+__asm__("__12cRiderVb_btf = cRider_cRider\n");
+// PORT: the compiler names this ctor __11cBtf_2EAAE0i; expose it under the address-derived name.
+__asm__(".globl func_002EAAE0\n.type func_002EAAE0,@function\nfunc_002EAAE0 = __11cBtf_2EAAE0i\n.size func_002EAAE0,0x180\n");
+#endif
 
 //100%
 INCLUDE_ASM("visualfx/boardtrailfx", func_002EAC60);
