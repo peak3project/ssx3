@@ -859,7 +859,270 @@ void func_00398A60(void* a, void* b)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ui/uiengine", func_00398A78);
+#ifdef SKIP_ASM
+extern "C" void func_0039FEB8(void* self, void* a, void* b);
+extern "C" void func_0031BE50(float* s, float* c, float angle);
+
+struct sV3_8A78 {
+    float x, y, z;
+    sV3_8A78() {}
+    sV3_8A78(float ax, float ay, float az) : x(ax), y(ay), z(az) {}
+    sV3_8A78 operator+(const sV3_8A78& o) const { return sV3_8A78(x + o.x, y + o.y, z + o.z); }
+};
+struct sV4_8A78 {
+    float x, y, z, w;
+    sV4_8A78() {}
+    sV4_8A78(const float& ax, const float& ay, const float& az, const float& aw) : x(ax), y(ay), z(az), w(aw) {}
+    void Set(float ax, float ay, float az)
+    {
+        x = ax;
+        y = ay;
+        z = az;
+    }
+} __attribute__((aligned(16)));
+struct sM33_8A78 {
+    float m[3][3];
+};
+// One sprite vertex: texture coordinates, colour (0..128) and position.
+struct sVtx_8A78 {
+    float u, v, q;
+    float pad0C;
+    int r, g, b, a;
+    sV4_8A78 pos;
+};
+// Texture page entry: id and the uv rectangle.
+struct sUITex_8A78 {
+    int id;
+    char pad4[0xC - 0x4];
+    float v0;   // 0xC
+    float u0;   // 0x10
+    float u1;   // 0x14
+    float v1;   // 0x18
+};
+struct sRS_8A78 {
+    int f0;
+    int f4;
+    int f8;
+    int fC;
+    short f10;
+};
+struct sVE_8A78 { short delta; short index; void (*fn)(void*, ...); };
+struct cUICtx_8A78 {
+    char pad0[0xE84];
+    sRS_8A78* top;           // 0xE84
+    char padE88[0x10D8 - 0xE88];
+    sVE_8A78* vt;            // 0x10D8
+};
+struct cUIIcon_8A78 {
+    char pad0[0x8];
+    sVE_8A78* vt;            // 0x8
+    char padC[0x15 - 0xC];
+    unsigned char f15;       // 0x15
+    char pad16[0x1C - 0x16];
+    float col[4];            // 0x1C (a, r, g, b)
+    sV3_8A78 rot;            // 0x2C
+    char pad38[0x44 - 0x38];
+    sV3_8A78 pos;            // 0x44
+    sV3_8A78 scale;          // 0x50
+    char pad5C[0x74 - 0x5C];
+    unsigned int flags;      // 0x74
+    int texId;               // 0x78
+    sUITex_8A78* tex;        // 0x7C
+};
+extern cUICtx_8A78* D_004A289C_8a78 __asm__("D_004A289C");
+extern sM33_8A78 D_004FF170_8a78 __asm__("D_004FF170");
+
+// PORT: PS2-only VU0 inline asm (a += b).
+static inline void vu0AddEq_8A78(sV4_8A78& a, const sV4_8A78& b)
+{
+    __asm__(
+        "lqc2      $vf3, %0\n"
+        "lqc2      $vf4, %1\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "+m"(a)
+        : "m"(b)
+        : "memory");
+}
+
+// Texture of the current render state (-1 = untextured).
+static inline void SetTexture_8A78(cUICtx_8A78* ctx, int id)
+{
+    ctx->top->f10 = id;
+}
+
+// Number of quarter turns applied to the texture coordinates.
+static inline int GetTurns_8A78(cUIIcon_8A78* self)
+{
+    return (self->flags >> 2) & 3;
+}
+
+// Pushes a copy of the current render state.
+static inline void PushRS_8A78()
+{
+    cUICtx_8A78* ctx = D_004A289C_8a78;
+    ctx->top[1] = ctx->top[0];
+    ctx->top++;
+}
+
+static inline void PopRS_8A78()
+{
+    D_004A289C_8a78->top--;
+}
+
+// m = r * m for a rotation of `angle` about `axis`.
+static inline void Rotate_8A78(sM33_8A78& m, const sV3_8A78& axis, float angle)
+{
+    sM33_8A78 r;
+    float s;
+    float c;
+    func_0031BE50(&s, &c, angle);
+    float t = 1.0f - c;
+    float x = axis.x;
+    float y = axis.y;
+    float z = axis.z;
+    float tx = t * x;
+    float ty = t * y;
+    float tz = t * z;
+    float sx = s * x;
+    float sy = s * y;
+    float sz = s * z;
+    r.m[0][0] = tx * x + c;
+    r.m[1][0] = tx * y + sz;
+    r.m[2][0] = tx * z - sy;
+    r.m[0][1] = ty * x - sz;
+    r.m[1][1] = ty * y + c;
+    r.m[2][1] = ty * z + sx;
+    r.m[0][2] = tz * x + sy;
+    r.m[1][2] = tz * y - sx;
+    r.m[2][2] = tz * z + c;
+    sM33_8A78 a = m;
+    m.m[0][0] = a.m[0][0] * r.m[0][0] + a.m[1][0] * r.m[0][1] + a.m[2][0] * r.m[0][2];
+    m.m[1][0] = a.m[0][0] * r.m[1][0] + a.m[1][0] * r.m[1][1] + a.m[2][0] * r.m[1][2];
+    m.m[2][0] = a.m[0][0] * r.m[2][0] + a.m[1][0] * r.m[2][1] + a.m[2][0] * r.m[2][2];
+    m.m[0][1] = a.m[0][1] * r.m[0][0] + a.m[1][1] * r.m[0][1] + a.m[2][1] * r.m[0][2];
+    m.m[1][1] = a.m[0][1] * r.m[1][0] + a.m[1][1] * r.m[1][1] + a.m[2][1] * r.m[1][2];
+    m.m[2][1] = a.m[0][1] * r.m[2][0] + a.m[1][1] * r.m[2][1] + a.m[2][1] * r.m[2][2];
+    m.m[0][2] = a.m[0][2] * r.m[0][0] + a.m[1][2] * r.m[0][1] + a.m[2][2] * r.m[0][2];
+    m.m[1][2] = a.m[0][2] * r.m[1][0] + a.m[1][2] * r.m[1][1] + a.m[2][2] * r.m[1][2];
+    m.m[2][2] = a.m[0][2] * r.m[2][0] + a.m[1][2] * r.m[2][1] + a.m[2][2] * r.m[2][2];
+}
+
+// Transforms the point (v.x, v.y) by the upper two rows of m.
+static inline sV4_8A78 Xform_8A78(const sM33_8A78& m, const sV4_8A78& v)
+{
+    sV4_8A78 r;
+    r.x = m.m[0][0] * v.x + m.m[1][0] * v.y;
+    r.y = m.m[0][1] * v.x + m.m[1][1] * v.y;
+    r.z = m.m[0][2] * v.x + m.m[1][2] * v.y;
+    r.w = v.w;
+    return r;
+}
+
+// cUIIcon: draws the icon as a textured quad at (x, y), rotated about its position.
+extern "C" void func_00398A78(cUIIcon_8A78* self, float x, float y)
+{
+    sVtx_8A78 verts[4];
+    cUICtx_8A78* ctx = D_004A289C_8a78;
+    if (self->tex != 0) {
+        SetTexture_8A78(ctx, self->tex->id);
+        verts[0].u = self->tex->u0;
+        verts[0].v = self->tex->v0;
+        verts[1].u = self->tex->u1;
+        verts[1].v = self->tex->v0;
+        verts[2].u = self->tex->u0;
+        verts[2].v = self->tex->v1;
+        verts[3].u = self->tex->u1;
+        verts[3].v = self->tex->v1;
+    } else if (self->texId > 0) {
+        SetTexture_8A78(ctx, self->texId);
+        verts[0].u = 0.0f;
+        verts[0].v = 0.0f;
+        verts[1].u = 1.0f;
+        verts[1].v = 0.0f;
+        verts[2].u = 0.0f;
+        verts[2].v = 1.0f;
+        verts[3].u = 1.0f;
+        verts[3].v = 1.0f;
+    } else {
+        SetTexture_8A78(ctx, -1);
+    }
+    if (self->flags & 2) {
+        func_00398A60(&verts[0].u, &verts[1].u);
+        func_00398A60(&verts[0].v, &verts[1].v);
+        func_00398A60(&verts[2].u, &verts[3].u);
+        func_00398A60(&verts[2].v, &verts[3].v);
+    }
+    for (char i = 0; i < GetTurns_8A78(self); i++) {
+        float t = verts[0].u;
+        verts[0].u = verts[2].u;
+        verts[2].u = verts[3].u;
+        verts[3].u = verts[1].u;
+        verts[1].u = t;
+        t = verts[0].v;
+        verts[0].v = verts[2].v;
+        verts[2].v = verts[3].v;
+        verts[3].v = verts[1].v;
+        verts[1].v = t;
+    }
+    sV3_8A78 pos = self->pos;
+    sV3_8A78 size;
+    sV3_8A78 scale = self->scale;
+    self->vt[20].fn((char*)self + self->vt[20].delta, &size);
+    size.x *= scale.x;
+    size.y *= scale.y;
+    func_0039FEB8(self, &pos, &size);
+    pos.x += x;
+    pos.y += y;
+    sM33_8A78 m = D_004FF170_8a78;
+    if (self->rot.x != 0.0f) {
+        sV3_8A78 axis(1.0f, 0.0f, 0.0f);
+        Rotate_8A78(m, axis, self->rot.x);
+    }
+    if (self->rot.y != 0.0f) {
+        sV3_8A78 axis(0.0f, 1.0f, 0.0f);
+        Rotate_8A78(m, axis, self->rot.y);
+    }
+    if (self->rot.z != 0.0f) {
+        sV3_8A78 axis(0.0f, 0.0f, 1.0f);
+        Rotate_8A78(m, axis, self->rot.z);
+    }
+    sV3_8A78 a(pos.x - self->pos.x, pos.y - self->pos.y, pos.z - self->pos.z);
+    sV3_8A78 b;
+    {
+        sV3_8A78 end = pos + size;
+        b.x = end.x - self->pos.x;
+        b.y = end.y - self->pos.y;
+        b.z = end.z - self->pos.z;
+    }
+    verts[0].pos = Xform_8A78(m, sV4_8A78(a.x, a.y, 0.0f, 1.0f));
+    verts[1].pos = Xform_8A78(m, sV4_8A78(b.x, a.y, 0.0f, 1.0f));
+    verts[2].pos = Xform_8A78(m, sV4_8A78(a.x, b.y, 0.0f, 1.0f));
+    verts[3].pos = Xform_8A78(m, sV4_8A78(b.x, b.y, 0.0f, 1.0f));
+    vu0AddEq_8A78(verts[0].pos, sV4_8A78(self->pos.x, self->pos.y, self->pos.z, 0.0f));
+    vu0AddEq_8A78(verts[1].pos, sV4_8A78(self->pos.x, self->pos.y, self->pos.z, 0.0f));
+    vu0AddEq_8A78(verts[2].pos, sV4_8A78(self->pos.x, self->pos.y, self->pos.z, 0.0f));
+    vu0AddEq_8A78(verts[3].pos, sV4_8A78(self->pos.x, self->pos.y, self->pos.z, 0.0f));
+    for (int i = 0; i < 4; i++) {
+        verts[i].pos.Set(verts[i].pos.x, verts[i].pos.y, 0.0f);
+        verts[i].a = (int)(self->col[0] * 128.0f);
+        verts[i].r = (int)(self->col[1] * 128.0f);
+        verts[i].g = (int)(self->col[2] * 128.0f);
+        verts[i].b = (int)(self->col[3] * 128.0f);
+        verts[i].q = 1.0f;
+    }
+    PushRS_8A78();
+    cUICtx_8A78* rc = D_004A289C_8a78;
+    rc->top->f0 |= 0xC;
+    int* w = &rc->top->f8;
+    *w = (*w & ~0x3E0) | ((((self->f15 & 0x1F) + 9) << 5) & 0x3E0);
+    sVE_8A78* vt = rc->vt;
+    vt[0x238 / 8].fn((char*)rc + vt[0x238 / 8].delta, 4, verts, 0);
+    PopRS_8A78();
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ui/uiengine", func_00399730);
