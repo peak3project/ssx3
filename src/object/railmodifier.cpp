@@ -6060,7 +6060,523 @@ extern "C" void func_00364C90(void* self, sData20* src)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/railmodifier", func_00364CD0);
+#ifdef SKIP_ASM
+// One view of a deferred-render camera: projection, view matrix and two parameter vectors (0xA0 bytes).
+struct sDmView {
+    t4Matrix proj;      // 0x00
+    t4Matrix view;      // 0x40
+    t4Vector a;         // 0x80
+    t4Vector b;         // 0x90
+};
+
+
+// 4x4 matrix with an empty ctor and VU0 copies (copies go through vf1..vf4).
+struct sDmMatrix {
+    t4Vector row[4];
+    sDmMatrix() {}
+    // PORT: PS2-only VU0 inline asm (4x4 matrix copy through VU0 registers).
+    sDmMatrix(const sDmMatrix& s)
+    {
+        __asm__ __volatile__(
+            "lqc2      $vf1, 0x0(%1)\n"
+            "lqc2      $vf2, 0x10(%1)\n"
+            "lqc2      $vf3, 0x20(%1)\n"
+            "lqc2      $vf4, 0x30(%1)\n"
+            "sqc2      $vf1, 0x0(%0)\n"
+            "sqc2      $vf2, 0x10(%0)\n"
+            "sqc2      $vf3, 0x20(%0)\n"
+            "sqc2      $vf4, 0x30(%0)\n"
+            :
+            : "r"(this), "r"(&s)
+            : "memory");
+    }
+    // PORT: PS2-only VU0 inline asm (4x4 matrix copy through VU0 registers).
+    sDmMatrix& operator=(const sDmMatrix& s)
+    {
+        __asm__ __volatile__(
+            "lqc2      $vf1, 0x0(%1)\n"
+            "lqc2      $vf2, 0x10(%1)\n"
+            "lqc2      $vf3, 0x20(%1)\n"
+            "lqc2      $vf4, 0x30(%1)\n"
+            "sqc2      $vf1, 0x0(%0)\n"
+            "sqc2      $vf2, 0x10(%0)\n"
+            "sqc2      $vf3, 0x20(%0)\n"
+            "sqc2      $vf4, 0x30(%0)\n"
+            :
+            : "r"(this), "r"(&s)
+            : "memory");
+        return *this;
+    }
+};
+
+// A deferred-render camera (0x180 bytes): world matrix and two views.
+struct sDmCamera {
+    sDmMatrix world;    // 0x000
+    sDmView views[2];   // 0x040, 0x0E0
+};
+
+// The deferred-render manager's camera table (cur index at 0x69CC0, cameras from 0x69CD0).
+struct sDeferMan {
+    char pad_0x0[0x69CC0];
+    int curCamera;              // 0x69CC0
+    char pad_0x69CC4[0xC];
+    sDmCamera cameras[1];       // 0x69CD0
+};
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix multiply, a * b in row-vector convention).
+static inline sDmMatrix operator*(const sDmMatrix& a, const sDmMatrix& b)
+{
+    sDmMatrix d;
+    __asm__ __volatile__(
+        "lqc2      $vf4, 0x0(%1)\n"
+        "lqc2      $vf5, 0x10(%1)\n"
+        "lqc2      $vf6, 0x20(%1)\n"
+        "lqc2      $vf7, 0x30(%1)\n"
+        "lqc2      $vf8, 0x0(%2)\n"
+        "lqc2      $vf9, 0x10(%2)\n"
+        "lqc2      $vf10, 0x20(%2)\n"
+        "lqc2      $vf11, 0x30(%2)\n"
+        "vmulax.xyzw ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw $vf12, $vf7, $vf8w\n"
+        "vmulax.xyzw ACC, $vf4, $vf9x\n"
+        "vmadday.xyzw ACC, $vf5, $vf9y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf9z\n"
+        "vmaddw.xyzw $vf13, $vf7, $vf9w\n"
+        "vmulax.xyzw ACC, $vf4, $vf10x\n"
+        "vmadday.xyzw ACC, $vf5, $vf10y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf10z\n"
+        "vmaddw.xyzw $vf14, $vf7, $vf10w\n"
+        "vmulax.xyzw ACC, $vf4, $vf11x\n"
+        "vmadday.xyzw ACC, $vf5, $vf11y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf11z\n"
+        "vmaddw.xyzw $vf15, $vf7, $vf11w\n"
+        "sqc2      $vf12, 0x0(%0)\n"
+        "sqc2      $vf13, 0x10(%0)\n"
+        "sqc2      $vf14, 0x20(%0)\n"
+        "sqc2      $vf15, 0x30(%0)\n"
+        :
+        : "r"(&d), "r"(&b), "r"(&a)
+        : "memory");
+    return d;
+}
+
+// One 128-bit DMA / VIF packet quadword.
+struct sDmQuad {
+    unsigned int w[4];
+} __attribute__((aligned(16)));
+
+// Copies n packet quadwords to vifPtr and advances it (the prototype asserts ((u_int)vifPtr & 0xf) == 0 here).
+static inline void AddQuads(ulong*& vifPtr, const void* srcp, int n)
+{
+    const sDmQuad* src = (const sDmQuad*)srcp;
+    sDmQuad* d = (sDmQuad*)vifPtr;
+    sDmQuad* end = d + n;
+    while (d != end) {
+        *d++ = *src++;
+    }
+    vifPtr = (ulong*)d;
+}
+
+// DMA source-chain tags: call (5), ref (3), cnt (1). The retail code zero-extends call addresses (unsigned VU
+// program / packet addresses) and sign-extends ref addresses.
+#define DMA_CALL(addr) (((ulong)(unsigned int)(addr) << 32) | 0x50000000)
+#define DMA_REF(addr, qwc) (((ulong)(int)(addr) << 32) | (0x30000000 | (qwc)))
+#define DMA_CNT(qwc) (0x10000000 | (qwc))
+
+// The object D_004A4248 points to: two DMA packet addresses.
+struct sDm4248 {
+    char pad_0x0[0x1A0];
+    int f1A0;               // 0x1A0
+    char pad_0x1A4[0x17C];
+    int f320;               // 0x320
+};
+
+extern sDm4248* D_004A4248;
+extern int D_004A5990;
+extern sDmMatrix D_004FFB80;
+extern char D_0042E590[];
+extern char D_00430A80[];
+extern char D_00434990[];
+extern char D_00435BD0[];
+extern char D_00439A40[];
+extern char D_0043B3F0[];
+extern char D_0044B080[];
+extern char D_0044B140[];
+
+// Packet quadword i of p (lq/sq).
+#define QW(p, i) (((cQuad128*)(p))[i])
+
+// Sends the first view's matrix and parameter vectors (cnt 7: unpack header + 6 quadwords).
+static inline void AddViewPacket(ulong*& vifPtr, const sDmCamera* cam)
+{
+    vifPtr[0] = DMA_CNT(7);
+    vifPtr[1] = 0;
+    vifPtr[2] = 0;
+    vifPtr[3] = 0x6C06000000000000;
+    QW(vifPtr, 2) = *(cQuad128*)&cam->views[0].view.row[0];
+    QW(vifPtr, 3) = *(cQuad128*)&cam->views[0].view.row[1];
+    QW(vifPtr, 4) = *(cQuad128*)&cam->views[0].view.row[2];
+    QW(vifPtr, 5) = *(cQuad128*)&cam->views[0].view.row[3];
+    QW(vifPtr, 6) = *(cQuad128*)&cam->views[0].a;
+    QW(vifPtr, 7) = *(cQuad128*)&cam->views[0].b;
+    vifPtr += 16;
+}
+
+// Sets a matrix from its sixteen elements, given row by row.
+static inline void SetMatrix(sDmMatrix& m, float m00, float m01, float m02, float m03, float m10, float m11, float m12,
+                             float m13, float m20, float m21, float m22, float m23, float m30, float m31, float m32,
+                             float m33)
+{
+    m.row[0].x = m00;
+    m.row[1].x = m10;
+    m.row[2].x = m20;
+    m.row[3].x = m30;
+    m.row[0].y = m01;
+    m.row[1].y = m11;
+    m.row[2].y = m21;
+    m.row[3].y = m31;
+    m.row[0].z = m02;
+    m.row[1].z = m12;
+    m.row[2].z = m22;
+    m.row[3].z = m32;
+    m.row[0].w = m03;
+    m.row[1].w = m13;
+    m.row[2].w = m23;
+    m.row[3].w = m33;
+}
+
+// Appends the VIF/DMA setup for render pass `pass` of shader `type` (render/bxps2deferman.cpp); pass 2 only
+// links in the caller's init chain (pInitDMA).
+extern "C" void func_00364CD0(void* self, int type, int pass, unsigned int pInitDMA, ulong** ppVif)
+{
+    sDeferMan* dm = (sDeferMan*)self;
+    ulong* vifPtr = *ppVif;
+    sDmCamera* cam = &dm->cameras[dm->curCamera];
+    switch (type) {
+    case 0:
+    case 8:
+        break;
+    case 1:
+        switch (pass) {
+        case 0:
+            vifPtr[0] = DMA_CALL(D_0042E590);
+            vifPtr[1] = 0;
+            vifPtr[2] = DMA_REF(D_0044B080, 12);
+            vifPtr[3] = 0;
+            vifPtr += 4;
+        case 1:
+            AddViewPacket(vifPtr, cam);
+            break;
+        case 2:
+            break;
+        }
+        break;
+    case 2:
+        switch (pass) {
+        case 0: {
+            vifPtr[0] = DMA_CALL(D_00430A80);
+            vifPtr[1] = 0;
+            vifPtr[2] = DMA_CNT(13);
+            vifPtr[3] = 0;
+            vifPtr[4] = 0;
+            vifPtr[5] = 0x6C0B000000000000;
+            QW(vifPtr, 3) = *(cQuad128*)&cam->views[0].view.row[0];
+            QW(vifPtr, 4) = *(cQuad128*)&cam->views[0].view.row[1];
+            QW(vifPtr, 5) = *(cQuad128*)&cam->views[0].view.row[2];
+            QW(vifPtr, 6) = *(cQuad128*)&cam->views[0].view.row[3];
+            QW(vifPtr, 7) = *(cQuad128*)&cam->views[0].a;
+            QW(vifPtr, 8) = *(cQuad128*)&cam->views[0].b;
+            vifPtr[0x12] = 0x0000008000000080;
+            vifPtr[0x13] = 0x0000008000000080;
+            vifPtr[0x14] = 0x302E400000008000;
+            vifPtr[0x15] = 0x412;
+            vifPtr[0x16] = 0x312E400000008000;
+            vifPtr[0x17] = 0x412;
+            vifPtr[0x18] = 0x302EC00000008000;
+            vifPtr[0x19] = 0x412;
+            vifPtr[0x1A] = 0x312EC00000008000;
+            vifPtr[0x1B] = 0x412;
+            vifPtr[0x1C] = 0;
+            vifPtr[0x1D] = 0x6C2A020000000000;
+            sDm4248* tex = D_004A4248;
+            vifPtr[0x1E] = DMA_REF(tex->f1A0, 0x12);
+            vifPtr[0x1F] = 0;
+            vifPtr += 0x20;
+            vifPtr[0] = DMA_REF(tex->f320, 0x12);
+            vifPtr[1] = 0;
+            vifPtr += 2;
+            vifPtr[0] = DMA_CNT(6);
+            vifPtr[1] = 0;
+            float recip[4];
+            recip[0] = 1.0f / 3.0f;
+            recip[1] = 1.0f / 5.0f;
+            recip[2] = 1.0f / 7.0f;
+            recip[3] = 0.0f;
+            vifPtr[2] = 0x0000021200000200;
+            vifPtr[3] = 0;
+            vifPtr[4] = *(int*)&recip[0] | ((ulong)*(int*)&recip[0] << 32);
+            vifPtr[5] = *(int*)&recip[0] | ((ulong)*(int*)&recip[0] << 32);
+            vifPtr[6] = 0x0000021600000204;
+            vifPtr[7] = 0;
+            vifPtr[8] = *(int*)&recip[1] | ((ulong)*(int*)&recip[1] << 32);
+            vifPtr[9] = *(int*)&recip[1] | ((ulong)*(int*)&recip[1] << 32);
+            vifPtr[10] = 0x0000021C0000020A;
+            vifPtr[11] = 0;
+            vifPtr[12] = *(int*)&recip[2] | ((ulong)*(int*)&recip[2] << 32);
+            vifPtr[13] = *(int*)&recip[2] | ((ulong)*(int*)&recip[2] << 32);
+            vifPtr += 14;
+            break;
+        }
+        case 1:
+            AddViewPacket(vifPtr, cam);
+            break;
+        case 2:
+            break;
+        }
+        break;
+    case 3:
+        switch (pass) {
+        case 0:
+            vifPtr[0] = DMA_CALL(D_00435BD0);
+            vifPtr[1] = 0;
+            vifPtr[2] = DMA_CNT(8);
+            vifPtr[3] = 0;
+            vifPtr[4] = 0;
+            vifPtr[5] = 0x6C07000000000000;
+            QW(vifPtr, 3) = *(cQuad128*)&cam->views[0].view.row[0];
+            QW(vifPtr, 4) = *(cQuad128*)&cam->views[0].view.row[1];
+            QW(vifPtr, 5) = *(cQuad128*)&cam->views[0].view.row[2];
+            QW(vifPtr, 6) = *(cQuad128*)&cam->views[0].view.row[3];
+            QW(vifPtr, 7) = *(cQuad128*)&cam->views[0].a;
+            QW(vifPtr, 8) = *(cQuad128*)&cam->views[0].b;
+            vifPtr[0x12] = 0x000002C20000010C;
+            vifPtr[0x13] = 0;
+            vifPtr += 0x14;
+            vifPtr[0] = DMA_REF(D_0044B140, 7);
+            vifPtr[1] = 0;
+            vifPtr += 2;
+            break;
+        case 1:
+            AddViewPacket(vifPtr, cam);
+            break;
+        case 2:
+            break;
+        }
+        break;
+    case 4:
+        switch (pass) {
+        case 0: {
+            vifPtr[0] = DMA_CALL(D_00439A40);
+            vifPtr[1] = 0;
+            vifPtr[2] = DMA_CNT(8);
+            vifPtr[3] = 0;
+            vifPtr[4] = 0;
+            vifPtr[5] = 0x6C07000000000000;
+            vifPtr += 6;
+            AddQuads(vifPtr, &cam->views[0].view, 4);
+            t4Vector a = cam->views[0].a;
+            a.z *= 0.0625f;
+            AddQuads(vifPtr, &a, 1);
+            t4Vector b = cam->views[0].b;
+            b.z *= 0.0625f;
+            AddQuads(vifPtr, &b, 1);
+            t4Vector s;
+            s.x = cam->views[0].proj.row[0].x;
+            s.y = cam->views[0].proj.row[1].y;
+            s.z = 0.0f;
+            s.w = 0.0f;
+            AddQuads(vifPtr, &s, 1);
+            break;
+        }
+        case 1: {
+            vifPtr[0] = DMA_CNT(8);
+            vifPtr[1] = 0;
+            vifPtr[2] = 0;
+            vifPtr[3] = 0x6C07000000000000;
+            vifPtr += 4;
+            AddQuads(vifPtr, &cam->views[1].view, 4);
+            t4Vector a = cam->views[1].a;
+            a.z *= 0.0625f;
+            AddQuads(vifPtr, &a, 1);
+            t4Vector b = cam->views[1].b;
+            b.z *= 0.0625f;
+            AddQuads(vifPtr, &b, 1);
+            t4Vector s;
+            s.x = cam->views[1].proj.row[0].x;
+            s.y = cam->views[1].proj.row[1].y;
+            s.z = 0.0f;
+            s.w = 0.0f;
+            AddQuads(vifPtr, &s, 1);
+            break;
+        }
+        case 2:
+            break;
+        }
+        break;
+    case 5:
+        switch (pass) {
+        case 0: {
+            vifPtr[0] = DMA_CALL(D_0043B3F0);
+            vifPtr[1] = 0;
+            vifPtr[2] = DMA_CNT(4);
+            vifPtr[3] = 0;
+            vifPtr[4] = 0;
+            vifPtr[5] = 0x6C03000000000000;
+            vifPtr += 6;
+            t4Vector a = cam->views[1].a;
+            a.z *= 0.0625f;
+            AddQuads(vifPtr, &a, 1);
+            t4Vector b = cam->views[1].b;
+            b.z *= 0.0625f;
+            AddQuads(vifPtr, &b, 1);
+            t4Vector s;
+            s.x = cam->views[1].proj.row[0].x;
+            s.y = cam->views[1].proj.row[1].y;
+            s.z = 0.0f;
+            s.w = 0.0f;
+            AddQuads(vifPtr, &s, 1);
+            break;
+        }
+        case 1: {
+            vifPtr[0] = DMA_CNT(4);
+            vifPtr[1] = 0;
+            vifPtr[2] = 0;
+            vifPtr[3] = 0x6C03000000000000;
+            vifPtr += 4;
+            t4Vector a = cam->views[1].a;
+            a.z *= 0.0625f;
+            AddQuads(vifPtr, &a, 1);
+            t4Vector b = cam->views[1].b;
+            b.z *= 0.0625f;
+            AddQuads(vifPtr, &b, 1);
+            t4Vector s;
+            s.x = cam->views[1].proj.row[0].x;
+            s.y = cam->views[1].proj.row[1].y;
+            s.z = 0.0f;
+            s.w = 0.0f;
+            AddQuads(vifPtr, &s, 1);
+            break;
+        }
+        case 2:
+            break;
+        }
+        break;
+    case 6: {
+        if (D_004A5990 == 0) {
+            // Clip space to texture space: x * 0.5 + 0.5, y * -0.5 + 0.5.
+            SetMatrix(D_004FFB80, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.5f, 0.5f, 1.0f,
+                      1.0f);
+            D_004A5990 = 1;
+        }
+        switch (pass) {
+        case 0: {
+            vifPtr[0] = DMA_CALL(D_00434990);
+            vifPtr[1] = 0;
+            vifPtr[2] = DMA_CNT(7);
+            vifPtr[3] = 0;
+            vifPtr[4] = 0;
+            vifPtr[5] = 0x6C06000000000000;
+            QW(vifPtr, 3) = *(cQuad128*)&cam->views[0].view.row[0];
+            QW(vifPtr, 4) = *(cQuad128*)&cam->views[0].view.row[1];
+            QW(vifPtr, 5) = *(cQuad128*)&cam->views[0].view.row[2];
+            QW(vifPtr, 6) = *(cQuad128*)&cam->views[0].view.row[3];
+            QW(vifPtr, 7) = *(cQuad128*)&cam->views[0].a;
+            QW(vifPtr, 8) = *(cQuad128*)&cam->views[0].b;
+            vifPtr[0x12] = DMA_CNT(5);
+            vifPtr[0x13] = 0;
+            vifPtr[0x14] = 0;
+            vifPtr[0x15] = 0x6C04039200000000;
+            vifPtr[0x16] = 0x312E400000008000;
+            vifPtr[0x17] = 0x412;
+            sDmMatrix m = cam->world;
+            m = m * D_004FFB80;
+            QW(vifPtr, 0xC) = *(cQuad128*)&m.row[0];
+            QW(vifPtr, 0xD) = *(cQuad128*)&m.row[1];
+            QW(vifPtr, 0xE) = *(cQuad128*)&m.row[2];
+            vifPtr += 0x1E;
+            if (pInitDMA) { // the prototype asserts pInitDMA here
+                vifPtr[0] = DMA_CALL(pInitDMA);
+                vifPtr[1] = 0;
+                vifPtr += 2;
+            }
+            break;
+        }
+        case 1: {
+            vifPtr[0] = DMA_CNT(7);
+            vifPtr[1] = 0;
+            vifPtr[2] = 0;
+            vifPtr[3] = 0x6C06000000000000;
+            QW(vifPtr, 2) = *(cQuad128*)&cam->views[0].view.row[0];
+            QW(vifPtr, 3) = *(cQuad128*)&cam->views[0].view.row[1];
+            QW(vifPtr, 4) = *(cQuad128*)&cam->views[0].view.row[2];
+            QW(vifPtr, 5) = *(cQuad128*)&cam->views[0].view.row[3];
+            QW(vifPtr, 6) = *(cQuad128*)&cam->views[0].a;
+            QW(vifPtr, 7) = *(cQuad128*)&cam->views[0].b;
+            vifPtr[0x10] = DMA_CNT(5);
+            vifPtr[0x11] = 0;
+            vifPtr[0x12] = 0;
+            vifPtr[0x13] = 0x6C04039200000000;
+            vifPtr[0x14] = 0x312E400000008000;
+            vifPtr[0x15] = 0x412;
+            sDmMatrix m = cam->world;
+            m = m * D_004FFB80;
+            QW(vifPtr, 0xB) = *(cQuad128*)&m.row[0];
+            QW(vifPtr, 0xC) = *(cQuad128*)&m.row[1];
+            QW(vifPtr, 0xD) = *(cQuad128*)&m.row[2];
+            vifPtr += 0x1C;
+            if (pInitDMA) {
+                vifPtr[0] = DMA_CALL(pInitDMA);
+                vifPtr[1] = 0;
+                vifPtr += 2;
+            }
+            break;
+        }
+        case 2:
+            if (pInitDMA) {
+                vifPtr[0] = DMA_CALL(pInitDMA);
+                vifPtr[1] = 0;
+                vifPtr += 2;
+            }
+            break;
+        }
+        break;
+    }
+    case 7:
+        switch (pass) {
+        case 0:
+            vifPtr[0] = DMA_CALL(D_00434990);
+            vifPtr[1] = 0;
+            vifPtr += 2;
+            if (pInitDMA) {
+                vifPtr[0] = DMA_CALL(pInitDMA);
+                vifPtr[1] = 0;
+                vifPtr += 2;
+            }
+            break;
+        case 1:
+            if (pInitDMA) {
+                vifPtr[0] = DMA_CALL(pInitDMA);
+                vifPtr[1] = 0;
+                vifPtr += 2;
+            }
+            break;
+        case 2:
+            if (pInitDMA) {
+                vifPtr[0] = DMA_CALL(pInitDMA);
+                vifPtr[1] = 0;
+                vifPtr += 2;
+            }
+            break;
+        }
+        break;
+    }
+    *ppVif = vifPtr;
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/railmodifier", func_00365E40);
