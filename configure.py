@@ -37,10 +37,20 @@ if sys.platform == "darwin":
 
 # The compiler is SN V1.36 with its dormant `vec_mark` insn switched on (see tools/patch_vecmark.py):
 # the retail code shows EA's compiler emitted it in every empty array-ctor loop. The patched copy is
-# generated from the stock download on first configure.
+# generated from the stock download on first configure, and again whenever the patch changes.
 STOCK_CC_DIR = f"{TOOLS_DIR}/cc/eegcc-2.95.3-V1.36"
 CC_DIR = f"{TOOLS_DIR}/cc/eegcc-2.95.3-V1.36-vecmark"
-if not os.path.isdir(CC_DIR) and os.path.isdir(STOCK_CC_DIR):
+
+
+def _vecmark_current() -> bool:
+    """True if CC_DIR holds the cc1plus that tools/patch_vecmark.py currently produces (re-patch after a patch change)."""
+    import hashlib, re
+    want = re.search(r'PATCHED_SHA1 = "(\w+)"', open(f"{TOOLS_DIR}/patch_vecmark.py").read()).group(1)
+    cc1plus = f"{CC_DIR}/lib/gcc-lib/ee/2.95.3/cc1plus.exe"
+    return os.path.isfile(cc1plus) and hashlib.sha1(open(cc1plus, "rb").read()).hexdigest() == want
+
+
+if os.path.isdir(STOCK_CC_DIR) and not _vecmark_current():
     subprocess.run([sys.executable, f"{TOOLS_DIR}/patch_vecmark.py", STOCK_CC_DIR, CC_DIR], check=True)
 DRIVER_PATH_FLAG = f"-B{CC_DIR}/lib/gcc-lib/ee/2.95.3/"
 

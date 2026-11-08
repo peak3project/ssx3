@@ -10,9 +10,11 @@ decrement with the delay slot filled from the fall-through. Retail has no empty 
 produces.
 
 This patch makes build_vec_init call `emit_insn (gen_vec_mark ())` at the top of each loop body: its call to
-expand_start_target_temps (0x43fe20) is redirected to a 20-byte stub in the unused tail of .text that makes
-the original call and then emits the marker. Verified: all 6,991 then-matched functions compile to the same
-bytes; empty array-ctor loops now reproduce both retail shapes.
+expand_start_target_temps (0x43fe20) is redirected to a 26-byte stub in the unused tail of .text that makes
+the original call and then emits the marker, except in a loop whose element type is itself an array (the row loop
+of a 2-D member array): retail lets reorg fill that loop's branch delay slot with the loop-top decrement, which
+the volatile marker would block (func_00372B78; no code change in any other C++ unit, 2026-11-08). Verified:
+all 6,991 then-matched functions compile to the same bytes; empty array-ctor loops now reproduce both retail shapes.
 
 usage: tools/patch_vecmark.py SRC_COMPILER_DIR DST_COMPILER_DIR   (copies SRC to DST, patches DST's cc1plus)
 """
@@ -23,7 +25,7 @@ import sys
 from pathlib import Path
 
 STOCK_SHA1 = "2e7192cd633a2a04f2a78fe84e4ac0fdbd6867ad"
-PATCHED_SHA1 = "3c653fe43aa9b8064bc48922b0a8156d80b18740"
+PATCHED_SHA1 = "7410088eab8c39f86ce38fff509be769cd94db77"
 CC1PLUS = "lib/gcc-lib/ee/2.95.3/cc1plus.exe"
 
 TEXT_VA, TEXT_OFF = 0x401000, 0x1000
@@ -49,6 +51,10 @@ def patch(data: bytearray) -> None:
         code.extend(b"\xe8" + struct.pack("<i", target - (here + 5)))
 
     call(START_TARGET_TEMPS)
+    # no marker in a loop whose element is itself an array (the recursive build_vec_init path; %esi = element
+    # type, TREE_CODE at +8, ARRAY_TYPE = 0x12): retail keeps those loops' delay slots stealable
+    code += b"\x80\x7e\x08\x12"  # cmpb $0x12, 0x8(%esi)
+    code += b"\x74\x0e"        # je ret
     call(GEN_VEC_MARK)
     code += b"\x50"            # push eax
     call(EMIT_INSN)
