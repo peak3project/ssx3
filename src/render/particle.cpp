@@ -3595,7 +3595,201 @@ extern "C" void func_003781A0(sGfx_81A0* self, float ang, sPt7278* pos, float* s
 
 INCLUDE_ASM("render/particle", func_00378808);
 
+//100%
 INCLUDE_ASM("render/particle", func_00379028);
+#ifdef SKIP_ASM
+struct sGlyph9028 {
+    unsigned short code;    // 0x0
+    unsigned char w;        // 0x2
+    unsigned char h;        // 0x3
+    unsigned short u;       // 0x4
+    unsigned short v;       // 0x6
+    signed char adv;        // 0x8
+    signed char xoff;       // 0x9
+    signed char yoff;       // 0xA
+    char pad;
+};
+
+struct sFontRes9028 {
+    int count;              // 0x0
+    sGlyph9028* table;      // 0x4
+    sGlyph9028* def;        // 0x8
+    int first;              // 0xC
+    int last;               // 0x10
+};
+
+struct sView9028 {
+    char pad_0x0[0x20];
+    int mode;               // 0x20
+    char pad_0x24[0x230 - 0x24];
+};
+
+struct sGfx9028 {
+    char pad_0x0[0xE84];
+    sPtRenderState* top;            // 0xE84
+    char pad_0xE88[0x10DC - 0xE88];
+    int curView;                    // 0x10DC
+    char pad_0x10E0[0x18F0 - 0x10E0];
+    sPtRing* ring;                  // 0x18F0
+    char pad_0x18F4[0x5A00 - 0x18F4];
+    unsigned int bufAddr;           // 0x5A00
+    char pad_0x5A04[0x6AF0 - 0x5A04];
+    float f6AF0;                    // 0x6AF0
+    char pad_0x6AF4[0x6B04 - 0x6AF4];
+    float f6B04;                    // 0x6B04
+    char pad_0x6B08[0x6B18 - 0x6B08];
+    float f6B18;                    // 0x6B18
+    char pad_0x6B1C[0x6B20 - 0x6B1C];
+    float f6B20;                    // 0x6B20
+    float f6B24;                    // 0x6B24
+    float f6B28;                    // 0x6B28
+    char pad_0x6B2C[0x6B30 - 0x6B2C];
+    sPtMatrix m6B30;                // 0x6B30
+    char pad_0x6B70[0x6B90 - 0x6B70];
+    int texReady;                   // 0x6B90
+    char pad_0x6B94[0x6D20 - 0x6B94];
+    sView9028 views[1];             // 0x6D20
+};
+
+// Homogeneous position (w given) with a const-reference ctor: its stores, w included, go straight to the stack
+// slot, where the by-value sPt7278 ctor keeps `this` in a register for a constant w.
+struct sPtPos9028 : sPt7278 {
+    sPtPos9028(const float& ax, const float& ay, const float& az, const float& aw)
+    {
+        x = ax;
+        y = ay;
+        z = az;
+        w = aw;
+    }
+};
+
+// Stores a two-float pair (uv, half size); both values are computed before either store.
+static inline void Set2_9028(float* d, float a, float b)
+{
+    d[0] = a;
+    d[1] = b;
+}
+
+// Glyph lookup: direct index for [first, last], binary search above, default glyph if not found.
+static inline sGlyph9028* Find9028(sFontRes9028* f, int c)
+{
+    if (c < f->first)
+        return 0;
+    if (c <= f->last)
+        return f->table + c - f->first;
+    int lo = f->last - f->first;
+    int hi = f->count;
+    do {
+        int mid = (lo + hi) >> 1;
+        sGlyph9028* p = f->table + mid;
+        if (c == p->code)
+            return p;
+        if (c < p->code)
+            hi = mid;
+        else
+            lo = mid + 1;
+    } while (lo < hi);
+    return f->def;
+}
+
+// PORT: PS2-only GS packet build and VU0 inline asm; uncached (0x30000000) pointers.
+extern "C" void func_00379028(sGfx9028* self, sFontRes9028* font, unsigned short* s, float* color,
+                              float x, float y, float sx, float sy, float su, float sv, float z)
+{
+    if (self->texReady == 0) {
+        func_0037D968(self);
+    }
+    unsigned int buf = self->bufAddr;
+    unsigned long* p = func_0038F460(D_004A4474, buf, -1, 0);
+    unsigned long* q = p + 10;
+    int nloop = 0;
+    if (self->views[self->curView].mode != 0) {
+        float vz = self->f6B18 * z + self->f6B28;
+        sPt7278 a;
+        sPt7278 b;
+        a.z = vz;
+        a.w = 1.0f;
+        b.z = vz;
+        b.w = 1.0f;
+        for (; *s; s++) {
+            sGlyph9028* g = Find9028(font, *s);
+            if (g) {
+                nloop++;
+                float uv0[2];
+                float uv1[2];
+                Set2_9028(uv0, g->u * su, g->v * sv);
+                Set2_9028(uv1, (g->u + g->w) * su, (g->v + g->h) * sv);
+                a.x = (x + g->xoff * sx) * self->f6AF0 + self->f6B20;
+                a.y = (y + g->yoff * sy) * self->f6B04 + self->f6B24;
+                b.x = a.x + g->w * sx * self->f6AF0;
+                b.y = a.y + g->h * sy * self->f6B04;
+                q[0] = Bits_CF0(uv0[0]) | ((long)Bits_CF0(uv0[1]) << 32);
+                q[1] = (int)a.x | ((long)(int)a.y << 16) | ((long)(int)a.z << 32);
+                q[2] = Bits_CF0(uv1[0]) | ((long)Bits_CF0(uv1[1]) << 32);
+                q[3] = (int)b.x | ((long)(int)b.y << 16) | ((long)(int)b.z << 32);
+                q += 4;
+                x += g->adv * sx;
+            }
+        }
+    } else {
+        for (; *s; s++) {
+            sGlyph9028* g = Find9028(font, *s);
+            if (g) {
+                nloop++;
+                float uv0[2];
+                float uv1[2];
+                float size[2];
+                Set2_9028(uv0, g->u * su, g->v * sv);
+                Set2_9028(uv1, (g->u + g->w) * su, (g->v + g->h) * sv);
+                Set2_9028(size, g->w * sx * 0.5f, g->h * sy * 0.5f);
+                sPtPos9028 pos(x + g->xoff * sx + size[0], y + g->yoff * sy + size[1], z, 1.0f);
+                sPt7278 v = MulMat7278(&self->m6B30, pos);
+                float inv = 1.0f / v.w;
+                v.x *= inv;
+                v.y *= inv;
+                float dx = self->f6AF0 * size[0] * inv;
+                v.w = inv;
+                float dy = self->f6B04 * size[1] * inv;
+                sPt7278 d(dx, dy, 0.0f, 0.0f);
+                sPt7278 a = Sub_CF0(v, d);
+                sPt7278 b = Add7278(v, d);
+                q[0] = Bits_CF0(uv0[0]) | ((long)Bits_CF0(uv0[1]) << 32);
+                q[1] = (int)a.x | ((long)(int)a.y << 16) | ((long)(int)(a.z * a.w) << 32);
+                q[2] = Bits_CF0(uv1[0]) | ((long)Bits_CF0(uv1[1]) << 32);
+                q[3] = (int)b.x | ((long)(int)b.y << 16) | ((long)(int)(b.z * b.w) << 32);
+                q += 4;
+                x += g->adv * sx;
+            }
+        }
+    }
+    p[0] = (nloop * 2 + 4) | 0x10000000;
+    p[1] = 0;
+    p[2] = 0;
+    p[3] = (unsigned long)((nloop * 2 + 3) | 0x50000000U) << 32;
+    p[4] = 0x2400000000000001UL;
+    p[5] = 0x10;
+    p[6] = 0x56;
+    p[7] = (long)(int)(color[1] * 204.0f) | ((long)(int)(color[2] * 204.0f) << 8) |
+           ((long)(int)(color[3] * 204.0f) << 16) | ((long)(int)(color[0] * 128.0f) << 24) |
+           ((long)Bits_CF0(1.0f) << 32);
+    p[8] = (unsigned long)(nloop | 0x8000) | ((unsigned long)0x8800 << 47);
+    p[9] = 0x5252;
+    unsigned int next = func_0038F668(D_004A4474, q, 4);
+    sPtRing* ring = self->ring;
+    sPtRenderState* rs = self->top;
+    self->bufAddr = next + 0x10;
+    if (ring->count < 0xA28) {
+        rs->f8 = (rs->f8 & ~0x1F) | (*(int*)((char*)ring + 0x69CC4) & 0x1F);
+        int key = *(int*)((char*)ring + 0x69CC0);
+        sPtRingEnt* e = (sPtRingEnt*)((ring->count++ << 7) + ((unsigned int)ring->ents | 0x30000000));
+        e->rs = *rs;
+        e->buf = buf;
+        e->next = next;
+        e->key = key;
+        e->flag = 0;
+    }
+}
+#endif
 
 INCLUDE_ASM("render/particle", func_00379860);
 
