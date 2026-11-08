@@ -4307,25 +4307,25 @@ extern "C" void func_00101A28(void* a, sNode_144368* node, int leaf);
 
 extern "C" void func_00144368(sTree_144368* self, sNode_144368* node, sKey_144368* key)
 {
-    int n = self->count;
     int i = 0;
-    int ok;
-    do {
-        if (i == n) {
+    for (;;) {
+        if (i == self->count) {
             return;
         }
         union { int i; float f; } u;
         u.i = (key->level + 0x7F) << 23;
         float s = u.f;
-        // PORT: pointer arithmetic through int
-        sBox_144368* b = (sBox_144368*)((i << 5) + (int)self->boxes);
-        ok = 0;
-        if (((float)key->x - 0.2f) * s <= b->max[0] && ((float)key->y - 0.2f) * s <= b->max[1] && ((float)key->z - 0.2f) * s <= b->max[2]
-            && b->min[0] <= ((float)(key->x + 1) + 0.2f) * s && b->min[1] <= ((float)(key->y + 1) + 0.2f) * s && b->min[2] <= ((float)(key->z + 1) + 0.2f) * s) {
+        int ok = 0;
+        if (((float)key->x - 0.2f) * s <= self->boxes[i].max[0] && ((float)key->y - 0.2f) * s <= self->boxes[i].max[1] && ((float)key->z - 0.2f) * s <= self->boxes[i].max[2]
+            && self->boxes[i].min[0] <= ((float)(key->x + 1) + 0.2f) * s && self->boxes[i].min[1] <= ((float)(key->y + 1) + 0.2f) * s && self->boxes[i].min[2] <= ((float)(key->z + 1) + 0.2f) * s) {
             ok = 1;
         }
+        if (ok) {
+            goto found;
+        }
         i++;
-    } while (!ok);
+    }
+found:
     int leaf = key->level < 14;
     func_00101A28(self->f0, node, leaf);
     if (leaf) {
