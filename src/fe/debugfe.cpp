@@ -1065,7 +1065,268 @@ extern "C" void func_0017E558(sDebugFEState17E558* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/debugfe", func_0017E5C8);
+#ifdef SKIP_ASM
+extern "C" void func_00392908(void* font, float x, float y, const char* str);
+extern "C" void func_00391CB0(void* font, float x, float y, const char* str);
+extern "C" void func_00392A60(void* font, float x, float y, const char* str);
+extern "C" void func_001DCA40(void* font, float x, float y, const char* fmt, ...);
+extern "C" void func_001DCA80(void* font, float x, float y, const char* fmt, ...);
+extern "C" void func_002CC350(void* stack);
+extern char D_0045D258[], D_0045D270[], D_0045D288[], D_0045D2A0[], D_0045D2B8[], D_0045D2D0[], D_0045D2E8[];
+extern char D_0045D300[], D_0045D310[], D_0045D328[], D_0045D340[], D_0045D358[], D_0045D378[], D_0045D390[];
+extern char D_0045D3A0[], D_0045D3C0[], D_0045D3D8[], D_0045D3F8[], D_0045D408[], D_0045D418[], D_0045D428[];
+extern char D_0045D438[], D_0045CF98[];
+extern char D_004A1328[], D_004A1330[], D_004A12F8[], D_004A1338[], D_004A12C0[];
+
+// Font colour, alpha first.
+struct sColor5C8 {
+    float a, r, g, b;
+};
+
+struct cFont5C8 {
+    char pad0[0x30];
+    float baseW;     // 0x30
+    float baseH;     // 0x34
+    float scaleW;    // 0x38
+    float scaleH;    // 0x3C
+    sColor5C8 color; // 0x40
+};
+
+struct sMenuStack5C8 {
+    int count;      // 0x0
+    void* items[8]; // 0x4
+};
+
+struct sDebugFE5C8 {
+    int f0;
+    int state;           // 0x4
+    sMenuStack5C8 stack; // 0x8
+    char pad2C[0x1C14 - 0x2C];
+    unsigned int msgTag; // 0x1C14
+};
+
+// Online settings of the debug front end (D_004A3028).
+struct sNetSettings5C8 {
+    char pad0[0x88];
+    char* game;          // 0x88
+    char pad8C[0x98 - 0x8C];
+    char* seed;          // 0x98
+    char pad9C[0xA8 - 0x9C];
+    unsigned int hostIP; // 0xA8
+    unsigned int myIP;   // 0xAC
+    int seedValue;       // 0xB0
+    int host;            // 0xB4
+};
+
+static inline sNetSettings5C8* Net5C8()
+{
+    return (sNetSettings5C8*)D_004A3028;
+}
+
+// EA's string class: one pointer to its text.
+class cBXString {
+public:
+    char* p;
+    cBXString(const cBXString& s);
+    ~cBXString();
+};
+// The destructor is the retail cBXString__cBXString; asm labels on destructor declarations are ignored, so it is
+// bound by an assembler equate.
+__asm__("_$_9cBXString = cBXString__cBXString");
+// PORT: dirtysock declares func_00260E50 as (ret, self, tag); here it returns the cBXString by value (the copy
+// constructor makes g++ pass the return slot first). Bound by asm label.
+cBXString func_00260E50_str(void* net, unsigned int tag) __asm__("func_00260E50");
+
+static inline void SetScale5C8(cFont5C8* font, float s)
+{
+    font->scaleW = font->baseW * s;
+    font->scaleH = font->baseH * s;
+}
+
+static inline void SetColor5C8(cFont5C8* font, float a, float r, float g, float b)
+{
+    sColor5C8 c;
+    c.a = a;
+    c.r = r;
+    c.g = g;
+    c.b = b;
+    font->color = c;
+}
+
+static inline bool IsConnected5C8(void* comm)
+{
+    return *(int*)((char*)comm + 0x20) == 5;
+}
+
+static inline void* sMenuStack5C8_top(sMenuStack5C8* s)
+{
+    if (s->count > 0)
+        return s->items[s->count - 1];
+    return 0;
+}
+
+// Debug lobby screen: draws the status of the current online operation.
+extern "C" void func_0017E5C8(sDebugFE5C8* self)
+{
+    cFont5C8* font = *(cFont5C8**)(*(char**)((char*)D_004A28A8 + 0x80) + 0x18);
+    switch (self->state) {
+    case 0:
+    case 1:
+        SetScale5C8(font, 1.5f);
+        SetColor5C8(font, 1.0f, 0.9f, 0.2f, 0.2f);
+        func_00392908(font, 320.0f, 200.0f, D_0045D258);
+        break;
+    case 2:
+        SetScale5C8(font, 1.5f);
+        SetColor5C8(font, 1.0f, 0.9f, 0.2f, 0.2f);
+        func_00392908(font, 320.0f, 200.0f, D_0045D270);
+        break;
+    case 4:
+        SetScale5C8(font, 1.5f);
+        SetColor5C8(font, 1.0f, 0.9f, 0.2f, 0.2f);
+        func_00392908(font, 320.0f, 200.0f, D_0045D288);
+        break;
+    case 5:
+        SetScale5C8(font, 1.5f);
+        SetColor5C8(font, 1.0f, 0.9f, 0.2f, 0.2f);
+        func_00392908(font, 320.0f, 200.0f, D_0045D2A0);
+        break;
+    case 8:
+        SetScale5C8(font, 1.5f);
+        SetColor5C8(font, 1.0f, 0.9f, 0.2f, 0.2f);
+        func_00392908(font, 320.0f, 200.0f, D_0045D2B8);
+        break;
+    case 9:
+        SetScale5C8(font, 1.5f);
+        SetColor5C8(font, 1.0f, 0.9f, 0.2f, 0.2f);
+        func_00392908(font, 320.0f, 200.0f, D_0045D2D0);
+        break;
+    case 7:
+        SetScale5C8(font, 1.5f);
+        SetColor5C8(font, 1.0f, 0.9f, 0.2f, 0.2f);
+        func_00392908(font, 320.0f, 200.0f, D_0045D2E8);
+        break;
+    case 11:
+        SetScale5C8(font, 1.5f);
+        SetColor5C8(font, 1.0f, 0.9f, 0.2f, 0.2f);
+        func_00392908(font, 320.0f, 200.0f, D_0045D300);
+        break;
+    case 13:
+        SetScale5C8(font, 1.5f);
+        SetColor5C8(font, 1.0f, 0.9f, 0.2f, 0.2f);
+        func_00392908(font, 320.0f, 100.0f, D_0045D310);
+        break;
+    case 17:
+        SetScale5C8(font, 1.5f);
+        SetColor5C8(font, 1.0f, 0.9f, 0.2f, 0.2f);
+        func_00392908(font, 320.0f, 100.0f, D_0045D328);
+        break;
+    case 18: {
+        SetScale5C8(font, 1.5f);
+        SetColor5C8(font, 1.0f, 0.9f, 0.2f, 0.2f);
+        func_00392908(font, 320.0f, 100.0f, D_0045D340);
+        SetScale5C8(font, 0.8f);
+        SetColor5C8(font, 1.0f, 0.9f, 0.9f, 0.9f);
+        func_00392908(font, 320.0f, 150.0f, func_00260E50_str(D_004A3028, self->msgTag).p);
+        break;
+    }
+    case 19: {
+        SetScale5C8(font, 1.5f);
+        SetColor5C8(font, 1.0f, 0.9f, 0.2f, 0.2f);
+        func_00392908(font, 320.0f, 100.0f, D_0045D358);
+        SetScale5C8(font, 0.8f);
+        SetColor5C8(font, 1.0f, 0.9f, 0.9f, 0.9f);
+        func_00392908(font, 320.0f, 150.0f, func_00260E50_str(D_004A3028, self->msgTag).p);
+        break;
+    }
+    case 20: {
+        SetScale5C8(font, 1.5f);
+        SetColor5C8(font, 1.0f, 0.9f, 0.2f, 0.2f);
+        func_00392908(font, 320.0f, 100.0f, D_0045D378);
+        SetScale5C8(font, 0.8f);
+        SetColor5C8(font, 1.0f, 0.9f, 0.9f, 0.9f);
+        func_00392908(font, 320.0f, 150.0f, func_00260E50_str(D_004A3028, self->msgTag).p);
+        break;
+    }
+    case 22: {
+        SetScale5C8(font, 1.5f);
+        SetColor5C8(font, 1.0f, 0.9f, 0.2f, 0.2f);
+        func_00392908(font, 320.0f, 100.0f, D_0045D390);
+        SetScale5C8(font, 0.8f);
+        SetColor5C8(font, 1.0f, 0.9f, 0.9f, 0.9f);
+        func_00392908(font, 320.0f, 150.0f, func_00260E50_str(D_004A3028, self->msgTag).p);
+        break;
+    }
+    case 21: {
+        SetScale5C8(font, 1.5f);
+        SetColor5C8(font, 1.0f, 0.9f, 0.2f, 0.2f);
+        func_00392908(font, 320.0f, 100.0f, D_0045D3A0);
+        SetScale5C8(font, 0.8f);
+        SetColor5C8(font, 1.0f, 0.9f, 0.9f, 0.9f);
+        func_00392908(font, 320.0f, 150.0f, func_00260E50_str(D_004A3028, self->msgTag).p);
+        break;
+    }
+    case 23: {
+        SetScale5C8(font, 1.5f);
+        SetColor5C8(font, 1.0f, 0.9f, 0.2f, 0.2f);
+        func_00392908(font, 320.0f, 100.0f, D_0045D3C0);
+        SetScale5C8(font, 0.8f);
+        SetColor5C8(font, 1.0f, 0.9f, 0.9f, 0.9f);
+        func_00392908(font, 320.0f, 150.0f, func_00260E50_str(D_004A3028, self->msgTag).p);
+        break;
+    }
+    case 24: {
+        SetScale5C8(font, 1.5f);
+        SetColor5C8(font, 1.0f, 0.9f, 0.2f, 0.2f);
+        func_00392908(font, 320.0f, 100.0f, D_0045D3D8);
+        SetScale5C8(font, 0.8f);
+        SetColor5C8(font, 1.0f, 0.9f, 0.9f, 0.9f);
+        func_00392908(font, 320.0f, 150.0f, func_00260E50_str(D_004A3028, self->msgTag).p);
+        break;
+    }
+    case 16: {
+        SetScale5C8(font, 1.5f);
+        SetColor5C8(font, 1.0f, 0.9f, 0.2f, 0.2f);
+        func_00392908(font, 320.0f, 100.0f, D_0045D3F8);
+        SetScale5C8(font, 0.7f);
+        SetColor5C8(font, 1.0f, 0.9f, 0.9f, 0.6f);
+        float y = 200.0f;
+        func_00391CB0(font, 110.0f, y, D_004A1328);
+        func_00392A60(font, 530.0f, y, Net5C8()->game);
+        y += 20.0f;
+        func_00391CB0(font, 110.0f, y, D_0045D408);
+        func_00392A60(font, 530.0f, y, Net5C8()->seed);
+        y += 20.0f;
+        func_00391CB0(font, 110.0f, y, D_0045D418);
+        func_00392A60(font, 530.0f, y, Net5C8()->host ? D_004A12F8 : D_004A1330);
+        y += 20.0f;
+        func_00391CB0(font, 110.0f, y, D_0045D428);
+        func_001DCA80(font, 530.0f, y, D_0045CF98, Net5C8()->hostIP >> 24, (Net5C8()->hostIP >> 16) & 0xFF,
+                      (Net5C8()->hostIP >> 8) & 0xFF, Net5C8()->hostIP & 0xFF);
+        y += 20.0f;
+        func_00391CB0(font, 110.0f, y, D_0045D438);
+        func_001DCA80(font, 530.0f, y, D_0045CF98, Net5C8()->myIP >> 24, (Net5C8()->myIP >> 16) & 0xFF,
+                      (Net5C8()->myIP >> 8) & 0xFF, Net5C8()->myIP & 0xFF);
+        y += 20.0f;
+        func_00391CB0(font, 110.0f, y, D_004A1338);
+        func_001DCA80(font, 530.0f, y, D_004A12C0, Net5C8()->seedValue);
+        break;
+    }
+    }
+    SetScale5C8(font, 0.9f);
+    if (sMenuStack5C8_top(&self->stack) != 0)
+        func_002CC350(&self->stack);
+    if (IsConnected5C8(D_004A2EB8)) {
+        unsigned int ip;
+        func_00256038(D_004A2EB8, (int*)&ip);
+        SetScale5C8(font, 0.8f);
+        SetColor5C8(font, 1.0f, 0.9f, 0.9f, 0.2f);
+        func_001DCA40(font, 320.0f, 420.0f, D_0045CF98, ip >> 24, (ip >> 16) & 0xFF, (ip >> 8) & 0xFF, ip & 0xFF);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/debugfe", func_0017F2D0);
