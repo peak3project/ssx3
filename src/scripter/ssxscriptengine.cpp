@@ -1,5 +1,203 @@
 #include "common.h"
 
+// Matrix helpers and the camera script object shared by func_0027D970 and func_0027F9F8.
+
+struct sRotMat_SE {
+    float m[4][4];
+} __attribute__((aligned(16)));
+
+struct sVec4_SE {
+    sVec4_SE() {}
+    void set(float ax, float ay, float az, float aw) { x = ax; y = ay; z = az; w = aw; }
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+extern "C" void func_0031BE50(float* s, float* c, float angle);
+
+static inline void VSet_SE(sVec4_SE* v, float x, float y, float z, float w)
+{
+    v->x = x;
+    v->y = y;
+    v->z = z;
+    v->w = w;
+}
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix copy).
+static inline void CopyMat_SE(sRotMat_SE* dst, const void* src)
+{
+    __asm__ __volatile__(
+        ".set noreorder\n"
+        "lqc2      $vf1, 0x0(%1)\n"
+        "lqc2      $vf2, 0x10(%1)\n"
+        "lqc2      $vf3, 0x20(%1)\n"
+        "lqc2      $vf4, 0x30(%1)\n"
+        "sqc2      $vf1, 0x0(%0)\n"
+        "sqc2      $vf2, 0x10(%0)\n"
+        "sqc2      $vf3, 0x20(%0)\n"
+        "sqc2      $vf4, 0x30(%0)\n"
+        ".set reorder\n"
+        :
+        : "r"(dst), "r"(src)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix multiply: top = top * r).
+static inline void MulTop_SE(sRotMat_SE* top, sRotMat_SE* r)
+{
+    __asm__ __volatile__(
+        ".set noreorder\n"
+        "lqc2      $vf4, 0x0(%0)\n"
+        "lqc2      $vf5, 0x10(%0)\n"
+        "lqc2      $vf6, 0x20(%0)\n"
+        "lqc2      $vf7, 0x30(%0)\n"
+        "lqc2      $vf8, 0x0(%1)\n"
+        "lqc2      $vf9, 0x10(%1)\n"
+        "lqc2      $vf10, 0x20(%1)\n"
+        "lqc2      $vf11, 0x30(%1)\n"
+        "vmulax.xyzw  ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw  $vf12, $vf7, $vf8w\n"
+        "vmulax.xyzw  ACC, $vf4, $vf9x\n"
+        "vmadday.xyzw ACC, $vf5, $vf9y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf9z\n"
+        "vmaddw.xyzw  $vf13, $vf7, $vf9w\n"
+        "vmulax.xyzw  ACC, $vf4, $vf10x\n"
+        "vmadday.xyzw ACC, $vf5, $vf10y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf10z\n"
+        "vmaddw.xyzw  $vf14, $vf7, $vf10w\n"
+        "vmulax.xyzw  ACC, $vf4, $vf11x\n"
+        "vmadday.xyzw ACC, $vf5, $vf11y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf11z\n"
+        "vmaddw.xyzw  $vf15, $vf7, $vf11w\n"
+        ".set reorder\n"
+        :
+        : "r"(top), "r"(r)
+        : "memory");
+    __asm__ __volatile__(
+        ".set noreorder\n"
+        "sqc2      $vf12, 0x0(%0)\n"
+        "sqc2      $vf13, 0x10(%0)\n"
+        "sqc2      $vf14, 0x20(%0)\n"
+        "sqc2      $vf15, 0x30(%0)\n"
+        ".set reorder\n"
+        :
+        : "r"(top)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix multiply in one block: top = top * r).
+static inline void MulMat_SE(sRotMat_SE* top, sRotMat_SE* r)
+{
+    __asm__ __volatile__(
+        ".set noreorder\n"
+        "lqc2      $vf4, 0x0(%0)\n"
+        "lqc2      $vf5, 0x10(%0)\n"
+        "lqc2      $vf6, 0x20(%0)\n"
+        "lqc2      $vf7, 0x30(%0)\n"
+        "lqc2      $vf8, 0x0(%1)\n"
+        "lqc2      $vf9, 0x10(%1)\n"
+        "lqc2      $vf10, 0x20(%1)\n"
+        "lqc2      $vf11, 0x30(%1)\n"
+        "vmulax.xyzw  ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw  $vf12, $vf7, $vf8w\n"
+        "vmulax.xyzw  ACC, $vf4, $vf9x\n"
+        "vmadday.xyzw ACC, $vf5, $vf9y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf9z\n"
+        "vmaddw.xyzw  $vf13, $vf7, $vf9w\n"
+        "vmulax.xyzw  ACC, $vf4, $vf10x\n"
+        "vmadday.xyzw ACC, $vf5, $vf10y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf10z\n"
+        "vmaddw.xyzw  $vf14, $vf7, $vf10w\n"
+        "vmulax.xyzw  ACC, $vf4, $vf11x\n"
+        "vmadday.xyzw ACC, $vf5, $vf11y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf11z\n"
+        "vmaddw.xyzw  $vf15, $vf7, $vf11w\n"
+        "sqc2      $vf12, 0x0(%0)\n"
+        "sqc2      $vf13, 0x10(%0)\n"
+        "sqc2      $vf14, 0x20(%0)\n"
+        "sqc2      $vf15, 0x30(%0)\n"
+        ".set reorder\n"
+        :
+        : "r"(top), "r"(r)
+        : "memory");
+}
+
+// Multiply the matrix at TOP by a rotation of ANGLE about AXIS (an inlined Rotate():
+// the axis argument is taken once on entry, before the sin/cos call).
+#define ROTATE_SE(TOP, AXIS, ANGLE) \
+    { \
+        const float* axis = (AXIS); \
+        sRotMat_SE r; \
+        float s; \
+        float c; \
+        func_0031BE50(&s, &c, (ANGLE)); \
+        float t = 1.0f - c; \
+        float x = axis[0]; \
+        float y = axis[1]; \
+        float z = axis[2]; \
+        float tx = t * x; \
+        float ty = t * y; \
+        float tz = t * z; \
+        float sx = s * x; \
+        float sy = s * y; \
+        float sz = s * z; \
+        r.m[0][0] = tx * x + c; \
+        r.m[1][0] = tx * y + sz; \
+        r.m[2][0] = tx * z - sy; \
+        r.m[0][1] = ty * x - sz; \
+        r.m[1][1] = ty * y + c; \
+        r.m[2][1] = ty * z + sx; \
+        r.m[0][2] = tz * x + sy; \
+        r.m[1][2] = tz * y - sx; \
+        r.m[2][2] = tz * z + c; \
+        r.m[3][0] = 0.0f; \
+        r.m[3][1] = 0.0f; \
+        r.m[3][2] = 0.0f; \
+        r.m[0][3] = 0.0f; \
+        r.m[1][3] = 0.0f; \
+        r.m[2][3] = 0.0f; \
+        r.m[3][3] = 1.0f; \
+        MulTop_SE((TOP), &r); \
+    }
+
+// PORT: PS2-only VU0 inline asm (matrix * vector into row 3).
+static inline void Translate_SE(sRotMat_SE* top, sVec4_SE* v)
+{
+    __asm__ __volatile__(
+        ".set noreorder\n"
+        "lqc2         $vf4, 0x0(%0)\n"
+        "lqc2         $vf5, 0x10(%0)\n"
+        "lqc2         $vf6, 0x20(%0)\n"
+        "lqc2         $vf7, 0x30(%0)\n"
+        "lqc2         $vf8, %1\n"
+        "vmulax.xyzw  ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw  $vf12, $vf7, $vf8w\n"
+        "sqc2         $vf12, 0x30(%0)\n"
+        ".set reorder\n"
+        :
+        : "r"(top), "m"(*v)
+        : "memory");
+}
+
+// The camera script object (func_0027D970 and func_0027F9F8 set up its matrix).
+struct sScrCam_SE {
+    char pad0[0x8];
+    char* owner;            // 0x8
+    char padC[0x1C - 0xC];
+    void* f1C;              // 0x1C
+    void* f20;              // 0x20
+    char pad24[0x30 - 0x24];
+    sRotMat_SE mat;         // 0x30
+    float rx;               // 0x70
+    float ry;               // 0x74
+    float rz;               // 0x78
+};
+
 //100%
 INCLUDE_ASM("scripter/ssxscriptengine", cSSXScriptEngine_Load);
 #ifdef SKIP_ASM
@@ -3959,7 +4157,91 @@ extern "C" void func_0027D8D8(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_0027D970);
+#ifdef SKIP_ASM
+unsigned char func_002743C8(void* self);
+char* func_0027C098(void* self);
+char* func_0027C2A8(void* self);
+char* func_0027C4B8(void* self);
+char* func_0027C6A0(void* self);
+extern void* D_004A28A4;
+extern char D_004FF1A0[];
+extern float D_004FF140[];
+extern float D_004FF150[];
+extern float D_004FF160[];
+extern "C" void func_0027A0D8_f(void* self, int type, void* a2, sVec4_SE* out, float* roll, float* pitch, float* yaw) __asm__("func_0027A0D8");
+
+// One camera case: offset + euler angles from the record, then the player's frame on top.
+#define CAMARM_SE(SELF, OWNER, REC) \
+    { \
+        sVec4_SE v; \
+        sRotMat_SE M; \
+        (SELF)->rx = *(float*)((REC) + 0x1C) * 0.01745329424738884f; \
+        (SELF)->ry = *(float*)((REC) + 0x18) * 0.01745329424738884f; \
+        (SELF)->rz = *(float*)((REC) + 0x14) * 0.01745329424738884f; \
+        VSet_SE(&v, *(float*)((REC) + 8), *(float*)((REC) + 0xC), *(float*)((REC) + 0x10), 1.0f); \
+        sRotMat_SE* m = &M; \
+        CopyMat_SE(m, D_004FF1A0); \
+        Translate_SE(m, &v); \
+        ROTATE_SE(m, D_004FF160, -(SELF)->rz); \
+        ROTATE_SE(m, D_004FF150, (SELF)->ry); \
+        ROTATE_SE(m, D_004FF140, (SELF)->rx); \
+        sVec4_SE out; \
+        float roll; \
+        float pitch; \
+        float yaw; \
+        func_0027A0D8_f(D_004A28A4, *(char*)((REC) + 0x20), *(void**)((OWNER) + 8), &out, &roll, &pitch, &yaw); \
+        Translate_SE(&(SELF)->mat, &out); \
+        ROTATE_SE(&(SELF)->mat, D_004FF160, -yaw); \
+        ROTATE_SE(&(SELF)->mat, D_004FF150, pitch); \
+        ROTATE_SE(&(SELF)->mat, D_004FF140, roll); \
+        MulMat_SE(&(SELF)->mat, m); \
+        (SELF)->rx = (SELF)->rx + roll; \
+        (SELF)->ry = (SELF)->ry + pitch; \
+        (SELF)->rz = (SELF)->rz + yaw; \
+    }
+
+// Declared earlier in the unit as (void*, int).
+extern "C" void func_0027D970_SE(sScrCam_SE* self, sScrCam_SE* cam) __asm__("func_0027D970");
+
+extern "C" void func_0027D970_SE(sScrCam_SE* self, sScrCam_SE* cam)
+{
+    char* owner = cam->owner;
+    CopyMat_SE(&self->mat, D_004FF1A0);
+    self->rx = 0.0f;
+    self->ry = 0.0f;
+    self->rz = 0.0f;
+    switch (func_002743C8(owner)) {
+    case 0: {
+        char* rec = func_0027C098(owner);
+        CAMARM_SE(self, owner, rec);
+        break;
+    }
+    case 1: {
+        char* rec = func_0027C2A8(owner);
+        CAMARM_SE(self, owner, rec);
+        break;
+    }
+    case 2: {
+        char* rec = func_0027C4B8(owner);
+        CAMARM_SE(self, owner, rec);
+        break;
+    }
+    case 3: {
+        sRotMat_SE* mat = &self->mat;
+        char* rec = func_0027C6A0(owner);
+        self->rx = *(float*)(rec + 0x10) * 0.01745329424738884f;
+        self->ry = *(float*)(rec + 0xC) * 0.01745329424738884f;
+        self->rz = *(float*)(rec + 8) * 0.01745329424738884f;
+        ROTATE_SE(mat, D_004FF160, -self->rz);
+        ROTATE_SE(mat, D_004FF150, self->ry);
+        ROTATE_SE(mat, D_004FF140, self->rx);
+        break;
+    }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_0027F968);
@@ -4004,186 +4286,6 @@ extern "C" void* func_0027F968(void* self)
 //100%
 INCLUDE_ASM("scripter/ssxscriptengine", func_0027F9F8);
 #ifdef SKIP_ASM
-struct sRotMat_SE {
-    float m[4][4];
-} __attribute__((aligned(16)));
-
-struct sVec4_SE {
-    sVec4_SE() {}
-    void set(float ax, float ay, float az, float aw) { x = ax; y = ay; z = az; w = aw; }
-    float x, y, z, w;
-} __attribute__((aligned(16)));
-
-extern "C" void func_0031BE50(float* s, float* c, float angle);
-
-static inline void VSet_SE(sVec4_SE* v, float x, float y, float z, float w)
-{
-    v->x = x;
-    v->y = y;
-    v->z = z;
-    v->w = w;
-}
-
-// PORT: PS2-only VU0 inline asm (4x4 matrix copy).
-static inline void CopyMat_SE(sRotMat_SE* dst, const void* src)
-{
-    __asm__ __volatile__(
-        ".set noreorder\n"
-        "lqc2      $vf1, 0x0(%1)\n"
-        "lqc2      $vf2, 0x10(%1)\n"
-        "lqc2      $vf3, 0x20(%1)\n"
-        "lqc2      $vf4, 0x30(%1)\n"
-        "sqc2      $vf1, 0x0(%0)\n"
-        "sqc2      $vf2, 0x10(%0)\n"
-        "sqc2      $vf3, 0x20(%0)\n"
-        "sqc2      $vf4, 0x30(%0)\n"
-        ".set reorder\n"
-        :
-        : "r"(dst), "r"(src)
-        : "memory");
-}
-
-// PORT: PS2-only VU0 inline asm (4x4 matrix multiply: top = top * r).
-static inline void MulTop_SE(sRotMat_SE* top, sRotMat_SE* r)
-{
-    __asm__ __volatile__(
-        ".set noreorder\n"
-        "lqc2      $vf4, 0x0(%0)\n"
-        "lqc2      $vf5, 0x10(%0)\n"
-        "lqc2      $vf6, 0x20(%0)\n"
-        "lqc2      $vf7, 0x30(%0)\n"
-        "lqc2      $vf8, 0x0(%1)\n"
-        "lqc2      $vf9, 0x10(%1)\n"
-        "lqc2      $vf10, 0x20(%1)\n"
-        "lqc2      $vf11, 0x30(%1)\n"
-        "vmulax.xyzw  ACC, $vf4, $vf8x\n"
-        "vmadday.xyzw ACC, $vf5, $vf8y\n"
-        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
-        "vmaddw.xyzw  $vf12, $vf7, $vf8w\n"
-        "vmulax.xyzw  ACC, $vf4, $vf9x\n"
-        "vmadday.xyzw ACC, $vf5, $vf9y\n"
-        "vmaddaz.xyzw ACC, $vf6, $vf9z\n"
-        "vmaddw.xyzw  $vf13, $vf7, $vf9w\n"
-        "vmulax.xyzw  ACC, $vf4, $vf10x\n"
-        "vmadday.xyzw ACC, $vf5, $vf10y\n"
-        "vmaddaz.xyzw ACC, $vf6, $vf10z\n"
-        "vmaddw.xyzw  $vf14, $vf7, $vf10w\n"
-        "vmulax.xyzw  ACC, $vf4, $vf11x\n"
-        "vmadday.xyzw ACC, $vf5, $vf11y\n"
-        "vmaddaz.xyzw ACC, $vf6, $vf11z\n"
-        "vmaddw.xyzw  $vf15, $vf7, $vf11w\n"
-        ".set reorder\n"
-        :
-        : "r"(top), "r"(r)
-        : "memory");
-    __asm__ __volatile__(
-        ".set noreorder\n"
-        "sqc2      $vf12, 0x0(%0)\n"
-        "sqc2      $vf13, 0x10(%0)\n"
-        "sqc2      $vf14, 0x20(%0)\n"
-        "sqc2      $vf15, 0x30(%0)\n"
-        ".set reorder\n"
-        :
-        : "r"(top)
-        : "memory");
-}
-
-// PORT: PS2-only VU0 inline asm (4x4 matrix multiply in one block: top = top * r).
-static inline void MulMat_SE(sRotMat_SE* top, sRotMat_SE* r)
-{
-    __asm__ __volatile__(
-        ".set noreorder\n"
-        "lqc2      $vf4, 0x0(%0)\n"
-        "lqc2      $vf5, 0x10(%0)\n"
-        "lqc2      $vf6, 0x20(%0)\n"
-        "lqc2      $vf7, 0x30(%0)\n"
-        "lqc2      $vf8, 0x0(%1)\n"
-        "lqc2      $vf9, 0x10(%1)\n"
-        "lqc2      $vf10, 0x20(%1)\n"
-        "lqc2      $vf11, 0x30(%1)\n"
-        "vmulax.xyzw  ACC, $vf4, $vf8x\n"
-        "vmadday.xyzw ACC, $vf5, $vf8y\n"
-        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
-        "vmaddw.xyzw  $vf12, $vf7, $vf8w\n"
-        "vmulax.xyzw  ACC, $vf4, $vf9x\n"
-        "vmadday.xyzw ACC, $vf5, $vf9y\n"
-        "vmaddaz.xyzw ACC, $vf6, $vf9z\n"
-        "vmaddw.xyzw  $vf13, $vf7, $vf9w\n"
-        "vmulax.xyzw  ACC, $vf4, $vf10x\n"
-        "vmadday.xyzw ACC, $vf5, $vf10y\n"
-        "vmaddaz.xyzw ACC, $vf6, $vf10z\n"
-        "vmaddw.xyzw  $vf14, $vf7, $vf10w\n"
-        "vmulax.xyzw  ACC, $vf4, $vf11x\n"
-        "vmadday.xyzw ACC, $vf5, $vf11y\n"
-        "vmaddaz.xyzw ACC, $vf6, $vf11z\n"
-        "vmaddw.xyzw  $vf15, $vf7, $vf11w\n"
-        "sqc2      $vf12, 0x0(%0)\n"
-        "sqc2      $vf13, 0x10(%0)\n"
-        "sqc2      $vf14, 0x20(%0)\n"
-        "sqc2      $vf15, 0x30(%0)\n"
-        ".set reorder\n"
-        :
-        : "r"(top), "r"(r)
-        : "memory");
-}
-
-// Multiply the matrix at TOP by a rotation of ANGLE about AXIS.
-#define ROTATE_SE(TOP, AXIS, ANGLE) \
-    { \
-        sRotMat_SE r; \
-        float s; \
-        float c; \
-        func_0031BE50(&s, &c, (ANGLE)); \
-        float t = 1.0f - c; \
-        float x = (AXIS)[0]; \
-        float y = (AXIS)[1]; \
-        float z = (AXIS)[2]; \
-        float tx = t * x; \
-        float ty = t * y; \
-        float tz = t * z; \
-        float sx = s * x; \
-        float sy = s * y; \
-        float sz = s * z; \
-        r.m[0][0] = tx * x + c; \
-        r.m[1][0] = tx * y + sz; \
-        r.m[2][0] = tx * z - sy; \
-        r.m[0][1] = ty * x - sz; \
-        r.m[1][1] = ty * y + c; \
-        r.m[2][1] = ty * z + sx; \
-        r.m[0][2] = tz * x + sy; \
-        r.m[1][2] = tz * y - sx; \
-        r.m[2][2] = tz * z + c; \
-        r.m[3][0] = 0.0f; \
-        r.m[3][1] = 0.0f; \
-        r.m[3][2] = 0.0f; \
-        r.m[0][3] = 0.0f; \
-        r.m[1][3] = 0.0f; \
-        r.m[2][3] = 0.0f; \
-        r.m[3][3] = 1.0f; \
-        MulTop_SE((TOP), &r); \
-    }
-
-// PORT: PS2-only VU0 inline asm (matrix * vector into row 3).
-static inline void Translate_SE(sRotMat_SE* top, sVec4_SE* v)
-{
-    __asm__ __volatile__(
-        ".set noreorder\n"
-        "lqc2         $vf4, 0x0(%0)\n"
-        "lqc2         $vf5, 0x10(%0)\n"
-        "lqc2         $vf6, 0x20(%0)\n"
-        "lqc2         $vf7, 0x30(%0)\n"
-        "lqc2         $vf8, %1\n"
-        "vmulax.xyzw  ACC, $vf4, $vf8x\n"
-        "vmadday.xyzw ACC, $vf5, $vf8y\n"
-        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
-        "vmaddw.xyzw  $vf12, $vf7, $vf8w\n"
-        "sqc2         $vf12, 0x30(%0)\n"
-        ".set reorder\n"
-        :
-        : "r"(top), "m"(*v)
-        : "memory");
-}
-
 void func_00283430(void* self);
 void* func_00279ED8_2(void* self, int i) __asm__("func_00279ED8__FPv");
 void* func_00279EF8_2(void* self, int i) __asm__("func_00279EF8__FPv");
@@ -4193,20 +4295,6 @@ extern float D_004FF140[];
 extern float D_004FF150[];
 extern float D_004FF160[];
 extern "C" void func_0027A0D8_f(void* self, int type, void* a2, sVec4_SE* out, float* roll, float* pitch, float* yaw) __asm__("func_0027A0D8");
-
-// The script object this function sets up (only the fields used here).
-struct sScrCam_SE {
-    char pad0[0x8];
-    char* owner;            // 0x8
-    char padC[0x1C - 0xC];
-    void* f1C;              // 0x1C
-    void* f20;              // 0x20
-    char pad24[0x30 - 0x24];
-    sRotMat_SE mat;         // 0x30
-    float rx;               // 0x70
-    float ry;               // 0x74
-    float rz;               // 0x78
-};
 
 extern "C" void func_0027F9F8(sScrCam_SE* self)
 {
