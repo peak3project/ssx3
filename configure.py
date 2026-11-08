@@ -66,8 +66,8 @@ UNIT_CFLAGS = {
     # Built without RTTI: retail vtable headers are {delta, 0} and every cRider-derived class shares cRider's +0x6D0
     # sub-vtable D_00459B90, which g++ 2.95 only does with -fno-rtti (func_00142A50; whole unit unchanged, 2026-11-08).
     "ai/control/handplantcontrol": "-fno-rtti",
-    "seg/seg_1218": "-fno-rtti",
-    "ai/rider": "-fno-rtti",  # same evidence (null typeinfo in D_00458338/D_00458360/D_00459BD0; func_00125EB8)  # same evidence (null typeinfo in D_004585F0/D_00458710; func_00108FA8)
+    "seg/seg_1218": "-fno-rtti",  # same evidence (null typeinfo in D_004585F0/D_00458710; func_00108FA8)
+    "ai/rider": "-fno-rtti",  # same evidence (null typeinfo in D_00458338/D_00458360/D_00459BD0; func_00125EB8)
     "ai/computer": "-fno-rtti",  # same evidence (the cComp constructor func_0010FCD8 stores the shared D_00459B90 sub-vtable)
     "ealib/seg_2B4578": "-G0",
     "ealib/seg_2DCAE8": "-G0",
