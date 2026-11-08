@@ -7678,7 +7678,183 @@ extern "C" float func_00135180(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/ai", func_001352A8);
+#ifdef SKIP_ASM
+extern "C" float func_00120038(void* rider);
+extern "C" void* cBE_getBE();
+void* cBE_getInterface_1352A8(void* be, int kind) __asm__("cBE_getInterface__Fv");
+extern "C" char* func_00311B20(void*, int);
+extern "C" int func_00311AE8(void*, int);
+extern "C" int cRiderAnimBase_play(void* self, int anim, int flags, float blend);
+extern "C" unsigned short func_001500D8(void* self, int a1, int a2);
+extern "C" unsigned short func_001500F8(void* self, int a1, int a2);
+extern "C" unsigned short func_00150118(void* self, int a1, int a2);
+extern "C" unsigned short func_00150138(void* self, int a1, int a2);
+extern "C" unsigned short func_00150158(void* self, int a1, int a2);
+extern "C" unsigned short func_00150178(void* self, int a1, int a2);
+extern "C" int func_00150198(void* self, int rider, int idx, int second);
+extern "C" int func_001502C8(void* self, int rider, int idx, int second);
+extern "C" int func_001503F8(void* self, int rider, int idx, int second);
+extern "C" float func_00119708(void* metrix, int id);
+extern "C" float func_001197D8(void* metrix, int id);
+extern "C" void func_0010E098(void*, int, float);
+extern "C" void func_00311E88(void*, int, float);
+extern "C" void* func_0028B180();
+extern "C" void func_0029A530(void* self, void* obj);
+extern "C" bool func_001446A0(void* self, int bit);
+
+// Grab control (ai/control/spincontrol.cpp): the trick controller's grab state machine.
+struct sGrabCtl_1352A8
+{
+    int mode;           // 0x00
+    int grabState;      // 0x04: 0..5, stepped in order by func_001352A8
+    int grab;           // 0x08: current grab id (prototype assert: grabHeld < kMaxGrabs), -1 = none
+    char pad0C[0x4C];
+    cRider* rider;      // 0x58
+};
+
+static inline char* Seq_1352A8(cRider* r, int layer)
+{
+    return func_00311B20(r->mRiderAnim, layer);
+}
+
+// Runs the grab state machine for this frame; returns whether the grab layer's animation is a grab (18..20).
+extern "C" int func_001352A8_impl(sGrabCtl_1352A8* self, int grab, int held) __asm__("func_001352A8");
+extern "C" int func_001352A8_impl(sGrabCtl_1352A8* self, int grab, int held)
+{
+    float speed = func_00120038(self->rider);
+    void* tbl = cBE_getInterface_1352A8(cBE_getBE(), 6);
+    int alt = self->rider->unk_2F4 >= 5;
+    cRider* r;
+    if (self->grabState == 0) {
+        if (grab == -1) {
+            if (self->grab != grab) {
+                *(float*)(Seq_1352A8(self->rider, 2) + 0x90) = -1.0f;
+                cRiderAnimBase_play(self->rider->mRiderAnim, 0x11F, 0, -1.0f);
+                self->grab = grab;
+            }
+        } else if (self->grab != grab) {
+            self->grab = grab;
+            if (func_00311AE8(self->rider->mRiderAnim, 2) == 0x12) {
+                r = self->rider;
+                cRiderAnimBase_play(r->mRiderAnim, func_001500D8(tbl, r->mAIIndex, self->grab), 1, -1.0f);
+            } else {
+                r = self->rider;
+                cRiderAnimBase_play(r->mRiderAnim, func_001500D8(tbl, r->mAIIndex, self->grab), 0, -1.0f);
+            }
+            *(float*)(Seq_1352A8(self->rider, 2) + 0x90) = speed;
+        } else if (func_001446A0(Seq_1352A8(self->rider, 2) + 0xB0, 0)) {
+            self->grabState = 1;
+        }
+    }
+    if (self->grabState == 1) {
+        if (func_001446A0(Seq_1352A8(self->rider, 2) + 0xB0, 1)) {
+            r = self->rider;
+            func_0010E098(self->rider, 1, func_00119708(r->mMetrix, func_00150118(tbl, r->mAIIndex, self->grab)));
+            *(float*)(Seq_1352A8(self->rider, 2) + 0x90) = 0.0f;
+            if (func_001500F8(tbl, self->rider->mAIIndex, self->grab) != 0x1B6) {
+                r = self->rider;
+                cRiderAnimBase_play(r->mRiderAnim, func_001500F8(tbl, r->mAIIndex, self->grab), 0, -1.0f);
+                *(float*)(Seq_1352A8(self->rider, 1) + 0x90) = speed;
+            }
+            self->grabState = 2;
+        }
+    }
+    if (self->grabState == 2) {
+        if (grab != self->grab) {
+            r = self->rider;
+            func_0010E098(self->rider, 1, func_001197D8(r->mMetrix, func_00150118(tbl, r->mAIIndex, self->grab)));
+            func_00311E88(self->rider->mRiderAnim, 1, 0.33f);
+            *(float*)(Seq_1352A8(self->rider, 2) + 0x90) = speed;
+            self->grabState = 5;
+        } else if (held) {
+            func_00311E88(self->rider->mRiderAnim, 1, 0.1f);
+            func_00311E88(self->rider->mRiderAnim, 2, 0.1f);
+            if (self->rider->unk_2F0 == 0.0f || (self->rider->unk_B2C & 1) == 0
+                || func_00150198(tbl, self->rider->mAIIndex, self->grab, alt) == 0x1B6) {
+                r = self->rider;
+                cRiderAnimBase_play(r->mRiderAnim, func_00150138(tbl, r->mAIIndex, self->grab), 0, -1.0f);
+            } else {
+                r = self->rider;
+                cRiderAnimBase_play(r->mRiderAnim, func_00150198(tbl, r->mAIIndex, self->grab, alt), 0, -1.0f);
+            }
+            func_0029A530(func_0028B180(), self->rider);
+            *(float*)(Seq_1352A8(self->rider, 2) + 0x90) = speed;
+            self->grabState = 3;
+        }
+    }
+    if (self->grabState == 3) {
+        if (grab == self->grab && held && func_001446A0(Seq_1352A8(self->rider, 2) + 0xB0, 1)) {
+            *(float*)(Seq_1352A8(self->rider, 2) + 0x90) = 0.0f;
+            if (func_00311AE8(self->rider->mRiderAnim, 2) == 0x13) {
+                r = self->rider;
+                func_0010E098(self->rider, 1, func_00119708(r->mMetrix, func_00150178(tbl, r->mAIIndex, self->grab)));
+                if (func_00150158(tbl, self->rider->mAIIndex, self->grab) != 0x1B6) {
+                    r = self->rider;
+                    cRiderAnimBase_play(r->mRiderAnim, func_00150158(tbl, r->mAIIndex, self->grab), 0, -1.0f);
+                    *(float*)(Seq_1352A8(self->rider, 1) + 0x90) = speed;
+                }
+            } else {
+                r = self->rider;
+                func_0010E098(self->rider, 1, func_00119708(r->mMetrix, func_001503F8(tbl, r->mAIIndex, self->grab, alt)));
+                if (func_001502C8(tbl, self->rider->mAIIndex, self->grab, alt) != 0x1B6) {
+                    r = self->rider;
+                    cRiderAnimBase_play(r->mRiderAnim, func_001502C8(tbl, r->mAIIndex, self->grab, alt), 0, -1.0f);
+                    *(float*)(Seq_1352A8(self->rider, 1) + 0x90) = speed;
+                }
+            }
+            self->grabState = 4;
+        } else if (func_001446A0(Seq_1352A8(self->rider, 2) + 0xB0, 1)
+                   || func_001446A0(Seq_1352A8(self->rider, 2) + 0xB0, 3)
+                   || func_001446A0(Seq_1352A8(self->rider, 2) + 0xB0, 2)) {
+            if (func_00311AE8(self->rider->mRiderAnim, 2) == 0x13) {
+                r = self->rider;
+                func_0010E098(self->rider, 1, func_00119708(r->mMetrix, func_00150178(tbl, r->mAIIndex, self->grab)));
+                r = self->rider;
+                func_0010E098(self->rider, 1, func_001197D8(r->mMetrix, func_00150178(tbl, r->mAIIndex, self->grab)));
+            } else {
+                r = self->rider;
+                func_0010E098(self->rider, 1, func_00119708(r->mMetrix, func_001503F8(tbl, r->mAIIndex, self->grab, alt)));
+                r = self->rider;
+                func_0010E098(self->rider, 1, func_001197D8(r->mMetrix, func_001503F8(tbl, r->mAIIndex, self->grab, alt)));
+            }
+            self->grabState = 5;
+        }
+    }
+    if (self->grabState == 4) {
+        if (grab != self->grab || !held) {
+            if (func_00311AE8(self->rider->mRiderAnim, 2) == 0x13) {
+                r = self->rider;
+                func_0010E098(self->rider, 1, func_001197D8(r->mMetrix, func_00150178(tbl, r->mAIIndex, self->grab)));
+            } else {
+                r = self->rider;
+                func_0010E098(self->rider, 1, func_001197D8(r->mMetrix, func_001503F8(tbl, r->mAIIndex, self->grab, alt)));
+            }
+            func_00311E88(self->rider->mRiderAnim, 1, 0.33f);
+            *(float*)(Seq_1352A8(self->rider, 2) + 0x90) = speed;
+            self->grabState = 5;
+        }
+    }
+    int anim = func_00311AE8(self->rider->mRiderAnim, 2);
+    if (self->grabState == 5) {
+        if (anim == 2 || func_001446A0(Seq_1352A8(self->rider, 2) + 0xB0, 3)) {
+            if (anim == 20 && held && grab != -1 && func_00150198(tbl, self->rider->mAIIndex, grab, alt) != 0x1B6) {
+                self->grab = grab;
+                func_00311E88(self->rider->mRiderAnim, 1, 0.33f);
+                r = self->rider;
+                cRiderAnimBase_play(r->mRiderAnim, func_00150198(tbl, r->mAIIndex, self->grab, alt), 1, -1.0f);
+                *(float*)(Seq_1352A8(self->rider, 2) + 0x90) = speed;
+                self->grabState = 3;
+            } else {
+                self->grabState = 0;
+                self->grab = -1;
+            }
+        }
+    }
+    return (unsigned)(anim - 18) < 3;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ai/ai", func_00135B30);
