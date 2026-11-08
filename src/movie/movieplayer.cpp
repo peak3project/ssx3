@@ -636,7 +636,385 @@ extern "C" int func_0023D7A8(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("movie/movieplayer", func_0023D7D8);
+#ifdef SKIP_ASM
+extern "C" void func_0023E2C8(void* self);
+void func_0023E2C0(void* self);
+void func_0023E4F0(void* self);
+extern "C" void func_0023E4F8(void* self);
+extern "C" void func_0023E540(void* self);
+extern "C" void func_0023E820(void* self);
+extern "C" void func_0023EB80(void* self);
+extern "C" void func_0023EC00(void* self);
+extern "C" void func_0023EF68(void* self);
+extern "C" void func_0023F050(void* self);
+extern "C" void func_0023F0F8(void* self);
+extern "C" void func_0023FD40(char* self);
+extern "C" void func_0023F2D8(void* self);
+extern "C" void func_0023F150(void* self);
+extern "C" void func_0023F1D8(void* self);
+extern "C" void func_0023F258(void* self);
+extern "C" void func_0023F308(void* self);
+extern "C" void func_0023F3A0(void* self);
+extern "C" void func_0023F438(void* self);
+extern "C" void func_0023F4F8(void* self);
+extern "C" void func_0023F578(char* self);
+extern "C" void func_0023F698(void* self);
+extern "C" void func_0023FBB8(void* self);
+extern "C" void func_0023FF00(void* self);
+extern "C" void func_0023FFC0(void* self);
+extern "C" void func_0023FC70(void* self);
+extern "C" void func_0023FE70(void* self);
+extern "C" void func_0023FFF0(void* self);
+extern "C" void func_002400B0(void* self);
+extern "C" void func_00240130(void* self);
+extern "C" void func_002402D0(void* self);
+extern "C" void func_002405D0(void* self);
+extern "C" void func_0023FD08(void* self);
+extern "C" void func_00240688(void* self);
+extern "C" void func_00240768(void* self);
+extern "C" void func_00240860(char* self);
+extern "C" void func_00240960(void* self);
+extern "C" void func_00240800(void* self);
+extern "C" void func_002409C8(void* self);
+extern "C" void func_00240AB0(void* self);
+extern "C" void func_00240B88(void* self);
+extern "C" void func_00240C30(void* self);
+extern "C" void func_00240C90(void* self);
+extern "C" void func_00240CC0(void* self);
+extern "C" void func_00240D90(char* self);
+extern "C" void func_00240EB0(void* self);
+extern "C" void func_00240EE0(void* self);
+void* func_00240F10(void* self);
+extern "C" void func_00240F30(void* self);
+extern "C" void func_0023E3C0(void* self);
+extern "C" void func_0023E428(void* self);
+extern "C" void func_00241400(char* self);
+extern "C" void func_00241540(char* self);
+
+// The player's decoder at 0x434, called through its vtable slots by hand (re-read for every call).
+#define DEC_7D8(s) (*(char**)((s) + 0x434))
+
+static inline int call0_7D8(char* s, int n)
+{
+    char* o = DEC_7D8(s);
+    sVEntry<int(void*)>* vt = *(sVEntry<int(void*)>**)o;
+    return vt[n].fn(o + vt[n].delta);
+}
+static inline int callI_7D8(char* s, int n, int a)
+{
+    char* o = DEC_7D8(s);
+    sVEntry<int(void*, int)>* vt = *(sVEntry<int(void*, int)>**)o;
+    return vt[n].fn(o + vt[n].delta, a);
+}
+static inline void callV_7D8(char* s, int n, int a)
+{
+    char* o = DEC_7D8(s);
+    sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)o;
+    vt[n].fn(o + vt[n].delta, a);
+}
+static inline void callN_7D8(char* s, int n)
+{
+    char* o = DEC_7D8(s);
+    sVEntry<void(void*)>* vt = *(sVEntry<void(void*)>**)o;
+    vt[n].fn(o + vt[n].delta);
+}
+static inline int isBusy_7D8(char* s) { return call0_7D8(s, 11); }
+// Release-build assert: compiles to an empty do { } while (0) (its loop notes still shape the code).
+#define ASSERT_7D8(cond) do { } while (0)
+
+static inline bool isState_7D8(char* s, int k)
+{
+    ASSERT_7D8(k > 0);
+    return *(int*)(s + 0x130) == k;
+}
+static inline bool isActive_7D8(char* s)
+{
+    return !(isState_7D8(s, 0x14) || isState_7D8(s, 0x24) || isState_7D8(s, 0x25) || isState_7D8(s, 0x1C) || isState_7D8(s, 0xC));
+}
+static inline bool canLoad_7D8(char* s)
+{
+    return !(isState_7D8(s, 0x14) || isState_7D8(s, 0x24) || isState_7D8(s, 0x25) || isState_7D8(s, 0x1C)
+        || isState_7D8(s, 0xC) || isState_7D8(s, 0x31) || isState_7D8(s, 0x32) || isState_7D8(s, 0x33)
+        || isState_7D8(s, 0x34) || isState_7D8(s, 0x35) || isState_7D8(s, 0x36) || *(int*)(s + 0x430) < 0);
+}
+// Decoder capability tests, written to the player's flag words.
+static inline void canPlay_7D8(char* s, int& out)
+{
+    out = call0_7D8(s, 53) && !callI_7D8(s, 65, *(int*)(s + 0xF8)) && !callI_7D8(s, 66, *(int*)(s + 0xF8));
+}
+static inline void canSkip_7D8(char* s, int& out)
+{
+    out = call0_7D8(s, 55) && call0_7D8(s, 58) && !call0_7D8(s, 51) && !call0_7D8(s, 59)
+        && callI_7D8(s, 67, *(int*)(s + 0xF8)) && !callI_7D8(s, 65, *(int*)(s + 0xF8)) && !callI_7D8(s, 66, *(int*)(s + 0xF8));
+}
+
+extern "C" void func_0023D7D8(void* self)
+{
+    char* s = (char*)self;
+    if (*(int*)(s + 0x130) == 1)
+        return;
+    *(int*)(s + 0xCC) = 0;
+    *(int*)(s + 0xD0) = 0;
+    *(int*)(s + 0xD4) = 0;
+    *(int*)(s + 0xD8) = 0;
+    callN_7D8(s, 3);
+    if (isBusy_7D8(s) || isActive_7D8(s)) {
+        int st = *(int*)(s + 0x130);
+        if (st == 7 || st == 0x1D) {
+            *(int*)(s + 0xD8) = 1;
+            canPlay_7D8(s, *(int*)(s + 0xCC));
+            canSkip_7D8(s, *(int*)(s + 0xD0));
+            if (*(int*)(s + 0x130) == 0x1D)
+                *(int*)(s + 0xD4) = 0;
+            else
+                *(int*)(s + 0xD4) = callI_7D8(s, 67, *(int*)(s + 0xF8));
+        }
+        if (call0_7D8(s, 63)) {
+            *(int*)(s + 0xC8) = 1;
+            callN_7D8(s, 47);
+        }
+    }
+    if (!isBusy_7D8(s)) {
+        if (canLoad_7D8(s)) {
+            sMCOverlayMgr* mgr = (sMCOverlayMgr*)s;
+            int idx = *(int*)(s + 0x430);
+            if (mgr->dev[idx].fC == 0) {
+                if (callI_7D8(s, 52, idx)) {
+                    if (*(int*)(s + 0x430) == *(int*)(s + 0x428)) {
+                        sVEntry<void(void*, int)>* avt = *(sVEntry<void(void*, int)>**)(s + 0x748);
+                        avt[1].fn(s + avt[1].delta, 0x31);
+                    } else {
+                        func_002420C8_v(self, *(int*)(s + 0x430));
+                    }
+                } else {
+                    func_003E6448(&mgr->dev[*(int*)(s + 0x430)], 0, 0xE0);
+                    if (*(int*)(s + 0x428) == *(int*)(s + 0x430) && !(*(int (**)())(s + 0x74))()
+                        && !(*(int (**)())(s + 0x64))() && !(*(int (**)())(s + 0x78))() && !(*(int (**)())(s + 0x68))()
+                        && !(*(int (**)())(s + 0x88))() && *(int*)(s + 0xBC) == 0 && *(int*)(s + 0xC0) == 0
+                        && !(*(int (**)())(s + 0x78))())
+                        func_00241400(s);
+                }
+            } else {
+                if (!callI_7D8(s, 52, idx))
+                    func_003E6448(&mgr->dev[*(int*)(s + 0x430)], 0, 0xE0);
+                else
+                    func_002420C8_v(self, *(int*)(s + 0x430));
+            }
+        }
+    }
+    if (!isBusy_7D8(s)) {
+        if (*(int*)(s + 0x338) != 0) {
+            *(int*)(s + 0x338) = 0;
+            *(int*)(s + 0x33C) = 5;
+        }
+        int st = *(int*)(s + 0x130);
+        if (st == 7 || st == 0x1D) {
+            if ((*(int (**)())(s + 0x7C))()) {
+                int old = *(int*)(s + 0x428);
+                func_00241400(s);
+                if (old != *(int*)(s + 0x428))
+                    func_00241FD0(self);
+            } else if ((*(int (**)())(s + 0x80))()) {
+                int old = *(int*)(s + 0x428);
+                func_00241540(s);
+                if (old != *(int*)(s + 0x428))
+                    func_00241FD0(self);
+            }
+        }
+    }
+    int go = 0;
+    int st = *(int*)(s + 0x130);
+    if (st == 7 || st == 0x16 || st == 0x14 || st == 0x1D || st == 4 || st == 0x17 || st == 0x18 || st == 9 || st == 0xA) {
+        (*(int*)(s + 0x33C))--;
+        if (*(int*)(s + 0x338) == 0 && *(int*)(s + 0x33C) <= 0)
+            go = !isBusy_7D8(s);
+    }
+    if (go) {
+        bool changed = false;
+        for (int i = 0; i < func_00241AC0(self); i++) {
+            if (callI_7D8(s, 26, i)) {
+                if (*(int*)(s + 0x430) < i || *(int*)(s + 0x430) == func_00241AC0(self) - 1) {
+                    *(int*)(s + 0x42C) = i;
+                    *(int*)(s + 0x430) = i;
+                    if (i != *(int*)(s + 0x428)) changed = true; else changed = false;
+                    callV_7D8(s, 5, i);
+                    *(int*)(s + 0x338) = 1;
+                    callV_7D8(s, 27, *(int*)(s + 0x42C));
+                    break;
+                }
+            }
+        }
+        if (changed)
+            func_0023FB20(self, *(int*)(s + 0x428));
+    }
+    switch (*(int*)(s + 0x130)) {
+    case 49:
+        func_0023E268(self);
+        break;
+    case 50:
+        func_0023E2C0(self);
+        break;
+    case 53:
+        func_0023E2C8(self);
+        break;
+    case 54:
+        func_0023E320(self);
+        break;
+    case 51:
+        func_0023E498(self);
+        break;
+    case 52:
+        func_0023E4F0(self);
+        break;
+    case 2:
+        func_0023E4F8(self);
+        break;
+    case 3:
+        func_0023E540(self);
+        break;
+    case 4:
+        func_0023E820(self);
+        break;
+    case 5:
+        func_0023EB80(self);
+        break;
+    case 6:
+        func_0023EC00(self);
+        break;
+    case 10:
+        func_0023EF68(self);
+        break;
+    case 11:
+        func_0023F050(self);
+        break;
+    case 12:
+        func_0023F0F8(self);
+        break;
+    case 22:
+        func_0023FD40(s);
+        break;
+    case 19:
+        func_0023F2D8(self);
+        break;
+    case 20:
+        func_0023F150(self);
+        break;
+    case 21:
+        func_0023F1D8(self);
+        break;
+    case 23:
+        func_0023F258(self);
+        break;
+    case 13:
+        func_0023F308(self);
+        break;
+    case 14:
+        func_0023F3A0(self);
+        break;
+    case 15:
+        func_0023F438(self);
+        break;
+    case 16:
+        func_0023F4F8(self);
+        break;
+    case 17:
+        func_0023F578(s);
+        break;
+    case 7:
+        func_0023F698(self);
+        break;
+    case 18:
+        func_0023FBB8(self);
+        break;
+    case 34:
+        func_0023FF00(self);
+        break;
+    case 35:
+        func_0023FFC0(self);
+        break;
+    case 36:
+        func_0023FC70(self);
+        break;
+    case 37:
+        func_0023FE70(self);
+        break;
+    case 30:
+        func_0023FFF0(self);
+        break;
+    case 31:
+        func_002400B0(self);
+        break;
+    case 32:
+        func_00240130(self);
+        break;
+    case 29:
+        func_002402D0(self);
+        break;
+    case 33:
+        func_002405D0(self);
+        break;
+    case 38:
+        func_0023FD08(self);
+        break;
+    case 24:
+        func_00240688(self);
+        break;
+    case 25:
+        func_00240768(self);
+        break;
+    case 26:
+        func_00240860(s);
+        break;
+    case 27:
+        func_00240960(self);
+        break;
+    case 28:
+        func_00240800(self);
+        break;
+    case 9:
+        func_002409C8(self);
+        break;
+    case 39:
+        func_00240AB0(self);
+        break;
+    case 40:
+        func_00240B88(self);
+        break;
+    case 41:
+        func_00240C30(self);
+        break;
+    case 42:
+        func_00240C90(self);
+        break;
+    case 43:
+        func_00240CC0(self);
+        break;
+    case 44:
+        func_00240D90(s);
+        break;
+    case 45:
+        func_00240EB0(self);
+        break;
+    case 46:
+        func_00240EE0(self);
+        break;
+    case 47:
+        func_00240F10(self);
+        break;
+    case 48:
+        func_00240F30(self);
+        break;
+    case 55:
+        func_0023E3C0(self);
+        break;
+    case 56:
+        func_0023E428(self);
+        break;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("movie/movieplayer", func_0023E268);
