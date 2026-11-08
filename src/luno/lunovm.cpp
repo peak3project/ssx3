@@ -36,7 +36,735 @@ void cMemMan_free(void* ptr);
 extern "C" void func_00224F30(cLunoTableRef* ref);
 extern "C" void func_00224DF0(cLunoTableRef* ref, int flags);
 
+//100%
 INCLUDE_ASM("luno/lunovm", luno_cLunoVM_execute);
+#ifdef SKIP_ASM
+// luno::cLunoVM::execute: the Luno script interpreter (lunovm.cpp), with the inline classes of lunovar.h,
+// lunofunc.h and lunovm.h. Out-of-line members are bound to their retail symbols.
+
+enum eLunoVarType {
+    eLunoVar_Nil,
+    eLunoVar_Int,
+    eLunoVar_Float,
+    eLunoVar_Index,
+    eLunoVar_Table,
+    eLunoVar_Func
+};
+
+class cLunoVar;
+extern cLunoVar gLunoNil __asm__("D_004C9098");
+
+// luno::cLunoFunc: compiled code block and function index (stored in a value's data area; trivial destructor).
+struct cLunoFunc {
+    const char* Code;
+    int Index;
+    void init(const char* code, int index) __asm__("func_00226600__FPvii");
+    ~cLunoFunc() {}
+};
+
+// luno::cLunoTable: reference-counted table handle.
+class cLunoTab {
+public:
+    cLunoTable* m_pTable;
+    cLunoTab& operator=(const cLunoTab& o) __asm__("func_00225068");
+    void set(const cLunoVar& key, const cLunoVar& val) __asm__("luno_cLunoTable_set");
+    cLunoVar& get(const cLunoVar& key) __asm__("func_00225248");
+    ~cLunoTab();
+};
+__asm__("_$_8cLunoTab = func_00224DF0");
+
+void cMemMan_free(void* ptr);
+
+class cLunoVar {
+public:
+    union {
+        int Int;
+        float Float;
+        unsigned int Index;
+        int Raw[2];
+    } Data;
+    eLunoVarType Type;
+
+    cLunoVar()
+    {
+        Type = eLunoVar_Nil;
+        Data.Int = 0;
+    }
+    cLunoVar(int i)
+    {
+        Type = eLunoVar_Int;
+        castInt() = i;
+    }
+    cLunoVar(float f)
+    {
+        Type = eLunoVar_Float;
+        castFloat() = f;
+    }
+    cLunoVar(eLunoVarType t, int i)
+    {
+        Type = t;
+        castInt() = i;
+    }
+    cLunoVar(eLunoVarType t, float f)
+    {
+        Type = t;
+        castFloat() = f;
+    }
+    cLunoVar(eLunoVarType t, unsigned int idx)
+    {
+        Type = t;
+        castIndex() = idx;
+    }
+    ~cLunoVar();
+
+    int& castInt() const __asm__("func_00226610__FPv");
+    float& castFloat() const __asm__("func_00226618__FPv");
+    unsigned int& castIndex() const __asm__("func_00226620__FPv");
+    cLunoTab& castTable()
+    {
+        return *(cLunoTab*)&Data;
+    }
+    cLunoFunc& castFunc()
+    {
+        return *(cLunoFunc*)&Data;
+    }
+    const cLunoTab& castTable() const { return *(const cLunoTab*)&Data; }
+    const cLunoFunc& castFunc() const { return *(const cLunoFunc*)&Data; }
+
+    void Clear()
+    {
+        if (Type == eLunoVar_Table) {
+            castTable().~cLunoTab();
+        } else if (Type == eLunoVar_Func) {
+            castFunc().~cLunoFunc();
+        }
+        Type = eLunoVar_Nil;
+        Data.Int = 0;
+    }
+
+    cLunoVar& operator=(const cLunoVar& o)
+    {
+        Clear();
+        if (o.Type == eLunoVar_Table) {
+            castTable() = o.castTable();
+        } else if (o.Type == eLunoVar_Func) {
+            castFunc() = o.castFunc();
+        } else {
+            Data.Int = o.Data.Int;
+        }
+        Type = o.Type;
+        return *this;
+    }
+    cLunoVar& operator=(const int& i)
+    {
+        Clear();
+        Data.Int = i;
+        Type = eLunoVar_Int;
+        return *this;
+    }
+    cLunoVar& operator=(const float& f)
+    {
+        Clear();
+        Data.Float = f;
+        Type = eLunoVar_Float;
+        return *this;
+    }
+    cLunoVar& operator=(const unsigned int& idx)
+    {
+        Clear();
+        Data.Index = idx;
+        Type = eLunoVar_Index;
+        return *this;
+    }
+    cLunoVar& operator=(const cLunoTab& t)
+    {
+        Clear();
+        castTable() = t;
+        Type = eLunoVar_Table;
+        return *this;
+    }
+    cLunoVar& operator=(const cLunoFunc& f)
+    {
+        Clear();
+        castFunc() = f;
+        Type = eLunoVar_Func;
+        return *this;
+    }
+
+    int isTrue() const
+    {
+        if (Type == eLunoVar_Nil) {
+            return 0;
+        }
+        if (Type == eLunoVar_Int) {
+            return Data.Int != 0;
+        }
+        if (Type == eLunoVar_Float) {
+            return Data.Float != 0.0f;
+        }
+        if (Type == eLunoVar_Index) {
+            return Data.Index != 0;
+        }
+        return 1;
+    }
+    int isFalse() const
+    {
+        if (Type == eLunoVar_Nil) {
+            return 1;
+        }
+        if (Type == eLunoVar_Int) {
+            return Data.Int == 0;
+        }
+        if (Type == eLunoVar_Float) {
+            return Data.Float == 0.0f;
+        }
+        if (Type == eLunoVar_Index) {
+            return Data.Index == 0;
+        }
+        return 0;
+    }
+
+    int operator==(const cLunoVar& o) const
+    {
+        if (o.Type == Type) {
+            return Data.Int == o.Data.Int;
+        }
+        if (Type == eLunoVar_Float && o.Type == eLunoVar_Int) {
+            return Data.Float == (float)o.Data.Int;
+        }
+        if (Type == eLunoVar_Int && o.Type == eLunoVar_Float) {
+            return Data.Int == (int)o.Data.Float;
+        }
+        if (Type == eLunoVar_Index && o.Type == eLunoVar_Int) {
+            return Data.Int == o.Data.Int;
+        }
+        return 0;
+    }
+    int operator!=(const cLunoVar& o) const
+    {
+        if (o.Type == Type) {
+            return Data.Int != o.Data.Int;
+        }
+        if (Type == eLunoVar_Float && o.Type == eLunoVar_Int) {
+            return Data.Float != (float)o.Data.Int;
+        }
+        if (Type == eLunoVar_Int && o.Type == eLunoVar_Float) {
+            return Data.Int != (int)o.Data.Float;
+        }
+        if (Type == eLunoVar_Index && o.Type == eLunoVar_Int) {
+            return Data.Int != o.Data.Int;
+        }
+        return 0;
+    }
+    int operator>=(const cLunoVar& o) const
+    {
+        if (o.Type == Type) {
+            return Data.Int >= o.Data.Int;
+        }
+        if (Type == eLunoVar_Float && o.Type == eLunoVar_Int) {
+            return Data.Float >= (float)o.Data.Int;
+        }
+        if (Type == eLunoVar_Int && o.Type == eLunoVar_Float) {
+            return Data.Int >= (int)o.Data.Float;
+        }
+        if (Type == eLunoVar_Index && o.Type == eLunoVar_Int) {
+            return Data.Index >= o.Data.Index;
+        }
+        return 0;
+    }
+    int operator>(const cLunoVar& o) const
+    {
+        if (o.Type == Type) {
+            return Data.Int > o.Data.Int;
+        }
+        if (Type == eLunoVar_Float && o.Type == eLunoVar_Int) {
+            return Data.Float > (float)o.Data.Int;
+        }
+        if (Type == eLunoVar_Int && o.Type == eLunoVar_Float) {
+            return Data.Int > (int)o.Data.Float;
+        }
+        if (Type == eLunoVar_Index && o.Type == eLunoVar_Int) {
+            return Data.Index > o.Data.Index;
+        }
+        return 0;
+    }
+    int operator<=(const cLunoVar& o) const
+    {
+        if (o.Type == Type) {
+            return Data.Int <= o.Data.Int;
+        }
+        if (Type == eLunoVar_Float && o.Type == eLunoVar_Int) {
+            return Data.Float <= (float)o.Data.Int;
+        }
+        if (Type == eLunoVar_Int && o.Type == eLunoVar_Float) {
+            return Data.Int <= (int)o.Data.Float;
+        }
+        if (Type == eLunoVar_Index && o.Type == eLunoVar_Int) {
+            return Data.Index <= o.Data.Index;
+        }
+        return 0;
+    }
+    int operator<(const cLunoVar& o) const
+    {
+        if (o.Type == Type) {
+            return Data.Int < o.Data.Int;
+        }
+        if (Type == eLunoVar_Float && o.Type == eLunoVar_Int) {
+            return Data.Float < (float)o.Data.Int;
+        }
+        if (Type == eLunoVar_Int && o.Type == eLunoVar_Float) {
+            return Data.Int < (int)o.Data.Float;
+        }
+        if (Type == eLunoVar_Index && o.Type == eLunoVar_Int) {
+            return Data.Index < o.Data.Index;
+        }
+        return 0;
+    }
+    int operator||(const cLunoVar& o) const
+    {
+        if (o.Type == eLunoVar_Nil) {
+            if (Type == eLunoVar_Nil) {
+                return 0;
+            }
+            return Data.Int != 0;
+        }
+        if (Type == eLunoVar_Nil) {
+            return 0;
+        }
+        return Data.Int != 0 || o.Data.Int != 0;
+    }
+    int operator&&(const cLunoVar& o) const
+    {
+        if (o.Type == eLunoVar_Nil) {
+            return 0;
+        }
+        if (Type == eLunoVar_Nil) {
+            return 0;
+        }
+        return Data.Int != 0 && o.Data.Int != 0;
+    }
+
+    cLunoVar operator!() const
+    {
+        if (Type == eLunoVar_Nil) {
+            return gLunoNil;
+        }
+        if (Type == eLunoVar_Int) {
+            return cLunoVar(Data.Int == 0);
+        }
+        if (Type == eLunoVar_Float) {
+            return cLunoVar(Data.Float == 0.0f);
+        }
+        return gLunoNil;
+    }
+    cLunoVar operator-() const
+    {
+        if (Type == eLunoVar_Nil) {
+            return gLunoNil;
+        }
+        if (Type == eLunoVar_Int) {
+            return cLunoVar(-Data.Int);
+        }
+        if (Type == eLunoVar_Float) {
+            return cLunoVar(-Data.Float);
+        }
+        return gLunoNil;
+    }
+    cLunoVar operator+(const cLunoVar& o) const __asm__("func_00226628");
+    cLunoVar& operator+=(const cLunoVar& o)
+    {
+        return *this = *this + o;
+    }
+
+    static void operator delete[](void* p) { cMemMan_free(p); }
+};
+__asm__("_$_8cLunoVar = func_00225B90");
+
+// Binary arithmetic (operator+ is also emitted out of line as func_00226628).
+static inline cLunoVar lunoAdd(const cLunoVar& a, const cLunoVar& b)
+{
+    if (b.Type == a.Type) {
+        if (a.Type == eLunoVar_Float) {
+            return cLunoVar(a.Type, a.Data.Float + b.Data.Float);
+        }
+        if (a.Type == eLunoVar_Int) {
+            return cLunoVar(a.Type, a.Data.Int + b.Data.Int);
+        }
+        if (a.Type == eLunoVar_Index) {
+            return cLunoVar(a.Type, a.Data.Index + b.Data.Index);
+        }
+        return gLunoNil;
+    }
+    if (a.Type == eLunoVar_Float && b.Type == eLunoVar_Int) {
+        return cLunoVar(a.Type, a.Data.Float + (float)b.Data.Int);
+    }
+    if (a.Type == eLunoVar_Int && b.Type == eLunoVar_Float) {
+        return cLunoVar(a.Type, a.Data.Int + (int)b.Data.Float);
+    }
+    return gLunoNil;
+}
+
+static inline cLunoVar lunoSub(const cLunoVar& a, const cLunoVar& b)
+{
+    if (b.Type == a.Type) {
+        if (a.Type == eLunoVar_Float) {
+            return cLunoVar(a.Type, a.Data.Float - b.Data.Float);
+        }
+        if (a.Type == eLunoVar_Int) {
+            return cLunoVar(a.Type, a.Data.Int - b.Data.Int);
+        }
+        return gLunoNil;
+    }
+    if (a.Type == eLunoVar_Float && b.Type == eLunoVar_Int) {
+        return cLunoVar(a.Type, a.Data.Float - (float)b.Data.Int);
+    }
+    if (a.Type == eLunoVar_Int && b.Type == eLunoVar_Float) {
+        return cLunoVar(a.Type, a.Data.Int - (int)b.Data.Float);
+    }
+    return gLunoNil;
+}
+
+static inline cLunoVar lunoMul(const cLunoVar& a, const cLunoVar& b)
+{
+    if (b.Type == a.Type) {
+        if (a.Type == eLunoVar_Float) {
+            return cLunoVar(a.Type, a.Data.Float * b.Data.Float);
+        }
+        if (a.Type == eLunoVar_Int) {
+            return cLunoVar(a.Type, a.Data.Int * b.Data.Int);
+        }
+        return gLunoNil;
+    }
+    if (a.Type == eLunoVar_Float && b.Type == eLunoVar_Int) {
+        return cLunoVar(a.Type, a.Data.Float * (float)b.Data.Int);
+    }
+    if (a.Type == eLunoVar_Int && b.Type == eLunoVar_Float) {
+        return cLunoVar(a.Type, a.Data.Int * (int)b.Data.Float);
+    }
+    return gLunoNil;
+}
+
+static inline cLunoVar lunoDiv(const cLunoVar& a, const cLunoVar& b)
+{
+    if (b.Type == a.Type) {
+        if (a.Type == eLunoVar_Float) {
+            return cLunoVar(a.Type, a.Data.Float / b.Data.Float);
+        }
+        if (a.Type == eLunoVar_Int) {
+            return cLunoVar(a.Type, a.Data.Int / b.Data.Int);
+        }
+        return gLunoNil;
+    }
+    if (a.Type == eLunoVar_Float && b.Type == eLunoVar_Int) {
+        return cLunoVar(a.Type, a.Data.Float / (float)b.Data.Int);
+    }
+    if (a.Type == eLunoVar_Int && b.Type == eLunoVar_Float) {
+        return cLunoVar(a.Type, a.Data.Int / (int)b.Data.Float);
+    }
+    return gLunoNil;
+}
+
+static inline cLunoVar lunoMod(const cLunoVar& a, const cLunoVar& b)
+{
+    if (b.Type == a.Type) {
+        if (a.Type == eLunoVar_Int) {
+            return cLunoVar(a.Type, a.Data.Int % b.Data.Int);
+        }
+        return gLunoNil;
+    }
+    return gLunoNil;
+}
+
+// Power is not implemented for any operand types. The two identical returns are real: the July 2003 prototype
+// keeps the type test and two separate nil copies; retail cross-jumped them (only the type loads remain).
+static inline cLunoVar lunoPow(const cLunoVar& a, const cLunoVar& b)
+{
+    if (b.Type == a.Type) {
+        return gLunoNil;
+    }
+    return gLunoNil;
+}
+
+// One pushed C-function argument: the register index it came from and its value.
+struct cLunoArg {
+    int Index;
+    cLunoVar Value;
+    static void operator delete[](void* p) { cMemMan_free(p); }
+};
+
+// PORT: operator_new__FUi really takes (size, tag, flags, d); bound by asm label
+void* operator new[](unsigned int size, const char* tag, unsigned int flags, int d) __asm__("operator_new__FUi");
+// PORT: the game's operator new is cMemMan_alloc(size, tag, flags, 0); bound by asm label
+void* operator new(unsigned int size, const char* tag, unsigned int flags, int d) __asm__("cMemMan_alloc");
+// PORT: the table handle constructor with a size (func_00224DA0) is bound by asm label.
+extern "C++" cLunoTab* lunoNewTable(cLunoTab* self, int size) __asm__("func_00224DA0");
+extern "C" int func_002224A0(void);
+extern char D_00479790[];
+extern char D_004797A0[];
+
+typedef cLunoVar (*tLunoCFunc)(int numArgs, cLunoArg* args);
+extern tLunoCFunc gLunoCFunctions[] __asm__("D_00441F38");
+
+// Compiled code: a 16-byte header, the instruction words, then the function table.
+struct sLunoCodeHeader {
+    int Magic;
+    int FuncTable;
+    int FuncTableEnd;
+    int Pad;
+};
+struct sLunoFuncEntry {
+    int Name;
+    int Start;
+    int Size;
+    int NumArgs;
+};
+
+// One instruction word.
+union tLunoOp {
+    unsigned int Raw;
+    int Int;
+    float Float;
+    struct {
+        unsigned char Op;
+        unsigned char A;
+        unsigned char B;
+        unsigned char C;
+    } ABC;
+    struct {
+        unsigned char Op;
+        unsigned char A;
+        unsigned short Target;
+    } Jump;
+    struct {
+        unsigned char Op;
+        unsigned char Ret;
+        unsigned char CFunc;
+        unsigned char NumArgs;
+    } CCall;
+};
+
+class cLunoVM {
+public:
+    cLunoVar* m_Regs;
+    cLunoVM() __asm__("func_002224A8");
+    ~cLunoVM() {}
+    void call(const cLunoFunc& func, cLunoVar& self, const cLunoVar& arg, cLunoVar& result) __asm__("func_00222648");
+    void execute(const cLunoFunc& func, cLunoVar& result) __asm__("luno_cLunoVM_execute");
+};
+
+void cLunoVM::execute(const cLunoFunc& func, cLunoVar& result)
+{
+    const char* code = func.Code;
+    const int* ops = (const int*)(code + sizeof(sLunoCodeHeader));
+    int numOps = (((const sLunoCodeHeader*)code)->FuncTable - sizeof(sLunoCodeHeader)) / sizeof(int);
+    cLunoArg* args = 0;
+    int argDepth = 0;
+    const sLunoFuncEntry* entry = (const sLunoFuncEntry*)(code + ((const sLunoCodeHeader*)code)->FuncTable);
+    entry += func.Index;
+    int argDepthMax = entry->NumArgs;
+
+    if (argDepthMax > 0) {
+        args = new (D_00479790, 0xA0000000, 0) cLunoArg[argDepthMax];
+    }
+    int pc = entry->Start;
+    while (pc < numOps) {
+        tLunoOp op;
+        op.Raw = ops[pc++];
+        switch (op.ABC.Op) {
+        case 32:
+            args[argDepth].Index = op.ABC.A;
+            args[argDepth].Value = m_Regs[op.ABC.B];
+            argDepth++;
+            break;
+        case 23: {
+            tLunoOp value;
+            value.Int = ops[pc++];
+            m_Regs[op.ABC.A] = value.Float;
+            break;
+        }
+        case 22: {
+            tLunoOp value;
+            value.Int = ops[pc++];
+            m_Regs[op.ABC.A] = value.Int;
+            break;
+        }
+        case 1:
+            if (m_Regs[op.ABC.A].isTrue()) {
+                pc = op.Jump.Target;
+            }
+            break;
+        case 2:
+            if (m_Regs[op.ABC.A].isFalse()) {
+                pc = op.Jump.Target;
+            }
+            break;
+        case 0:
+            pc = op.Jump.Target;
+            break;
+        case 34:
+            m_Regs[op.ABC.A] = !m_Regs[op.ABC.B];
+            break;
+        case 35:
+            m_Regs[op.ABC.A] = -m_Regs[op.ABC.B];
+            break;
+        case 3:
+            m_Regs[op.ABC.A] = m_Regs[op.ABC.B] == m_Regs[op.ABC.C];
+            break;
+        case 4:
+            m_Regs[op.ABC.A] = m_Regs[op.ABC.B] != m_Regs[op.ABC.C];
+            break;
+        case 5:
+            m_Regs[op.ABC.A] = m_Regs[op.ABC.B] >= m_Regs[op.ABC.C];
+            break;
+        case 6:
+            m_Regs[op.ABC.A] = m_Regs[op.ABC.B] > m_Regs[op.ABC.C];
+            break;
+        case 7:
+            m_Regs[op.ABC.A] = m_Regs[op.ABC.B] <= m_Regs[op.ABC.C];
+            break;
+        case 8:
+            m_Regs[op.ABC.A] = m_Regs[op.ABC.B] < m_Regs[op.ABC.C];
+            break;
+        case 9:
+            m_Regs[op.ABC.A] = m_Regs[op.ABC.B] || m_Regs[op.ABC.C];
+            break;
+        case 10:
+            m_Regs[op.ABC.A] = m_Regs[op.ABC.B] && m_Regs[op.ABC.C];
+            break;
+        case 11:
+            m_Regs[op.ABC.A] = m_Regs[op.ABC.B];
+            break;
+        case 12:
+            m_Regs[op.ABC.A] = lunoAdd(m_Regs[op.ABC.B], m_Regs[op.ABC.C]);
+            break;
+        case 13:
+            m_Regs[op.ABC.A] = lunoSub(m_Regs[op.ABC.B], m_Regs[op.ABC.C]);
+            break;
+        case 14:
+            m_Regs[op.ABC.A] = lunoMul(m_Regs[op.ABC.B], m_Regs[op.ABC.C]);
+            break;
+        case 15:
+            m_Regs[op.ABC.A] = lunoDiv(m_Regs[op.ABC.B], m_Regs[op.ABC.C]);
+            break;
+        case 17:
+            m_Regs[op.ABC.A] = lunoMod(m_Regs[op.ABC.B], m_Regs[op.ABC.C]);
+            break;
+        case 16:
+            m_Regs[op.ABC.A] = lunoPow(m_Regs[op.ABC.B], m_Regs[op.ABC.C]);
+            break;
+        case 27:
+            if (m_Regs[op.ABC.B].Type != eLunoVar_Nil) {
+                cLunoVar& arg = m_Regs[op.ABC.C];
+                cLunoVM vm;
+                vm.call(m_Regs[op.ABC.B].castFunc(), m_Regs[0], arg, m_Regs[op.ABC.A]);
+            } else {
+                func_002224A0();
+            }
+            break;
+        case 33:
+            m_Regs[op.CCall.Ret] = gLunoCFunctions[op.CCall.CFunc](op.CCall.NumArgs, &args[argDepth - op.CCall.NumArgs]);
+            argDepth -= op.CCall.NumArgs;
+            break;
+        case 18:
+            m_Regs[op.ABC.A].castTable().set(m_Regs[op.ABC.B], m_Regs[op.ABC.C]);
+            break;
+        case 28:
+            m_Regs[op.ABC.A].castTable().set(m_Regs[op.ABC.B], m_Regs[op.ABC.C]);
+            m_Regs[op.ABC.B].Data.Index++;
+            break;
+        case 19:
+            m_Regs[op.ABC.A] = m_Regs[op.ABC.B];
+            break;
+        case 20: {
+            unsigned int value = ops[pc++];
+            m_Regs[op.ABC.A] = value;
+            break;
+        }
+        case 21: {
+            tLunoOp value;
+            value.Int = ops[pc++];
+            m_Regs[op.ABC.A] = value.Int;
+            break;
+        }
+        case 29: {
+            cLunoFunc f;
+            f.init(code, ops[pc++]);
+            m_Regs[op.ABC.A] = f;
+            break;
+        }
+        case 36: {
+            int target = ops[pc++];
+            int down = m_Regs[op.ABC.C] < cLunoVar(0.0f);
+            if (down) {
+                if (m_Regs[op.ABC.A] >= m_Regs[op.ABC.B]) {
+                    m_Regs[op.ABC.A] += m_Regs[op.ABC.C];
+                    pc = target;
+                }
+            } else {
+                if (m_Regs[op.ABC.A] <= m_Regs[op.ABC.B]) {
+                    m_Regs[op.ABC.A] += m_Regs[op.ABC.C];
+                    pc = target;
+                }
+            }
+            break;
+        }
+        case 24:
+            m_Regs[op.ABC.A] = m_Regs[op.ABC.B].castTable().get(m_Regs[op.ABC.C]);
+            break;
+        case 25:
+            m_Regs[op.ABC.A] = *lunoNewTable((cLunoTab*)operator new(sizeof(cLunoTab), D_004797A0, 0x20000000, 0), 0x20);
+            break;
+        case 30:
+            m_Regs[op.ABC.A] = gLunoNil;
+            break;
+        case 31:
+            result = m_Regs[op.ABC.A];
+            pc = numOps;
+            break;
+        case 37: {
+            tLunoOp value;
+            value.Int = ops[pc++];
+            args[argDepth].Index = op.ABC.A;
+            args[argDepth].Value = value.Int;
+            argDepth++;
+            break;
+        }
+        case 38: {
+            tLunoOp value;
+            value.Int = ops[pc++];
+            args[argDepth].Index = op.ABC.A;
+            args[argDepth].Value = value.Float;
+            argDepth++;
+            break;
+        }
+        case 39: {
+            tLunoOp value;
+            value.Int = ops[pc++];
+            args[argDepth].Index = op.ABC.A;
+            args[argDepth].Value = value.Int;
+            argDepth++;
+            break;
+        }
+        case 40:
+            args[argDepth].Index = op.ABC.A;
+            args[argDepth].Value = op.ABC.B;
+            argDepth++;
+            break;
+        case 41:
+            args[argDepth].Index = op.ABC.A;
+            args[argDepth].Value = (float)op.ABC.B;
+            argDepth++;
+            break;
+        case 42:
+            result = gLunoNil;
+            pc = numOps;
+            break;
+        }
+    }
+    delete[] args;
+    delete[] m_Regs;
+}
+#endif
 
 //100%
 INCLUDE_ASM("luno/lunovm", func_00224C00);
