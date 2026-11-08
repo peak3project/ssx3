@@ -965,7 +965,271 @@ extern "C" int func_0032B6A8(sSphereVec4* a, sSphereVec4* b, sSphereVec4* c, sSp
 }
 #endif
 
+//100%
 INCLUDE_ASM("intersect/riderspheretree", func_0032B6E0);
+#ifdef SKIP_ASM
+struct sCell_B6E0 {
+    sSphereVec4 n[2];   // 0x00 triangle normals (1e10 = not computed, 1e11 = degenerate)
+    sSphereVec4 lo;     // 0x20 bounds (lo.x 1e10 = not computed)
+    sSphereVec4 hi;     // 0x30
+};
+
+struct sPatch_B6E0 {
+    char pad_0x00[0x10];
+    sSphereVec4 verts[10][10];  // 0x0010
+    sCell_B6E0 fine[9][9];      // 0x0650
+    sCell_B6E0 coarse[3][3];    // 0x1A90
+};
+
+struct sVE_B6E0 {
+    short delta;
+    short pad;
+    union {
+        int (*test)(void* self, void* a, void* b, void* c, sSphereVec4* n, void* d, void* e, void* f);
+        void (*uv)(void* self, void* obj, float* u, float* v, void* d, void* e, void* f);
+    };
+};
+
+struct sQuery_B6E0 {
+    int type;           // 0x00
+    int pad_0x04;
+    int facing;         // 0x08
+    int pad_0x0C;
+    sSphereVec4 dir;    // 0x10
+    sSphereVec4 hi;     // 0x20
+    sSphereVec4 lo;     // 0x30
+    char pad_0x40[0x10];
+    sVE_B6E0* vt;       // 0x50
+};
+
+struct sHitCache_B6E0 {
+    void* obj;              // 0x00
+    unsigned short u;       // 0x04
+    unsigned short v;       // 0x06
+    int tri;                // 0x08
+    int type;               // 0x0C
+};
+
+// PORT: PS2-only VU0 inline asm (bounds of four points).
+static inline void Bounds_B6E0(sCell_B6E0* c, const sSphereVec4& a, const sSphereVec4& b,
+                               const sSphereVec4& d, const sSphereVec4& e)
+{
+    __asm__(
+        "lqc2      $vf2, %2\n"
+        "lqc2      $vf3, %3\n"
+        "lqc2      $vf4, %4\n"
+        "lqc2      $vf5, %5\n"
+        "vmax.xyzw $vf6, $vf2, $vf3\n"
+        "vmini.xyzw $vf7, $vf2, $vf3\n"
+        "vmax.xyzw $vf8, $vf4, $vf5\n"
+        "vmini.xyzw $vf9, $vf4, $vf5\n"
+        "vmax.xyzw $vf6, $vf6, $vf8\n"
+        "vmini.xyzw $vf7, $vf7, $vf9\n"
+        "sqc2      $vf6, %0\n"
+        "sqc2      $vf7, %1\n"
+        : "=m"(c->hi), "=m"(c->lo)
+        : "m"(a), "m"(b), "m"(d), "m"(e));
+}
+
+// PORT: PS2-only VU0 inline asm (unit normal of triangle a b c; returns 1/|n|).
+static inline float TriNormal_B6E0(sSphereVec4& n, const sSphereVec4& a, const sSphereVec4& b,
+                                  const sSphereVec4& c)
+{
+    union { int i; float f; } inv;
+    __asm__(
+        "lqc2      $vf2, %2\n"
+        "lqc2      $vf3, %3\n"
+        "lqc2      $vf4, %4\n"
+        "vsub.xyzw $vf5, $vf2, $vf3\n"
+        "vsub.xyzw $vf6, $vf3, $vf4\n"
+        "vopmula.xyz ACC, $vf5, $vf6\n"
+        "vopmsub.xyz $vf7, $vf6, $vf5\n"
+        "vsub.w    $vf7, $vf7, $vf7\n"
+        "vaddw.x   $vf8, $vf0, $vf0w\n"
+        "vmul.xyzw $vf9, $vf7, $vf7\n"
+        "vadday.x  ACC, $vf9, $vf9y\n"
+        "vmaddaz.x ACC, $vf8, $vf9z\n"
+        "vmaddw.x  $vf9, $vf8, $vf9w\n"
+        "vrsqrt    Q, $vf0w, $vf9x\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf5, $vf7, Q\n"
+        "vaddw.x   $vf10, $vf0, $vf0w\n"
+        "vmulq.xyzw $vf10, $vf10, Q\n"
+        "qmfc2.ni  %1, $vf10\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(n), "=r"(inv.i)
+        : "m"(a), "m"(b), "m"(c));
+    return inv.f;
+}
+
+// does the cell's bounding box overlap the query box?
+static inline int Overlap_B6E0(const sCell_B6E0* c, const sQuery_B6E0* q)
+{
+    return q->hi.x > c->lo.x && q->lo.x < c->hi.x
+        && q->hi.y > c->lo.y && q->lo.y < c->hi.y
+        && q->hi.z > c->lo.z && q->lo.z < c->hi.z;
+}
+
+// the cell's k-th triangle normal, built on first use (99999997952 marks a degenerate triangle)
+static inline sSphereVec4& CellNormal_B6E0(sCell_B6E0* cell, int k, const sSphereVec4& a,
+                                           const sSphereVec4& b, const sSphereVec4& c)
+{
+    if (cell->n[k].x == 10000000000.0f) {
+        if (TriNormal_B6E0(cell->n[k], a, b, c) > 10.0f)
+            cell->n[k].x = 99999997952.0f;
+    }
+    return cell->n[k];
+}
+
+// query against a 9x9-cell terrain patch (coarse 3x3 cells for type 0): tries the cached cell first,
+// then every cell whose bounds overlap the query box; returns the hit cell's uv in uvOut
+extern "C" int func_0032B6E0_typed(sQuery_B6E0* q, void* obj, sPatch_B6E0* patch, void* a3, void* a4,
+                                   void* a5, float* uvOut, sHitCache_B6E0* cache) __asm__("func_0032B6E0");
+extern "C" int func_0032B6E0_typed(sQuery_B6E0* q, void* obj, sPatch_B6E0* patch, void* a3, void* a4,
+                                   void* a5, float* uvOut, sHitCache_B6E0* cache)
+{
+    // the cached cell's row is scaled by its own step variable: the binary keeps it in a
+    // second register next to step and multiplies only the row index by it
+    int rowStep;
+    int step;
+    int n;
+    int skip;
+    float scale;
+    float half;
+    sCell_B6E0* cell;
+    if (q->type == 0) {
+        step = 3;
+        rowStep = 3;
+        skip = 21;
+        n = 3;
+        scale = 1.0f / 3.0f;
+        half = 1.0f / 6.0f;
+        cell = patch->coarse[0];
+    } else {
+        step = 1;
+        rowStep = 1;
+        skip = 1;
+        n = 9;
+        scale = 1.0f / 9.0f;
+        half = 1.0f / 18.0f;
+        cell = patch->fine[0];
+    }
+    if (cache != 0 && cache->obj == obj && cache->type == q->type) {
+        sCell_B6E0* c;
+        if (cache->type == 0)
+            c = &patch->coarse[cache->u][cache->v];
+        else
+            c = &patch->fine[cache->u][cache->v];
+        sSphereVec4* p00 = &patch->verts[cache->u * rowStep][cache->v * step];
+        sSphereVec4* p10 = p00 + step * 10;
+        sSphereVec4* p01 = p00 + step;
+        sSphereVec4* p11 = p10 + step;
+        if (c->lo.x == 10000000000.0f)
+            Bounds_B6E0(c, *p00, *p10, *p01, *p11);
+        if (cache->tri) {
+            sSphereVec4& n0 = CellNormal_B6E0(c, 0, *p11, *p10, *p01);
+            if (n0.x != 99999997952.0f && (!q->facing || Dot_A1C0(n0, q->dir) <= 0.8f)) {
+                sVE_B6E0* vt = q->vt;
+                if (vt[4].test((char*)q + vt[4].delta, p11, p10, p01, &n0, a3, a4, a5)) {
+                    float s = cache->u * scale + half;
+                    float t = cache->v * scale + half;
+                    if (q->type == 2) {
+                        sVE_B6E0* vt = q->vt;
+                        vt[8].uv((char*)q + vt[8].delta, obj, &s, &t, a3, a4, a5);
+                    }
+                    uvOut[0] = s;
+                    uvOut[1] = t;
+                    return 1;
+                }
+            }
+        } else {
+            sSphereVec4& n1 = CellNormal_B6E0(c, 1, *p01, *p10, *p00);
+            if (n1.x != 99999997952.0f && (!q->facing || Dot_A1C0(n1, q->dir) <= 0.8f)) {
+                sVE_B6E0* vt = q->vt;
+                if (vt[4].test((char*)q + vt[4].delta, p01, p10, p00, &n1, a3, a4, a5)) {
+                    float s = cache->u * scale + half;
+                    float t = cache->v * scale + half;
+                    if (q->type == 2) {
+                        sVE_B6E0* vt = q->vt;
+                        vt[8].uv((char*)q + vt[8].delta, obj, &s, &t, a3, a4, a5);
+                    }
+                    uvOut[0] = s;
+                    uvOut[1] = t;
+                    return 1;
+                }
+            }
+        }
+        cache->obj = 0;
+        cache->u = 0;
+        cache->v = 0;
+        cache->tri = 0;
+        cache->type = 0;
+    }
+    sSphereVec4* p00 = patch->verts[0];
+    for (int u = 0; u < n; u++) {
+        sSphereVec4* p10 = p00 + step * 10;
+        sSphereVec4* p01 = p00 + step;
+        sSphereVec4* p11 = p10 + step;
+        for (int v = 0; v < n; v++) {
+            if (cell->lo.x == 10000000000.0f)
+                Bounds_B6E0(cell, *p00, *p10, *p01, *p11);
+            if (Overlap_B6E0(cell, q)) {
+                sSphereVec4& n0 = CellNormal_B6E0(cell, 0, *p11, *p10, *p01);
+                if (n0.x != 99999997952.0f && (!q->facing || Dot_A1C0(n0, q->dir) <= 0.8f)) {
+                    sVE_B6E0* vt = q->vt;
+                    if (vt[4].test((char*)q + vt[4].delta, p11, p10, p01, &n0, a3, a4, a5)) {
+                        float s = u * scale + half;
+                        float t = v * scale + half;
+                        if (q->type == 2) {
+                            sVE_B6E0* vt = q->vt;
+                            vt[8].uv((char*)q + vt[8].delta, obj, &s, &t, a3, a4, a5);
+                        }
+                        uvOut[0] = s;
+                        uvOut[1] = t;
+                        if (cache) {
+                            cache->obj = obj;
+                            cache->u = u;
+                            cache->v = v;
+                            cache->tri = 1;
+                            cache->type = q->type;
+                        }
+                        return 1;
+                    }
+                }
+                sSphereVec4& n1 = CellNormal_B6E0(cell, 1, *p01, *p10, *p00);
+                if (n1.x != 99999997952.0f && (!q->facing || Dot_A1C0(n1, q->dir) <= 0.8f)) {
+                    sVE_B6E0* vt = q->vt;
+                    if (vt[4].test((char*)q + vt[4].delta, p01, p10, p00, &n1, a3, a4, a5)) {
+                        float s = u * scale + half;
+                        float t = v * scale + half;
+                        if (q->type == 2) {
+                            sVE_B6E0* vt = q->vt;
+                            vt[8].uv((char*)q + vt[8].delta, obj, &s, &t, a3, a4, a5);
+                        }
+                        uvOut[0] = s;
+                        uvOut[1] = t;
+                        if (cache) {
+                            cache->obj = obj;
+                            cache->u = u;
+                            cache->v = v;
+                            cache->tri = 0;
+                            cache->type = q->type;
+                        }
+                        return 1;
+                    }
+                }
+            }
+            p00 += step;
+            p10 += step;
+            p01 += step;
+            p11 += step;
+            cell++;
+        }
+        p00 += skip;
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("intersect/riderspheretree", func_0032C0F8);
