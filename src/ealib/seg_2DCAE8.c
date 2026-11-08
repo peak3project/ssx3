@@ -8513,7 +8513,590 @@ void func_003E9590(void *arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E95C8);
+#ifdef SKIP_ASM
+struct Ev_95C8 { int type; int kind; int code; char *data; };
+struct Rec_95C8 {
+    int f0;
+    int tag;
+    int f8[12];
+    void (*fn)(void *, struct Ev_95C8 *, int);
+    int ctx;
+    struct Rec_95C8 *next;
+};
+struct Slot_95C8 { int h; int f4; int f8; int fC; int f10; };
+struct Cb_95C8 { void (*fn)(void *, struct Ev_95C8 *, int); int ctx; };
+struct Sess_95C8 {                  /* 0x110 */
+    char name[0x20];
+    char self[0x20];
+    char host[0x20];
+    char oppo[0x20];
+    char p1[0x10];
+    char p2[0x10];
+    char p3[0x10];
+    char p4[0x10];
+    int addr;
+    int from;
+    int seed;
+    int when;
+    char auth[0x40];
+};
+struct Room_95C8 {                  /* 0x68 */
+    int id;
+    int f04;
+    int flags;
+    int f0C;
+    int f10;
+    char f14[4];
+    char f18[4];
+    char name[0x20];
+    char host[0x20];
+    char ping[8];
+    int addr;
+};
+struct User_95C8 {                  /* 0x138 */
+    int id;
+    int flags;
+    char name[0x20];
+    char f28[8];
+    int addr;
+    int f34;
+    char f38[0x80];
+    char fB8[0x80];
+};
+struct Rank_95C8 {                  /* 0xA8 */
+    int score;
+    int f04;
+    char name[0x20];
+    char f28[0x80];
+};
+struct Lob_95C8 {
+    int f0;
+    int f4;
+    unsigned int f8;
+    int fC;
+    int f10;
+    int f14;
+    unsigned int f18;
+    unsigned int f1C;
+    int f20;
+    char f24[0x10];
+    char f34[0x100];
+    char f134[0x40];
+    char f174[0x40];
+    int f1B4;
+    int f1B8;
+    int f1BC;
+    char f1C0[0x40];
+    struct Sess_95C8 sess;
+    struct Slot_95C8 s[8];
+    int f3B0;
+    int f3B4;
+    char f3B8[0x100];
+    int f4B8;
+    char f4BC[0x40];
+    int f4FC;
+    int f500;
+    int f504;
+    int f508;
+    int f50C;
+    int f510;
+    struct Cb_95C8 cb[5];
+};
+
+extern int TagFind_95C8(char *, char *) __asm__("cDirtysock_tag_TagFieldFind");
+extern int TagGetNumber_95C8(int, int) __asm__("cDirtysock_tag_TagFieldGetNumber");
+extern int TagGetAddr_95C8(int, int) __asm__("cDirtysock_tag_TagFieldGetAddr");
+extern int TagGetFlags_95C8(int, int) __asm__("cDirtysock_tag_TagFieldGetFlags");
+extern int TagGetTime_95C8(int, int) __asm__("cDirtysock_tag_TagFieldGetTime");
+extern int TagGetString_95C8(int, char *, int, char *) __asm__("cDirtysock_tag_TagFieldGetString");
+extern int TagGetBinary_95C8(int, void *, int) __asm__("cDirtysock_tag_TagFieldGetBinary");
+extern int TagDupl_95C8(char *, int, char *) __asm__("cDirtysock_tag_TagFieldDupl");
+extern int TagSetNumber_95C8(char *, int, char *, int) __asm__("cDirtysock_tag_TagFieldSetNumber");
+extern int TagSetAddress_95C8(char *, int, char *, int) __asm__("cDirtysock_tag_TagFieldSetAddress");
+extern int TagSetBinary_95C8(char *, int, char *, void *, int) __asm__("cDirtysock_tag_TagFieldSetBinary");
+extern void *func_002591E8_95C8(int) __asm__("func_002591E8");
+extern void func_00259210_95C8(void *) __asm__("func_00259210");
+extern void *func_00416210_95C8(void *, int, int) __asm__("func_00416210");
+extern int sprintf_95C8(char *, char *, ...) __asm__("sprintf");
+extern char *strcpy(char *, const char *);
+extern void func_003E76A8_95C8(void *, char *, ...) __asm__("func_003E76A8");
+extern int func_003E77F0_95C8(void *, struct Rec_95C8 *, int) __asm__("func_003E77F0");
+extern void func_003E7B00_95C8(void *, int, int) __asm__("func_003E7B00");
+extern void func_003E7BA0_95C8(void *) __asm__("func_003E7BA0");
+extern void func_003E7C40_95C8(void *) __asm__("func_003E7C40");
+extern void func_003E7F70_95C8(void *, int, int) __asm__("func_003E7F70");
+extern void func_003E9590_95C8(void *) __asm__("func_003E9590");
+extern int func_003EE320_95C8(int, void *) __asm__("func_003EE320");
+extern void func_003EE3E0_95C8(int, int, void *) __asm__("func_003EE3E0");
+extern void *func_003EE468_95C8(int, int) __asm__("func_003EE468");
+extern void *func_003EE480_95C8(int, int) __asm__("func_003EE480");
+extern int func_003EE9A0_95C8(int) __asm__("func_003EE9A0");
+extern void func_003EEB30_95C8(int, char *, int) __asm__("func_003EEB30");
+extern int func_003EEC88_95C8(int, char *) __asm__("func_003EEC88");
+extern int func_003EED08_95C8(int, char *) __asm__("func_003EED08");
+extern void func_003EEDA0_95C8(int, int, int) __asm__("func_003EEDA0");
+extern int func_003EEEE8_95C8(int, int) __asm__("func_003EEEE8");
+extern void func_003EEF40_95C8(int, int) __asm__("func_003EEF40");
+extern void func_003F5638_95C8(int, int, int) __asm__("func_003F5638");
+extern int func_003F5738_95C8(int) __asm__("func_003F5738");
+extern int func_003F57C8_95C8(int, int) __asm__("func_003F57C8");
+extern int func_003F5910_95C8(int, int, int, char *, int) __asm__("func_003F5910");
+extern int func_003F5A70_95C8(int, int *, int *, char **) __asm__("func_003F5A70");
+extern void func_003F5C38_95C8(int, int, int, int, int) __asm__("func_003F5C38");
+extern unsigned int func_003F5D88_95C8(int) __asm__("func_003F5D88");
+
+extern char D_00495F30_95C8[] __asm__("D_00495F30");
+extern char D_00495FB0_95C8[] __asm__("D_00495FB0");
+extern char D_004A4870_95C8[] __asm__("D_004A4870");
+extern char D_004A4880_95C8[] __asm__("D_004A4880");
+extern char D_004A4888_95C8[] __asm__("D_004A4888");
+extern char D_004A4890_95C8[] __asm__("D_004A4890");
+extern char D_004A48E0_95C8[] __asm__("D_004A48E0");
+extern char D_004A48E8_95C8[] __asm__("D_004A48E8");
+extern char D_004A4908_95C8[] __asm__("D_004A4908");
+extern char D_004A4910_95C8[] __asm__("D_004A4910");
+extern char D_004A4918_95C8[] __asm__("D_004A4918");
+extern char D_004A4920_95C8[] __asm__("D_004A4920");
+extern char D_004A4928_95C8[] __asm__("D_004A4928");
+extern char D_004A4930_95C8[] __asm__("D_004A4930");
+extern char D_004A4938_95C8[] __asm__("D_004A4938");
+extern char D_004A4940_95C8[] __asm__("D_004A4940");
+extern char D_004A4948_95C8[] __asm__("D_004A4948");
+extern char D_004A4950_95C8[] __asm__("D_004A4950");
+extern char D_004A4958_95C8[] __asm__("D_004A4958");
+extern char D_004A4960_95C8[] __asm__("D_004A4960");
+extern char D_004A4968_95C8[] __asm__("D_004A4968");
+extern char D_004A4970_95C8[] __asm__("D_004A4970");
+extern char D_004A4978_95C8[] __asm__("D_004A4978");
+extern char D_004A4980_95C8[] __asm__("D_004A4980");
+extern char D_004A4988_95C8[] __asm__("D_004A4988");
+extern char D_004A4990_95C8[] __asm__("D_004A4990");
+extern char D_004A4998_95C8[] __asm__("D_004A4998");
+extern char D_004A49A0_95C8[] __asm__("D_004A49A0");
+extern char D_004A49A8_95C8[] __asm__("D_004A49A8");
+extern char D_004A49B0_95C8[] __asm__("D_004A49B0");
+extern char D_004A49B8_95C8[] __asm__("D_004A49B8");
+extern char D_004A49C0_95C8[] __asm__("D_004A49C0");
+extern char D_004A49C8_95C8[] __asm__("D_004A49C8");
+extern char D_004A49D0_95C8[] __asm__("D_004A49D0");
+extern char D_004A49D8_95C8[] __asm__("D_004A49D8");
+extern char D_004A49E0_95C8[] __asm__("D_004A49E0");
+extern char D_004A49E8_95C8[] __asm__("D_004A49E8");
+extern char D_004A49F0_95C8[] __asm__("D_004A49F0");
+extern char D_004A49F8_95C8[] __asm__("D_004A49F8");
+extern char D_004A4A00_95C8[] __asm__("D_004A4A00");
+extern char D_004A4A08_95C8[] __asm__("D_004A4A08");
+extern char D_004A4A10_95C8[] __asm__("D_004A4A10");
+extern char D_004A4A18_95C8[] __asm__("D_004A4A18") __attribute__((aligned(8)));
+extern char D_004A4A20_95C8[] __asm__("D_004A4A20");
+extern char D_004A4A28_95C8[] __asm__("D_004A4A28");
+extern char D_004A4A30_95C8[] __asm__("D_004A4A30");
+extern char D_004A4A38_95C8[] __asm__("D_004A4A38");
+extern char D_004A4A40_95C8[] __asm__("D_004A4A40");
+extern char D_004A4A48_95C8[] __asm__("D_004A4A48");
+extern char D_004A4A50_95C8[] __asm__("D_004A4A50");
+extern char D_004A4A58_95C8[] __asm__("D_004A4A58");
+extern char D_004A4A60_95C8[] __asm__("D_004A4A60");
+extern char D_004A4A68_95C8[] __asm__("D_004A4A68");
+
+void func_003E95C8(struct Lob_95C8 *self)
+{
+    char buf[0x100];
+    struct Ev_95C8 ev;
+    struct Rec_95C8 rec;
+    char pop[0x200];
+    int kind;
+    int code;
+    char *data;
+    unsigned int now;
+    int len;
+    int e;
+    int id;
+
+    if (self->f0 == 0) {
+        return;
+    }
+    now = func_003F5D88_95C8(self->f0);
+    if (self->fC != 0x6F66666C) {
+        int diff = now - self->f14;
+        if (self->f14 != 0 && diff > 5000) {
+            self->f10 += diff;
+        }
+        if ((int)(self->f10 - now) < 0) {
+            func_003E7F70_95C8(self, 0x74696D65, 0x800);
+        }
+    }
+    self->f14 = now;
+    if (self->fC == 0x7465726D || self->fC == 0x6F66666C) {
+        return;
+    }
+    func_003E7C40_95C8(self);
+    while ((len = func_003F5A70_95C8(self->f0, &kind, &code, &data)) >= 0) {
+        self->f10 = now + 60000;
+        if (kind == 0x7E706E67) {
+            if (self->f1C != 0xFFFFFFFF) {
+                TagDupl_95C8(buf, 0x100, data);
+                TagSetNumber_95C8(buf, 0x100, D_004A4908_95C8, self->f1C);
+                data = buf;
+                len = -1;
+            }
+            func_003F5910_95C8(self->f0, kind, code, data, len);
+        } else {
+            ev.kind = kind;
+            ev.code = code;
+            ev.data = data;
+            ev.type = 0;
+            if (self->cb[0].fn != 0) {
+                self->cb[0].fn(self, &ev, self->cb[0].ctx);
+            }
+            func_003E77F0_95C8(self, &rec, kind);
+            if (rec.fn != 0) {
+                rec.fn(self, &ev, rec.ctx);
+            }
+            if (self->fC == 0x72646972) {
+                if (kind == 0x40646972) {
+                    int port = func_003F57C8_95C8(self->f0, 0x6C707274);
+                    self->f500 = func_003F57C8_95C8(self->f0, 0x6C616472);
+                    if (TagFind_95C8(data, D_004A4910_95C8) == 0) {
+                        self->f3B4 = TagGetAddr_95C8(TagFind_95C8(data, D_004A4890_95C8), 0);
+                        self->f3B0 = TagGetNumber_95C8(TagFind_95C8(data, D_004A4918_95C8), 0);
+                    }
+                    self->f4B8 = TagGetNumber_95C8(TagFind_95C8(data, D_004A4920_95C8), 0);
+                    TagGetString_95C8(TagFind_95C8(data, D_004A48E0_95C8), self->f4BC, 0x40, D_004A4888_95C8);
+                    func_003F5738_95C8(self->f0);
+                    if (self->f3B4 != 0) {
+                        self->fC = 0x636F6E6E;
+                        func_003E9590_95C8(self);
+                        func_003E76A8_95C8(self, D_00495F30_95C8, self->f3B4, self->f3B0);
+                        func_003F5638_95C8(self->f0, self->f3B4, self->f3B0);
+                        buf[0] = 0;
+                        TagSetAddress_95C8(buf, 0x100, D_004A4890_95C8, self->f500);
+                        TagSetNumber_95C8(buf, 0x100, D_004A4918_95C8, port);
+                        func_003F5910_95C8(self->f0, 0x61646472, 0, buf, -1);
+                        break;
+                    }
+                    TagGetString_95C8(TagFind_95C8(data, D_004A4928_95C8), self->f3B8, 0x100, D_004A4888_95C8);
+                    self->f8 |= 0x400;
+                }
+                kind = 0;
+            }
+            if (kind == -1 && code == -1) {
+                buf[0] = 0;
+                TagSetBinary_95C8(buf, 0x100, D_004A4930_95C8, D_00495FB0_95C8, 10);
+                func_003F5910_95C8(self->f0, 0x736B6579, 0, buf, -1);
+                self->f504 = 1;
+                self->fC = 0x736B6579;
+                kind = 0x636F6E6E;
+                code = 0;
+            }
+            if (self->fC == 0x736B6579 && (kind == 0x736B6579 || kind == 0x73656C65) && code == 0) {
+                if (kind == 0x736B6579) {
+                    TagGetBinary_95C8(TagFind_95C8(data, D_004A4930_95C8), self->f24, 0x10);
+                }
+                self->f8 |= 1;
+                self->fC = 0x69646C65;
+                kind = 0x636F6E6E;
+                code = 0;
+                self->f18 = now;
+                if (self->cb[3].fn != 0) {
+                    ev.type = 3;
+                    ev.kind = 0x636F6E6E;
+                    ev.code = 0;
+                    ev.data = 0;
+                    self->cb[3].fn(self, &ev, self->cb[3].ctx);
+                }
+            }
+            if (kind == -1 && code == (int)0xFEFEFEFE && self->fC != 0x636F6E6E) {
+                func_003E7F70_95C8(self, 0xFEFEFEFE, 0x800);
+            }
+            if (code == 0x61757468) {
+                func_003E7F70_95C8(self, 0x61757468, 2);
+            }
+            if (kind == 0x61757468 && code == 0) {
+                self->fC = 0x61757468;
+                self->f8 |= 2;
+                TagGetString_95C8(TagFind_95C8(data, D_004A4880_95C8), self->f134, 0x40, D_004A4888_95C8);
+                self->f4FC = TagGetAddr_95C8(TagFind_95C8(data, D_004A4890_95C8), 0);
+            }
+            if (kind == 0x61636374 && code == 0) {
+                self->fC = 0x61636374;
+                self->f8 |= 2;
+            }
+            if (kind == 0x736E6170 && --self->f50C == 0 && code == 0) {
+                self->f508 = TagGetNumber_95C8(TagFind_95C8(data, D_004A48E8_95C8), 0);
+            }
+            if (kind == 0x73656C65 && code == 0) {
+                self->f504 = TagGetNumber_95C8(TagFind_95C8(data, D_004A4938_95C8), 0);
+                self->f510 = TagGetNumber_95C8(TagFind_95C8(data, D_004A4940_95C8), 0);
+            }
+            if (kind == 0x70657273 && code == 0) {
+                TagGetString_95C8(TagFind_95C8(data, D_004A4948_95C8), self->f174, 0x40, D_004A4888_95C8);
+                self->f18 = now;
+            }
+            if (kind == 0x2B736573) {
+                func_00416210_95C8(&self->sess, 0, sizeof(self->sess));
+                TagGetString_95C8(TagFind_95C8(data, D_004A4880_95C8), self->sess.name, 0x20, D_004A4888_95C8);
+                TagGetString_95C8(TagFind_95C8(data, D_004A4950_95C8), self->sess.self, 0x20, D_004A4888_95C8);
+                TagGetString_95C8(TagFind_95C8(data, D_004A4958_95C8), self->sess.host, 0x20, D_004A4888_95C8);
+                TagGetString_95C8(TagFind_95C8(data, D_004A4960_95C8), self->sess.oppo, 0x20, D_004A4888_95C8);
+                TagGetString_95C8(TagFind_95C8(data, D_004A4968_95C8), self->sess.p1, 0x10, D_004A4888_95C8);
+                TagGetString_95C8(TagFind_95C8(data, D_004A4970_95C8), self->sess.p2, 0x10, D_004A4888_95C8);
+                TagGetString_95C8(TagFind_95C8(data, D_004A4978_95C8), self->sess.p3, 0x10, D_004A4888_95C8);
+                TagGetString_95C8(TagFind_95C8(data, D_004A4980_95C8), self->sess.p4, 0x10, D_004A4888_95C8);
+                TagGetString_95C8(TagFind_95C8(data, D_004A4988_95C8), self->sess.auth, 0x40, D_004A4888_95C8);
+                self->sess.addr = TagGetAddr_95C8(TagFind_95C8(data, D_004A4890_95C8), 0);
+                self->sess.from = TagGetAddr_95C8(TagFind_95C8(data, D_004A4990_95C8), 0);
+                self->sess.seed = TagGetNumber_95C8(TagFind_95C8(data, D_004A4998_95C8), 0);
+                self->sess.when = TagGetTime_95C8(TagFind_95C8(data, D_004A49A0_95C8), 0);
+                self->f8 |= 0x200;
+                if (self->cb[4].fn != 0) {
+                    ev.type = 4;
+                    ev.kind = 0x706C6179;
+                    ev.data = data;
+                    ev.code = 0;
+                    self->cb[4].fn(self, &ev, self->cb[4].ctx);
+                }
+            }
+            if (kind == 0x2B6D7367) {
+                struct Cb_95C8 *cb = &self->cb[1];
+                if (cb->fn != 0) {
+                    ev.type = 1;
+                    ev.kind = 0x63686174;
+                    ev.code = 0;
+                    ev.data = data;
+                    ev.code = TagGetFlags_95C8(TagFind_95C8(data, D_004A49A8_95C8), 0);
+                    if (ev.code & 4) {
+                        ev.kind = 0x63617374;
+                    }
+                    if (ev.code & 0x10000) {
+                        ev.kind = 0x70726976;
+                    }
+                    cb->fn(self, &ev, cb->ctx);
+                }
+            }
+            if (kind == 0x2B77686F) {
+                int room;
+                int count;
+                TagGetString_95C8(TagFind_95C8(data, D_004A49B0_95C8), self->f174, 0x40, D_004A4888_95C8);
+                self->f1B4 = TagGetFlags_95C8(TagFind_95C8(data, D_004A49A8_95C8), 0);
+                room = TagGetNumber_95C8(TagFind_95C8(data, D_004A49B8_95C8), 0);
+                count = TagGetNumber_95C8(TagFind_95C8(data, D_004A49C0_95C8), 0);
+                if (room != self->f1B8) {
+                    self->f1B8 = room;
+                    func_003E7B00_95C8(self, room, count);
+                    TagGetString_95C8(TagFind_95C8(data, D_004A49C8_95C8), self->f1C0, 0x40, D_004A4888_95C8);
+                    self->f1BC = TagGetFlags_95C8(TagFind_95C8(data, D_004A49D0_95C8), 0);
+                    self->f8 |= 8;
+                    if (self->s[1].h != 0) {
+                        while ((e = func_003EE9A0_95C8(self->s[1].h)) != 0) {
+                            func_00259210_95C8(func_003EE480_95C8(self->s[1].f4, e));
+                        }
+                        self->f8 |= 0x40;
+                    }
+                }
+            }
+            if (kind == 0x2B726F6D && self->s[0].h != 0) {
+                id = TagGetNumber_95C8(TagFind_95C8(data, D_004A49D8_95C8), -1);
+                if (id >= 0) {
+                    if (TagFind_95C8(data, D_004A49B0_95C8) != 0) {
+                        struct Room_95C8 *r = func_002591E8_95C8(sizeof(struct Room_95C8));
+                        func_00416210_95C8(r, 0, sizeof(struct Room_95C8));
+                        r->id = id;
+                        TagGetString_95C8(TagFind_95C8(data, D_004A49B0_95C8), r->name, 0x20, D_004A4888_95C8);
+                        TagGetString_95C8(TagFind_95C8(data, D_004A49E0_95C8), r->host, 0x20, D_004A4888_95C8);
+                        r->flags = TagGetFlags_95C8(TagFind_95C8(data, D_004A49A8_95C8), -1);
+                        r->addr = TagGetAddr_95C8(TagFind_95C8(data, D_004A49E8_95C8), 0);
+                        r->f10 = TagGetNumber_95C8(TagFind_95C8(data, D_004A49F0_95C8), 0);
+                        r->f0C = TagGetNumber_95C8(TagFind_95C8(data, D_004A49F8_95C8), 0);
+                        sprintf_95C8(r->f14, D_004A4870_95C8, r->f10);
+                        strcpy(r->f18, (r->flags & 0x10000) ? D_004A4A00_95C8 : D_004A4A08_95C8);
+                        r->ping[0] = 0;
+                        len = TagGetNumber_95C8(TagFind_95C8(data, D_004A4A10_95C8), -1);
+                        if (len == 0) {
+                            __builtin_memcpy(r->ping, D_004A4A18_95C8, 4);
+                        } else if (len > 0) {
+                            sprintf_95C8(r->ping, D_004A4A20_95C8, len);
+                        }
+                        e = func_003EEEE8_95C8(self->s[0].h, r->id);
+                        if (e != 0) {
+                            struct Room_95C8 *old = func_003EE468_95C8(self->s[0].f4, e);
+                            if (old != 0 && old->ping[0] >= '0' && old->ping[0] <= '9') {
+                                strcpy(r->ping, old->ping);
+                            }
+                            func_00259210_95C8(old);
+                            func_003EE3E0_95C8(self->s[0].f4, e, r);
+                        } else {
+                            func_003EEDA0_95C8(self->s[0].h, r->id, func_003EE320_95C8(self->s[0].f4, r));
+                        }
+                    } else {
+                        e = func_003EEEE8_95C8(self->s[0].h, id);
+                        if (e != 0) {
+                            func_003EEF40_95C8(self->s[0].h, id);
+                            func_00259210_95C8(func_003EE480_95C8(self->s[0].f4, e));
+                            self->f8 |= 0x20;
+                        }
+                    }
+                    self->f8 |= 0x20;
+                }
+            }
+            if (kind == 0x2B706F70 && self->s[0].h != 0) {
+                char *p;
+                TagGetString_95C8(TagFind_95C8(data, D_004A4A28_95C8), pop, sizeof(pop), D_004A4888_95C8);
+                p = pop;
+                while (*p != 0) {
+                    int count;
+                    {
+                        unsigned int c;
+                        for (id = 0; (c = (unsigned char)*p) - '0' < 10; p++) {
+                            id = id * 10 + (c & 0xF);
+                        }
+                    }
+                    if (id == 0) {
+                        break;
+                    }
+                    if (*p != 0) {
+                        p++;
+                    }
+                    {
+                        unsigned int c;
+                        for (count = 0; (c = (unsigned char)*p) - '0' < 10; p++) {
+                            count = count * 10 + (c & 0xF);
+                        }
+                    }
+                    if (*p != 0) {
+                        p++;
+                    }
+                    if (id != self->f1B8) {
+                        func_003E7B00_95C8(self, id, count);
+                    }
+                }
+            }
+            if (kind == 0x2B757372 && self->s[1].h != 0) {
+                id = TagGetNumber_95C8(TagFind_95C8(data, D_004A49D8_95C8), -1);
+                if (id >= 0) {
+                    if (TagFind_95C8(data, D_004A49B0_95C8) != 0) {
+                        struct User_95C8 *u = func_002591E8_95C8(sizeof(struct User_95C8));
+                        func_00416210_95C8(u, 0, sizeof(struct User_95C8));
+                        u->id = id;
+                        TagGetString_95C8(TagFind_95C8(data, D_004A49B0_95C8), u->name, 0x20, D_004A4888_95C8);
+                        u->addr = TagGetAddr_95C8(TagFind_95C8(data, D_004A49E8_95C8), 0);
+                        TagGetString_95C8(TagFind_95C8(data, D_004A4A10_95C8), u->f28, 8, D_004A4888_95C8);
+                        u->flags = TagGetFlags_95C8(TagFind_95C8(data, D_004A49A8_95C8), 0);
+                        TagGetString_95C8(TagFind_95C8(data, D_004A4A30_95C8), u->f38, 0x80, D_004A4888_95C8);
+                        u->f34 = TagGetNumber_95C8(TagFind_95C8(data, D_004A49C8_95C8), 0);
+                        TagGetString_95C8(TagFind_95C8(data, D_004A4A38_95C8), u->fB8, 0x80, D_004A4888_95C8);
+                        e = func_003EEEE8_95C8(self->s[1].h, u->id);
+                        if (e != 0) {
+                            struct User_95C8 *old = func_003EE468_95C8(self->s[1].f4, e);
+                            __builtin_memcpy(old, u, sizeof(struct User_95C8));
+                            func_003EE3E0_95C8(self->s[1].f4, e, old);
+                            func_00259210_95C8(u);
+                            u = old;
+                        } else {
+                            func_003EEDA0_95C8(self->s[1].h, u->id, func_003EE320_95C8(self->s[1].f4, u));
+                        }
+                        if (u->flags & 0x200000) {
+                            self->f1B4 = u->flags;
+                        }
+                    } else {
+                        e = func_003EEEE8_95C8(self->s[1].h, id);
+                        if (e != 0) {
+                            func_003EEF40_95C8(self->s[1].h, id);
+                            func_00259210_95C8(func_003EE480_95C8(self->s[1].f4, e));
+                        }
+                    }
+                    func_003E7B00_95C8(self, self->f1B8, TagGetNumber_95C8(TagFind_95C8(data, D_004A49F0_95C8), 0));
+                    self->f8 |= 0x40;
+                }
+            }
+            if (kind == 0x2B726E6B && self->s[2].h != 0) {
+                if (TagGetNumber_95C8(TagFind_95C8(data, D_004A4A40_95C8), 0) == -2) {
+                    while ((e = func_003EE9A0_95C8(self->s[2].h)) != 0) {
+                        func_00259210_95C8(func_003EE480_95C8(self->s[2].f4, e));
+                    }
+                } else {
+                    struct Rank_95C8 *k = func_002591E8_95C8(sizeof(struct Rank_95C8));
+                    k->f04 = 0;
+                    k->score = TagGetNumber_95C8(TagFind_95C8(data, D_004A49E8_95C8), 0);
+                    TagGetString_95C8(TagFind_95C8(data, D_004A49B0_95C8), k->name, 0x20, D_004A4888_95C8);
+                    TagGetString_95C8(TagFind_95C8(data, D_004A4A30_95C8), k->f28, 0x80, D_004A4888_95C8);
+                    if (k->score >= 0x2000) {
+                        k->score = 0x1FFF;
+                    }
+                    e = func_003EEC88_95C8(self->s[2].h, k->name);
+                    if (e == 0 && k->score > 0) {
+                        func_003EEB30_95C8(self->s[2].h, k->name, func_003EE320_95C8(self->s[2].f4, k));
+                    } else if (e != 0) {
+                        if (k->score > 0) {
+                            struct Rank_95C8 *old = func_003EE468_95C8(self->s[2].f4, e);
+                            __builtin_memcpy(old, k, sizeof(struct Rank_95C8));
+                            func_003EE3E0_95C8(self->s[2].f4, e, old);
+                        } else {
+                            func_00259210_95C8(func_003EE480_95C8(self->s[2].f4, func_003EED08_95C8(self->s[2].h, k->name)));
+                        }
+                        func_00259210_95C8(k);
+                    } else {
+                        func_00259210_95C8(k);
+                    }
+                }
+                self->f8 |= 0x80;
+            }
+            if (kind == 0x2B736E70 && self->f508 >= 4 && self->f508 < 8 && self->s[self->f508].h != 0) {
+                struct Rank_95C8 *k = func_002591E8_95C8(sizeof(struct Rank_95C8));
+                k->f04 = TagGetNumber_95C8(TagFind_95C8(data, D_004A49C8_95C8), 0);
+                k->score = TagGetNumber_95C8(TagFind_95C8(data, D_004A4A10_95C8), 0);
+                TagGetString_95C8(TagFind_95C8(data, D_004A49B0_95C8), k->name, 0x20, D_004A4888_95C8);
+                TagGetString_95C8(TagFind_95C8(data, D_004A4A30_95C8), k->f28, 0x80, D_004A4888_95C8);
+                if (k->score >= 0x2000) {
+                    k->score = 0x1FFF;
+                }
+                e = func_003EEC88_95C8(self->s[self->f508].h, k->name);
+                if (e == 0) {
+                    int ref = func_003EE320_95C8(self->s[self->f508].f4, k);
+                    func_003EEB30_95C8(self->s[self->f508].h, k->name, ref);
+                } else {
+                    struct Rank_95C8 *old = func_003EE468_95C8(self->s[self->f508].f4, e);
+                    __builtin_memcpy(old, k, sizeof(struct Rank_95C8));
+                    func_003EE3E0_95C8(self->s[self->f508].f4, e, old);
+                    func_00259210_95C8(k);
+                }
+                self->f8 |= 0x80;
+            }
+            if ((kind == 0x6D6F7665 || kind == 0x726F6F6D) && code == 0) {
+                int ident = TagGetNumber_95C8(TagFind_95C8(data, D_004A4A48_95C8), -1);
+                if (ident >= 0) {
+                    func_003E7B00_95C8(self, ident, TagGetNumber_95C8(TagFind_95C8(data, D_004A4A50_95C8), 0));
+                }
+            }
+            if (kind == 0x6D6F7665) {
+                int room = TagGetNumber_95C8(TagFind_95C8(data, D_004A4A58_95C8), 0);
+                int count = TagGetNumber_95C8(TagFind_95C8(data, D_004A4A60_95C8), 0);
+                if (room != self->f1B8) {
+                    self->f1B8 = room;
+                    func_003E7B00_95C8(self, room, count);
+                    TagGetString_95C8(TagFind_95C8(data, D_004A4880_95C8), self->f1C0, 0x40, D_004A4888_95C8);
+                    self->f1BC = TagGetFlags_95C8(TagFind_95C8(data, D_004A4A68_95C8), 0);
+                    self->f8 |= 8;
+                    if (self->s[1].h != 0) {
+                        while ((e = func_003EE9A0_95C8(self->s[1].h)) != 0) {
+                            func_00259210_95C8(func_003EE480_95C8(self->s[1].f4, e));
+                        }
+                        self->f8 |= 0x40;
+                    }
+                }
+            }
+        }
+        func_003F5C38_95C8(self->f0, 0, 0, 0, 0);
+    }
+    func_003E7BA0_95C8(self);
+    if (self->f18 != 0 && self->f18 <= now) {
+        func_003E9590_95C8(self);
+        self->f18 = now + 30000;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003EAE68);
