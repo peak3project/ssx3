@@ -367,7 +367,7 @@ static inline void CopyMat(sPtMatrix* dst, const sPtMatrix* src)
 extern "C" void func_00364B88(void* table, void* key);
 extern "C" void func_00367B60(void* mgr, int id);
 extern "C" void func_0037D968(void* self);
-extern "C" void func_00382AF0(void* self, int arg1, int arg2);
+extern "C" void func_00382AF0(void* self, bool enable, bool waitVSync);
 extern "C" void func_00387EC0(void* self, void* verts, void* cols, int count, void* a4, void* a5, void* a6, float f0, float f1);
 extern "C" unsigned long* func_0038F460(int dma, unsigned int buf, int a2, int a3);
 extern "C" unsigned int func_0038F668(int dma, unsigned long* p, int a2);
@@ -6480,7 +6480,306 @@ extern "C" void* func_00382760(void* arg)
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/particle", func_00382AF0);
+#ifdef SKIP_ASM
+// The display / frame-buffer state of the graphics manager as the flip routine reads it.
+struct sGsFlip_382AF0 {
+    float offX;                 // 0x0
+    float offY;                 // 0x4
+    char pad8[0xF44 - 0x8];
+    int skipSwap;               // 0xF44
+    char padF48[0x5900 - 0xF48];
+    unsigned short scX;         // 0x5900
+    unsigned short scY;         // 0x5902
+    unsigned short scW;         // 0x5904
+    unsigned short scH;         // 0x5906
+    char pad5908[0x59D0 - 0x5908];
+    unsigned int dthe;          // 0x59D0
+    char pad59D4[0x59E0 - 0x59D4];
+    unsigned long dimx;         // 0x59E0
+    int blur;                   // 0x59E8
+    unsigned int blurR;         // 0x59EC
+    unsigned int blurG;         // 0x59F0
+    unsigned int blurB;         // 0x59F4
+    unsigned int blurA;         // 0x59F8
+    float blurScale;            // 0x59FC
+    char pad5A00[0x5A30 - 0x5A00];
+    unsigned int width;         // 0x5A30
+    unsigned int height;        // 0x5A34
+    unsigned int psm;           // 0x5A38
+    unsigned int psm2;          // 0x5A3C
+    unsigned int zpsm;          // 0x5A40
+    short interlace;            // 0x5A44
+    short ffmd;                 // 0x5A46
+    short f5A48;                // 0x5A48
+    int f5A4C;                  // 0x5A4C
+    unsigned int fbw;           // 0x5A50
+    unsigned int dispW;         // 0x5A54
+    unsigned int dispH;         // 0x5A58
+    unsigned int dispFbw;       // 0x5A5C
+    unsigned int magv;          // 0x5A60
+    unsigned int magh;          // 0x5A64
+    int f5A68;                  // 0x5A68
+    int f5A6C;                  // 0x5A6C
+    int f5A70;                  // 0x5A70
+    int frame;                  // 0x5A74
+    unsigned int buf0;          // 0x5A78
+    unsigned int buf1;          // 0x5A7C
+    unsigned int zbp;           // 0x5A80
+    unsigned int drawFbp;       // 0x5A84
+    unsigned int dispFbp;       // 0x5A88
+    char pad5A8C[0x6AE0 - 0x5A8C];
+    unsigned int clearCol;      // 0x6AE0
+};
+
+extern unsigned long D_004FFCC0[];
+
+// PORT: PS2-only inline asm (sync before handing the packet to DMA).
+static inline void Sync_382AF0(void)
+{
+    __asm__ __volatile__("sync");
+}
+
+static inline int Clamp_382AF0(int v, int lo, int hi)
+{
+    int r;
+    if (v >= lo) {
+        r = v;
+        if (v > hi)
+            r = hi;
+    } else
+        r = lo;
+    return r;
+}
+
+static inline unsigned int DivU_382AF0(unsigned int a, unsigned int b)
+{
+    return a / b;
+}
+
+// PORT: PS2 hardware registers (DMA CHCR / VIF1_STAT / GS privileged registers).
+extern "C" void func_00382AF0(void* arg, bool enable, bool waitVSync)
+{
+    sGsFlip_382AF0* self = (sGsFlip_382AF0*)arg;
+    unsigned long* p;
+    unsigned int size;
+
+    self->frame++;
+    if (self->skipSwap != 0) {
+        self->skipSwap = 0;
+    } else if (self->blur == 0 && (self->frame & 1) == 0) {
+        self->drawFbp = self->buf1;
+        self->dispFbp = self->buf0;
+    } else {
+        self->drawFbp = self->buf0;
+        self->dispFbp = self->buf1;
+    }
+
+    if (*(volatile int*)0x10009000 & 0x100) {
+        do {
+        } while (*(volatile int*)0x10009000 & 0x100);
+    }
+    do {
+    } while (*(volatile int*)0x1000A000 & 0x100);
+    do {
+    } while (*(volatile int*)0x1000D000 & 0x100);
+    do {
+    } while (*(volatile int*)0x10003C00 & 0x1F000003);
+    do {
+    } while ((*(volatile long*)0x12001000 & 0xC000) != 0x4000);
+
+    if (waitVSync) {
+        *(volatile long*)0x12001000 = 8;
+        while (!(*(volatile long*)0x12001000 & 8)) {
+        }
+        *(volatile long*)0x12001000;
+    }
+
+    *(volatile unsigned long*)0x12000000 = (unsigned long)enable | 0xFF20;
+    *(volatile unsigned long*)0x12000020 = (long)self->interlace | (long)self->ffmd << 1;
+    *(volatile unsigned long*)0x12000070 = (unsigned long)self->dispFbp | (unsigned long)self->dispFbw << 9 |
+                                           (unsigned long)self->psm << 15;
+    if (self->f5A4C) {
+        int dh = self->dispH - 1;
+        *(volatile unsigned long*)0x12000080 = (long)((int)(self->offX * 4.0f + -43.0f) + 344) |
+                                               (long)((int)(12.0f - self->offY * 2.0f) + 35) << 12 |
+                                               (long)(1550 / (int)self->dispW - 1) << 23 | (long)((int)self->dispW * (1550 / (int)self->dispW) - 1) << 32 |
+                                               (long)dh << 44;
+    } else {
+        int mul = 1;
+        if (self->interlace != 0 && self->ffmd == 1)
+            mul = 2;
+        *(volatile unsigned long*)0x12000080 = (unsigned long)(self->offX * 8.0f + 5.0f + 636.0f) |
+                                               (unsigned long)(50.0f - self->offY * 2.0f) << 12 |
+                                               (unsigned long)self->magh << 23 | (unsigned long)self->magv << 27 |
+                                               (unsigned long)2560 << 32 |
+                                               (unsigned long)((self->height - 1) * mul) << 44;
+    }
+    *(volatile unsigned long*)0x120000E0 = 0;
+
+    p = (unsigned long*)((unsigned int)D_004FFCC0 | 0x30000000);
+    if (self->blur) {
+        int r, g, b;
+        float q;
+        int n, step, i, abe;
+        int u, v, v1;
+        int x, y, x0, y0, left, top, vb, y1;
+
+        p[0] = 0x100000000000000BUL;
+        p[1] = 0xE;
+        p[2] = (unsigned long)self->dispFbp | (unsigned long)self->dispFbw << 16 | (unsigned long)self->psm << 24 |
+               0xFF00000000000000UL;
+        p[3] = 0x4C;
+        p[4] = 0x61;
+        p[5] = 0x14;
+        p[6] = (unsigned long)(self->drawFbp << 5) | (unsigned long)self->fbw << 14 | (unsigned long)self->psm2 << 20 |
+               (unsigned long)10 << 26 | (unsigned long)9 << 30;
+        p[7] = 6;
+        p[8] = 0x8000000064UL;
+        p[9] = 0x42;
+        p[10] = 5;
+        p[11] = 8;
+        p[12] = (unsigned long)(self->dispW - 1) << 16 | (unsigned long)(self->dispH - 1) << 48;
+        p[13] = 0x40;
+        p[14] = (unsigned long)(self->dispW - 1) << 16 | (unsigned long)(self->dispH - 1) << 48;
+        p[15] = 0x41;
+        p[16] = (unsigned long)((0x800 - (self->dispW >> 1)) << 4) | (unsigned long)((0x800 - (self->dispH >> 1)) << 4) << 32;
+        p[17] = 0x18;
+        p[18] = (unsigned long)self->zbp | (unsigned long)(self->zpsm - 0x30) << 24 | (unsigned long)1 << 32;
+        p[19] = 0x4E;
+        p[20] = 0x30000;
+        p[21] = 0x47;
+        p[22] = 0;
+        p[23] = 0x3F;
+        abe = self->blurA != 0x80;
+        p[24] = 0x2400000000000001UL;
+        p[25] = 0x10;
+        p[26] = (unsigned long)abe << 6 | 0x11E;
+        r = Clamp_382AF0((int)((float)self->blurR * self->blurScale), 0, 255);
+        g = Clamp_382AF0((int)((float)self->blurG * self->blurScale), 0, 255);
+        b = Clamp_382AF0((int)((float)self->blurB * self->blurScale), 0, 255);
+        q = 1.0f;
+        p[27] = (unsigned long)r | (unsigned long)g << 8 | (unsigned long)b << 16 | (unsigned long)self->blurA << 24 | (unsigned long)*(unsigned int*)&q << 32;
+
+        n = DivU_382AF0(self->dispW, 32);
+        left = -(int)(self->dispW >> 1) * 16 + 0x8000;
+        step = (self->width / n) * 16;
+        top = 0x8000 - (self->dispH >> 1) * 16;
+        if (self->f5A4C) {
+            u = 8;
+            x = 0;
+            y = 0;
+        } else {
+            u = 0;
+            x = -8;
+            y = -8;
+        }
+        x0 = x + left;
+        y0 = y + top;
+        vb = (self->height - 1) * 16 + 8;
+        y1 = y0 + (self->dispH - 1) * 16;
+        p[28] = (unsigned long)(n + 1) | 0x4400000000000000UL;
+        p[29] = 0x5353;
+        v = u;
+        v1 = v + step;
+        p += 30;
+        for (i = 0; i < n; i++) {
+            p[0] = (unsigned long)v | 0x80000;
+            p[1] = (unsigned long)x0 | (unsigned long)y0 << 16;
+            p[2] = (unsigned long)v1 | (unsigned long)vb << 16;
+            p[3] = (unsigned long)(x0 + 0x200) | (unsigned long)y1 << 16;
+            v += step;
+            v1 += step;
+            x0 += 0x200;
+            p += 4;
+        }
+        p[0] = (unsigned long)u | (unsigned long)(self->height * 16 - 8) << 16;
+        p[1] = (unsigned long)(-(self->dispW >> 1) * 16 + 0x8000) | (unsigned long)((self->dispH >> 1) * 16 + 0x7FE8) << 16 |
+               0x800000000000UL;
+        p[2] = (unsigned long)(self->width << 4) | (unsigned long)(self->height * 16 - 8) << 16;
+        p[3] = (unsigned long)((self->dispW >> 1) * 16 + 0x8000) | (unsigned long)((self->dispH >> 1) * 16 + 0x7FF8) << 16 |
+               0x800000000000UL;
+        p += 4;
+    }
+
+    p[0] = 0x1000000000008010UL;
+    p[1] = 0xE;
+    p[2] = (unsigned long)self->drawFbp | (unsigned long)self->fbw << 16 | (unsigned long)self->psm2 << 24;
+    p[3] = 0x4C;
+    p[4] = (unsigned long)self->drawFbp | (unsigned long)self->fbw << 16 | (unsigned long)self->psm2 << 24 |
+           0xFF00000000000000UL;
+    p[5] = 0x4D;
+    p[6] = (unsigned long)self->zbp | (unsigned long)(self->zpsm - 0x30) << 24;
+    p[7] = 0x4E;
+    p[8] = (unsigned long)self->zbp | (unsigned long)(self->zpsm - 0x30) << 24;
+    p[9] = 0x4F;
+    p[10] = (unsigned long)((0x800 - (self->width >> 1)) << 4) | (unsigned long)((0x800 - (self->height >> 1)) << 4) << 32;
+    p[11] = 0x18;
+    p[12] = (unsigned long)((0x800 - (self->width >> 1)) << 4) | (unsigned long)((0x800 - (self->height >> 1)) << 4) << 32;
+    p[13] = 0x19;
+    p[14] = 0;
+    p[15] = 0x4A;
+    p[16] = 0;
+    p[17] = 0x4B;
+    p[18] = 0x8000000080UL;
+    p[19] = 0x3B;
+    p[20] = 1;
+    p[21] = 0x1A;
+    p[22] = 1;
+    p[23] = 0x46;
+    p[24] = (unsigned long)self->dthe;
+    p[25] = 0x45;
+    p[26] = self->dimx;
+    p[27] = 0x44;
+    p[28] = 0;
+    p[29] = 0x49;
+    p[30] = 0;
+    p[31] = 0x22;
+    p[32] = 0;
+    p[33] = 0x3F;
+    p += 34;
+    {
+        unsigned int n = self->width >> 5;
+        int top = 0x800 - (self->height >> 1);
+        int y1 = (self->height + top) * 16;
+        int y0 = top * 16;
+        int x = (0x800 - (self->width >> 1)) * 16;
+        p[0] = (long)(int)((n * 2 + 4) | 0x8000) | 0x1000000000000000UL;
+        p[1] = 0xE;
+        p[2] = 0x30000;
+        p[3] = 0x47;
+        p[4] = 6;
+        p[5] = 0;
+        p[6] = (unsigned long)(self->clearCol | 0x80000000) | 0x3F80000000000000UL;
+        p[7] = 1;
+        p += 8;
+        for (; n != 0; n--) {
+            p[0] = (unsigned long)x | (unsigned long)y0 << 16;
+            p[1] = 5;
+            p[2] = (unsigned long)(x + 0x200) | (unsigned long)y1 << 16;
+            p[3] = 5;
+            x += 0x200;
+            p += 4;
+        }
+    }
+    p[0] = 0x500AD;
+    p[1] = 0x47;
+    p += 2;
+    p[0] = 0x1000000000008002UL;
+    p[1] = 0xE;
+    p[2] = (unsigned long)self->scX | (unsigned long)(self->scX + (self->scW - 1)) << 16 | (unsigned long)self->scY << 32 |
+           (unsigned long)(self->scY + (self->scH - 1)) << 48;
+    p[3] = 0x40;
+    p[4] = (unsigned long)self->scX | (unsigned long)(self->scX + (self->scW - 1)) << 16 | (unsigned long)self->scY << 32 |
+           (unsigned long)(self->scY + (self->scH - 1)) << 48;
+    p[5] = 0x41;
+    p += 6;
+    size = ((unsigned int)p & 0x0FFFFFFF) - (unsigned int)D_004FFCC0;
+    Sync_382AF0();
+    func_00371940((unsigned int)D_004FFCC0, size >> 4, 6);
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/particle", func_00383770);
