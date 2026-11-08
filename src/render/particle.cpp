@@ -5457,7 +5457,132 @@ extern "C" void func_003816F0(cPS2GraphicsMan* self, sPtMatPacket* obj)
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/particle", func_00381AD0);
+#ifdef SKIP_ASM
+// Projected clip-space point (the file's VU0 point type).
+typedef sPt7278 sClipPt_3A10;
+
+// Clip vertex: three quadwords (texture coords, colour, position); the colour quadword holds integers.
+struct sClipVtx_3A10 {
+    float st[4];                    // 0x00
+    float col[4];                   // 0x10: integer channels r, g, b, a
+    sClipPt_3A10 pos;               // 0x20
+    sClipVtx_3A10() {}
+};
+
+// GS packet under construction (out-of-line ctor func_00384D98, close func_00384E50).
+struct sClipPkt_1AD0 {
+    unsigned int* where;            // 0x0
+    unsigned int cur;               // 0x4
+    unsigned int start;             // 0x8
+    int open;                       // 0xC
+    int count;                      // 0x10
+};
+
+void* PktOpen_1AD0(sClipPkt_1AD0* pkt, unsigned int* buf) __asm__("func_00384D98");
+void PktClose_1AD0(sClipPkt_1AD0* pkt, int flags) __asm__("func_00384E50");
+void PktVert_1AD0(sClipPkt_1AD0* pkt, sClipVtx_3A10* v, sClipPt_3A10* p) __asm__("func_00384FD0");
+void PktStrip_1AD0(sClipPkt_1AD0* pkt, sClipVtx_3A10* v, sClipPt_3A10* p) __asm__("func_003850A8");
+extern "C" int func_00383A10(cPS2GraphicsMan* self, sClipVtx_3A10* ivert, sClipPt_3A10* iproj, int* ioutcode);
+
+// The vertex before v. Int arithmetic: the typed v[-1] / *(v - 1) gives gcc 2.95's unsigned-sizetype
+// offset split (addiu base,-32768 + 32720(base)), 99.5 instead of 100.
+#define PREVVTX_1AD0(v) (*(sClipVtx_3A10*)((int)(v) - (int)sizeof(sClipVtx_3A10)))
+
+// Draws a strip of n vertices, clipping each edge against the view volume.
+extern "C" void func_00381AD0(cPS2GraphicsMan* self, int n, sClipVtx_3A10* v)
+{
+    sClipPt_3A10 prev;
+    sClipPkt_1AD0 pkt;
+    int prevoc;
+    int i;
+
+    if (self->texReady == 0) {
+        func_0037D968(self);
+    }
+    prevoc = -1;
+    PktOpen_1AD0(&pkt, &self->bufAddr);
+    for (i = 0; i < n; i++, v++) {
+        int oc = 0;
+        sClipPt_3A10 proj = MulMat7278(&self->m6B30, v->pos);
+        proj.w = 1.0f / proj.w;
+        proj.x *= proj.w;
+        proj.y *= proj.w;
+        if (proj.x < self->xmin) {
+            oc = 2;
+        }
+        if (self->xmax < proj.x) {
+            oc |= 1;
+        }
+        if (proj.y < self->ymin) {
+            oc |= 8;
+        }
+        if (self->ymax < proj.y) {
+            oc |= 4;
+        }
+        if (proj.w < 0.0f) {
+            oc ^= 0x2F;
+        } else {
+            if (proj.z > self->zmin) {
+                oc |= 0x20;
+            }
+            if (proj.z < self->zmax) {
+                oc |= 0x10;
+            }
+        }
+        if (oc == 0) {
+            if (prevoc == 0) {
+                PktVert_1AD0(&pkt, v, &proj);
+            } else if (i != 0) {
+                int ioutcode[2];
+                sClipVtx_3A10 ivert[2];
+                sClipPt_3A10 iproj[2];
+                iproj[0] = prev;
+                ivert[0] = PREVVTX_1AD0(v);
+                ioutcode[0] = prevoc;
+                iproj[1] = proj;
+                ivert[1] = *v;
+                ioutcode[1] = oc;
+                func_00383A10(self, ivert, iproj, ioutcode);
+                PktStrip_1AD0(&pkt, &ivert[0], &iproj[0]);
+                PktVert_1AD0(&pkt, v, &proj);
+            } else {
+                PktStrip_1AD0(&pkt, v, &proj);
+            }
+        } else if (prevoc == 0) {
+            sClipVtx_3A10 ivert[2];
+            sClipPt_3A10 iproj[2];
+            int ioutcode[2];
+            iproj[0] = prev;
+            ivert[0] = PREVVTX_1AD0(v);
+            ioutcode[0] = prevoc;
+            iproj[1] = proj;
+            ivert[1] = *v;
+            ioutcode[1] = oc;
+            func_00383A10(self, ivert, iproj, ioutcode);
+            PktVert_1AD0(&pkt, &ivert[1], &iproj[1]);
+        } else if ((prevoc & oc) == 0) {
+            sClipVtx_3A10 ivert[2];
+            sClipPt_3A10 iproj[2];
+            int ioutcode[2];
+            iproj[0] = prev;
+            ivert[0] = PREVVTX_1AD0(v);
+            ioutcode[0] = prevoc;
+            iproj[1] = proj;
+            ivert[1] = *v;
+            ioutcode[1] = oc;
+            if (func_00383A10(self, ivert, iproj, ioutcode)) {
+                PktStrip_1AD0(&pkt, &ivert[0], &iproj[0]);
+                PktVert_1AD0(&pkt, &ivert[1], &iproj[1]);
+            }
+        }
+        prev = proj;
+        prevoc = oc;
+    }
+    PktClose_1AD0(&pkt, 2);
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/particle", func_00381F10);
@@ -5992,16 +6117,7 @@ INCLUDE_ASM("render/particle", func_00383808);
 //100%
 INCLUDE_ASM("render/particle", func_00383A10);
 #ifdef SKIP_ASM
-struct sClipPt_3A10 {
-    float x, y, z, w;
-};
-
-// Clip vertex: three quadwords (texture coords, colour, position); the colour quadword holds integers.
-struct sClipVtx_3A10 {
-    float st[4];                    // 0x00
-    float col[4];                   // 0x10: integer channels r, g, b, a
-    float pos[4];                   // 0x20
-};
+// sClipPt_3A10 / sClipVtx_3A10: see func_00381AD0.
 
 // Integer view of colour channel k of a vertex.
 #define VTXCOL_3A10(v, k) (*(unsigned int*)&(v).col[k])
