@@ -6279,7 +6279,229 @@ extern "C" void func_00362CC8(char* self)
 
 INCLUDE_ASM("object/railmodifier", func_00362DE8);
 
+//100%
 INCLUDE_ASM("object/railmodifier", func_00363490);
+#ifdef SKIP_ASM
+// A texture key: texture and palette indices (-1 = none).
+struct sRmKey3490 {
+    int tex : 16;
+    int pal : 16;
+};
+
+// A deferred draw: render state, texture key, user argument, then the DMA packet to call and the address of
+// its closing tag (patched to a RET).
+struct sRmDraw3490 {
+    sRmState_29B8* state;   // 0x00
+    sRmKey3490 key;         // 0x04
+    int arg;                // 0x08
+    unsigned int packet;    // 0x0C
+    unsigned int tail;      // 0x10
+    int pad14;              // 0x14
+    sRmDraw3490* next;      // 0x18
+};
+
+// A sort-list entry: key and its draw chain.
+struct sRmDrawItem3490 {
+    unsigned int key;
+    sRmDraw3490* draw;
+};
+
+// The deferred-render manager (render/bxps2deferman.cpp): sort list and current render state.
+struct sRmDeferMan3490 {
+    char pad_0x0[0x67CA4];
+    int count;                          // 0x67CA4
+    sRmDrawItem3490 items[0x400];       // 0x67CA8
+    sRmState_29B8 state;                // 0x69CA8
+    int pad_0x69CBC[2];                 // 0x69CBC
+    int found;                          // 0x69CC4
+};
+
+extern "C" void func_00362DE8(void* self);
+extern "C" void func_00363C20(void* self, sRmState_29B8* state, int arg, ulong** pp);
+extern "C" void func_00368660(char* self, short tex, short pal, int idx, ulong** pp, unsigned int* gif);
+extern "C" void func_0036AC00(char* self, int idx, ulong** pp, unsigned int* gif);
+extern "C" void func_0036C790(char* self, int idx, ulong** pp, unsigned int* gif);
+extern "C" void func_003904A0(char* self, int idx, ulong** pp, unsigned int* gif);
+extern "C" void func_0038F300(void* self, int mode);
+extern "C" void func_00396128(char* self);
+extern "C" void func_00365F68(void* self);
+extern "C" void func_00365FA8(void* self);
+extern "C" void func_003666F8();
+extern "C" void func_00364050(char* self);
+extern "C" void func_00364360(void* self, ulong** pp);
+extern void* D_004A4474;
+extern char* D_004A5B80;
+extern sRailPair D_0053AB80_3490[] __asm__("D_0053AB80");
+
+// Forgets the cached texture slots of a texture cache.
+static inline void invalidate3490(char* cache)
+{
+    int* a = (int*)(cache + 0x1F4C);
+    for (int i = 1; i >= 0; i--) {
+        a[i] = -1;
+    }
+    *(int*)(cache + 0x1F54) = -1;
+}
+
+// PORT: PS2-only: wait for the packet writes to complete (SYNC).
+static inline void sync3490()
+{
+    __asm__ __volatile__("sync");
+}
+
+// Copies a render state.
+static inline void setState3490(sRmState_29B8* dst, const sRmState_29B8* src)
+{
+    *dst = *src;
+}
+
+// Draws one key of the texture cache.
+static inline void drawKey3490(char* cache, const sRmKey3490& key, int idx, ulong** pp, unsigned int* gif)
+{
+    func_00368660(cache, key.tex, key.pal, idx, pp, gif);
+}
+
+extern "C" void func_00363490(sRmDeferMan3490* self, unsigned int* pChain, unsigned int* pA, unsigned int* pGif,
+                              unsigned int* pB)
+{
+    func_00362DE8(self);
+    *pA = 0;
+    *pB = 0;
+    ulong* vifPtr = (ulong*)(*pChain | 0x30000000);
+    setState3490(&self->state, &D_00501420_29B8);
+    func_00364360(self, &vifPtr);
+    func_00364050((char*)self);
+    func_003666F8();
+    void* ring = D_004A4474;
+    int mode = *(int*)ring;
+    func_0038F300(ring, 5);
+    char* gs = D_004A5B80;
+    char* cache = *(char**)(gs + 0x18F4);
+    func_00396128(cache);
+    func_00365F68(cache + 0x1F60);
+    if (self->count != 0) {
+        int pass;
+        int k = 0;
+        for (int i = 0; i < self->count; i++) {
+            for (sRmDraw3490* d = self->items[i].draw; d != 0; d = d->next) {
+                int s = d->key.tex;
+                if (s >= 0) {
+                    D_0053AB80_3490[s].a = k;
+                    D_0053AB80_3490[s].b++;
+                }
+                s = d->key.pal;
+                if (s >= 0) {
+                    D_0053AB80_3490[s].a = k;
+                    D_0053AB80_3490[s].b++;
+                }
+                k++;
+            }
+        }
+        int layers[2] = {6, 9};
+        int bounds[3];
+        for (int j = 0; j < 2; j++) {
+            int lo = j ? bounds[j - 1] : 0;
+            int hi = self->count;
+            bounds[j] = 0;
+            while (hi - lo >= 2) {
+                bounds[j] = (lo + hi) >> 1;
+                if ((int)((self->items[bounds[j]].draw->state->w2 & 0x3E0) >> 5) >= layers[j]) {
+                    hi = bounds[j];
+                } else {
+                    lo = bounds[j];
+                }
+            }
+            bounds[j] = hi;
+        }
+        bounds[2] = self->count;
+        self->found = -1;
+        sRmState_29B8* last = 0;
+        k = 0;
+        for (pass = 0; pass < 3; pass++) {
+            int start = pass ? bounds[pass - 1] : 0;
+            int end = bounds[pass];
+            for (int i = start; i < end; i++) {
+                for (sRmDraw3490* d = self->items[i].draw; d != 0; d = d->next) {
+                    sRmState_29B8* st = d->state;
+                    if (st != last) {
+                        func_00363C20(self, st, d->arg, &vifPtr);
+                        last = st;
+                    }
+                    sRmKey3490 key = d->key;
+                    drawKey3490(cache, key, k++, &vifPtr, pGif);
+                    if (d->packet != 0) {
+                        vifPtr[0] = ((ulong)d->packet << 32) | 0x50000000;
+                        vifPtr[1] = 0;
+                        vifPtr += 2;
+                        ulong* tag = (ulong*)(d->tail | 0x30000000);
+                        tag[0] = 0x60000000;
+                        tag[1] = 0;
+                    }
+                }
+            }
+            switch (layers[pass]) {
+            case 6:
+                for (int n = 0; n < *(int*)(gs + 0x59C0); n++) {
+                    func_0036AC00(gs, n, &vifPtr, pGif);
+                }
+                self->found = -1;
+                setState3490(&self->state, &D_00501420_29B8);
+                last = 0;
+                func_00364360(self, &vifPtr);
+                invalidate3490(cache);
+                break;
+            case 9: {
+                vifPtr[0] = 0x70000000;
+                vifPtr[1] = 0;
+                vifPtr += 2;
+                ulong* tag = (ulong*)(*pGif | 0x20000000);
+                tag[0] = 0x70000000;
+                tag[1] = 0;
+                *pGif += 0x10;
+                *pA = (unsigned int)vifPtr & 0xFFFFFFF;
+                *pB = *pGif;
+                for (int n = 0; n < *(int*)(gs + 0x59C0); n++) {
+                    func_0036C790(gs, n, &vifPtr, pGif);
+                }
+                for (int n = 0; n < *(int*)(gs + 0x59C0); n++) {
+                    func_003904A0(gs, n, &vifPtr, pGif);
+                }
+                self->found = -1;
+                setState3490(&self->state, &D_00501420_29B8);
+                last = 0;
+                func_00364360(self, &vifPtr);
+                invalidate3490(cache);
+                break;
+            }
+            }
+        }
+    }
+    if (*pA == 0) {
+        vifPtr[0] = 0x70000000;
+        vifPtr[1] = 0;
+        vifPtr += 2;
+        *pA = (unsigned int)vifPtr & 0xFFFFFFF;
+    }
+    if (*pB == 0) {
+        ulong* tag = (ulong*)(*pGif | 0x20000000);
+        tag[0] = 0x70000000;
+        tag[1] = 0;
+        *pGif += 0x10;
+        *pB = *pGif;
+    }
+    ulong* tag = (ulong*)(*pGif | 0x20000000);
+    tag[0] = 0x70000000;
+    tag[1] = 0;
+    *pGif += 0x10;
+    vifPtr[0] = 0x70000000;
+    vifPtr[1] = 0;
+    vifPtr += 2;
+    *pChain = (unsigned int)vifPtr & 0xFFFFFFF;
+    sync3490();
+    func_00365FA8(cache + 0x1F60);
+    func_0038F300(ring, mode);
+}
+#endif
 
 INCLUDE_ASM("object/railmodifier", func_00363C20);
 
