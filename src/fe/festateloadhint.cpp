@@ -689,7 +689,180 @@ extern "C" void func_002464E8(void* self, char* obj)
 
 INCLUDE_ASM("fe/festateloadhint", func_00246CF8);
 
+//100%
 INCLUDE_ASM("fe/festateloadhint", cFELoadState_InitwidgetMultiP);
+#ifdef SKIP_ASM
+// PORT: the widget name templates are splat-named literals; copied from the symbols as char-array structs.
+struct sName19_72C0 { char c[19]; };
+struct sName12_72C0 { char c[12]; };
+struct sName10_72C0 { char c[10]; };
+struct sName8_72C0 { char c[8]; };
+struct sName7_72C0 { char c[7]; };
+struct sName2_72C0 { char c[2]; };
+extern char D_0047BE60[];
+extern char D_004A2C40[];
+extern char D_004A2C48[];
+extern char D_0047BE78[];
+extern char D_0047BE88[];
+extern char D_004A2C50[];
+extern char D_0047BE98[];
+extern char D_0047BEA8[];
+extern char D_0047BEB8[];
+extern char D_004A2C18[];
+// PORT: the literal "%d" (strcpy of a constant expands to an aligned 3-byte copy).
+extern char D_004A2C28[] __attribute__((aligned(8)));
+extern char D_004A2C58[];
+extern char D_004A2C60[];
+extern int D_00534B30[];
+extern int D_00536730[];
+extern "C" void* cGameModeMan_getGM();
+extern "C" char* func_00155270(void* iface, int a1);
+extern "C" unsigned int func_004139F8(float f);
+extern "C" char* func_0020A1A8(int v);
+extern "C" char* strcpy(char* dst, const char* src);
+
+struct sLoadInfo_72C0 {
+    char pad0[0x10];
+    int image[2];                   // 0x10: per-player image
+};
+
+static inline void Activate_72C0(char* obj)
+{
+    sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(obj + 8);
+    vt[9].fn(obj + vt[9].delta, 1);
+}
+
+// The player index is a char parameter (the caller in onCreateScreen declares it int); bound by asm label.
+extern "C" void cFELoadState_InitwidgetMultiP_72C0(void* self, char player) __asm__("cFELoadState_InitwidgetMultiP");
+
+extern "C" void cFELoadState_InitwidgetMultiP_72C0(void* self, char player)
+{
+    sName19_72C0 rankNumName = *(sName19_72C0*)D_0047BE60;
+    sName7_72C0 rankName = *(sName7_72C0*)D_004A2C40;
+    sName7_72C0 timeName = *(sName7_72C0*)D_004A2C48;
+    sName12_72C0 knockdownsName = *(sName12_72C0*)D_0047BE78;
+    sName10_72C0 wipeoutsName = *(sName10_72C0*)D_0047BE88;
+    sName8_72C0 tricksName = *(sName8_72C0*)D_004A2C50;
+    sName12_72C0 handplantsName = *(sName12_72C0*)D_0047BE98;
+    sName12_72C0 ubertricksName = *(sName12_72C0*)D_0047BEA8;
+    sName12_72C0 ubergrindsName = *(sName12_72C0*)D_0047BEB8;
+    char buf[0x20];
+    char fmt[0x20];
+    char side = player;
+    cBE_getInterface_Fv(*(void**)(D_004A28A8 + 0x78), 7);
+    if (D_00534B30[2] == 0 && D_00534B30[0] != 0) {
+        player = !player;
+    }
+    if (side == 1) {
+        rankNumName.c[0] = '2';
+        rankName.c[0] = '2';
+        timeName.c[0] = '2';
+        knockdownsName.c[0] = '2';
+        wipeoutsName.c[0] = '2';
+        tricksName.c[0] = '2';
+        handplantsName.c[0] = '2';
+        ubertricksName.c[0] = '2';
+        ubergrindsName.c[0] = '2';
+    }
+    void* iface1 = cBE_getInterface_Fv(cBE_getBE(), 1);
+    cBE_getInterface_Fv(cBE_getBE(), 0);
+    void* iface3 = cBE_getInterface_Fv(cBE_getBE(), 3);
+    cGameModeMan_getGM();
+    void* iface8 = cBE_getInterface_Fv(cBE_getBE(), 8);
+    char* st = func_00155270(iface8, func_00146E98(iface1, player != 0));
+    void* obj = cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(rankNumName.c));
+    if (obj != 0) {
+        __builtin_memcpy(fmt, D_004A2C28, sizeof("%d"));
+        sprintf(buf, fmt, D_00536730[player] + 1);
+        cUIText_setAsciiString((cUIText*)obj, buf);
+    }
+    obj = cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(rankName.c));
+    if (obj != 0) {
+        cBE_getInterface_Fv(*(void**)(D_004A28A8 + 0x78), 7);
+        int rank;
+        if (D_00534B30[0] != 0 && D_00534B30[1] != 0) {
+            rank = 8;
+        } else {
+            rank = func_00148950(iface3, func_00146E98(iface1, player != 0));
+        }
+        unsigned short fmtw[50];
+        unsigned short text[100];
+        char* o = *(char**)(D_004A28A8 + 0x8C);
+        sVEntry<void*(void*, int)>* vt = *(sVEntry<void*(void*, int)>**)(o + 4);
+        func_002C2508(fmtw, vt[4].fn(o + vt[4].delta, GetHashValue32(D_0047BC80)));
+        func_002C26D0(text, fmtw, rank);
+        func_003A0E90(obj, (char*)text);
+    }
+    obj = cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(timeName.c));
+    if (obj != 0) {
+        if (D_00535C10[0] == 0 || D_00535C10[0] == 5) {
+            int i = func_00146E98(iface1, player != 0);
+            unsigned int t = func_004139F8((float)D_00536640[i] * (1.0f / 60.0f));
+            char* o = (char*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_004A2C58));
+            if (o != 0) {
+                Activate_72C0(o);
+            }
+            strcpy(buf, func_0020A1A8(t));
+        } else {
+            int i = func_00146E98(iface1, player != 0);
+            unsigned int score = D_00536640[i];
+            char* o = (char*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_004A2C60));
+            if (o != 0) {
+                Activate_72C0(o);
+            }
+            sprintf(buf, D_004A2C28, score);
+        }
+        cUIText_setAsciiString((cUIText*)obj, buf);
+    }
+    obj = cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(knockdownsName.c));
+    if (obj != 0) {
+        __builtin_memcpy(fmt, D_004A2C28, sizeof("%d"));
+        sprintf(buf, fmt, *(int*)(st + 0x2C));
+        cUIText_setAsciiString((cUIText*)obj, buf);
+    }
+    obj = cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(wipeoutsName.c));
+    if (obj != 0) {
+        __builtin_memcpy(fmt, D_004A2C28, sizeof("%d"));
+        sprintf(buf, fmt, *(int*)(st + 0x28));
+        cUIText_setAsciiString((cUIText*)obj, buf);
+    }
+    obj = cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(tricksName.c));
+    if (obj != 0) {
+        __builtin_memcpy(fmt, D_004A2C28, sizeof("%d"));
+        sprintf(buf, fmt, *(int*)(st + 0x14));
+        cUIText_setAsciiString((cUIText*)obj, buf);
+    }
+    obj = cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(handplantsName.c));
+    if (obj != 0) {
+        __builtin_memcpy(fmt, D_004A2C28, sizeof("%d"));
+        sprintf(buf, fmt, *(int*)(st + 0xC));
+        cUIText_setAsciiString((cUIText*)obj, buf);
+    }
+    obj = cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(ubertricksName.c));
+    if (obj != 0) {
+        __builtin_memcpy(fmt, D_004A2C28, sizeof("%d"));
+        sprintf(buf, fmt, *(int*)(st + 0x18));
+        cUIText_setAsciiString((cUIText*)obj, buf);
+    }
+    obj = cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(ubergrindsName.c));
+    if (obj != 0) {
+        __builtin_memcpy(fmt, D_004A2C28, sizeof("%d"));
+        sprintf(buf, fmt, *(int*)(st + 0x20));
+        cUIText_setAsciiString((cUIText*)obj, buf);
+    }
+    sName2_72C0 picName = *(sName2_72C0*)D_004A2C18;
+    picName.c[0] = side + '0';
+    char* pic = (char*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(picName.c));
+    sLoadInfo_72C0* p = *(sLoadInfo_72C0**)((char*)self + 0x48);
+    if (p != 0 && pic != 0) {
+        int q = p->image[player];
+        if (q != 0) {
+            *(int*)(pic + 0x78) = q;
+            *(int*)(pic + 0x7C) = 0;
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/festateloadhint", cFELoadState_widgetCreateQP);
