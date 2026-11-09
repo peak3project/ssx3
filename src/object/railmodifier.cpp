@@ -440,7 +440,437 @@ extern "C" void func_0035C5A0(void* self, sRmMat44* m)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/railmodifier", func_0035C698);
+#ifdef SKIP_ASM
+// A spline segment: cubic coefficient matrix (rows t^3, t^2, t, 1), next segment.
+struct sRmSeg_C698 {
+    char pad_0x00[0x10];
+    sRmMat44 coef;          // 0x10
+    char pad_0x50[0x14];
+    sRmSeg_C698* next;      // 0x64
+};
+
+// A rail spline resource.
+struct sRmSpline_C698 {
+    char pad_0x00[0x1C];
+    unsigned int mask;      // 0x1C
+    int numSegs;            // 0x20
+    sRmSeg_C698* segs;      // 0x24
+    int id;                 // 0x28
+};
+
+struct sRmSet_C698 {
+    char pad_0x00[0x44];
+    unsigned int* refs;     // 0x44
+};
+
+struct sRmWorld_C698 {
+    char pad_0x00[0x8];
+    sRmSet_C698** sets;     // 0x8
+};
+
+static inline void* refToPtr_C698(unsigned int p)
+{
+    return (void*)(p << 2);
+}
+
+static inline void* lookup_C698(sRmSet_C698* set, unsigned int idx)
+{
+    unsigned int p = set->refs[idx] >> 8;
+    if (p == 0) {
+        return 0;
+    }
+    return refToPtr_C698(p);
+}
+
+struct sRmRef_C698 {
+    unsigned int id;
+
+    void* get(sRmWorld_C698* w)
+    {
+        sRmSet_C698* set = w->sets[id & 0xFF];
+        if (set == 0) {
+            return 0;
+        }
+        return lookup_C698(set, id >> 8);
+    }
+};
+
+struct sRmObj_C698 {
+    char pad_0x00[0x30];
+    sRmRef_C698 spline;     // 0x30
+    int bone;               // 0x34
+    char pad_0x38[0x8];
+    void* model;            // 0x40
+};
+
+// Hit record (position, normal, distance, type, ids, spline parameter).
+struct sRmHit_C698 {
+    t4Vector pos;       // 0x00
+    t4Vector nrm;       // 0x10
+    t4Vector v20;       // 0x20
+    t4Vector v30;       // 0x30
+    float dist;         // 0x40
+    int type;           // 0x44
+    int pad48;
+    int id;             // 0x4C
+    void* model;        // 0x50
+    void* obj;          // 0x54
+    void* spline;       // 0x58
+    int bone;           // 0x5C
+    int f60;            // 0x60
+    int f64;            // 0x64
+    float t;            // 0x68
+    float u;            // 0x6C
+    float v;            // 0x70
+    int pad74[3];
+};
+
+// A direction (w = 0); stores w first, like sVec4W in ai/rider.cpp.
+struct sRmDir_C698 : t4Vector {
+    sRmDir_C698(const float& ax, const float& ay, const float& az)
+    {
+        w = 0.0f;
+        x = ax;
+        y = ay;
+        z = az;
+    }
+};
+
+// Power basis (t^3, t^2, t, w) of a cubic parameter, built up from t.
+struct sRmPow_C698 : t4Vector {
+    sRmPow_C698(const float& t, const float& aw)
+    {
+        w = aw;
+        z = t;
+        y = t * t;
+        x = t * y;
+    }
+};
+
+// Five floats (the golden-section start brackets for the five sample points).
+struct sRmF5_C698 {
+    float v[5];
+};
+
+extern "C" sRmWorld_C698** func_002D1BD8();
+extern "C" void func_0035C5A0(void* self, sRmMat44* m);
+extern t4Vector D_004FF120_C698 __asm__("D_004FF120");
+extern const sRmF5_C698 D_0048E7D8;
+extern const sRmF5_C698 D_0048E7F0;
+
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix multiply, d = b * a).
+static inline void vu0MulMat_C698(sRmMat44* d, const sRmMat44* a, const sRmMat44* b)
+{
+    __asm__ __volatile__(
+        "lqc2      $vf4, 0x0(%1)\n"
+        "lqc2      $vf5, 0x10(%1)\n"
+        "lqc2      $vf6, 0x20(%1)\n"
+        "lqc2      $vf7, 0x30(%1)\n"
+        "lqc2      $vf8, 0x0(%2)\n"
+        "lqc2      $vf9, 0x10(%2)\n"
+        "lqc2      $vf10, 0x20(%2)\n"
+        "lqc2      $vf11, 0x30(%2)\n"
+        "vmulax.xyzw ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw $vf12, $vf7, $vf8w\n"
+        "vmulax.xyzw ACC, $vf4, $vf9x\n"
+        "vmadday.xyzw ACC, $vf5, $vf9y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf9z\n"
+        "vmaddw.xyzw $vf13, $vf7, $vf9w\n"
+        "vmulax.xyzw ACC, $vf4, $vf10x\n"
+        "vmadday.xyzw ACC, $vf5, $vf10y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf10z\n"
+        "vmaddw.xyzw $vf14, $vf7, $vf10w\n"
+        "vmulax.xyzw ACC, $vf4, $vf11x\n"
+        "vmadday.xyzw ACC, $vf5, $vf11y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf11z\n"
+        "vmaddw.xyzw $vf15, $vf7, $vf11w\n"
+        "sqc2      $vf12, 0x0(%0)\n"
+        "sqc2      $vf13, 0x10(%0)\n"
+        "sqc2      $vf14, 0x20(%0)\n"
+        "sqc2      $vf15, 0x30(%0)\n"
+        :
+        : "r"(d), "r"(a), "r"(b)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix copy through VU0 registers).
+static inline void vu0CopyMat_C698(sRmMat44* d, const sRmMat44* s)
+{
+    __asm__ __volatile__(
+        "lqc2      $vf1, 0x0(%1)\n"
+        "lqc2      $vf2, 0x10(%1)\n"
+        "lqc2      $vf3, 0x20(%1)\n"
+        "lqc2      $vf4, 0x30(%1)\n"
+        "sqc2      $vf1, 0x0(%0)\n"
+        "sqc2      $vf2, 0x10(%0)\n"
+        "sqc2      $vf3, 0x20(%0)\n"
+        "sqc2      $vf4, 0x30(%0)\n"
+        :
+        : "r"(d), "r"(s)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (vector * matrix, row-vector convention).
+static inline t4Vector vu0MtxMul_C698(const sRmMat44* m, const t4Vector& v)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2         $vf8, %1\n"
+        "lqc2         $vf4, 0x0(%2)\n"
+        "lqc2         $vf5, 0x10(%2)\n"
+        "lqc2         $vf6, 0x20(%2)\n"
+        "lqc2         $vf7, 0x30(%2)\n"
+        "vmulax.xyzw  ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw  $vf12, $vf7, $vf8w\n"
+        "sqc2         $vf12, %0\n"
+        : "=m"(r)
+        : "m"(v), "r"(m)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (a - b).
+static inline t4Vector vu0Sub_C698(const t4Vector& a, const t4Vector& b)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (a + b).
+static inline t4Vector vu0Add_C698(const t4Vector& a, const t4Vector& b)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (dot product).
+static inline float vu0Dot_C698(const t4Vector& a, const t4Vector& b)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "lqc2      $vf5, %3\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf5\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "qmfc2.ni  %1, $vf4\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4-component vector length).
+static inline float vu0Length_C698(const t4Vector& v)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %1, $vi22\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(v));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (normalised copy of a 4-vector).
+static inline t4Vector vu0Normal_C698(const t4Vector& v)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2       $vf3, %1\n"
+        "vaddw.x    $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw  $vf4, $vf3, $vf3\n"
+        "vadday.x   ACC, $vf4, $vf4y\n"
+        "vmaddaz.x  ACC, $vf6, $vf4z\n"
+        "vmaddw.x   $vf4, $vf6, $vf4w\n"
+        "vrsqrt     Q, $vf0w, $vf4x\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf5, $vf3, Q\n"
+        "sqc2       $vf5, %0\n"
+        : "=m"(r)
+        : "m"(v)
+        : "memory");
+    return r;
+}
+
+// Point on a cubic segment at parameter t.
+static inline t4Vector evalSeg_C698(const sRmMat44* c, float t)
+{
+    sRmPow_C698 v(t, 1.0f);
+    return vu0MtxMul_C698(c, v);
+}
+
+// PORT: SN abs.s asm helper (PS2 FPU).
+static inline float fsAbs_C698(float x)
+{
+    float r;
+    __asm__("abs.s %0,%1" : "=f"(r) : "f"(x));
+    return r;
+}
+
+// Tangent of a cubic segment at parameter t.
+static inline t4Vector evalTan_C698(const sRmMat44* c, float t)
+{
+    sRmDir_C698 v(t * (3.0f * t), 2.0f * t, 1.0f);
+    return vu0MtxMul_C698(c, v);
+}
+
+static inline float clamp_C698(float x, float lo, float hi)
+{
+    return x >= lo ? x <? hi : lo;
+}
+
+static inline void resetHit_C698(sRmHit_C698* h)
+{
+    h->type = 2;
+    h->obj = 0;
+    h->model = 0;
+    h->spline = 0;
+    h->bone = -1;
+    h->f60 = -1;
+    h->f64 = -1;
+    h->id = -1;
+    h->v20 = D_004FF120_C698;
+    h->v30 = D_004FF120_C698;
+    h->t = 0;
+    h->u = 0;
+    h->v = 0;
+}
+
+extern "C" void func_0035C698(sRmObj_C698* self, void* box, void* box2, const t4Vector* point, unsigned int mask,
+                              int* found, float* bestDist, sRmHit_C698* out)
+{
+    sRmSpline_C698* spline = (sRmSpline_C698*)self->spline.get(*func_002D1BD8());
+    if ((spline->mask & mask) == 0) {
+        return;
+    }
+    sRmMat44 mat;
+    func_0035C5A0(self, &mat);
+    sRmSeg_C698* seg = spline->segs;
+    for (int i = 0; i < spline->numSegs; i++, seg = seg->next) {
+        float a = 0.0f;
+        float b = 1.0f;
+        t4Vector pos;
+        t4Vector next;
+        t4Vector dir;
+        sRmMat44 c;
+        {
+            sRmMat44 t;
+            vu0MulMat_C698(&t, &mat, &seg->coef);
+            vu0CopyMat_C698(&c, &t);
+        }
+        pos = evalSeg_C698(&c, a);
+        float best = vu0Length_C698(vu0Sub_C698(*point, pos));
+        int bestIdx = 0;
+        int k;
+        for (k = 1; k < 5; k++) {
+            next = evalSeg_C698(&c, k * 0.25f);
+            dir = vu0Sub_C698(next, pos);
+            float u = vu0Dot_C698(vu0Sub_C698(*point, pos), dir) / vu0Dot_C698(dir, dir);
+            dir = vu0Add_C698(pos, vu0Scale(dir, clamp_C698(u, 0.0f, 1.0f)));
+            float d = vu0Length_C698(vu0Sub_C698(*point, dir));
+            if (d < best) {
+                best = d;
+                bestIdx = k;
+            }
+            pos = next;
+        }
+        sRmF5_C698 lo = D_0048E7D8;
+        sRmF5_C698 hi = D_0048E7F0;
+        a = lo.v[bestIdx];
+        b = hi.v[bestIdx];
+        float tc = a + (b - a) * 0.381966f;
+        float td = a + (b - a) * 0.618034f;
+        // Golden-section search on [a, b]. f(a) and f(b) are evaluated but never read (the binary keeps both
+        // evaluations; their lengths drop out).
+        float fa, fb, fc, fd;
+        pos = evalSeg_C698(&c, a);
+        fa = vu0Length_C698(vu0Sub_C698(pos, *point));
+        pos = evalSeg_C698(&c, tc);
+        fc = vu0Length_C698(vu0Sub_C698(pos, *point));
+        pos = evalSeg_C698(&c, td);
+        fd = vu0Length_C698(vu0Sub_C698(pos, *point));
+        float t = td;
+        float dist = fd;
+        pos = evalSeg_C698(&c, b);
+        fb = vu0Length_C698(vu0Sub_C698(pos, *point));
+        for (k = 0; k < 24; k++) {
+            if (fsAbs_C698(b - a) <= 0.0005f) {
+                break;
+            }
+            if (fd < fc) {
+                a = tc;
+                tc = td;
+                td = tc * 0.618034f + b * 0.381966f;
+                pos = evalSeg_C698(&c, td);
+                float f = vu0Length_C698(vu0Sub_C698(pos, *point));
+                fc = fd;
+                fd = f;
+                t = td;
+                dist = fd;
+            } else {
+                b = td;
+                td = tc;
+                tc = td * 0.618034f + a * 0.381966f;
+                pos = evalSeg_C698(&c, tc);
+                float f = vu0Length_C698(vu0Sub_C698(pos, *point));
+                fd = fc;
+                fc = f;
+                t = tc;
+                dist = fc;
+            }
+        }
+        if (*found == 0 || dist < *bestDist) {
+            *found = 1;
+            *bestDist = dist;
+            resetHit_C698(out);
+            out->pos = pos;
+            out->nrm = vu0Normal_C698(evalTan_C698(&c, t));
+            out->id = spline->id;
+            out->model = self->model;
+            out->bone = self->bone;
+            out->t = t;
+            out->spline = spline;
+            out->obj = 0;
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/railmodifier", func_0035CFE0__FPv);
