@@ -666,7 +666,402 @@ done:
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_00139C88);
+#ifdef SKIP_ASM
+extern "C" float func_0013A7B0(void* self, char* hit);
+int func_0011FEE8(void* rider);
+// PORT: these rider helpers are defined with one parameter (mangled __FPv) but take more here.
+void func_0011FEC8_9C88(void* rider, int v) __asm__("func_0011FEC8__FPv");
+void func_0011FE78_9C88(void* rider, int v) __asm__("func_0011FE78__FPv");
+void func_00113998_9C88(void* model, void* pos, void* vel) __asm__("func_00113998__FPv");
+extern "C" int func_00116120(void* rider, int a, int b);
+// PORT: func_00106538 is declared with a void* second parameter in this unit; bind the reference form.
+extern "C" void func_00106538_9C88(void* rider, const t4Vector& v) __asm__("func_00106538");
+extern "C" int func_00311AE8(void*, int);
+extern "C" char* func_00311B20(void*, int);
+extern "C" bool func_001446A0(void* self, int bit);
+unsigned int AIrand();
+extern "C" void* cBE_getBE();
+extern "C" void* cBE_getInterface__Fv(void* be, int kind);
+extern "C" float func_00149120(void* self, int rider, int value);
+extern "C" void func_0010E910(void* rider, int a1, int a2, int a3, void* hit, float speed);
+extern "C" void func_00115640(void* rider);
+extern "C" int func_00114CC0(void* rider);
+extern "C" void func_0013A8F8(void* self, float v);
+extern "C" void func_0013A968(void* self, float v);
+extern "C" int cRiderAnimBase_play(void* self, int anim, int flags, float blend);
+extern "C" void func_003098B0(void* self);
+extern "C" int func_0013AA48(void* self, t4Vector* push);
+// PORT: func_00105398 is declared with an int second parameter in this unit; here it gets a vector pointer.
+extern "C" void func_00105398_9C88(void* rider, t4Vector* push) __asm__("func_00105398");
+extern "C" void func_00107888(void* rider);
+extern void* D_004A3DD8;
+extern int D_004A1120;
+
+// The surface record a landing hit points at (flags at 0xA, id at 0x150).
+struct sSurf_9C88 {
+    char pad00[0xA];
+    short flags;                // 0x0A
+    char pad0C[0x144];
+    int id;                     // 0x150
+
+    // Inline getter: the flags come back as int (the target sign-extends them with lh before the bit test).
+    int getFlags() const { return flags; }
+};
+
+// World hit record filled by func_0013A7B0 (0x80 bytes).
+struct sHit_9C88 {
+    t4Vector pos;               // 0x00
+    t4Vector nrm;               // 0x10
+    t4Vector vel;               // 0x20
+    char pad30[0x1C];
+    int mat;                    // 0x4C
+    char* obj;                  // 0x50
+    sSurf_9C88* surf;           // 0x54
+    char pad58[0x14];
+    float f6C;                  // 0x6C
+    float f70;                  // 0x70
+    char pad74[0xC];
+} __attribute__((aligned(16)));
+
+struct sInfo_9C88 {
+    t4Vector pos;
+    t4Vector dir;
+    t4Vector up;
+    float speed;
+} __attribute__((aligned(16)));
+
+extern "C" void func_0010EB30_9C88(void* rider, int a1, int a2, int a3, sInfo_9C88* info) __asm__("func_0010EB30");
+
+// PORT: PS2-only VU0 inline asm (4-component vector length).
+static inline float Len_9C88(const t4Vector& v)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %1, $vi22\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(v));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4-component dot product).
+static inline float Dot_9C88(const t4Vector& a, const t4Vector& b)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "lqc2      $vf5, %3\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf5\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "qmfc2.ni  %1, $vf4\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector times scalar).
+static inline t4Vector Scale_9C88(const t4Vector& v, float s)
+{
+    t4Vector r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (in-place vector times scalar).
+static inline void ScaleEq_9C88(t4Vector& v, float s)
+{
+    int t;
+    __asm__(
+        "mfc1      %1, %2\n"
+        "lqc2      $vf4, %0\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "+m"(v), "=&r"(t)
+        : "f"(s)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (a += b).
+static inline void AddEq_9C88(t4Vector& a, const t4Vector& b)
+{
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(a)
+        : "m"(a), "m"(b)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (vector subtract).
+static inline t4Vector Sub_9C88(const t4Vector& a, const t4Vector& b)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (cross product, w = 0).
+static inline t4Vector Cross_9C88(const t4Vector& a, const t4Vector& b)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf4, %1\n"
+        "lqc2      $vf5, %2\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vsub.w    $vf6, $vf6, $vf6\n"
+        "sqc2      $vf6, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (normalize via rsqrt).
+static inline t4Vector Normalize_9C88(const t4Vector& v)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vrsqrt    Q, $vf0w, $vf4x\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf5, $vf3, Q\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(v)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2 FPU abs.s via inline asm; use fabsf off-PS2.
+static inline float Abs_9C88(float x)
+{
+    float r;
+    __asm__("abs.s %0,%1" : "=f"(r) : "f"(x));
+    return r;
+}
+
+// PORT: `<?` is the g++ minimum operator (EE min.s).
+static inline float Clamp_9C88(float v, float lo, float hi)
+{
+    return (v >= lo) ? (v <? hi) : lo;
+}
+
+static inline t4Vector side_9C88(char* r) { return *(t4Vector*)(r + 0x1A0); }
+static inline t4Vector fwd_9C88(char* r) { return *(t4Vector*)(r + 0x1B0); }
+static inline t4Vector up_9C88(char* r) { return *(t4Vector*)(r + 0x1C0); }
+
+// Virtual slot 43 of the hit object's handler (hit, impulse).
+typedef sVEntry<void(void*, void*, const t4Vector&)> sVE43_9C88;
+
+#define RIDER_9C88 (*(char**)(self + 0x4))
+
+extern "C" void func_00139C88(char* self)
+{
+    sHit_9C88 hit;
+    float d = func_0013A7B0(self, (char*)&hit);
+    float vn = 0.0f;
+    if (d >= 0.5f)
+        vn = Dot_9C88(Sub_9C88(*(t4Vector*)(RIDER_9C88 + 0x1E0), hit.vel), hit.nrm);
+    if (d >= 0.5f && vn < 0.0f) {
+        float speed = Len_9C88(*(t4Vector*)(RIDER_9C88 + 0x1E0));
+        if (func_0011FEE8(RIDER_9C88) == 5)
+            func_0011FEC8_9C88(RIDER_9C88, 0xD);
+        char* r = RIDER_9C88;
+        func_00113998_9C88(*(void**)(r + 0x788), r + 0x110, r + 0x1E0);
+        char* e = D_004A28A8->game->f44 + hit.mat * 0xB0;
+        if (*(int*)(e + 0x44) != 0 || (hit.surf && (hit.surf->getFlags() & 2))) {
+            func_00116120(RIDER_9C88, 0, 1);
+            return;
+        }
+        float pen = Dot_9C88(Sub_9C88(hit.pos, *(t4Vector*)(RIDER_9C88 + 0x110)), hit.nrm) - *(float*)(e + 0x18);
+        if (pen > 0.0f)
+            func_00106538_9C88(RIDER_9C88, Scale_9C88(hit.nrm, pen));
+        *(t4Vector*)(RIDER_9C88 + 0x370) = hit.nrm;
+        *(t4Vector*)(RIDER_9C88 + 0x3D0) = hit.vel;
+        *(float*)(RIDER_9C88 + 0x770) = -vn;
+        char* r2 = RIDER_9C88;
+        *(t4Vector*)(r2 + 0x380) = *(t4Vector*)(r2 + 0x370);
+        if (hit.surf) {
+            *(int*)(RIDER_9C88 + 0x430) = hit.surf->id;
+            *(float*)(RIDER_9C88 + 0xAAC) = hit.f6C;
+            *(float*)(RIDER_9C88 + 0xAB0) = hit.f70;
+        } else {
+            *(unsigned int*)(RIDER_9C88 + 0x430) = 0xFFFFFFFF;
+        }
+        t4Vector v = Scale_9C88(*(t4Vector*)(RIDER_9C88 + 0x370), -vn);
+        ScaleEq_9C88(v, *(float*)(e + 0x3C));
+        AddEq_9C88(*(t4Vector*)(RIDER_9C88 + 0x1E0), v);
+        char* r3 = RIDER_9C88;
+        float out = -Dot_9C88(*(t4Vector*)(r3 + 0x1E0), *(t4Vector*)(r3 + 0x370));
+        if (*(float*)(e + 0x40) < out)
+            AddEq_9C88(*(t4Vector*)(RIDER_9C88 + 0x1E0), Scale_9C88(*(t4Vector*)(r3 + 0x370), out - *(float*)(e + 0x40)));
+        if (hit.obj) {
+            char* h = *(char**)(hit.obj + 0xC);
+            if (h) {
+                sVE43_9C88* vt = *(sVE43_9C88**)(h + 0xC);
+                vt[43].fn(h + vt[43].delta, &hit, Scale_9C88(Scale_9C88(v, -1.0f), (float)*(int*)((char*)D_004A28A8 + 0x10) /* app int at 0x10 */));
+            }
+        }
+        int anim = 0x1B6;
+        char* r4 = RIDER_9C88;
+        *(t4Vector*)(r4 + 0x3A0) = Normalize_9C88(Sub_9C88(fwd_9C88(r4), Scale_9C88(*(t4Vector*)(r4 + 0x370), Dot_9C88(fwd_9C88(r4), *(t4Vector*)(r4 + 0x370)))));
+        char* r5 = RIDER_9C88;
+        *(t4Vector*)(r5 + 0x3B0) = Cross_9C88(*(t4Vector*)(r5 + 0x370), *(t4Vector*)(r5 + 0x3A0));
+        *(int*)(RIDER_9C88 + 0x438) = hit.mat;
+        *(t4Vector*)(RIDER_9C88 + 0x460) = hit.pos;
+        *(float*)(RIDER_9C88 + 0x454) = Dot_9C88(Sub_9C88(*(t4Vector*)(RIDER_9C88 + 0x110), hit.pos), *(t4Vector*)(RIDER_9C88 + 0x370));
+        if (func_00311AE8(*(void**)(RIDER_9C88 + 0x784), 2) == 0x14) {
+            if (!func_001446A0(func_00311B20(*(void**)(RIDER_9C88 + 0x784), 2) + 0xB0, 2))
+                anim = 0x169;
+        } else if (func_00311AE8(*(void**)(RIDER_9C88 + 0x784), 2) == 0x15) {
+            if (!func_001446A0(func_00311B20(*(void**)(RIDER_9C88 + 0x784), 2) + 0xB0, 3))
+                anim = 0x169;
+        } else {
+            int flip = 0;
+            if (func_00311AE8(*(void**)(RIDER_9C88 + 0x784), 2) == 0x13) {
+                flip = func_001446A0(func_00311B20(*(void**)(RIDER_9C88 + 0x784), 2) + 0xB0, 2) == 0;
+            } else if (func_00311AE8(*(void**)(RIDER_9C88 + 0x784), 2) == 0x12) {
+                if (func_001446A0(func_00311B20(*(void**)(RIDER_9C88 + 0x784), 2) + 0xB0, 2) == 0)
+                    flip = func_001446A0(func_00311B20(*(void**)(RIDER_9C88 + 0x784), 2) + 0xB0, 0) != 0;
+            }
+            char* r6 = RIDER_9C88;
+            if (Dot_9C88(up_9C88(r6), *(t4Vector*)(r6 + 0x370)) < 0.0f)
+                flip = 1;
+            if (flip) {
+                float a = Dot_9C88(side_9C88(r6), *(t4Vector*)(r6 + 0x370));
+                float b = Dot_9C88(fwd_9C88(r6), *(t4Vector*)(r6 + 0x370));
+                float c = Dot_9C88(up_9C88(r6), *(t4Vector*)(r6 + 0x370));
+                if (Abs_9C88(b) > Abs_9C88(a) && Abs_9C88(b) > Abs_9C88(c)) {
+                    if (b < 0.0f)
+                        anim = 0x162;
+                    else
+                        anim = 0x163;
+                } else if (Abs_9C88(c) > Abs_9C88(a) && Abs_9C88(c) > Abs_9C88(b)) {
+                    if (c < 0.0f) {
+                        anim = 0x15E;
+                    } else {
+                        unsigned int k;
+                        if (2222.22216796875f < Len_9C88(*(t4Vector*)(RIDER_9C88 + 0x1E0)))
+                            k = AIrand() & 3;
+                        else
+                            k = AIrand() & 1;
+                        anim = 0x160;
+                        if (k != 0) {
+                            if (k == 1)
+                                anim = 0x161;
+                            else
+                                anim = 0x15F;
+                        }
+                    }
+                } else {
+                    if (a < 0.0f)
+                        anim = 0x165;
+                    else
+                        anim = 0x164;
+                }
+            } else if (*(int*)(r6 + 0x330) == 0) {
+                float u = Dot_9C88(up_9C88(r6), *(t4Vector*)(r6 + 0x3A0));
+                float k = func_00149120(cBE_getInterface__Fv(cBE_getBE(), 3), *(int*)(RIDER_9C88 + 0x86C), *(int*)(RIDER_9C88 + 0xB34)) * 0.29999101161956787f + 1.0f;
+                if (k * 0.699962317943573f < u)
+                    anim = 0x15C;
+                else if (u < k * -0.699962317943573f)
+                    anim = 0x15D;
+            }
+        }
+        if (anim != 0x1B6) {
+            sInfo_9C88 info;
+            info.pos = hit.pos;
+            info.dir = Normalize_9C88(*(t4Vector*)(RIDER_9C88 + 0x1E0));
+            info.up = hit.nrm;
+            info.speed = Abs_9C88(vn);
+            func_0010EB30_9C88(RIDER_9C88, anim, 0, *(int*)(RIDER_9C88 + 0x438), &info);
+        } else {
+            func_0010E910(RIDER_9C88, *(float*)(RIDER_9C88 + 0x378) < 0.699999988079071f, 0, *(int*)(RIDER_9C88 + 0x330), &hit, speed);
+            func_0011FE78_9C88(RIDER_9C88, 0);
+            if (func_0011FEE8(RIDER_9C88) != 0xC) {
+                if (func_0011FEE8(RIDER_9C88) == 2) {
+                    func_00115640(RIDER_9C88);
+                    if (vn < -1388.888916015625f)
+                        func_0013A968(self, vn);
+                } else if (*(int*)(RIDER_9C88 + 0x330) != 0) {
+                    if (func_0011FEE8(RIDER_9C88) != 1) {
+                        if (*(int*)(RIDER_9C88 + 0x330) == 1)
+                            cRiderAnimBase_play(*(void**)(RIDER_9C88 + 0x784), 0x1A, 0, -1.0f);
+                        else
+                            cRiderAnimBase_play(*(void**)(RIDER_9C88 + 0x784), 0x22, 0, -1.0f);
+                        func_0011FEC8_9C88(RIDER_9C88, 1);
+                    }
+                } else {
+                    func_00115640(RIDER_9C88);
+                    func_0011FEC8_9C88(RIDER_9C88, 0);
+                    if (func_00114CC0(RIDER_9C88))
+                        func_0013A8F8(self, vn);
+                    else
+                        func_0013A968(self, vn);
+                }
+            }
+            char* r7 = RIDER_9C88;
+            float f = Abs_9C88(Dot_9C88(fwd_9C88(r7), Normalize_9C88(*(t4Vector*)(r7 + 0x1E0))));
+            // Both clamp bounds are 1.0 in the binary (c.le.s against 1.0, then min.s with 1.0).
+            ScaleEq_9C88(*(t4Vector*)(RIDER_9C88 + 0x1E0), Clamp_9C88(f, 1.0f, 1.0f));
+            func_003098B0(D_004A3DD8);
+        }
+    }
+    func_0011E150(RIDER_9C88, 0);
+    *(int*)(*(char**)(RIDER_9C88 + 0xAA0) + 0x28) = D_004A1120;
+    t4Vector push;
+    int got = func_0013AA48(self, &push);
+    *(unsigned int*)(*(char**)(RIDER_9C88 + 0xAA0) + 0x28) = 0xFFFFFFFF;
+    if (got)
+        func_00105398_9C88(RIDER_9C88, &push);
+    else
+        func_00105398_9C88(RIDER_9C88, 0);
+    func_00107888(RIDER_9C88);
+}
+
+#undef RIDER_9C88
+#endif
 
 //100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_0013A7B0);
