@@ -3218,7 +3218,134 @@ extern "C" int func_00106F78_6F78(cRider* self)
 
 INCLUDE_ASM("seg/seg_1218", func_00107578);
 
+//100%
 INCLUDE_ASM("seg/seg_1218", func_00107888);
+#ifdef SKIP_ASM
+// Rider-rider collisions: for every other active rider, push the two apart when their sphere trees touch
+// (and exchange momentum along the contact), then shove the other rider when this one runs into it.
+
+// A rider's per-rider record (indexed by the other rider's AI index): set flag and the frame counters of the
+// last contact, momentum exchange and shove.
+struct sRec_7888 {
+    int active;         // 0x00
+    char pad4[0xC];
+    int lastExchange;   // 0x10
+    int lastContact;    // 0x14
+    int lastShove;      // 0x18
+    char pad1C[0x24 - 0x1C];
+};
+
+extern "C" float cRider_getMass(cRider* self);
+extern "C" int func_00329F98(void* a, void* b, t4Vector* dir, t4Vector* pos);
+extern "C" float func_00149038(void* iface, int index, int column);
+extern "C" void func_00107E70_7888(cRider* self, cRider* other, t4Vector* n, int flag, float speed) __asm__("func_00107E70");
+
+// PORT: PS2-only VU0 inline asm (a -= b).
+static inline void SubEq_7888(t4Vector& a, const t4Vector& b)
+{
+    __asm__(
+        ".set push\n"
+        ".set noreorder\n"
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        ".set pop\n"
+        : "=m"(a)
+        : "m"(a), "m"(b));
+}
+
+// PORT: PS2-only VU0 inline asm (vector divided by scalar).
+static inline t4Vector Div_7888(const t4Vector& v, float s)
+{
+    t4Vector r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vdiv      Q, $vf0w, $vf3x\n"
+        "lqc2      $vf4, %2\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf4, $vf4, Q\n"
+        "sqc2      $vf4, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s));
+    return r;
+}
+
+// Vector times scalar.
+static inline t4Vector operator*(const t4Vector& v, float s) { return Scale(v, s); }
+
+static inline sRec_7888* Rec_7888(cRider* r, int idx) { return &((sRec_7888*)r)[idx]; }
+
+extern "C" void func_00107888(cRider* self)
+{
+    int busy = 0;
+    float mass = cRider_getMass(self);
+    if (func_00311AE8(self->mRiderAnim, 1) != 0xD ||
+        func_001446A0(func_00311B20(self->mRiderAnim, 1) + 0xB0, 1) ||
+        !func_001446A0(func_00311B20(self->mRiderAnim, 1) + 0xB0, 0))
+        busy = 1;
+    for (int i = 0; i < 6; i++) {
+        if (!Rec_7888(self, i)->active)
+            continue;
+        cRider* other = (cRider*)D_004A28A8->game->race->riders[i];
+        if (other->mIsActor != 0)
+            continue;
+        sRec_7888* orec = Rec_7888(other, self->mAIIndex);
+        if (orec->lastContact < func_001298C8()) {
+            sRec_7888* srec = Rec_7888(self, other->mAIIndex);
+            srec->lastContact = func_001298C8();
+            orec->lastContact = func_001298C8();
+            t4Vector dir;
+            t4Vector pos;
+            if (func_00329F98(self->mSphereTree, other->mSphereTree, &dir, &pos)) {
+                float omass = cRider_getMass(other);
+                t4Vector a = dir * -0.550000011920929f;
+                t4Vector b = dir * 0.550000011920929f;
+                if (func_001231A8(self))
+                    SubEq_7888(a, Scale(self->mGroundNormal, Dot(a, self->mGroundNormal)));
+                if (func_001231A8(other))
+                    SubEq_7888(b, Scale(other->mGroundNormal, Dot(b, other->mGroundNormal)));
+                func_00106538_m2537(self, a);
+                func_00106538_m2537(other, b);
+                if (srec->lastExchange < func_001298C8() - 3) {
+                    t4Vector n = Norm(dir);
+                    float t = (Dot(other->mVelocity, n) - Dot(self->mVelocity, n)) / (mass + omass);
+                    func_00107E70_7888(self, other, &n, 0, omass * t);
+                    func_00107E70_7888(other, self, &n, 0, -mass * t);
+                    srec->lastExchange = func_001298C8();
+                    orec->lastExchange = func_001298C8();
+                }
+            }
+        }
+        if (busy)
+            continue;
+        if (orec->lastShove >= func_001298C8() - 3)
+            continue;
+        if (func_00311AE8(other->mRiderAnim, 1) == 3 &&
+            func_001446A0(func_00311B20(other->mRiderAnim, 1) + 0xB0, 0) &&
+            !func_001446A0(func_00311B20(other->mRiderAnim, 1) + 0xB0, 1))
+            continue;
+        t4Vector d = Sub(other->mPosition, self->mPosition);
+        float len = Len(d);
+        if (len > 150.0f)
+            continue;
+        if (len < 0.001f)
+            continue;
+        t4Vector n = Div_7888(d, len);
+        if (!(Dot(n, self->unk_340) > 0.0f))
+            continue;
+        float attr = func_00149038(cBE_getInterface_C258(cBE_getBE(), 3), self->mAIIndex, self->unk_B34);
+        float spd = Len(self->mVelocity);
+        float k = (attr * 3.0001144409179688f + 1.0f) * (self->unk_350 + 0.5f) * 599.9739990234375f;
+        if (0.001f < spd)
+            n = Add(Scale(n, 0.5f), Scale(self->mVelocity, 0.5f / spd));
+        func_00107E70_7888(other, self, &n, 1, k);
+        orec->lastShove = func_001298C8();
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00107E70);
