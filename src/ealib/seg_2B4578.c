@@ -4397,7 +4397,255 @@ int func_003BAA00(int h, int *pos) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003BAAC0);
+#ifdef SKIP_ASM
+struct Rec_AAC0 { int p; int id; int v1; int v2; int v3; };
+struct Out_AAC0 {
+    short f00;
+    unsigned char f02;
+    signed char f03;
+    short f04;
+    short f06;
+    unsigned char f08;
+    unsigned char f09;
+    unsigned char f0A;
+    unsigned char f0B;
+    unsigned char f0C;
+    unsigned char f0D;
+    unsigned char f0E;
+    unsigned char f0F;
+    unsigned char f10;
+    unsigned char f11;
+    unsigned char f12;
+    unsigned char f13;
+    unsigned char f14;
+    unsigned char f15;
+    unsigned char f16;
+    signed char f17;
+    short f18;
+    unsigned char f1A;
+    unsigned char f1B;
+    unsigned char f1C;
+    unsigned char f1D;
+    unsigned char f1E;
+    unsigned char f1F;
+    int f20;
+    int f24;
+    int f28;
+    int f2C;
+    int f30;
+    int f34[4];
+    int f44[4];
+    short f54;
+    short f56;
+    int f58;
+    int f5C;
+    int f60;
+    int f64;
+    int f68;
+    int f6C;
+    int f70;
+    int f74;
+    int f78;
+    int f7C;
+    int f80;
+    int f84;
+    int f88;
+    int f8C;
+    int f90;
+    int f94;
+    int data[6];
+    short len[6];
+    short fBC[6];
+    int fC8;
+};
+extern void f_6210_AAC0(void *, int, int) __asm__("func_00416210");
+extern int f_7388_AAC0(struct Rec_AAC0 *) __asm__("func_003C7388");
+extern char D_0044C580[];
+
+int func_003BAAC0(int *src, struct Out_AAC0 *out) {
+    int a[43];
+    int c[43];
+    int d[46];
+    int b[46];
+    int e[6];
+    struct Rec_AAC0 rec;
+    int i;
+    int ret;
+
+    f_6210_AAC0(e, 0, sizeof(e));
+    rec.p = *src;
+    out->fC8 = rec.p;
+    for (i = 0; i < 43; i++) {
+        c[i] = 0;
+    }
+    for (i = 0; i < 46; i++) {
+        b[i] = 0;
+    }
+    for (i = 0; i < 6; i++) {
+        out->data[i] = 0;
+        out->len[i] = 0;
+    }
+    a[7] = 0x3C;
+    a[0xC] = 0x40;
+    a[0x19] = (int)D_0044C580;
+    a[1] = 0;
+    a[2] = 0x7F;
+    a[3] = 0;
+    a[4] = 0x7F;
+    a[6] = 0;
+    a[8] = -1;
+    a[9] = 1;
+    a[0xA] = 0;
+    a[0xD] = 0;
+    a[0xE] = 0x7F;
+    a[0x1C] = 0x7F;
+    a[0xF] = 0;
+    a[0x10] = 0;
+    a[0x11] = 0;
+    a[0x12] = 0;
+    a[0x13] = 0;
+    out->f17 = 0;
+    a[0x17] = 0;
+    a[0x1A] = 0;
+    a[0x26] = 0;
+    a[0x27] = 0;
+    a[0x28] = 0;
+    a[0x29] = 0;
+    a[0x2A] = 0;
+    a[0x1D] = 0;
+    a[0x1E] = 0;
+    a[0x1F] = 0;
+    a[0x20] = 0;
+    a[0x21] = 0;
+    a[0x22] = 0;
+    a[0x23] = 0;
+    a[0x24] = 0;
+    a[0x25] = 1;
+    d[0] = 0;
+    d[5] = 0;
+    d[6] = -1;
+    d[2] = 1;
+    d[4] = 22050;
+    d[7] = -1;
+    d[0x20] = 5;
+    d[0xC] = 8;
+    d[8] = 0;
+    d[0x1C] = 0;
+    d[9] = 0;
+    d[0x1D] = 0;
+    d[0x14] = 0;
+    d[0x1E] = 0;
+    d[0x15] = 0;
+    d[0x1F] = 0;
+    d[0x22] = 0;
+    d[0x26] = 0;
+    d[0x23] = 0;
+    d[0x27] = 0;
+    ret = 0;
+    while (f_7388_AAC0(&rec) != 0) {
+        if (rec.id < 0x2B) {
+            a[rec.id] = rec.v1;
+            c[rec.id] = rec.v2;
+            if (rec.id == 0x14) {
+                out->f34[out->f17] = rec.v2;
+                out->f44[out->f17] = rec.v3;
+                out->f17++;
+            }
+        } else if (rec.id >= 0x80 && rec.id < 0xAE) {
+            d[rec.id - 0x80] = rec.v1;
+            b[rec.id - 0x80] = rec.v2;
+            if (rec.id == 0x98) {
+                out->data[0] = rec.v2;
+                out->len[0] = rec.v3;
+            } else if (rec.id == 0x99) {
+                out->data[1] = rec.v2;
+                out->len[1] = rec.v3;
+            } else if (rec.id == 0x9A) {
+                out->data[2] = rec.v2;
+                out->len[2] = rec.v3;
+            } else if (rec.id == 0x9B) {
+                out->data[3] = rec.v2;
+                out->len[3] = rec.v3;
+            } else if (rec.id == 0xA4) {
+                out->data[4] = rec.v2;
+                out->len[4] = rec.v3;
+            } else if (rec.id == 0xA5) {
+                out->data[5] = rec.v2;
+                out->len[5] = rec.v3;
+            }
+        } else if (rec.id == 0xFE) {
+            ret = 1;
+            break;
+        }
+    }
+    out->f08 = a[1];
+    out->f09 = a[2];
+    out->f0A = a[3];
+    out->f0B = a[4];
+    out->f0C = a[6];
+    out->f0D = a[7];
+    out->f0E = a[8];
+    out->f0F = a[9];
+    out->f10 = a[10];
+    out->f11 = a[0xC];
+    out->f12 = a[0xD];
+    out->f14 = a[0xE];
+    out->f15 = a[0xF];
+    out->f04 = a[0x10];
+    out->f06 = a[0x11];
+    out->f20 = c[0x12] + a[0x12];
+    out->f16 = a[0x13];
+    out->f24 = c[0x17] + a[0x17];
+    out->f28 = c[0x19] + a[0x19];
+    out->f80 = a[0x1A];
+    out->f84 = a[0x26];
+    out->f88 = a[0x27];
+    out->f8C = a[0x28];
+    out->f90 = a[0x29];
+    out->f94 = a[0x2A];
+    out->f1A = a[0x1C];
+    out->f2C = c[0x1D] + a[0x1D];
+    out->f1B = a[0x1E];
+    out->f1C = a[0x1F];
+    out->f30 = c[0x20] + a[0x20];
+    out->f1D = a[0x21];
+    out->f54 = a[0x22];
+    out->f1E = a[0x23];
+    out->f00 = a[0x24];
+    out->f1F = a[0x25];
+    out->f02 = d[0];
+    out->f13 = d[0x20];
+    out->f56 = d[4];
+    out->f58 = d[5];
+    out->f5C = d[6];
+    out->f60 = d[7];
+    out->f18 = d[0xC];
+    out->f64 = b[0xA];
+    out->f68 = d[8];
+    e[0] = d[0x1C];
+    out->f6C = d[9];
+    e[1] = d[0x1D];
+    out->f03 = d[2];
+    out->f70 = d[0x14];
+    e[2] = d[0x1E];
+    out->f74 = d[0x15];
+    e[3] = d[0x1F];
+    out->f78 = d[0x22];
+    e[4] = d[0x26];
+    out->f7C = d[0x23];
+    e[5] = d[0x27];
+    for (i = 0; i < out->f03; i++) {
+        if (D_0050A8E8.setup.cfg.f27 == 2 && out->f03 == 2) {
+            e[i] = 0;
+        }
+        out->fBC[i] = D_0050A8E8.f2E0[out->f03 - 1][i] + e[i];
+    }
+    *src = rec.p;
+    return ret;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003BB0C8);
