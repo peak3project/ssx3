@@ -3070,7 +3070,151 @@ extern "C" int func_00106848(cRider* self)
 #undef LAND_KIND
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_1218", func_00106F78);
+#ifdef SKIP_ASM
+// Rider against a wall: find the contact near the board, push the rider out of it, bounce the velocity off
+// the contact normal and start the impact reaction.
+
+struct sContact_6F78 {
+    t4Vector pos;       // 0x00
+    t4Vector n;         // 0x10
+    t4Vector vel;       // 0x20
+    char pad30[0x1C];
+    int mat;            // 0x4C
+    char* obj;          // 0x50
+    char pad54[0x2C];
+} __attribute__((aligned(16)));
+
+extern "C" int func_00334680_6F78(void*, t4Vector*, sContact_6F78*, int, float) __asm__("func_00334680");
+extern "C" int func_00108A48_6F78(cRider*, sContact_6F78*) __asm__("func_00108A48");
+extern "C" void func_001065B0_6F78(cRider*, sContact_6F78*) __asm__("func_001065B0");
+extern "C" void func_00105D98_6F78(cRider*, sInfo*, int) __asm__("func_00105D98");
+
+static inline sVec4 Front_6F78(const sAnimModelBone* b)
+{
+    return sVec4(2.0f * (b->rot.y * b->rot.x - b->rot.w * b->rot.z),
+                   1.0f - 2.0f * (b->rot.z * b->rot.z + b->rot.x * b->rot.x),
+                   2.0f * (b->rot.y * b->rot.z + b->rot.w * b->rot.x),
+                   0.0f);
+}
+
+// PORT: PS2-only VU0 inline asm (a -= b).
+static inline void SubEq_6F78(t4Vector& a, const t4Vector& b)
+{
+    __asm__(
+        ".set push\n"
+        ".set noreorder\n"
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        ".set pop\n"
+        : "=m"(a)
+        : "m"(a), "m"(b));
+}
+
+// PORT: PS2-only VU0 inline asm (a += b).
+static inline void AddEq_6F78(t4Vector& a, const t4Vector& b)
+{
+    __asm__(
+        "lqc2      $vf3, %0\n"
+        "lqc2      $vf4, %1\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "+m"(a)
+        : "m"(b)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (a /= s).
+static inline void DivEq_6F78(t4Vector& v, float s)
+{
+    int t;
+    __asm__(
+        "mfc1      %1, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vdiv      Q, $vf0w, $vf3x\n"
+        "lqc2      $vf4, %0\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf5, $vf4, Q\n"
+        "sqc2      $vf5, %0\n"
+        : "+m"(v), "=&r"(t)
+        : "f"(s));
+}
+
+extern "C" int func_00106F78_6F78(cRider* self) __asm__("func_00106F78");
+extern "C" int func_00106F78_6F78(cRider* self)
+{
+    if (func_0011FE98(self) == 4)
+        return 0;
+    sAnimModelBone* bone = &self->mAnimModel->bones[self->unk_89C];
+    const sVec4& fwd = Front_6F78(bone);
+    sContact_6F78 c;
+    if (!func_00334680_6F78(self->unk_860, &bone->pos, &c, 1, 300.0f))
+        return 0;
+    float spd = Len(self->mVelocity);
+    if (0.001f < spd) {
+        t4Vector d = Sub(c.pos, bone->pos);
+        if (Dot(d, self->mVelocity) < spd * -0.20000000298023224f)
+            return 0;
+    }
+    float proj = Dot(fwd, Sub(c.pos, bone->pos));
+    t4Vector d = Sub(Add(bone->pos, Scale(fwd, Clamp(proj, -50.0f, 50.0f))), c.pos);
+    if (Len(d) > 50.0f)
+        return 0;
+    sContact_6F78 land;
+    if (func_00108A48_6F78(self, &land))
+        return 0;
+    float vn = Dot(self->mVelocity, c.n);
+    if (vn < 0.0f) {
+        vn = -vn;
+        ScaleEq(c.n, -1.0f);
+    }
+    if (c.obj != 0) {
+        char* h = *(char**)(c.obj + 0xC);
+        if (h != 0) {
+            sVEntry<void(void*, sContact_6F78*)>* vt = *(sVEntry<void(void*, sContact_6F78*)>**)(h + 0xC);
+            vt[42].fn(h + vt[42].delta, &c);
+        }
+    }
+    sInfo info;
+    info.pos = c.pos;
+    info.dir = Norm(self->mVelocity);
+    info.speed = vn;
+    t4Vector n = Sub(bone->pos, c.pos);
+    SubEq_6F78(n, Scale(c.n, Dot(n, c.n)));
+    if (func_001231A8(self))
+        SubEq_6F78(n, Scale(self->mGroundNormal, Dot(n, self->mGroundNormal)));
+    float len = Len(n);
+    if (len < 0.001f)
+        n = c.n;
+    else
+        DivEq_6F78(n, len);
+    info.normal = n;
+    float pen = Dot(d, n);
+    if (pen < 50.0f)
+        func_00106538_m2537(self, Scale(n, 50.0f - pen));
+    t4Vector old = self->mVelocity;
+    float push = (Dot(n, Sub(c.vel, self->mVelocity)) >? 0.0f) + 55.55555725097656f; // PORT: g++ maximum operator
+    AddEq_6F78(self->mVelocity, Scale(n, push));
+    t4Vector imp = ScaleM(SubM(old, self->mVelocity), (float)*(int*)((char*)D_004A28A8 + 0x10) /* app int at 0x10 */);
+    if (c.obj != 0) {
+        char* h = *(char**)(c.obj + 0xC);
+        if (h != 0) {
+            sVEntry<void(void*, sContact_6F78*, t4Vector*)>* vt = *(sVEntry<void(void*, sContact_6F78*, t4Vector*)>**)(h + 0xC);
+            vt[43].fn(h + vt[43].delta, &c, &imp);
+        }
+    }
+    if (func_0011FE98(self) == 0) {
+        c.n = n;
+        func_001065B0_6F78(self, &c);
+        cRider_updateOrientationImplicit(self);
+    }
+    func_00105D98_6F78(self, &info, c.mat);
+    return 1;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_1218", func_00107578);
 
