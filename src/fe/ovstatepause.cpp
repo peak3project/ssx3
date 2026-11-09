@@ -514,7 +514,95 @@ extern "C" void func_001FA100(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/ovstatepause", func_001FA238);
+#ifdef SKIP_ASM
+extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
+extern "C" void* func_00211088(void* mem, void* owner, unsigned char a2, int a3);
+extern "C" void cUIStateStack_pushSpecial(void* stack, void* state, int a2, int a3);
+extern "C" void* func_0039F190(void* list, int a1);
+extern "C" int func_0039A738(void* self);
+extern "C" void func_00161EF0(void* p, int v);
+extern "C" void func_00266F58(void* self, int a, int b);
+extern char D_0046F9C0[];
+
+static inline int Is_FA238(int id, char* s)
+{
+    return id == GetHashValue32(s);
+}
+
+static inline sGameOptions Cfg_FA238()
+{
+    return D_00535610;
+}
+
+// Pause options screen: widget event handler.
+extern "C" void func_001FA238(void* self, char* widget, unsigned int event)
+{
+    if (widget == 0)
+        return;
+    char* iface = (char*)cBE_getInterface_Fv(cBE_getBE(), 4);
+    switch (event) {
+    case 5:
+        if (Is_FA238(*(int*)(widget + 0x38), D_004A24E8)) {
+            char* stack = *(char**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x48);
+            char* p = (char*)func_00211088(cMemMan_alloc(0x27C, D_0046F9C0, 0x100, 0), *(void**)((char*)self + 0x10), *(unsigned char*)((char*)self + 0x14), 0x2A);
+            *(int*)(p + 0x1C) = (*(int*)(p + 0x1C) & ~0x3F00) | 0x100;
+            cUIStateStack_pushSpecial(stack + 0x18, p, 0, 0);
+        }
+        break;
+    case 6:
+        func_0039F190(*(char**)((char*)self + 0x10) + 0x18, 1);
+        break;
+    case 9: {
+        if (Is_FA238(*(int*)(widget + 0x38), D_004A2498)) {
+            D_00535610.f30 = *(unsigned char*)(widget + 0x319);
+        } else if (Is_FA238(*(int*)(widget + 0x38), D_004A24A0)) {
+            int v = func_0039A738(widget);
+            char* race = *(char**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x84);
+            func_00161EF0(*(void**)(*(char**)(race + 4) + 0xA8), v);
+        } else if (Is_FA238(*(int*)(widget + 0x38), D_004A24A8)) {
+            int v = func_0039A738(widget);
+            char* race = *(char**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x84);
+            func_00161EF0(*(void**)(*(char**)(race + 8) + 0xA8), v);
+        } else if (Is_FA238(*(int*)(widget + 0x38), D_004A24B0)) {
+            unsigned char vol = *(unsigned char*)(widget + 0x74);
+            D_00535610.sfxVol = vol;
+            func_00287410(func_0028B180(), Cfg_FA238().sfxVol);
+        } else if (Is_FA238(*(int*)(widget + 0x38), D_004A24B8)) {
+            unsigned char vol = *(unsigned char*)(widget + 0x74);
+            D_00535610.speechVol = vol;
+            func_00287488(func_0028B180(), Cfg_FA238().speechVol);
+        } else if (Is_FA238(*(int*)(widget + 0x38), D_004A24C0)) {
+            unsigned char vol = *(unsigned char*)(widget + 0x74);
+            D_00535610.musicVol = vol;
+            func_00287520(func_0028B180(), Cfg_FA238().musicVol);
+        } else if (Is_FA238(*(int*)(widget + 0x38), D_004A24C8)) {
+            D_00535610.f17 = func_0039A738(widget) != 0;
+            func_00287558(func_0028B180(), Cfg_FA238().f17 != 0);
+        } else if (Is_FA238(*(int*)(widget + 0x38), D_004A24D0)) {
+            D_00535610.f16 = func_0039A738(widget) != 0;
+            func_002875D0(func_0028B180(), Cfg_FA238().f16 != 0);
+        }
+        cBE_getInterface_Fv(*(void**)((char*)D_004A28A8 + 0x78), 7);
+        if (D_00534B30[0] != 0 && Is_FA238(*(int*)(widget + 0x38), D_0046F9B0)) {
+            int cur;
+            int max;
+            func_00266F90(D_004A33F4, &cur, &max);
+            cur = *(int*)(widget + 0x74) * 10;
+            func_00266F58(D_004A33F4, cur, max);
+            if (cur < 10)
+                func_00266E88(D_004A33F4);
+            else
+                func_00266E30(D_004A33F4);
+        }
+        sVEntry<void(void*)>* vt = *(sVEntry<void(void*)>**)(iface + 0xC);
+        vt[1].fn(iface + vt[1].delta);
+        break;
+    }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/ovstatepause", func_001FA9E0);
