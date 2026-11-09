@@ -1459,7 +1459,240 @@ extern "C" void func_0010E910(char* self, int a1, int a2, int a3, char* evt, flo
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/computer", func_0010EB30);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+extern "C" float func_00119B08(void* self, int flag);
+extern "C" void func_00296310(void* mgr, void* rider);
+extern "C" void func_0029F660(void* mgr, void* rider, int a, int b);
+extern "C" void func_002961F0(void* mgr, void* rider, float v);
+void func_0011FEC8_EB30(void* self, int v) __asm__("func_0011FEC8__FPv");
+void func_0011FE78_EB30(void* self, int v) __asm__("func_0011FE78__FPv");
+extern "C" void func_00116930(void* rider);
+extern "C" void cRider_doLeanPoseAdjust(void* self, void* xf);
+extern "C" void cRider_updateOrientationImplicit(void*);
+// Animation state sample (rideranimbase func_00312660's result, 0x50 bytes).
+struct sSeqState_EB30 {
+    char pad[0x50];
+} __attribute__((aligned(16)));
+// Packed index word (handplantcontrol's sIdx): low byte and upper 24 bits both hold the index.
+struct sIdx_EB30 { unsigned int id:8; int val:24; };
+extern sIdx_EB30 D_004A4C08_EB30 __asm__("D_004A4C08");
+extern "C" sSeqState_EB30 func_00312660(void* anim, int id, sIdx_EB30 h, float t);
+extern "C" void func_0030ECD8(void* xf, void* model, void* buf, int a3);
+extern "C" void cRiderAnimBase_changeOrientationOffset(void* self, void* xf);
+extern "C" void cRiderAnimBase_changeHeadingOffset(void* self, float angle);
+extern "C" int cRiderAnimBase_play(void* self, int anim, int flags, float blend);
+extern "C" void func_0031BE50(float* s, float* c, float angle);
+
+// 16-byte vector with inline constructors (ai/ai's sVec4).
+struct sVec4_EB30 : t4Vector
+{
+    sVec4_EB30() {}
+    sVec4_EB30(float ax, float ay, float az, float aw) { x = ax; y = ay; z = az; w = aw; }
+} __attribute__((aligned(16)));
+
+// A bone transform: position, rotation quaternion.
+struct sXf_EB30
+{
+    sVec4_EB30 pos;
+    sVec4_EB30 rot;
+};
+
+extern "C" void func_0011DFE0(void* self, sVec4_EB30 dir, float angle);
+extern sVec4_EB30 D_004FF130_EB30 __asm__("D_004FF130");
+extern sVec4_EB30 D_004FF160_EB30 __asm__("D_004FF160");
+
+// PORT: PS2-only VU0 macro-mode asm (quaternion product a * b).
+static inline sVec4_EB30 QuatMul_EB30(const sVec4_EB30& a, const sVec4_EB30& b)
+{
+    sVec4_EB30 r;
+    __asm__(
+        "lqc2       $vf4, %1\n"
+        "lqc2       $vf5, %2\n"
+        "vmul.xyzw  $vf7, $vf4, $vf5\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vmulaw.xyz ACC, $vf4, $vf5w\n"
+        "vmaddaw.xyz ACC, $vf5, $vf4w\n"
+        "vsubax.w   ACC, $vf7, $vf7x\n"
+        "vmsubay.w  ACC, $vf0, $vf7y\n"
+        "vmsubz.w   $vf8, $vf0, $vf7z\n"
+        "vmaddw.xyz $vf8, $vf6, $vf0w\n"
+        "sqc2       $vf8, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (a - b).
+static inline sVec4_EB30 Sub_EB30(const sVec4_EB30& a, const sVec4_EB30& b)
+{
+    sVec4_EB30 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (a + b).
+static inline sVec4_EB30 Add_EB30(const sVec4_EB30& a, const sVec4_EB30& b)
+{
+    sVec4_EB30 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (v rotated by quaternion q).
+static inline sVec4_EB30 Rot_EB30(const sVec4_EB30& q, const sVec4_EB30& v)
+{
+    sVec4_EB30 r;
+    __asm__(
+        "lqc2      $vf4, %1\n"
+        "lqc2      $vf5, %2\n"
+        "vsub.w    $vf8, $vf8, $vf8\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vopmula.xyz ACC, $vf4, $vf6\n"
+        "vopmsub.xyz $vf7, $vf6, $vf4\n"
+        "vmulaw.xyz ACC, $vf5, $vf0w\n"
+        "vmaddaw.xyz ACC, $vf6, $vf4w\n"
+        "vmaddaw.xyz ACC, $vf6, $vf4w\n"
+        "vmaddaw.xyz ACC, $vf7, $vf0w\n"
+        "vmaddw.xyz $vf8, $vf7, $vf0w\n"
+        "sqc2      $vf8, %0\n"
+        : "=m"(r)
+        : "m"(q), "m"(v)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector times scalar).
+static inline sVec4_EB30 Scale_EB30(const sVec4_EB30& v, float s)
+{
+    sVec4_EB30 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+static inline sVec4_EB30 Conj_EB30(const sXf_EB30& p)
+{
+    sVec4_EB30 r;
+    r.w = p.rot.w;
+    r.x = p.rot.x;
+    r.y = p.rot.y;
+    r.z = p.rot.z;
+    r.x = -r.x;
+    r.y = -r.y;
+    r.z = -r.z;
+    return r;
+}
+
+static inline sXf_EB30 Invert_EB30(const sXf_EB30& a)
+{
+    sXf_EB30 r;
+    r.rot = Conj_EB30(a);
+    r.pos = Add_EB30(Scale_EB30(Rot_EB30(r.rot, Sub_EB30(a.pos, D_004FF130_EB30)), -1.0f), D_004FF130_EB30);
+    return r;
+}
+
+static inline sXf_EB30 Combine_EB30(const sXf_EB30& a, const sXf_EB30& b)
+{
+    sXf_EB30 r;
+    r.rot = QuatMul_EB30(a.rot, b.rot);
+    r.pos = Add_EB30(Rot_EB30(a.rot, Sub_EB30(b.pos, D_004FF130_EB30)), a.pos);
+    return r;
+}
+
+static inline sVec4_EB30 AxisAngle_EB30(const sVec4_EB30& axis, float angle)
+{
+    float s, c;
+    func_0031BE50(&s, &c, angle * 0.5f);
+    return sVec4_EB30(s * axis.x, s * axis.y, s * axis.z, c);
+}
+
+static inline void SetHeading_EB30(char* a, float angle)
+{
+    *(sVec4_EB30*)(a + 0x30) = D_004FF130_EB30;
+    *(sVec4_EB30*)(a + 0x40) = AxisAngle_EB30(D_004FF160_EB30, -angle);
+}
+
+extern "C" void func_0010EB30(char* self, int a1, int a2, int a3, char* evt)
+{
+    sVEntry<void(void*, float)>* vf = &(*(sVEntry<void(void*, float)>**)(self + 0x6C0))[17];
+    vf->fn(self + vf->delta, *(float*)(evt + 0x30) * 5.0f);
+    float r = func_00119B08(*(void**)(self + 0x790), a2);
+    func_0010E098(self, 1, r);
+    func_00296310(func_0028B180(), self);
+    func_0029F660(func_0028B180(), self, 0, 0);
+    func_002961F0(func_0028B180(), self, r);
+    func_00111AA0_impl(*(void**)(self + 0x77C), evt, evt + 0x20, a3, *(float*)(evt + 0x30));
+    func_0011FEC8_EB30(self, 0xD);
+    if (*(int*)(self + 0x328) == 3) {
+        func_0011DFE0(self, *(sVec4_EB30*)(self + 0x1C0), 1.5707964f);
+        cRiderAnimBase_changeHeadingOffset(*(void**)(self + 0x784), 1.5707964f);
+        SetHeading_EB30(*(char**)(self + 0x784), 0.0f);
+    } else if (*(int*)(self + 0x328) == 4) {
+        func_0011DFE0(self, *(sVec4_EB30*)(self + 0x1C0), -1.5707964f);
+        cRiderAnimBase_changeHeadingOffset(*(void**)(self + 0x784), -1.5707964f);
+        SetHeading_EB30(*(char**)(self + 0x784), 0.0f);
+    }
+    *(int*)(self + 0x328) = 0;
+    func_00116930(self);
+    cRider_doLeanPoseAdjust(self, self + 0x110);
+    cRider_updateOrientationImplicit(self);
+    *(int*)(self + 0x1F8) = 0;
+    *(int*)(self + 0x1F0) = 0;
+    *(int*)(self + 0x1F4) = 0;
+    *(int*)(self + 0x210) = 0;
+    *(int*)(self + 0x208) = 0;
+    *(int*)(self + 0x20C) = 0;
+    *(int*)(self + 0x258) = 0;
+    *(int*)(self + 0x250) = 0;
+    *(int*)(self + 0x254) = 0;
+    *(int*)(self + 0x330) = 0;
+    sSeqState_EB30 st = func_00312660(*(void**)(self + 0x784), a1, D_004A4C08_EB30, *(float*)(self + 0x1F8));
+    sXf_EB30 a;
+    func_0030ECD8(&a, *(void**)(self + 0x780), &st, 0);
+    char* trk = *(char**)(self + 0x780);
+    sVec4_EB30* n = (sVec4_EB30*)((*(int*)(self + 0x89C) << 4) + *(int*)(trk + 0x24));
+    sXf_EB30 node;
+    node.pos = sVec4_EB30(n->x * *(float*)(trk + 0x140), n->y * *(float*)(trk + 0x144),
+                          n->z * *(float*)(trk + 0x148), n->w * *(float*)(trk + 0x14C));
+    node.rot = *(sVec4_EB30*)(*(char**)(trk + 0x28) + (*(int*)(self + 0x89C) << 4));
+    sXf_EB30 y = Combine_EB30(node, Invert_EB30(a));
+    *(sXf_EB30*)(self + 0x110) = Combine_EB30(*(sXf_EB30*)(self + 0x110), y);
+    cRider_updateOrientationImplicit(self);
+    sXf_EB30 w = Invert_EB30(y);
+    cRiderAnimBase_changeOrientationOffset(*(void**)(self + 0x784), &w);
+    cRiderAnimBase_play(*(void**)(self + 0x784), a1, 0, -1.0f);
+    func_0011FEC8_EB30(self, 8);
+    func_0011FE78_EB30(self, 2);
+}
+#endif
 
 //100%
 INCLUDE_ASM("ai/computer", func_0010F1C0);
