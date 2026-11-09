@@ -135,7 +135,400 @@ extern "C" int func_00321AD8(void* self, int a1, int a2)
 }
 #endif
 
+//100%
 INCLUDE_ASM("input/inputparse", cInputMapParser_readToken);
+#ifdef SKIP_ASM
+// cInputMapParser::readToken: skips whitespace, '#' line directives and '//' comments, then reads one token into
+// s->text / s->tok (/ s->value for numbers). The input is a byte stream (base, len, pos); peek/advance are inline
+// helpers that each re-test the end of the buffer. In the number branch the lookahead character is kept in `c`:
+// every advance is followed by a peek (also after the optional 'f' float suffix, whose re-read value is unused).
+extern "C" void func_00321500(void* self, const char* fmt, ...);
+extern "C" int func_0041AA88(const char* a, const char* b);
+extern "C" int func_004178B0(const char* a, const char* b, ...);
+extern char D_0048DDE8[];
+extern char D_0048DE08[];
+extern char D_0048DE28[];
+extern char D_0048DE50[];
+extern char D_0048DE60[];
+extern char D_0048DE80[];
+extern char D_0048DEA8[];
+extern char D_004A3F30[];
+extern char D_004A3F38[];
+extern char D_004A3F40[];
+extern char D_004A3F48[];
+extern char D_004A3F50[];
+extern char D_004A3F58[];
+extern char D_004A3F60[];
+extern char D_004A3F68[];
+extern char D_004A3F70[];
+extern char D_004A3F78[];
+extern char D_004A3F80[];
+extern char D_004A3F88[];
+extern char D_004A3F90[];
+extern char D_004A3F98[];
+
+struct sTok_321AF0 {
+    unsigned char* base;    // 0x0
+    int len;                // 0x4
+    unsigned char* pos;     // 0x8
+    char fname[0x80];       // 0xC
+    int line;               // 0x8C
+    int lineStart;          // 0x90
+    int pad94;              // 0x94
+    int tok;                // 0x98
+    char text[0x40];        // 0x9C
+    float value;            // 0xDC
+};
+
+static inline bool more_321AF0(sTok_321AF0* s)
+{
+    return s->pos < s->base + s->len;
+}
+static inline int pk_321AF0(sTok_321AF0* s)
+{
+    return more_321AF0(s) ? *s->pos : -1;
+}
+// peek into a variable (statement form: the token loops keep the lookahead in `c`)
+#define PKC_321AF0(v) { v = -1; if (more_321AF0(s)) v = *s->pos; }
+static inline int pk1_321AF0(sTok_321AF0* s)
+{
+    return s->pos + 1 < s->base + s->len ? s->pos[1] : -1;
+}
+static inline void adv_321AF0(sTok_321AF0* s)
+{
+    if (s->pos < s->base + s->len) {
+        s->pos++;
+    }
+}
+static inline int isWh_321AF0(char c)
+{
+    return c == ' ' || c == '\t' || c == '\n' || c == '\r';
+}
+static inline int isDig_321AF0(char c)
+{
+    return (unsigned)(c - '0') < 10;
+}
+static inline int isAlp_321AF0(char c)
+{
+    return (unsigned)(c - 'a') < 26 || (unsigned)(c - 'A') < 26;
+}
+static inline void blanks_321AF0(sTok_321AF0* s)
+{
+    while (isWh_321AF0(pk_321AF0(s)) && pk_321AF0(s) != -1 && pk_321AF0(s) != '\n') adv_321AF0(s);
+}
+
+// append the current character to the token text (63 chars max) and advance
+#define PUSHC_321AF0(c, msg)                \
+    if (p - s->text >= 0x3F) {              \
+        *p = 0;                             \
+        func_00321500(s, msg);              \
+        s->tok = 1;                         \
+    }                                       \
+    *p++ = c;                               \
+    adv_321AF0(s);
+
+extern "C" void cInputMapParser_readToken(void* self)
+{
+    sTok_321AF0* s = (sTok_321AF0*)self;
+    int c;
+    char* text;
+    char* p;
+    do {
+        PKC_321AF0(c);
+        if (c == '\n') {
+            adv_321AF0(s);
+            s->lineStart = 1;
+            s->line++;
+        } else if (c == '#' && s->lineStart) {
+            adv_321AF0(s);
+            blanks_321AF0(s);
+            if (!isDig_321AF0(pk_321AF0(s))) {
+                func_00321500(s, D_0048DDE8);
+                while (pk_321AF0(s) != '\n' && pk_321AF0(s) != -1) adv_321AF0(s);
+            } else {
+                s->line = 0;
+                while (isDig_321AF0(pk_321AF0(s))) {
+                    s->line = s->line * 10 + (pk_321AF0(s) - '0');
+                    adv_321AF0(s);
+                }
+                blanks_321AF0(s);
+                if (pk_321AF0(s) != '"') {
+                    func_00321500(s, D_0048DDE8);
+                    while (pk_321AF0(s) != '\n' && pk_321AF0(s) != -1) adv_321AF0(s);
+                    c = ' ';
+                } else {
+                    adv_321AF0(s);
+                    char* q = s->fname;
+                    int n = 0;
+                    for (;;) {
+                        if (pk_321AF0(s) == '\n' || pk_321AF0(s) == -1) {
+                            func_00321500(s, D_0048DDE8);
+                            adv_321AF0(s);
+                            goto strdone_321AF0;
+                        }
+                        if (pk_321AF0(s) == '"') {
+                            adv_321AF0(s);
+                            goto strdone_321AF0;
+                        }
+                        if (n < 0x7F) {
+                            *q++ = pk_321AF0(s);
+                            n++;
+                        }
+                        adv_321AF0(s);
+                    }
+                strdone_321AF0:
+                    *q = 0;
+                    blanks_321AF0(s);
+                    if (pk_321AF0(s) != '\n') {
+                        func_00321500(s, D_0048DDE8);
+                        blanks_321AF0(s);
+                    } else {
+                        adv_321AF0(s);
+                    }
+                    PKC_321AF0(c);
+                }
+            }
+        } else if (c == '/' && pk1_321AF0(s) == c) {
+            adv_321AF0(s);
+            adv_321AF0(s);
+            while (pk_321AF0(s) != '\n' && pk_321AF0(s) != -1) adv_321AF0(s);
+            s->lineStart = 0;
+            c = ' ';
+        } else {
+            if (isWh_321AF0(c)) {
+                adv_321AF0(s);
+            }
+        }
+        text = s->text;
+    } while (isWh_321AF0(c));
+
+    p = text;
+    s->lineStart = 0;
+    PKC_321AF0(c);
+    *p++ = c;
+    if (c == -1) {
+        adv_321AF0(s);
+        *p = 0;
+        s->tok = 0;
+        return;
+    }
+    if (c == '!') {
+        adv_321AF0(s);
+        PKC_321AF0(c);
+        if (c == '=') {
+            *p++ = c;
+            adv_321AF0(s);
+            *p = 0;
+            s->tok = 0x13;
+        } else {
+            *p = 0;
+            s->tok = 0x18;
+        }
+    } else if (c == '+') {
+        adv_321AF0(s);
+        PKC_321AF0(c);
+        if (c == '+') {
+            *p++ = c;
+            adv_321AF0(s);
+            *p = 0;
+            func_00321500(s, D_0048DE08);
+            s->tok = 1;
+        } else {
+            *p = 0;
+            s->tok = 0x14;
+        }
+    } else if (c == '-') {
+        adv_321AF0(s);
+        PKC_321AF0(c);
+        if (c == '+') {
+            *p++ = c;
+            adv_321AF0(s);
+            *p = 0;
+            func_00321500(s, D_0048DE08);
+            s->tok = 1;
+        } else {
+            *p = 0;
+            s->tok = 0x15;
+        }
+    } else if (c == '.') {
+        adv_321AF0(s);
+        *p = 0;
+        s->tok = 4;
+    } else if (c == '*') {
+        adv_321AF0(s);
+        *p = 0;
+        s->tok = 0x16;
+    } else if (c == '/') {
+        adv_321AF0(s);
+        *p = 0;
+        s->tok = 0x17;
+    } else if (c == '=') {
+        adv_321AF0(s);
+        PKC_321AF0(c);
+        if (c == '=') {
+            *p++ = c;
+            adv_321AF0(s);
+            *p = 0;
+            s->tok = 0x12;
+        } else {
+            *p = 0;
+            s->tok = 3;
+        }
+    } else if (c == '<') {
+        adv_321AF0(s);
+        PKC_321AF0(c);
+        if (c == '=') {
+            *p++ = c;
+            adv_321AF0(s);
+            *p = 0;
+            s->tok = 0x11;
+        } else {
+            *p = 0;
+            s->tok = 0x10;
+        }
+    } else if (c == '>') {
+        adv_321AF0(s);
+        PKC_321AF0(c);
+        if (c == '=') {
+            *p++ = c;
+            adv_321AF0(s);
+            *p = 0;
+            s->tok = 0xF;
+        } else {
+            *p = 0;
+            s->tok = 0xE;
+        }
+    } else if (c == '&' && pk1_321AF0(s) == c) {
+        adv_321AF0(s);
+        *p++ = pk_321AF0(s);
+        adv_321AF0(s);
+        *p = 0;
+        s->tok = 0xD;
+    } else if (c == '|' && pk1_321AF0(s) == c) {
+        adv_321AF0(s);
+        *p++ = pk_321AF0(s);
+        adv_321AF0(s);
+        *p = 0;
+        s->tok = 0xC;
+    } else if (c == '(') {
+        adv_321AF0(s);
+        *p = 0;
+        s->tok = 9;
+    } else if (c == ')') {
+        adv_321AF0(s);
+        *p = 0;
+        s->tok = 0xA;
+    } else if (c == ',') {
+        adv_321AF0(s);
+        *p = 0;
+        s->tok = 8;
+    } else if (c == '?') {
+        adv_321AF0(s);
+        *p = 0;
+        s->tok = 6;
+    } else if (c == ';') {
+        adv_321AF0(s);
+        *p = 0;
+        s->tok = 5;
+    } else if (c == ':') {
+        adv_321AF0(s);
+        *p = 0;
+        s->tok = 7;
+    } else if (isAlp_321AF0(c)) {
+        // identifier or keyword
+        adv_321AF0(s);
+        for (;;) {
+            PKC_321AF0(c);
+            if (isAlp_321AF0(c) || isDig_321AF0(c) || c == '_') {
+                PUSHC_321AF0(c, D_0048DE28)
+            } else {
+                break;
+            }
+        }
+        *p = 0;
+        if (func_0041AA88(text, D_004A3F30) == 0) {
+            s->tok = 0x19;
+        } else if (func_0041AA88(text, D_004A3F38) == 0) {
+            s->tok = 0x1A;
+        } else if (func_0041AA88(text, D_004A3F40) == 0) {
+            s->tok = 0x1B;
+        } else if (func_0041AA88(text, D_004A3F48) == 0) {
+            s->tok = 0x1C;
+        } else if (func_0041AA88(text, D_004A3F50) == 0) {
+            s->tok = 0x1D;
+        } else if (func_0041AA88(text, D_004A3F58) == 0) {
+            s->tok = 0x1E;
+        } else if (func_0041AA88(text, D_004A3F60) == 0) {
+            s->tok = 0x1F;
+        } else if (func_0041AA88(text, D_004A3F68) == 0) {
+            s->tok = 0x20;
+        } else if (func_0041AA88(text, D_004A3F70) == 0) {
+            s->tok = 0x21;
+        } else if (func_0041AA88(text, D_004A3F78) == 0) {
+            s->tok = 0x22;
+        } else if (func_0041AA88(text, D_004A3F80) == 0) {
+            s->tok = 0x23;
+        } else if (func_0041AA88(text, D_004A3F88) == 0) {
+            s->tok = 0x24;
+        } else if (func_0041AA88(text, D_004A3F90) == 0) {
+            s->tok = 0x25;
+        } else if (func_0041AA88(text, D_0048DE50) == 0) {
+            s->tok = 0x26;
+        } else {
+            s->tok = 2;
+        }
+    } else if (c == '+' || c == '-' || isDig_321AF0(c)) {
+        // number: [sign] digits [. digits] [(E|e) [sign] digits] [f]
+        adv_321AF0(s);
+        for (;;) {
+            PKC_321AF0(c);
+            if (isDig_321AF0(c)) {
+                PUSHC_321AF0(c, D_0048DE60)
+            } else {
+                break;
+            }
+        }
+        if (c == '.' || c == 'E' || c == 'e') {
+            if (c == '.') {
+                do {
+                    PUSHC_321AF0(c, D_0048DE60)
+                    PKC_321AF0(c);
+                } while (isDig_321AF0(c));
+            }
+            if (c == 'E' || c == 'e') {
+                PUSHC_321AF0(c, D_0048DE60)
+                PKC_321AF0(c);
+                if (c == '-' || c == '+') {
+                    PUSHC_321AF0(c, D_0048DE60)
+                    PKC_321AF0(c);
+                }
+                if (!isDig_321AF0(c)) {
+                    *p = 0;
+                    func_00321500(s, D_0048DE80);
+                    s->tok = 1;
+                }
+                do {
+                    PUSHC_321AF0(c, D_0048DE60)
+                    PKC_321AF0(c);
+                } while (isDig_321AF0(c));
+            }
+        }
+        if (c == 'f') {
+            adv_321AF0(s);
+            PKC_321AF0(c);
+        }
+        *p = 0;
+        func_004178B0(text, D_004A3F98, &s->value);
+        s->tok = 0xB;
+        return;
+    } else {
+        func_00321500(s, D_0048DEA8, c);
+        *p = 0;
+        adv_321AF0(s);
+        s->tok = 1;
+    }
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("input/inputparse", func_00323098);
