@@ -3972,5 +3972,225 @@ extern "C" void func_002E6C08_sb(sSpeedBoost_6C08* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("visualfx/boardwakefx", func_002E7A10);
+#ifdef SKIP_ASM
+extern int D_004A4724;
+
+struct sGs_7A10 {
+    unsigned int f0_0 : 2;
+    unsigned int f0_2 : 2;
+    unsigned int f0_4 : 28;
+    unsigned int f4_0 : 2;
+    unsigned int f4_2 : 5;
+    unsigned int f4_7 : 5;
+    unsigned int f4_12 : 8;
+    unsigned int f4_20 : 2;
+    unsigned int f4_22 : 1;
+    unsigned int f4_23 : 2;
+    unsigned int f4_25 : 7;
+    unsigned int f8_0 : 5;
+    unsigned int f8_5 : 5;
+    unsigned int f8_10 : 19;
+    unsigned int f8_29 : 3;
+    unsigned int wC;
+    unsigned int f10 : 16;
+    unsigned int f10hi : 16;
+    void SetF22(int v) { f4_22 = v; }
+};
+
+extern sGs_7A10 D_00501420_7A10 __asm__("D_00501420");
+
+struct sVtx_7A10 {
+    float s, t, q, pad;     // 0x00
+    int c[4];               // 0x10
+    t4Vector pos;           // 0x20
+    sVtx_7A10() {}
+};
+
+struct sSeg_7A10 {
+    t4Vector a;             // 0x00
+    t4Vector b;             // 0x10
+};
+
+struct sV3_7A10 {
+    float x, y, z;
+};
+
+struct sSpray_7A10 {
+    float len;              // 0x00
+    sV3_7A10 a;             // 0x04
+    sV3_7A10 b;             // 0x10
+};
+
+struct sPos_7A10 : t4Vector {
+    sPos_7A10(const sV3_7A10& v, const float& aw)
+    {
+        x = v.x;
+        y = v.y;
+        z = v.z;
+        w = aw;
+    }
+};
+
+struct sSpeedBoost_7A10 {
+    char* rider;            // 0x000 (virtual base)
+    float maxLen;           // 0x004
+    float alpha;            // 0x008
+    float width;            // 0x00C
+    float phase;            // 0x010
+    int numSegs;            // 0x014 (mSpeedBoostTrailNumSegs)
+    float totalLen;         // 0x018
+    char pad1C[0x30 - 0x1C];
+    int trailHead;          // 0x030
+    char pad34[0x50 - 0x34];
+    sSpray_7A10 trail[30];  // 0x050 (kSpeedBoostTrailMaxNumSegs)
+    int tex;                // 0x398
+    int head;               // 0x39C
+    int count;              // 0x3A0
+    int max;                // 0x3A4
+    int air;                // 0x3A8
+    sSeg_7A10* segs;        // 0x3AC
+};
+
+class cGfx_7A10 {
+public:
+    char pad[0xE84];
+    sGs_7A10* stateTop;     // 0xE84
+    char padE88[0xF50 - 0xE88];
+    int texIds[1];          // 0xF50
+    int TexId(int i) { return texIds[i]; }
+    void PushState() { stateTop[1] = stateTop[0]; stateTop++; }
+};
+
+struct sVE_7A10 {
+    short delta;
+    short index;
+    void (*fn)(void*, int, sVtx_7A10*, int);
+};
+
+extern "C" sVtx_7A10* func_0037A260(char* gfx, int n);
+extern "C" void func_0037A430(char* gfx);
+
+// The ring index wraps with a run-time divisor (the target keeps the divide-by-zero trap).
+static inline int Wrap_7A10(int i, int n)
+{
+    return i % n;
+}
+
+static inline t4Vector BonePos_7A10(char* o, int off)
+{
+    return ((t4Vector*)(*(char**)(*(char**)(o + 0x780) + 0x30) + (*(int*)(o + off) << 6)))[3];
+}
+
+static inline void AddVert_7A10(sVtx_7A10* v, float s, float t, const t4Vector& col, const t4Vector& pos)
+{
+    v->c[0] = (int)(col.y * 255.0f);
+    v->c[1] = (int)(col.z * 255.0f);
+    v->c[2] = (int)(col.w * 255.0f);
+    v->c[3] = (int)(col.x * 128.0f);
+    v->q = 1.0f;
+    v->pos = pos;
+    v->s = s;
+    v->t = t;
+}
+
+// Speed-boost effect render (visualfx/speedboostfx.cpp in the prototype): the two board-wake ribbons from the
+// 20-entry ring, then the speed-boost trail as one strip.
+extern "C" void func_002E7A10(sSpeedBoost_7A10* self)
+{
+    if (self->count == 0)
+        return;
+    if (self->maxLen < 3.0f)
+        return;
+    if (self->alpha < 0.05f)
+        return;
+    if (D_004A4724 == 0)
+        return;
+    ((cGfx_7A10*)D_004A289C)->PushState();
+    *((cGfx_7A10*)D_004A289C)->stateTop = D_00501420_7A10;
+    *(short*)(*(char**)(D_004A289C + 0xE84) + 0x10) = ((cGfx_7A10*)D_004A289C)->TexId(self->tex);
+    ((cGfx_7A10*)D_004A289C)->stateTop->f0_2 = 0;
+    ((cGfx_7A10*)D_004A289C)->stateTop->SetF22(1);
+    ((cGfx_7A10*)D_004A289C)->stateTop->f4_23 = 0;
+    ((cGfx_7A10*)D_004A289C)->stateTop->f4_20 = 0;
+    ((cGfx_7A10*)D_004A289C)->stateTop->f4_12 = 0x14;
+    ((cGfx_7A10*)D_004A289C)->stateTop->f4_0 = 2;
+    ((cGfx_7A10*)D_004A289C)->stateTop->f8_10 = 0;
+    ((cGfx_7A10*)D_004A289C)->stateTop->f8_5 = 7;
+    ((cGfx_7A10*)D_004A289C)->stateTop->f4_2 = 7;
+    {
+        sVtx_7A10 left[42];
+        sVtx_7A10 right[42];
+        int n = self->count;
+        int nv = 0;
+        t4Vector d = vu0Scale(BonePos_7A10(self->rider, 0x89C), 0.7f);
+        float inv = 1.0f / (float)((n - 1) * (n - 1));
+        float dv = 1.0f / (float)self->count;
+        t4Vector col;
+        col.x = 1.0f;
+        col.y = 1.0f;
+        col.z = 1.0f;
+        col.w = 1.0f;
+        float fi = 0.0f;
+        t4Vector e0;
+        t4Vector e1;
+        float v = self->phase;
+        t4Vector pos = *(t4Vector*)(self->rider + 0x1A0);
+        t4Vector side = vu0Scale(pos, self->width * 0.5f);
+        int h = self->head;
+        for (int i = 0; i < self->count; i++) {
+            if (h < 0)
+                h = 19;
+            col.x = self->alpha * (1.0f - fi * fi * inv);
+            if (col.x < 0.0f)
+                col.x = 0.0f;
+            e0 = vu0Add(self->segs[h].a, d);
+            e1 = vu0Add(self->segs[h].b, d);
+            AddVert_7A10(&left[nv], 0.0f, v, col, vu0Sub(e0, side));
+            AddVert_7A10(&right[nv], 0.0f, v, col, vu0Sub(e1, side));
+            nv++;
+            AddVert_7A10(&left[nv], 1.0f, v, col, vu0Add(e0, side));
+            AddVert_7A10(&right[nv], 1.0f, v, col, vu0Add(e1, side));
+            nv++;
+            v += dv;
+            h--;
+            fi += 1.0f;
+        }
+        if (nv >= 4) {
+            char* gfx = D_004A289C;
+            sVEntry<void(void*, int, sVtx_7A10*, int)>* vt = *(sVEntry<void(void*, int, sVtx_7A10*, int)>**)(gfx + 0x10D8);
+            vt[71].fn(gfx + vt[71].delta, nv, left, 0);
+            char* gfx2 = D_004A289C;
+            sVEntry<void(void*, int, sVtx_7A10*, int)>* vt2 = *(sVEntry<void(void*, int, sVtx_7A10*, int)>**)(gfx2 + 0x10D8);
+            vt2[71].fn(gfx2 + vt2[71].delta, nv, right, 0);
+        }
+    }
+    if (self->numSegs >= 2) {
+        char* gfx = D_004A5B80;
+        sVtx_7A10* vp = func_0037A260(gfx, self->numSegs * 2);
+        int k = 0;
+        float len = 0.0f;
+        float total = self->maxLen <? self->totalLen;
+        // The positions' w stays in the shared 1.0f register: a literal w (by value or const&) is stored through
+        // a frame-pointer copy or kills the folded first colour (li 255) - the target has neither.
+        float posW = 1.0f;
+        for (int i = 0; i < self->numSegs; i++) {
+            len += self->trail[i].len;
+            float t = len / total;
+            float tv = self->phase + t;
+            t4Vector col;
+            col.x = wakeClamp(wakeClamp(self->alpha * (1.0f - t), 0.0f, 1.0f), 0.0f, 1.0f);
+            col.y = 1.0f;
+            col.z = 1.0f;
+            col.w = 1.0f;
+            int idx = Wrap_7A10(self->trailHead + i, 30);
+            AddVert_7A10(&vp[k++], 0.0f, tv, col, sPos_7A10(self->trail[idx].a, posW));
+            AddVert_7A10(&vp[k++], 1.0f, tv, col, sPos_7A10(self->trail[idx].b, posW));
+        }
+        func_0037A430(gfx);
+    }
+    ((cGfx_7A10*)D_004A289C)->stateTop--;
+}
+#endif
 
