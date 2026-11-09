@@ -1394,7 +1394,147 @@ extern "C" void func_003A2A00(sSprite_2A00* o, sRect_2A00 r, sMat3_2A00 m, sColo
 }
 #endif
 
+//100%
 INCLUDE_ASM("ui/uitext", func_003A2BC8);
+#ifdef SKIP_ASM
+// 98.73% (w9 r20): sibling of func_003A23B8 (extra sMat3 m by value, const& 5th arg of func_0038E880/EA60); separate `float vb` for the clipped v1 in the tail E880 arm fixes the w/u1/v1 FPR order. Open: fiw must outrank the hoisted (v1-v0) invariant (target $f23), then y/(u1-u0); redundant `y = y0;` row-loop reset as in 003A23B8.
+struct sRect_2BC8 {
+    float x, y, w, h;
+};
+struct sMat3_2BC8 {
+    float m[9];
+};
+struct sColor_2BC8 {
+    float a, r, g, b;
+};
+struct sRS_2BC8 {
+    char pad[0x10];
+    short tex;              // 0x10
+};
+struct sGfx_2BC8 {
+    char pad[0xE84];
+    sRS_2BC8* top;          // 0xE84
+};
+struct sQuadVtx_2BC8 {
+    float s, t, q;
+    int pad;
+    int r, g, b, a;
+    float pos[4];
+    sQuadVtx_2BC8() {}
+};
+struct sSprite_2BC8 {
+    int tex;                // 0x0
+    char pad[8];
+    float v0;               // 0xC
+    float u0;               // 0x10
+    float u1;               // 0x14
+    float v1;               // 0x18
+};
+struct sPos_2BC8 { float x, y, w, h; sPos_2BC8(float a, float b, float c, float d) : x(a), y(b), w(c), h(d) {} };
+struct sUV_2BC8 { float u, v, du, dv; sUV_2BC8(float a, float b, float c, float d) : u(a), v(b), du(c), dv(d) {} };
+extern sGfx_2BC8* D_004A289C_2BC8 __asm__("D_004A289C");
+extern int D_004A28AC_2BC8 __asm__("D_004A28AC");
+extern "C" void func_0038E880(int ctx, sQuadVtx_2BC8* v, const sPos_2BC8& p, const sUV_2BC8& uv, const sMat3_2BC8& m);
+extern "C" void func_0038EA60(int ctx, sQuadVtx_2BC8* v, const sPos_2BC8& p, const sUV_2BC8& uv, const sMat3_2BC8& m);
+
+extern "C" void func_003A2BC8(sSprite_2BC8* o, sRect_2BC8 r, sMat3_2BC8 m, sColor_2BC8 c, int flags, float w, float h)
+{
+    int tex = o->tex;
+    D_004A289C_2BC8->top->tex = tex;
+    float x0 = r.x;
+    float v0 = o->v0;
+    float v1 = o->v1;
+    float u0 = o->u0;
+    float u1 = o->u1;
+    float y0 = r.y;
+    if (w <= 0.0f || h <= 0.0f)
+        return;
+    float tw = r.w / w;
+    float th = r.h / h;
+    if (flags & 1) {
+        u0 = u1;
+        u1 = o->u0;
+    }
+    if (flags & 2) {
+        v0 = v1;
+        v1 = o->v0;
+    }
+    int iw = (int)w;
+    int ih = (int)h;
+    float fiw;
+    float y = y0;
+    sQuadVtx_2BC8 v[4];
+    for (int i = 0; i < 4; i++) {
+        sQuadVtx_2BC8* p = &v[i];
+        p->a = (int)(c.a * 128.0f);
+        p->r = (int)(c.r * 255.0f);
+        p->g = (int)(c.g * 255.0f);
+        p->b = (int)(c.b * 255.0f);
+        p->q = 1.0f;
+    }
+    float fih = (float)ih;
+    if (ih != 0) {
+        y = y0;
+        int j = 0;
+        while (j < ih) {
+            float ny;
+            int jn;
+            float x = x0;
+            if (flags & 4) {
+                ny = y + th;
+                jn = j + 1;
+                fiw = (float)iw;
+                    for (int k = 0; k < iw; k++) {
+                        func_0038EA60(D_004A28AC_2BC8, v, sPos_2BC8(x, y, tw, th), sUV_2BC8(u0, v0, u1 - u0, v1 - v0), m);
+                        x += tw;
+                    }
+                if (fiw != w) {
+                    func_0038EA60(D_004A28AC_2BC8, v, sPos_2BC8(x, y, (x0 + r.w) - x, th), sUV_2BC8(u0, v0, u1 - u0, (v0 + (v1 - v0) * (w - fiw)) - v0), m);
+                }
+            } else {
+                ny = y + th;
+                jn = j + 1;
+                fiw = (float)iw;
+                    for (int k = 0; k < iw; k++) {
+                        func_0038E880(D_004A28AC_2BC8, v, sPos_2BC8(x, y, tw, th), sUV_2BC8(u0, v0, u1 - u0, v1 - v0), m);
+                        x += tw;
+                    }
+                if (fiw != w) {
+                    func_0038E880(D_004A28AC_2BC8, v, sPos_2BC8(x, y, (x0 + r.w) - x, th), sUV_2BC8(u0, v0, (u0 + (u1 - u0) * (w - fiw)) - u0, v1 - v0), m);
+                }
+            }
+            y = ny;
+            j = jn;
+        }
+    }
+    if (fih != h) {
+        float x = x0;
+        if (flags & 4) {
+            u0 = u0 + (u1 - u0) * (1.0f - (h - fih));
+            fiw = (float)iw;
+            float ph = (y0 + r.h) - y;
+                for (int k = 0; k < iw; k++) {
+                    func_0038EA60(D_004A28AC_2BC8, v, sPos_2BC8(x, y, tw, ph), sUV_2BC8(u0, v0, u1 - u0, v1 - v0), m);
+                    x += tw;
+                }
+            if (fiw != w) {
+                func_0038EA60(D_004A28AC_2BC8, v, sPos_2BC8(x, y, (x0 + r.w) - x, ph), sUV_2BC8(u0, v0, u1 - u0, (v0 + (v1 - v0) * (w - fiw)) - v0), m);
+            }
+        } else {
+            float vb = v0 + (v1 - v0) * (h - fih);
+            fiw = (float)iw;
+            float ph = (y0 + r.h) - y;
+                for (int k = 0; k < iw; k++) {
+                    func_0038E880(D_004A28AC_2BC8, v, sPos_2BC8(x, y, tw, ph), sUV_2BC8(u0, v0, u1 - u0, vb - v0), m);
+                    x += tw;
+                }
+            if (fiw != w) {
+                func_0038E880(D_004A28AC_2BC8, v, sPos_2BC8(x, y, (x0 + r.w) - x, ph), sUV_2BC8(u0, v0, (u0 + (u1 - u0) * (w - fiw)) - u0, vb - v0), m);
+            }
+        }
+    }
+}
+#endif
 //100%
 INCLUDE_ASM("ui/uitext", func_003A3280);
 #ifdef SKIP_ASM
