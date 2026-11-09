@@ -448,7 +448,340 @@ extern "C" void func_00114130(char* s, int a, int b)
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_14B10", func_00114298);
+#ifdef SKIP_ASM
+extern "C" float func_0031C040(float x);
+extern "C" float func_0031BF60(float x);
+int func_0011FE98(void* self);
+extern "C" void func_002707E0(int a, int b, void* c);
+extern "C" void func_00309848(void* self);
+extern "C" float func_00119E38(void* self, int a, int b);
+extern "C" void func_0010E098(void* self, int mask, float amt);
+extern "C" int func_001298C8();
+extern void* D_004A3DD8;
+
+// 4-float vector with a component constructor.
+struct sV4_4298 {
+    float x, y, z, w;
+    sV4_4298() {}
+    sV4_4298(float ax, float ay, float az, float aw) { x = ax; y = ay; z = az; w = aw; }
+} __attribute__((aligned(16)));
+
+extern sV4_4298 D_004FF140_4298 __asm__("D_004FF140");
+extern sV4_4298 D_004FF160_4298 __asm__("D_004FF160");
+
+// PORT: PS2-only VU0 inline asm (4-component vector length).
+static inline float Len_4298(const sV4_4298& v)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %1, $vi22\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(v));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4-component dot product).
+static inline float Dot_4298(const sV4_4298& a, const sV4_4298& b)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "lqc2      $vf5, %3\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf5\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "qmfc2.ni  %1, $vf4\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector times scalar).
+static inline sV4_4298 Scale_4298(const sV4_4298& v, float s)
+{
+    sV4_4298 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (in-place vector times scalar).
+static inline void ScaleEq_4298(sV4_4298& v, float s)
+{
+    int t;
+    __asm__(
+        "mfc1      %1, %2\n"
+        "lqc2      $vf4, %0\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "+m"(v), "=&r"(t)
+        : "f"(s)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (in-place vector divided by scalar). Assembled in noreorder mode: retail
+// leaves the final sqc2 out of a following branch delay slot (as btAddEq in visualfx/boardtrailfx).
+static inline void DivEq_4298(sV4_4298& v, float s)
+{
+    int t;
+    __asm__(
+        "mfc1      %1, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vdiv      Q, $vf0w, $vf3x\n"
+        "lqc2      $vf4, %0\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf5, $vf4, Q\n"
+        ".set push\n"
+        ".set noreorder\n"
+        "sqc2      $vf5, %0\n"
+        ".set pop\n"
+        : "+m"(v), "=&r"(t)
+        : "f"(s)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (vector add).
+static inline sV4_4298 Add_4298(const sV4_4298& a, const sV4_4298& b)
+{
+    sV4_4298 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (a += b).
+static inline void AddEq_4298(sV4_4298& a, const sV4_4298& b)
+{
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(a)
+        : "m"(a), "m"(b)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (vector subtract).
+static inline sV4_4298 Sub_4298(const sV4_4298& a, const sV4_4298& b)
+{
+    sV4_4298 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (a -= b).
+static inline void SubEq_4298(sV4_4298& a, const sV4_4298& b)
+{
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(a)
+        : "m"(a), "m"(b)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (cross product, w = 0). The first operand is "o" (offsettable): a global
+// operand is then addressed through a base register (lui; addiu; lqc2 0($r)) as in retail.
+static inline sV4_4298 Cross_4298(const sV4_4298& a, const sV4_4298& b)
+{
+    sV4_4298 r;
+    __asm__(
+        "lqc2      $vf4, %1\n"
+        "lqc2      $vf5, %2\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vsub.w    $vf6, $vf6, $vf6\n"
+        "sqc2      $vf6, %0\n"
+        : "=m"(r)
+        : "o"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (normalize via rsqrt).
+static inline sV4_4298 Normalize_4298(const sV4_4298& v)
+{
+    sV4_4298 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vrsqrt    Q, $vf0w, $vf4x\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf5, $vf3, Q\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(v)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only FPU asm (absolute value).
+static inline float Abs_4298(float x)
+{
+    float r;
+    __asm__("abs.s %0,%1" : "=f"(r) : "f"(x));
+    return r;
+}
+
+// PORT: `<?` is the g++ minimum operator (EE min.s).
+static inline float Clamp_4298(float v, float lo, float hi)
+{
+    return (v >= lo) ? (v <? hi) : lo;
+}
+
+static inline sV4_4298 Up_4298(char* r) { return *(sV4_4298*)(r + 0x1C0); }
+static inline int Flags_4298(char* r) { return *(short*)(r + 0x2D4); }
+
+#define VEL_4298 (*(sV4_4298*)(self + 0x1E0))
+
+// Applies the rider's push (speedFactor in [0, 1]; negative = no push) and the slope/heading corrections.
+extern "C" void func_00114298(char* self, float speedFactor)
+{
+    int steered = 0;
+    float speed = Len_4298(VEL_4298);
+    sV4_4298 oldVel = VEL_4298;
+    float push;
+    if (speedFactor < 0.0f) {
+        *(int*)(*(char**)(self + 0x77C) + 0x14) = -1;
+        push = 0.16339834034442902f;
+    } else {
+        push = speedFactor * speedFactor;
+        push *= speed < 972.1808471679688f ? speed * 0.357146680355072f + 361.203125f : 708.4142456054688f;
+        push = Clamp_4298(push, 361.203125f, 708.4142456054688f);
+    }
+    float lo = func_0031C040(0.8726646900177002f);
+    float hi = func_0031C040(1.2217305898666382f);
+    if (func_0011FE98(self) == 4) {
+        AddEq_4298(VEL_4298, Scale_4298(Up_4298(self), push));
+    } else {
+        float t = (*(float*)(self + 0x378) - lo) * (1.0f / (hi - lo));
+        sV4_4298 dir = Normalize_4298(Add_4298(*(sV4_4298*)(self + 0x370), Scale_4298(*(sV4_4298*)(self + 0x3A0), 0.2f)));
+        if (*(float*)(self + 0x3A8) < 0.0f || t < 0.0f || *(float*)(self + 0x1E8) < 0.0f) {
+            AddEq_4298(VEL_4298, Scale_4298(dir, push));
+        } else {
+            sV4_4298 flat = Normalize_4298(sV4_4298(*(float*)(self + 0x370), *(float*)(self + 0x374), 0.0f, 0.0f));
+            sV4_4298 side = Normalize_4298(Sub_4298(*(sV4_4298*)(self + 0x3A0), Scale_4298(flat, Dot_4298(*(sV4_4298*)(self + 0x3A0), flat))));
+            sV4_4298 vdir = Normalize_4298(Sub_4298(VEL_4298, Scale_4298(flat, Dot_4298(VEL_4298, flat))));
+            float s0 = func_0031BF60(0.0f);
+            float s1 = func_0031BF60(0.349065899848938f);
+            float f = t * (side.z - s0) * (1.0f / (s1 - s0));
+            f = Clamp_4298(f, 0.0f, 0.949999988079071f);
+            steered = 1;
+            dir = Normalize_4298(Add_4298(Scale_4298(dir, 1.0f - f), Scale_4298(side, f)));
+            VEL_4298 = Add_4298(Add_4298(Scale_4298(VEL_4298, 1.0f - f), Scale_4298(vdir, f * speed)), Scale_4298(Scale_4298(dir, push), 0.5f));
+        }
+    }
+    func_002707E0(*(int*)(*(char**)((char*)D_004A28A8 + 0x84) + 0x28), *(int*)(self + 0x86C), *(char**)(self + 0x790) + 0xFC);
+    func_00309848(D_004A3DD8);
+    func_0010E098(self, 1, func_00119E38(*(void**)(self + 0x790), *(int*)(self + 0x320) != *(int*)(self + 0x324), steered));
+    if (*(float*)(self + 0x378) > hi + 0.019999999552965164f) {
+        sV4_4298 dv = Sub_4298(VEL_4298, oldVel);
+        sV4_4298 ov = oldVel;
+        ov.z = 0.0f;
+        dv.z = 0.0f;
+        if (Dot_4298(ov, dv) < 0.0f) {
+            float a = *(float*)(self + 0x2E4) * 0.5f;
+            float b = *(float*)(self + 0x2E4) * 0.699999988079071f;
+            float k;
+            if (a <= speed) {
+                if (speed <= b)
+                    k = (speed - a) / (b - a);
+                else
+                    k = 1.0f;
+            } else {
+                k = 0.0f;
+            }
+            SubEq_4298(VEL_4298, Scale_4298(dv, k));
+        }
+    }
+    float slope = *(float*)(self + 0x388);
+    sV4_4298 h = *(sV4_4298*)(self + 0x380);
+    h.z = 0.0f;
+    if (Abs_4298(h.x) > 0.0f || Abs_4298(h.y) > 0.0f)
+        DivEq_4298(h, Len_4298(h));
+    else
+        h = D_004FF140_4298;
+    *(sV4_4298*)(self + 0x3C0) = h;
+    if (slope < 0.05000000074505806f && slope > -0.05000000074505806f) {
+        sV4_4298 lat = Scale_4298(h, Dot_4298(VEL_4298, h) / Dot_4298(h, h));
+        SubEq_4298(VEL_4298, lat);
+        AddEq_4298(*(sV4_4298*)(self + 0x110), Scale_4298(h, 4.0f));
+        if (!(Flags_4298(self) & 0x20))
+            ScaleEq_4298(VEL_4298, 0.799975574016571f);
+    }
+    float len = Len_4298(VEL_4298);
+    if (*(float*)(self + 0x2E4) < len)
+        ScaleEq_4298(VEL_4298, *(float*)(self + 0x2E4) / len);
+    if (speedFactor >= 0.0f && (*(int*)(self + 0x434) < 0xB || *(int*)(self + 0x434) > 0xD)) {
+        float t = (float)(func_001298C8() - *(int*)(*(char**)(self + 0x77C) + 0x10)) * 0.01666666753590107f;
+        float k;
+        if (t <= 0.5388872623443604f) {
+            k = 0.6939882636070251f;
+        } else {
+            float u = (t - 0.5388872623443604f) * 1.2326725721359253f <? 1.0f; // PORT: g++ minimum operator
+            k = u + (1.0f - u) * 0.6939882636070251f;
+        }
+        ScaleEq_4298(VEL_4298, k);
+    }
+    sV4_4298 c = Cross_4298(D_004FF160_4298, VEL_4298);
+    float cl = Len_4298(c);
+    if (cl > 0.0f) {
+        ScaleEq_4298(c, 1.0f / cl);
+        sV4_4298 side = Cross_4298(c, *(sV4_4298*)(self + 0x370));
+        *(float*)(self + 0x5A4) = Dot_4298(VEL_4298, *(sV4_4298*)(self + 0x370)) * Len_4298(side);
+    } else {
+        *(float*)(self + 0x5A4) = 0.0f;
+    }
+    *(int*)(self + 0x5A8) = speedFactor > 0.0f;
+}
+
+#undef VEL_4298
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_14B10", func_00114CC0);
