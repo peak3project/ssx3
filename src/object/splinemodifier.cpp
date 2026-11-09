@@ -1388,7 +1388,148 @@ extern "C" int func_0035ABF0(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/splinemodifier", func_0035AC20);
+#ifdef SKIP_ASM
+// One 0x60-byte multi-spline node: its position, direction and acceleration on the track.
+struct sSmNode_AC20 {
+    t4Vector origin;        // 0x00
+    t4Vector dir;           // 0x10
+    t4Vector q;             // 0x20
+    char pad_0x30[0x20];
+    float fD0;              // 0x50
+    float fD4;              // 0x54
+    char pad_0x58[0x8];
+};
+
+// An object placed on the spline: its transform at 0x10.
+struct sSmObj_AC20 {
+    char pad_0x0[0x10];
+    sSmM44_9830 mat;        // 0x10
+};
+
+struct cMultiSpline_AC20 {
+    char pad_0x0[0x4];
+    int count;              // 0x4
+    int mode;               // 0x8
+    float angle;            // 0xC
+    float start;            // 0x10
+    char pad_0x14[0x1C];
+    int dirty;              // 0x30
+    char pad_0x34[0x8];
+    sSmNode_AC20* nodes;    // 0x3C
+    char pad_0x40[0x4];
+    sSmObj_AC20** objs;     // 0x44
+    sSmFollow follow;       // 0x48
+};
+
+// d = a * b, operands in math order (vu0MulMat_9830 takes them the other way round).
+static inline void matMul_AC20(sSmM44_9830* d, const sSmM44_9830* a, const sSmM44_9830* b)
+{
+    vu0MulMat_9830(d, b, a);
+}
+
+// PORT: the unit declares func_0035AC20 as returning void* earlier; it really returns nothing.
+void func_0035AC20_impl(cMultiSpline_AC20* self) __asm__("func_0035AC20");
+void func_0035AC20_impl(cMultiSpline_AC20* self)
+{
+    float t[256];
+    float step = self->follow.length / (float)self->count;
+    t[0] = self->start;
+    for (int i = 1; i < self->count; i++) {
+        t[i] = t[i - 1] + step;
+    }
+    for (int i = 0; i < self->count; i++) {
+        if (t[i] < 0.0f) {
+            t[i] = t[i] + self->follow.length;
+        } else if (self->follow.length <= t[i]) {
+            t[i] = t[i] - self->follow.length;
+        }
+    }
+    sSmM44_9830 R;
+    sSmV3_9830 rot;
+    sSmM44_9830 t2;
+    sSmM44_9830 tm;
+    char* sub = (char*)self + 4;
+    if (self->angle != 0.0f) {
+        const sSmV3_9830* a = &D_004FF160;
+        float sinA, cosA;
+        func_0031BE50(&sinA, &cosA, *(float*)(sub + 8));
+        float k = 1.0f - cosA;
+        float kx = k * a->x;
+        float ky = k * a->y;
+        float kz = k * a->z;
+        float sX = sinA * a->x;
+        float sY = sinA * a->y;
+        float sZ = sinA * a->z;
+        R.m[0][0] = kx * a->x + cosA;
+        R.m[1][0] = kx * a->y + sZ;
+        R.m[2][0] = kx * a->z - sY;
+        R.m[3][0] = 0.0f;
+        R.m[0][1] = ky * a->x - sZ;
+        R.m[1][1] = ky * a->y + cosA;
+        R.m[2][1] = ky * a->z + sX;
+        R.m[3][1] = 0.0f;
+        R.m[0][2] = kz * a->x + sY;
+        R.m[1][2] = kz * a->y - sX;
+        R.m[2][2] = kz * a->z + cosA;
+        R.m[3][2] = 0.0f;
+        R.m[0][3] = 0.0f;
+        R.m[1][3] = 0.0f;
+        R.m[2][3] = 0.0f;
+        R.m[3][3] = 1.0f;
+    }
+    sSmNode_AC20* node = self->nodes;
+    for (int i = 0; i < self->count; i++, node++) {
+        float rx = 0.0f;
+        float ry = 0.0f;
+        float rz = 0.0f;
+        func_00345248(&self->follow, t[i], &node->origin, &node->dir, &node->q);
+        node->fD0 = node->dir.x * node->dir.x;
+        node->fD4 = node->dir.y * node->dir.y;
+        if ((unsigned)(self->mode - 2) < 2) {
+            rz = ry - Atan2_9830(node->dir.y, node->dir.x);
+        }
+        if (self->mode == 1 || self->mode == 3) {
+            float len = fsqrt(node->fD0 + node->fD4);
+            ry += Atan2_9830(node->dir.z, len);
+        }
+        rot.x = rx;
+        rot.y = ry;
+        rot.z = rz;
+        sSmObj_AC20* o = self->objs[i];
+        sSmM44_9830* m = &o->mat;
+        float sx, cx, sy, cy, sz, cz;
+        func_0031BE50(&sx, &cx, rot.x);
+        func_0031BE50(&sy, &cy, rot.y);
+        func_0031BE50(&sz, &cz, rot.z);
+        float sxsy = sx * sy;
+        float cxsz = cx * sz;
+        o->mat.m[0][0] = cy * cz;
+        o->mat.m[0][1] = -cy * sz;
+        o->mat.m[0][2] = sy;
+        o->mat.m[0][3] = 0.0f;
+        o->mat.m[1][0] = sxsy * cz + cxsz;
+        o->mat.m[1][1] = cx * cz - sxsy * sz;
+        o->mat.m[1][2] = -sx * cy;
+        o->mat.m[1][3] = 0.0f;
+        o->mat.m[2][0] = sx * sz - cx * sy * cz;
+        o->mat.m[2][1] = cxsz * sy + sx * cz;
+        o->mat.m[2][2] = cx * cy;
+        o->mat.m[2][3] = 0.0f;
+        o->mat.m[3][0] = node->origin.x;
+        o->mat.m[3][1] = node->origin.y;
+        o->mat.m[3][2] = node->origin.z;
+        o->mat.m[3][3] = 1.0f;
+        if (self->angle != 0.0f) {
+            matMul_AC20(&tm, &R, m);
+            vu0CopyMat_9830(&t2, &tm);
+            vu0CopyMat_9830(m, &t2);
+        }
+    }
+    self->dirty = 0;
+}
+#endif
 
 INCLUDE_ASM("object/splinemodifier", func_0035B200);
 
