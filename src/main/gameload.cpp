@@ -547,7 +547,401 @@ void* func_002306A8(void* self, int i)
 }
 #endif
 
+//100%
 INCLUDE_ASM("main/gameload", func_002306B8);
+#ifdef SKIP_ASM
+extern "C" float func_002EE400(int id);
+extern "C" void func_002570D8(void* p);
+extern "C" void func_00278918(void* world);
+extern "C" void func_00231D18(void* self);
+extern "C" int func_0022E920(void* views);
+extern "C" void cGameViewMan_updateAll(void* views);
+extern "C" void func_00230F40(void* self);
+extern "C" void func_0022E8B8(void* views);
+extern "C" void func_003A88A8(void* p);
+extern "C" void func_002373B8(void* p);
+extern "C" void func_0020CFD0(void);
+extern "C" int func_002CC098(void* p);
+extern "C" void func_0020AB50(int id);
+extern "C" void func_0029CED8(void* snd, int a, int b, float f);
+extern "C" void func_0030A868(void* mgr, int a, int b, int c);
+extern "C" void func_00398038(void* p);
+extern "C" void func_0029ED18(void* snd);
+extern "C" void func_002CC0C0(void* p);
+extern "C" int func_00231840(char* self, int a);
+extern "C" int func_0020CBE8(void);
+extern "C" void func_00326AE0(void* p);
+extern "C" void func_0020CA10(void);
+extern "C" void func_00289B70(void* snd);
+extern "C" void func_00294F48(void* snd);
+extern "C" int func_0020CBA0(void);
+extern "C" void cPlaybackMan_update(void* p);
+extern "C" int func_00237950(void* p);
+extern "C" void func_0026F4A8(void* p);
+extern "C" int func_00270280(void* p);
+extern "C" int func_002379C8(void* p);
+extern "C" int func_0026CE50(void* p);
+extern "C" void func_00354F98(void* mgr, int a);
+extern "C" void func_00355028(void* mgr, int a);
+extern "C" void func_00309270(void* p);
+extern "C" void func_002294C8(void* p);
+extern "C" void func_003440C8(void* p);
+extern "C" void func_00357BF8(void* p);
+extern "C" void func_002B7848(void* p, void* a, int i);
+void func_00237948(void* p);
+extern "C" void func_003F42A0(void);
+extern "C" void func_001A39F0(void* p);
+extern "C" void func_001E1458(void);
+extern "C" void func_001F3188(void* p);
+extern char* D_004A5B64;
+extern void* D_004A2EB8;
+extern void* D_004A28A0;
+// Pending script pause request; 0xFFFFFFFF = none (the store is lui/ori, so the global is unsigned).
+extern unsigned int D_004A20CC;
+extern int D_004A2A50;
+extern int D_004A2A54;
+extern int D_005366E8[];
+extern int D_004428F8[];
+extern int D_004428FC[];
+extern int D_00442920[];
+extern char D_0047B798[];
+
+// A script message (cWScriptQueueEntry).
+struct sMsg_06B8 {
+    int a;
+    int type;
+    int c;
+};
+
+// The script manager's message queue (wscript/wscriptman: cWScriptQueue).
+struct sQueue_06B8 {
+    int head;
+    int tail;
+    sMsg_06B8 entries[16];
+};
+
+extern "C" sMsg_06B8* func_0030C870(sQueue_06B8* self);
+extern "C" sMsg_06B8* func_0030C820(sQueue_06B8* self);
+
+// The script manager (D_004A3DD8); hasMessage / popMessage are inline here
+// (out-of-line copies: func_0030D330, func_0030D348).
+struct sScript_06B8 {
+    char pad0[0x1C4];
+    sQueue_06B8 queue;              // 0x1C4
+    bool hasMessage() { return queue.head != queue.tail; }
+    sMsg_06B8* popMessage() { return func_0030C820(&queue); }
+};
+
+struct sVSlot_06B8 {
+    short delta;
+    short index;
+    void (*fn)(void*, ...);
+};
+
+struct sUIObj_06B8 {
+    char pad0[0x8];
+    sVSlot_06B8* vt;                // 0x8
+};
+
+struct sStateStack_06B8 {
+    void* top;
+};
+
+struct sUIEngine_06B8 {
+    char pad0[0xC];
+    sUIObj_06B8* fC;                // 0xC
+    char pad10[0x18 - 0x10];
+    sStateStack_06B8 states;        // 0x18
+};
+
+struct sViews_06B8 {
+    char pad0[0x4];
+    char* players[3];               // 0x4
+    unsigned int numPlayers;        // 0x10
+    unsigned int getNumPlayers() { return numPlayers; }
+    char* getPlayer(unsigned int id) { return players[id]; }
+};
+
+struct sRace_06B8 {
+    char pad0[0x28];
+    char* riders[0x14];             // 0x28
+    int numRiders;                  // 0x78
+    int getNumRiders() { return numRiders; }
+    char* getRider(int idx) { return riders[idx]; }
+    char pad7C[0xCC - 0x7C];
+    sVSlot_06B8* vt;                // 0xCC
+};
+
+struct sGame_06B8 {
+    char pad0[0x8];
+    int quit;                       // 0x8
+    sRace_06B8* race;               // 0xC
+    char** f10;                     // 0x10
+    char pad14[0x28 - 0x14];
+    int* state;                     // 0x28
+    char pad2C[0x30 - 0x2C];
+    sScript_06B8* script;           // 0x30
+    char* playback;                 // 0x34
+    void* f38;                      // 0x38
+    void* f3C;                      // 0x3C
+    void* f40;                      // 0x40
+    char pad44[0x48 - 0x44];
+    sUIEngine_06B8* ui;             // 0x48
+    void* f4C;                      // 0x4C
+    char pad50[0x78 - 0x50];
+    char* f78;                      // 0x78
+    void* f7C;                      // 0x7C
+    char pad80[0x84 - 0x80];
+    sViews_06B8* views;             // 0x84
+    char pad88[0x94 - 0x88];
+    void* f94;                      // 0x94
+    char pad98[0x9C - 0x98];
+    int f9C;                        // 0x9C
+    int fA0;                        // 0xA0
+    void* fA4;                      // 0xA4
+    char padA8[0xAC - 0xA8];
+    int frame;                      // 0xAC
+    char padB0[0x214 - 0xB0];
+    int f214;                       // 0x214
+    char pad218[0x228 - 0x218];
+    unsigned char f228;             // 0x228
+};
+
+static inline bool racing_06B8(int s)
+{
+    return s != 0 && s < 10;
+}
+
+static inline bool pending_06B8()
+{
+    return D_004A20CC != 0xFFFFFFFF;
+}
+
+static inline bool playing_06B8(char* pb)
+{
+    return *(int*)(pb + 0x70) == 1;
+}
+
+static inline bool stateIs_06B8(int* st, int k)
+{
+    return *st == k;
+}
+
+// Returns false (and flags the game to quit) once the app asked to quit.
+static inline bool checkQuit_06B8(sGame_06B8* self)
+{
+    if (*(int*)((char*)D_004A28A8 + 4) != 0) {
+        self->quit = 1;
+        return false;
+    }
+    return true;
+}
+
+// Runs the loading phase; returns true once the views and the world are ready.
+static inline bool updateLoading_06B8(sGame_06B8* self)
+{
+    if (func_0022E920(self->views) == 0 || *(int*)(self->f78 + 0x1D0) == 0) {
+        *(int*)(*self->f10 + 0x3D4) = 0;
+        func_003A6928(self->f10);
+        cGameViewMan_updateAll(self->views);
+        if (*(int*)(self->f78 + 0x1D0) == 0) {
+            func_00230F40(self);
+            func_0022D8D8(self->f78);
+        }
+        if (self->f9C == 0 && func_0022E920(self->views) == 0) {
+            self->fA0 = 1;
+        }
+        self->f9C = 1;
+        if (self->fA0 != 0) {
+            char* m = (char*)D_004A289C;
+            sVSlot_06B8* vt = *(sVSlot_06B8**)(m + 0x10D8);
+            vt[19].fn(m + vt[19].delta);
+            func_0022E8B8(self->views);
+            func_003A88A8(*self->f10);
+            self->fA0 = 0;
+        }
+        return false;
+    }
+    *(int*)(*self->f10 + 0x3D4) = 1;
+    self->f9C = 0;
+    self->fA0 = 0;
+    func_003A6928(self->f10);
+    func_0022D8D8(self->f78);
+    return true;
+}
+
+// Handles script messages and pause requests; returns true when the race should run this frame.
+static inline bool updateMessages_06B8(sGame_06B8* self)
+{
+    if (func_002CC098(self->fA4) == 0) {
+        sScript_06B8* sm = self->script;
+        sQueue_06B8* q = &sm->queue;
+        if (sm->hasMessage()) {
+            sMsg_06B8* msg = func_0030C870(q);
+            if (msg->type == 8) {
+                func_0020AB50(0x1D);
+                D_005366E8[++D_004A2A54] = 3;
+                D_004A2A50 = D_004428FC[0];
+                func_0029CED8(func_0028B180(), 4, 0, 1.0f);
+                return false;
+            }
+            if (msg->type == 9) {
+                func_0030A868(self->script, msg->a, 5, msg->c);
+                if (func_0039F9D8(&self->ui->states, GetHashValue32(D_0047B798)) == 0) {
+                    func_0020AB50(0x1E);
+                    D_005366E8[++D_004A2A54] = 3;
+                    D_004A2A50 = D_004428FC[0];
+                    func_00398038(self->ui);
+                } else {
+                    ((sScript_06B8*)D_004A3DD8)->popMessage();
+                }
+                return false;
+            }
+        }
+    }
+    if (pending_06B8()) {
+        func_0020AB50(0x22);
+        D_005366E8[++D_004A2A54] = 0xC;
+        D_004A2A50 = D_00442920[0];
+        D_004A20CC = 0xFFFFFFFF;
+        func_0029ED18(func_0028B180());
+        return false;
+    }
+    if (func_002CC098(self->fA4) != 0) {
+        func_00398038(self->ui);
+        func_002CC0C0(self->fA4);
+        return false;
+    }
+    if (func_00231840((char*)self, 0) != 0 && !racing_06B8(*self->state) && !playing_06B8(self->playback) && func_0020CBE8() != 0) {
+        func_00326AE0(D_004A28A0);
+        func_0020CA10();
+        D_005366E8[++D_004A2A54] = 2;
+        D_004A2A50 = D_004428F8[0];
+        sUIObj_06B8* o = self->ui->fC;
+        o->vt[44].fn((char*)o + o->vt[44].delta, self->f228);
+        func_00289B70(func_0028B180());
+        func_00294F48(func_0028B180());
+        return false;
+    }
+    int wasPaused = D_004A2A50 & 1;
+    func_00398038(self->ui);
+    if (func_0020CBA0() != 0) {
+        return false;
+    }
+    cPlaybackMan_update(self->playback);
+    if (func_002CC098(self->fA4) != 0) {
+        return false;
+    }
+    if (wasPaused && (D_004A2A50 & 1) == 0) {
+        return false;
+    }
+    return true;
+}
+
+static inline void updateRace_06B8(sGame_06B8* self)
+{
+    if (self->f7C == 0 || func_00237950(self->f7C) != 0) {
+        if (self->f214 == 3) {
+            func_00230F40(self);
+            func_00354C98(&D_004A5988, 1);
+        } else {
+            func_00230F40(self);
+        }
+        if ((D_004A2A50 & 1) == 0) {
+            func_0026F4A8(self->state);
+        }
+        if (func_00270280(self->state) == 0 && (D_004A2A50 & 8) == 0) {
+            char* w = (char*)D_004A28A4;
+            sVSlot_06B8* vt = *(sVSlot_06B8**)(w + 0x2A8);
+            vt[5].fn(w + vt[5].delta);
+        }
+    }
+    int skip = 0;
+    if ((D_004A2A50 & 1) != 0 || func_00270280(self->state) != 0) {
+        skip = 1;
+    }
+    if (!skip && ((self->f7C != 0 && func_002379C8(self->f7C) == 0) || func_0026CE50(self->playback) != 0)) {
+        skip = 1;
+    }
+    if (!skip) {
+        if ((D_004A2A50 & 2) == 0) {
+            func_00354F98(&D_004A5988, 1);
+        }
+        func_00354F98(&D_004A5988, 5);
+        func_00354F98(&D_004A5988, 6);
+        if ((D_004A2A50 & 2) == 0) {
+            func_00355028(&D_004A5988, 1);
+        }
+        sRace_06B8* r = self->race;
+        r->vt[3].fn((char*)r + r->vt[3].delta);
+        if ((D_004A2A50 & 0x10) == 0) {
+            func_00354F98(&D_004A5988, 2);
+        }
+        if ((D_004A2A50 & 4) == 0) {
+            func_00354F98(&D_004A5988, 3);
+        }
+        func_00309270(self->script);
+        func_002294C8(self->f38);
+        func_003440C8(self->f3C);
+        func_00357BF8(self->f40);
+        func_00354C98(&D_004A5988, 1);
+    } else {
+        func_00354F98(&D_004A5988, 5);
+        if ((D_004A2A50 & 4) == 0) {
+            func_00354F98(&D_004A5988, 3);
+        }
+    }
+    func_00354F98(&D_004A5988, 4);
+    if (!racing_06B8(*self->state) || !stateIs_06B8(self->state, 3)) {
+        cGameViewMan_updateAll(self->views);
+    }
+    self->frame++;
+    unsigned int i;
+    for (i = 0; i < self->views->getNumPlayers(); i++) {
+        func_002B7848(self->f4C, self->views->getPlayer(i) + 0x20, i);
+    }
+    int j;
+    for (j = 0; j < self->race->getNumRiders(); j++) {
+        char* rd = self->race->getRider(j);
+        sVSlot_06B8* vt = *(sVSlot_06B8**)(rd + 0x6C0);
+        vt[19].fn(rd + vt[19].delta);
+    }
+}
+
+extern "C" void func_002306B8(sGame_06B8* self)
+{
+    if (self->views->numPlayers >= 2) {
+        *(int*)(D_004A5B64 + 0x34) = 1;
+    } else {
+        *(int*)(D_004A5B64 + 0x34) = func_002EE400(6) > 0.9f;
+    }
+    if (D_004A2EEC != 0) {
+        func_002570D8(D_004A2EEC);
+    }
+    func_00278918(D_004A28A4);
+    func_00231D18(self);
+    if (checkQuit_06B8(self) && updateLoading_06B8(self)) {
+        if (self->f7C != 0) {
+            func_002373B8(self->f7C);
+        }
+        func_0020CFD0();
+        if (updateMessages_06B8(self)) {
+            updateRace_06B8(self);
+        }
+        if (self->f7C != 0) {
+            func_00237948(self->f7C);
+        }
+    }
+    if (D_004A2EB8 != 0) {
+        func_003F42A0();
+    }
+    if (*(void**)((char*)D_004A28A8 + 0x11C) != 0) {
+        func_001A39F0(*(void**)((char*)D_004A28A8 + 0x11C));
+    }
+    func_001E1458();
+    func_001F3188(self->f94);
+}
+#endif
 
 //100%
 INCLUDE_ASM("main/gameload", func_00230E90);
