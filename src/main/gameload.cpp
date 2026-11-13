@@ -154,7 +154,191 @@ extern "C" void cGame_loadTrack(char* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("main/gameload", func_0022FA98);
+#ifdef SKIP_ASM
+extern "C" void cBE_setState(int state);
+extern "C" void cCameraTriggerMan_cleanupOnExit(void* self);
+extern "C" void cCameraTriggerMan_purge(void* self);
+extern "C" void func_001A3C50(void* p);
+extern "C" void func_00278A98(void* p);
+extern "C" void func_00397B70(void* p, int flags);
+extern "C" void func_002370A0(void* p, int flags);
+extern "C" void func_002EA820(void* p);
+void func_002C3FA0(void* p);
+void operator_delete(int* p);
+extern "C" void func_0026AF00(void* p);
+extern "C" void func_00334850(void* p);
+extern "C" void func_002CC048(void* p, int flags);
+extern "C" void func_00354C98(void* mgr, int a);
+extern "C" void func_00354B38(void* p);
+extern "C" void func_00229278(void* p, int flags);
+extern "C" void func_00343B28(void* p, int flags);
+extern "C" void func_00357A00(void* p, int flags);
+extern "C" void func_0026C588(void* p, int flags);
+extern "C" void func_00351120(void* p, int flags);
+extern "C" void func_002ECFA0();
+extern "C" void func_0022E730(void* p, int flags);
+extern "C" void func_0026F088(void* p, int flags);
+extern "C" void func_0022CD18(void* p, int flags);
+extern "C" void func_002DBEE0(void* p, int flags);
+extern "C" void func_002F5230(void* p, int flags);
+extern "C" void func_003A6740(void* p, int flags);
+extern "C" void func_00242518(void* p, int flags);
+struct cBigFile;
+void cBigFile__cBigFile(cBigFile* p, int flags);
+extern "C" void func_003916C0(void* p, int flags);
+extern "C" void func_0036A020(void* p);
+extern "C" void func_0038ADB0(void* p);
+extern "C" void func_002B6AE0(void* p, int flags);
+extern "C" void func_002B68D0(void* a);
+extern "C" void func_00286A80(void* p);
+extern "C" void func_00286C00(void* p);
+extern "C" void func_00278590(void* p);
+extern "C" void func_0036A290();
+extern void* D_004A28A8;
+extern void* D_004A28A4;
+extern void* D_004A289C;
+extern void* D_004A52D4;
+extern void* D_004A3500;
+extern char* D_004A5B64;
+extern int D_004A2A54;
+extern char D_004D33A0[];
+extern char D_005047F8[];
+extern char D_004A5988_bm __asm__("D_004A5988");
+
+// Rider result block copied into the network state (bedbreward func_0015C418 / func_0015C4E0).
+struct sBEBlk_FA98 { int v[0x2B]; };
+// The network game state (dirtysock/tagsunk sNetState); the unit declares D_00534B30 as int[] below.
+struct sNetState_FA98 {
+    int active;                     // 0x000
+    int f4;                         // 0x004
+    int chan;                       // 0x008
+    char pad_0x00C[0x330 - 0xC];
+    sBEBlk_FA98 blkA;               // 0x330 (D_00534E60)
+};
+extern sNetState_FA98 D_00534B30_FA98 __asm__("D_00534B30");
+extern sBEBlk_FA98 D_00534F0C;
+
+struct sVEntry_FA98 {
+    short delta;
+    short index;
+    void (*fn)(void*, int);
+};
+struct sVEntry0_FA98 {
+    short delta;
+    short index;
+    void (*fn)(void*);
+};
+
+struct sRiderList_FA98 {
+    char* riders[8];
+    char* getRider(int idx) { return riders[idx]; }
+};
+struct sRace_FA98 {
+    char pad[0x28];
+    sRiderList_FA98 list;           // 0x28
+};
+
+static inline char* rider_FA98(int i)
+{
+    sRace_FA98* race = *(sRace_FA98**)(*(char**)((char*)D_004A28A8 + 0x84) + 0xC);
+    return race->list.getRider(i);
+}
+
+// Virtual deleting destructor through the vtable pointer at vptrOff.
+static inline void vdelete_FA98(void* p, int vptrOff)
+{
+    sVEntry_FA98* vt = *(sVEntry_FA98**)((char*)p + vptrOff);
+    vt[1].fn((char*)p + vt[1].delta, 3);
+}
+
+struct sCell_FA98 {
+    char b[0x14];
+    ~sCell_FA98() {}
+};
+struct sGrid_FA98 {
+    sCell_FA98 cells[8];
+    static void operator delete(void* p) { operator_delete((int*)p); }
+};
+
+extern "C" void func_0022FA98(void* self)
+{
+    cBE_setState(0);
+    char* iface = (char*)cBE_getInterface_Fv(*(void**)((char*)D_004A28A8 + 0x78), 7);
+    if (D_00534B30_FA98.active != 0 && D_00534B30_FA98.f4 != 0) {
+        int side = D_00534B30_FA98.chan != 0;
+        D_00534B30_FA98.blkA = *(sBEBlk_FA98*)(*(char**)(rider_FA98(D_00534B30_FA98.chan == 0) + 0x790) + 0xFC);
+        D_00534F0C = *(sBEBlk_FA98*)(*(char**)(rider_FA98(side) + 0x790) + 0xFC);
+        sVEntry0_FA98* vt = *(sVEntry0_FA98**)(iface + 0xC);
+        vt[1].fn(iface + vt[1].delta);
+    }
+    cCameraTriggerMan_cleanupOnExit(D_004C5830);
+    {
+        char* m = (char*)D_004A289C;
+        sVEntry0_FA98* vt = *(sVEntry0_FA98**)(m + 0x10D8);
+        vt[19].fn(m + vt[19].delta);
+    }
+    func_001A3C50(*(void**)((char*)D_004A28A8 + 0x11C));
+    func_00278A98(D_004A28A4);
+    if (*(void**)((char*)self + 0x48) != 0) func_00397B70(*(void**)((char*)self + 0x48), 3);
+    if (*(void**)((char*)self + 0x7C) != 0) func_002370A0(*(void**)((char*)self + 0x7C), 3);
+    func_002EA820(*(void**)((char*)self + 0x64));
+    func_002C3FA0(*(void**)((char*)self + 0x44));
+    operator_delete(*(int**)((char*)self + 0x44));
+    if (*(void**)((char*)self + 0x14) != 0) vdelete_FA98(*(void**)((char*)self + 0x14), 0xC);
+    if (*(void**)((char*)self + 0x18) != 0) vdelete_FA98(*(void**)((char*)self + 0x18), 0x4);
+    if (*(void**)((char*)self + 0x1C) != 0) vdelete_FA98(*(void**)((char*)self + 0x1C), 0x649C);
+    func_0026AF00(D_004D33A0);
+    func_00334850(*(void**)((char*)self + 0x20));
+    if (*(void**)((char*)self + 0xA4) != 0) func_002CC048(*(void**)((char*)self + 0xA4), 3);
+    void* bm = &D_004A5988_bm;
+    func_00354C98(bm, 1);
+    func_00354B38(bm);
+    if (*(void**)((char*)self + 0x30) != 0) vdelete_FA98(*(void**)((char*)self + 0x30), 0x494);
+    if (*(void**)((char*)self + 0x38) != 0) func_00229278(*(void**)((char*)self + 0x38), 3);
+    if (*(void**)((char*)self + 0x3C) != 0) func_00343B28(*(void**)((char*)self + 0x3C), 3);
+    if (*(void**)((char*)self + 0x40) != 0) func_00357A00(*(void**)((char*)self + 0x40), 3);
+    if (*(void**)((char*)self + 0x34) != 0) func_0026C588(*(void**)((char*)self + 0x34), 3);
+    if (*(void**)((char*)self + 0x88) != 0) func_00351120(*(void**)((char*)self + 0x88), 3);
+    cCameraTriggerMan_purge(D_004C5830);
+    func_002ECFA0();
+    if (*(void**)((char*)self + 0x84) != 0) func_0022E730(*(void**)((char*)self + 0x84), 3);
+    if (*(void**)((char*)self + 0xC) != 0) vdelete_FA98(*(void**)((char*)self + 0xC), 0xCC);
+    if (*(void**)((char*)self + 0x28) != 0) func_0026F088(*(void**)((char*)self + 0x28), 3);
+    if (*(void**)((char*)self + 0x98) != 0) vdelete_FA98(*(void**)((char*)self + 0x98), 0);
+    if (*(void**)((char*)self + 0x78) != 0) func_0022CD18(*(void**)((char*)self + 0x78), 3);
+    if (*(void**)((char*)self + 0x2C) != 0) func_002DBEE0(*(void**)((char*)self + 0x2C), 3);
+    if (*(void**)((char*)self + 0x90) != 0) func_002F5230(*(void**)((char*)self + 0x90), 3);
+    if (*(void**)((char*)self + 0x10) != 0) func_003A6740(*(void**)((char*)self + 0x10), 3);
+    if (*(void**)((char*)self + 0x8C) != 0) func_00242518(*(void**)((char*)self + 0x8C), 3);
+    if (*(void**)((char*)self + 0xA8) != 0) cBigFile__cBigFile(*(cBigFile**)((char*)self + 0xA8), 3);
+    operator_delete(*(int**)((char*)self + 0x94));
+    if (*(void**)((char*)self + 0x24) != 0) func_003916C0(*(void**)((char*)self + 0x24), 3);
+    delete *(sGrid_FA98**)((char*)self + 0x20);
+    {
+        char* m = (char*)D_004A289C;
+        sVEntry0_FA98* vt = *(sVEntry0_FA98**)(m + 0x10D8);
+        vt[113].fn(m + vt[113].delta);
+    }
+    {
+        char* m = (char*)D_004A289C;
+        sVEntry_FA98* vt = *(sVEntry_FA98**)(m + 0x10D8);
+        vt[50].fn(m + vt[50].delta, *(int*)((char*)self + 0x220));
+    }
+    func_0036A020(D_004A289C);
+    func_0038ADB0(D_005047F8);
+    *(void**)((char*)D_004A28A8 + 0x84) = 0;
+    if (*(void**)((char*)self + 0x4C) != 0) func_002B6AE0(*(void**)((char*)self + 0x4C), 3);
+    func_002B68D0(D_004A52D4);
+    func_00286A80(D_004A3500);
+    func_00286C00(D_004A3500);
+    func_00278590(D_004A28A4);
+    func_0036A290();
+    D_004A2A54 = 0;
+    *(int*)(D_004A5B64 + 0x34) = 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("main/gameload", func_00230050);
