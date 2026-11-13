@@ -3059,7 +3059,160 @@ extern "C" void func_002E4F28(int* self, int flags)
 }
 #endif
 
+//100%
 INCLUDE_ASM("visualfx/boardwakefx", func_002E4F50);
+#ifdef SKIP_ASM
+extern char* D_004A5B64;
+extern float D_00504FB8[];
+// PORT: 128-bit TImode quadword (as func_002E55D8 below; the PC port needs a 16-byte struct).
+typedef int cQuad4F50 __attribute__((mode(TI)));
+// func_002E55D8 below declares D_004FF160 with its own type.
+extern cQuad4F50 D_004FF160_4F50 __asm__("D_004FF160");
+
+struct sWakeBubble4F50 {
+    int f0;
+    int mode;                   // 0x4
+    int count;                  // 0x8
+    float size;                 // 0xC
+    float amp;                  // 0x10
+    float f14;                  // 0x14
+    float f18;                  // 0x18
+    float f1C;                  // 0x1C
+    t4Vector pos;               // 0x20
+    t4Vector dir;               // 0x30
+    t4Vector prevDir;           // 0x40
+    t4Matrix mat;               // 0x50
+    float age;                  // 0x90
+    float life;                 // 0x94
+    int seed[3];                // 0x98
+    float col[3];               // 0xA4
+    int first;                  // 0xB0
+};
+
+// The per-mode settings record (func_002E5DA0 builds two of them).
+struct sWakeBubbleCfg4F50 {
+    float f[8];
+    t4Vector c0;                // 0x20
+    t4Vector c1;                // 0x30
+};
+
+// PORT: PS2-only VU0 inline asm (quadword vector * scalar; the scratch GPR is $3, cf. sound/soundsys).
+static inline t4Vector vu0ScaleQ4F50(const cQuad4F50& v, float s)
+{
+    t4Vector r;
+    __asm__(
+        "mfc1      $3, %2\n"
+        "lqc2      $vf4, %1\n"
+        "qmtc2.ni  $3, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(v), "f"(s)
+        : "$3", "memory");
+    return r;
+}
+
+// Sine/cosine from the 512-entry table D_00504FB8 (81.487 = 512 / 2pi; the cosine is a quarter turn on).
+static inline float wakeSin4F50(float a)
+{
+    return D_00504FB8[(int)(a * 81.4873275756836f) & 0x1FF];
+}
+
+static inline float wakeCos4F50(float a)
+{
+    return D_00504FB8[((int)(a * 81.4873275756836f) & 0x1FF) + 0x80];
+}
+
+static inline float wakeRandRange4F50(float lo, float hi)
+{
+    return lo + (hi - lo) * wakeRand();
+}
+
+static inline void wakeWrap4F50(float& r, float v, float s)
+{
+    if (v > s * 0.5f) {
+        float q = v / s;
+        r = (q - (float)(int)q) * s - s;
+    } else if (v < -(s * 0.5f)) {
+        float q = v / s;
+        r = (q - (float)(int)q) * s + s;
+    }
+}
+
+// func_002E5DA0 below declares this function with its own parameter types.
+extern "C" void func_002E4F50_4F50(sWakeBubble4F50* self, sWakeBubbleCfg4F50* cfg) __asm__("func_002E4F50");
+
+extern "C" void func_002E4F50_4F50(sWakeBubble4F50* self, sWakeBubbleCfg4F50* cfg)
+{
+    switch (self->mode) {
+    case 0:
+        self->f18 = cfg->c0.x;
+        self->col[0] = cfg->c0.y;
+        self->col[1] = cfg->c0.z;
+        self->col[2] = cfg->c0.w;
+        self->count = (int)(cfg->f[0] * 500.0f);
+        self->amp = cfg->f[1] * 500.0f;
+        self->f14 = cfg->f[4];
+        break;
+    case 1:
+        self->f18 = cfg->c1.x;
+        self->col[0] = cfg->c1.y;
+        self->col[1] = cfg->c1.z;
+        self->col[2] = cfg->c1.w;
+        self->count = (int)(cfg->f[2] * 6.0f);
+        self->amp = cfg->f[3] * 250.0f;
+        break;
+    }
+    float dt = 1.0f / (float)*(int*)(D_004A5B64 + 0x10);
+    self->age = self->age - dt;
+    if (self->age < 0.0f) {
+        self->prevDir = self->dir;
+        float amp = self->amp;
+        float ang = cfg->f[5] * 0.01745329424738884f;
+        float s = wakeSin4F50(ang);
+        float c = wakeCos4F50(ang);
+        t4Vector d;
+        d.x = amp * c;
+        d.y = amp * s;
+        d.z = 0.0f;
+        d.w = 0.0f;
+        float rx = wakeRandRange4F50(-amp, amp);
+        float ry = wakeRandRange4F50(-amp, amp);
+        float t = cfg->f[6];
+        t4Vector nv;
+        nv.x = d.x * (1.0f - t) + t * rx;
+        nv.y = d.y * (1.0f - t) + t * ry;
+        nv.z = t * wakeRandRange4F50(-amp, amp);
+        nv.w = 0.0f;
+        self->dir = nv;
+        float life = wakeRand() * 4.0f + 1.0f;
+        self->life = life;
+        self->age = life;
+        if (self->first != 0) {
+            self->prevDir = self->dir;
+            self->first = 0;
+        }
+    }
+    float k = self->age / self->life;
+    vu0AddEq(self->pos, vu0Scale(vu0Add(vu0Scale(self->dir, 1.0f - k), vu0Scale(self->prevDir, k)), dt));
+    vu0AddEq(self->pos, vu0ScaleQ4F50(D_004FF160_4F50, self->f1C * cfg->f[7] * dt));
+    float x = self->pos.x;
+    float y = self->pos.y;
+    float z = self->pos.z;
+    float px = x;
+    float py = y;
+    float pz = z;
+    wakeWrap4F50(x, px, self->size);
+    wakeWrap4F50(y, py, self->size);
+    wakeWrap4F50(z, pz, self->size);
+    t4Vector o;
+    o.x = x;
+    o.y = y;
+    o.z = z;
+    o.w = 1.0f;
+    self->pos = o;
+}
+#endif
 
 //100%
 INCLUDE_ASM("visualfx/boardwakefx", func_002E5430);
