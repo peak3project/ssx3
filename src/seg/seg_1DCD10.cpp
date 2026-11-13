@@ -280,6 +280,303 @@ extern "C" int func_002DC168(void *arg0, void *arg1) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_1DCD10", func_002DC190);
+#ifdef SKIP_ASM
+struct sV3_C190 {
+    float x, y, z;
+    sV3_C190() {}
+    sV3_C190(float a, float b, float c) : x(a), y(b), z(c) {}
+};
+
+struct sV4_C190 {
+    float x, y, z, w;
+    sV4_C190() {}
+    sV4_C190(const sV3_C190& v, const float& vw) : x(v.x), y(v.y), z(v.z), w(vw) {}
+    sV4_C190(float vx, float vy, float vz, const float& vw) : x(vx), y(vy), z(vz), w(vw) {}
+    sV4_C190(float vx, float vy) : x(vx), y(vy), z(0.0f), w(0.0f) {}
+} __attribute__((aligned(16)));
+
+struct sRow_C190 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+struct sMat_C190;
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix multiply, d = a * b).
+static inline void mulMat_C190(sMat_C190* d, const sMat_C190* a, const sMat_C190* b)
+{
+    __asm__ __volatile__(
+        "lqc2      $vf4, 0x0(%1)\n"
+        "lqc2      $vf5, 0x10(%1)\n"
+        "lqc2      $vf6, 0x20(%1)\n"
+        "lqc2      $vf7, 0x30(%1)\n"
+        "lqc2      $vf8, 0x0(%2)\n"
+        "lqc2      $vf9, 0x10(%2)\n"
+        "lqc2      $vf10, 0x20(%2)\n"
+        "lqc2      $vf11, 0x30(%2)\n"
+        "vmulax.xyzw ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw $vf12, $vf7, $vf8w\n"
+        "vmulax.xyzw ACC, $vf4, $vf9x\n"
+        "vmadday.xyzw ACC, $vf5, $vf9y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf9z\n"
+        "vmaddw.xyzw $vf13, $vf7, $vf9w\n"
+        "vmulax.xyzw ACC, $vf4, $vf10x\n"
+        "vmadday.xyzw ACC, $vf5, $vf10y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf10z\n"
+        "vmaddw.xyzw $vf14, $vf7, $vf10w\n"
+        "vmulax.xyzw ACC, $vf4, $vf11x\n"
+        "vmadday.xyzw ACC, $vf5, $vf11y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf11z\n"
+        "vmaddw.xyzw $vf15, $vf7, $vf11w\n"
+        "sqc2      $vf12, 0x0(%0)\n"
+        "sqc2      $vf13, 0x10(%0)\n"
+        "sqc2      $vf14, 0x20(%0)\n"
+        "sqc2      $vf15, 0x30(%0)\n"
+        :
+        : "r"(d), "r"(a), "r"(b)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix copy through VU0 registers).
+static inline void copyMat_C190(sMat_C190* d, const sMat_C190* s)
+{
+    __asm__ __volatile__(
+        "lqc2      $vf1, 0x0(%1)\n"
+        "lqc2      $vf2, 0x10(%1)\n"
+        "lqc2      $vf3, 0x20(%1)\n"
+        "lqc2      $vf4, 0x30(%1)\n"
+        "sqc2      $vf1, 0x0(%0)\n"
+        "sqc2      $vf2, 0x10(%0)\n"
+        "sqc2      $vf3, 0x20(%0)\n"
+        "sqc2      $vf4, 0x30(%0)\n"
+        :
+        : "r"(d), "r"(s)
+        : "memory");
+}
+
+
+struct sMat_C190 {
+    sRow_C190 r[4];
+    sMat_C190() {}
+    // Product constructor: *this = a * b.
+    sMat_C190(const sMat_C190& a, const sMat_C190& b) { mulMat_C190(this, &a, &b); }
+    sMat_C190& operator=(const sMat_C190& s)
+    {
+        copyMat_C190(this, &s);
+        return *this;
+    }
+};
+
+struct sCtx_C190 {
+    char pad_0x0[0x6AF0];
+    float sx;                       // 0x6AF0
+    char pad_0x6AF4[0x10];
+    float sy;                       // 0x6B04
+    char pad_0x6B08[0x28];
+    sMat_C190 view;                 // 0x6B30
+    sV4_C190 clipMin;               // 0x6B70
+    sV4_C190 clipMax;               // 0x6B80
+    int ready;                      // 0x6B90
+};
+
+struct sVert_C190 {
+    sV3_C190 pos;                   // 0x0
+    float col[3];                   // 0xC
+    float size;                     // 0x18
+};
+
+struct sPart_C190 {
+    char pad_0x0[0x1C];
+    int count;                      // 0x1C
+    sVert_C190* verts;              // 0x20
+};
+
+struct sList_C190 {
+    int f0;
+    sPart_C190* part;               // 0x4
+};
+
+struct sMesh_C190 {
+    int f0;
+    int count;                      // 0x4
+    sList_C190* list;               // 0x8
+};
+
+struct sObj_C190 {
+    char pad_0x0[0x10];
+    sMat_C190 mat;                  // 0x10
+    char pad_0x50[0x14];
+    sMesh_C190* mesh;               // 0x64
+    sV3_C190 min;                   // 0x68
+    sV3_C190 max;                   // 0x74
+};
+
+struct sSprite_C190 {
+    sV4_C190 a;                     // 0x0
+    sV4_C190 b;                     // 0x10
+    float col[4];                   // 0x20
+};
+
+struct sOut_C190 {
+    int count;
+    int pad[3];
+    sSprite_C190 e[1];              // 0x10
+};
+
+struct sKey_C190 {
+    int idx;
+    int depth;
+};
+
+extern sCtx_C190* D_C190 __asm__("D_004A5B80");
+extern sKey_C190 D_00537AC0_C190[] __asm__("D_00537AC0");
+extern "C" void func_0037D968(void* self);
+
+static inline sV3_C190 operator*(const sV3_C190& a, float s)
+{
+    return sV3_C190(a.x * s, a.y * s, a.z * s);
+}
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix * vector).
+static inline sV4_C190 mulMatVec_C190(const sMat_C190* m, const sV4_C190& v)
+{
+    sV4_C190 r;
+    __asm__(
+        "lqc2      $vf8, %2\n"
+        "lqc2      $vf4, 0x0(%1)\n"
+        "lqc2      $vf5, 0x10(%1)\n"
+        "lqc2      $vf6, 0x20(%1)\n"
+        "lqc2      $vf7, 0x30(%1)\n"
+        "vmulax.xyzw ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw $vf12, $vf7, $vf8w\n"
+        "sqc2      $vf12, %0\n"
+        : "=m"(r)
+        : "r"(m), "m"(v)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (a - b).
+static inline sV4_C190 sub_C190(const sV4_C190& a, const sV4_C190& b)
+{
+    sV4_C190 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (a + b).
+static inline sV4_C190 add4_C190(const sV4_C190& a, const sV4_C190& b)
+{
+    sV4_C190 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+static inline int outcode_C190(const sCtx_C190* g, const sV4_C190& v)
+{
+    int code = 0;
+    if (v.x < g->clipMin.x)
+        code |= 2;
+    if (g->clipMax.x < v.x)
+        code |= 1;
+    if (v.y < g->clipMin.y)
+        code |= 8;
+    if (g->clipMax.y < v.y)
+        code |= 4;
+    if (v.w < 0.0f) {
+        code ^= 0x2F;
+    } else {
+        if (g->clipMin.z < v.z)
+            code |= 0x20;
+        if (v.z < g->clipMax.z)
+            code |= 0x10;
+    }
+    return code;
+}
+
+extern "C" void func_002DC190(sOut_C190* out, sObj_C190** objs, int n, int clip)
+{
+    sCtx_C190* g = D_C190;
+    if (g->ready == 0)
+        func_0037D968(g);
+    for (int i = 0; i < n; i++) {
+        sObj_C190* obj = objs[i];
+        sV4_C190 c = mulMatVec_C190(&g->view, sV4_C190(sV3_C190(obj->min.x + obj->max.x, obj->min.y + obj->max.y, obj->min.z + obj->max.z) * 0.5f, 1.0f));
+        float d = (int)c.w;
+        if (d >= 25000.0f)
+            continue;
+        float fade;
+        if (d < 18000.0f)
+            fade = 1.0f;
+        else
+            fade = (25000.0f - d) * 0.000142857141f;
+        sMat_C190 m;
+        m = sMat_C190(g->view, obj->mat);
+        sMesh_C190* mesh = obj->mesh;
+        sList_C190* list = mesh->list;
+        for (int j = 0; j < mesh->count; j++) {
+            sPart_C190* part = list->part;
+            if (part != 0 && part->count != 0) {
+                sVert_C190* v = part->verts;
+                for (int k = 0; k < part->count; k++, v++) {
+                    sV4_C190 p = mulMatVec_C190(&m, sV4_C190(v->pos.x, v->pos.y, v->pos.z, 1.0f));
+                    int depth = (int)p.w;
+                    if (depth > 0) {
+                        float fd = depth;
+                        float t;
+                        if (fd <= 500.0f)
+                            t = 0.0f;
+                        else if (fd < 2499.66748046875f)
+                            t = (fd - 500.0f) * 0.00050008314f;
+                        else
+                            t = 1.0f;
+                        float a = fade * t;
+                        if (a != 0.0f) {
+                            p.w = 1.0f / p.w;
+                            unsigned short id = out->count;
+                            D_00537AC0_C190[id].idx = id;
+                            D_00537AC0_C190[id].depth = depth;
+                            p.x *= p.w;
+                            p.y *= p.w;
+                            float s = v->size * p.w;
+                            sV4_C190 off(g->sx * s, g->sy * s);
+                            out->e[out->count].a = sub_C190(p, off);
+                            out->e[out->count].b = add4_C190(p, off);
+                            if (clip != 0) {
+                                if (outcode_C190(g, out->e[out->count].a) & outcode_C190(g, out->e[out->count].b))
+                                    continue;
+                            }
+                            out->e[out->count].col[0] = a * 128.0f;
+                            out->e[out->count].col[1] = v->col[0] * 128.0f;
+                            out->e[out->count].col[2] = v->col[1] * 128.0f;
+                            out->e[out->count].col[3] = v->col[2] * 128.0f;
+                            out->count++;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+#endif
 
 INCLUDE_ASM("seg/seg_1DCD10", func_002DC7B0);
