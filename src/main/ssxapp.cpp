@@ -2806,7 +2806,270 @@ extern "C" void func_0022A770(sVisOwner_A770* self, sVisList_A770* list, int cou
 }
 #endif
 
+//100%
 INCLUDE_ASM("main/ssxapp", func_0022A830);
+#ifdef SKIP_ASM
+struct sQ_A830 {
+    float v[4];
+} __attribute__((aligned(16)));
+
+// One octree cell: its level (cell size 2^level) and integer coordinates in cells of that size.
+struct sCell_A830 {
+    int level;
+    int x;
+    int y;
+    int z;
+};
+
+struct sOct_A830 {
+    sOct_A830* child[8];
+};
+
+struct sVisEnt_A830 {
+    sOct_A830* node;
+    unsigned int mask;
+};
+
+struct sVisList_A830 {
+    int count;
+    sVisEnt_A830 e[512];
+};
+
+struct sVisOwner_A830 {
+    char pad0[0x10];
+    sQ_A830 frustum[4];         // 0x10
+    char pad50[0x94 - 0x50];
+    sVisList_A830 lists[2];     // 0x94: fully inside / partly inside
+};
+
+struct sVisInstEnt_A830 {
+    char* obj;
+    int f4;
+};
+
+struct sVisInst_A830 {
+    char pad0[0x8];
+    sVisInstEnt_A830 ent[32];   // 0x8
+    int f108;
+    int count;                  // 0x10C
+};
+
+struct sVisCtx_A830 {
+    sVisOwner_A830* owner;
+    sVisInst_A830* inst;
+    unsigned int mask;
+    int inside;
+};
+
+// Box test bounds relative to the cell: -0.2 and 1.2 cell sizes.
+// Box test bounds relative to the cell, in cell sizes: (-0.2, -0.2, -0.2) and (1.2, 1.2, 1.2).
+extern char D_00442130[];
+// VU0 microprogram entry (micro-memory address 0x948; resolved via undefined_syms_auto.txt)
+extern char D_948[];
+
+// The cell's bounding sphere: centre and radius (2^level * 1.4 * sqrt(3)/2).
+static inline void cellSphere_A830(sQ_A830& out, sCell_A830* c)
+{
+    union {
+        int i;
+        float f;
+    } s;
+    s.i = (c->level + 127) << 23;
+    float size = s.f;
+    sQ_A830 r;
+    r.v[3] = size * 1.2124355f;
+    r.v[0] = ((float)c->x + 0.5f) * size;
+    r.v[1] = ((float)c->y + 0.5f) * size;
+    r.v[2] = ((float)c->z + 0.5f) * size;
+    out = r;
+}
+
+// PORT: PS2-only VU0 microprogram call (lqc2/vitof0/vcallms); the PC port needs a C version of
+// the microprogram at 0x570 (box vs frustum test).
+static inline void boxTestStart_A830(int* pos, char* offs, sQ_A830* frustum)
+{
+    __asm__ __volatile__(
+        "lqc2       $vf1, %0\n"
+        "lqc2       $vf2, 0x0(%1)\n"
+        "lqc2       $vf3, 0x10(%1)\n"
+        "vitof0.xyz $vf1, $vf1\n"
+        "lqc2       $vf10, 0x0(%2)\n"
+        "lqc2       $vf11, 0x10(%2)\n"
+        "lqc2       $vf12, 0x20(%2)\n"
+        "lqc2       $vf13, 0x30(%2)\n"
+        "vmulaw.xyz ACC, $vf1, $vf1w\n"
+        "vmaddw.xyz $vf15, $vf2, $vf1w\n"
+        "vmulaw.xyz ACC, $vf1, $vf1w\n"
+        "vmaddw.xyz $vf16, $vf3, $vf1w\n"
+        "vcallms    0x570\n"
+        :
+        : "m"(*(sQ_A830*)pos), "r"(offs), "r"(frustum));
+}
+
+// PORT: PS2-only VU0 (cfc2): result of the box test started by boxTestStart_A830
+// (1 = outside, 2 = partly inside, 0 = inside).
+static inline void boxTestResult_A830(int& res)
+{
+    int r1;
+    int r2;
+    __asm__ __volatile__(
+        "cfc2.i     %0, $vi1\n"
+        "cfc2.ni    %1, $vi2\n"
+        : "=r"(r1), "=r"(r2));
+    if (r2 != 0) {
+        res = 1;
+    } else if (r1 != 0) {
+        res = 2;
+    } else {
+        res = 0;
+    }
+}
+
+// PORT: PS2-only VU0 microprogram call (lqc2/ctc2/vcallmsr/cfc2); the PC port needs a C version
+// of the microprogram at 0x948 (sphere vs object volume test).
+static inline int sphereVisible_A830(sVisInst_A830* inst, unsigned int& mask, sQ_A830* v)
+{
+    int result = 1;
+    for (int i = 0; i < inst->count; i++) {
+        int bit = 1 << i;
+        if (mask & bit) {
+            sQ_A830* m = (sQ_A830*)(inst->ent[i].obj + 0x50);
+            int r;
+            __asm__ __volatile__(
+                "lqc2      $vf1, %1\n"
+                "lqc2      $vf2, %2\n"
+                "lqc2      $vf3, %3\n"
+                "lqc2      $vf4, %4\n"
+                "lqc2      $vf5, %5\n"
+                "lqc2      $vf6, %6\n"
+                "ctc2.ni   %7, $vi27\n"
+                "vnop\n"
+                "vnop\n"
+                "vcallmsr  $vi27\n"
+                "cfc2.i    %0, $vi1\n"
+                : "=r"(r)
+                : "m"(m[0]), "m"(m[1]), "m"(m[2]), "m"(m[3]), "m"(m[4]), "m"(*v), "r"((int)D_948 >> 3)
+                : "memory");
+            if (r == 0) {
+                return 0;
+            }
+            if (r == 2) {
+                result = 2;
+            } else {
+                mask &= ~bit;
+            }
+        }
+    }
+    return result;
+}
+
+// PORT: callers declare func_0022A830 with other pointer types; defined under an asm label.
+extern "C" void visit_A830(sVisCtx_A830* ctx, sOct_A830* node, sCell_A830* cell) __asm__("func_0022A830");
+
+// Visits the eight children of an octree cell (cells at level 11 have none).
+static inline void visitChildren_A830(sVisCtx_A830* sub, sOct_A830* node, sCell_A830* cell)
+{
+    if (cell->level != 11) {
+        sCell_A830 c;
+        c.level = cell->level - 1;
+        c.x = cell->x * 2;
+        c.y = cell->y * 2;
+        c.z = cell->z * 2;
+        if (node->child[0] != 0) {
+            visit_A830(sub, node->child[0], &c);
+        }
+        c.x++;
+        if (node->child[4] != 0) {
+            visit_A830(sub, node->child[4], &c);
+        }
+        c.y++;
+        if (node->child[6] != 0) {
+            visit_A830(sub, node->child[6], &c);
+        }
+        c.x--;
+        if (node->child[2] != 0) {
+            visit_A830(sub, node->child[2], &c);
+        }
+        c.z++;
+        if (node->child[3] != 0) {
+            visit_A830(sub, node->child[3], &c);
+        }
+        c.x++;
+        if (node->child[7] != 0) {
+            visit_A830(sub, node->child[7], &c);
+        }
+        c.y--;
+        if (node->child[5] != 0) {
+            visit_A830(sub, node->child[5], &c);
+        }
+        c.x--;
+        if (node->child[1] != 0) {
+            visit_A830(sub, node->child[1], &c);
+        }
+    }
+}
+
+// Box test result 1: the cell is outside the frustum.
+static inline bool isOutside_A830(int res)
+{
+    return res == 1;
+}
+
+// Octree visibility walk: tests the cell against the frustum (unless the parent was fully inside) and
+// the object volumes still in the mask, files it as fully/partly inside and recurses into its children.
+extern "C" void visit_A830(sVisCtx_A830* ctx, sOct_A830* node, sCell_A830* cell)
+{
+    int pos[4] __attribute__((aligned(16)));  // cell coordinates and 2^level as float bits
+    sQ_A830 sphere;
+    unsigned int mask = ctx->mask;
+    int res;
+    if (ctx->inside != 0) {
+        res = 0;
+        if (mask != 0) {
+            cellSphere_A830(sphere, cell);
+        }
+    } else {
+        pos[0] = cell->x;
+        pos[1] = cell->y;
+        pos[2] = cell->z;
+        pos[3] = (cell->level + 127) << 23;
+        boxTestStart_A830(pos, D_00442130, ctx->owner->frustum);
+        if (mask != 0) {
+            cellSphere_A830(sphere, cell);
+        }
+        boxTestResult_A830(res);
+    }
+    if (isOutside_A830(res)) {
+        return;
+    }
+    if (mask != 0) {
+        if (sphereVisible_A830(ctx->inst, mask, &sphere) == 0) {
+            return;
+        }
+    }
+    if (res == 0) {
+        ctx->owner->lists[0].e[ctx->owner->lists[0].count].node = node;
+        ctx->owner->lists[0].e[ctx->owner->lists[0].count].mask = mask;
+        ctx->owner->lists[0].count++;
+        sVisCtx_A830 sub;
+        sub.inside = 1;
+        sub.owner = ctx->owner;
+        sub.inst = ctx->inst;
+        sub.mask = mask;
+        visitChildren_A830(&sub, node, cell);
+    } else if (res == 2) {
+        ctx->owner->lists[1].e[ctx->owner->lists[1].count].node = node;
+        ctx->owner->lists[1].e[ctx->owner->lists[1].count].mask = mask;
+        ctx->owner->lists[1].count++;
+        sVisCtx_A830 sub;
+        sub.inside = 0;
+        sub.owner = ctx->owner;
+        sub.inst = ctx->inst;
+        sub.mask = mask;
+        visitChildren_A830(&sub, node, cell);
+    }
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("main/ssxapp", func_0022ADD8);
