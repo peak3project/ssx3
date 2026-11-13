@@ -2010,7 +2010,226 @@ extern "C" void func_0013BFA8(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_0013C140);
+#ifdef SKIP_ASM
+extern "C" void cRider_updateOrientationImplicit(void*);
+int func_0011FEE8(void* rider);
+extern "C" float func_003342D0(void* world, void* seg, void* hit, int flags);
+extern "C" void func_00106538(void* rider, void* v);
+extern "C" void func_00105D98(void* rider, void* info, int id);
+extern "C" void* func_0032F650(void* self, void* tree, int flag);
+extern "C" void func_0032F708(void* self, int flags);
+
+struct sHit_C140 {
+    t4Vector pos;            // 0x00
+    t4Vector normal;         // 0x10
+    t4Vector v20;            // 0x20
+    float pad30[4];         // 0x30
+    float dist;             // 0x40
+    int pad44[2];           // 0x44
+    int m4C;                // 0x4C
+    char* obj;              // 0x50
+    char* tri;              // 0x54
+    int pad58[5];           // 0x58
+    float m6C;              // 0x6C
+    float m70;              // 0x70
+    int pad74[3];           // 0x74
+} __attribute__((aligned(16)));
+
+struct sSphere_C140 {
+    int state;              // 0x00
+    int f4;                 // 0x04
+    int f8;                 // 0x08
+    int padC;               // 0x0C
+    t4Vector dir;            // 0x10
+    char rest[0x320 - 0x20];
+} __attribute__((aligned(16)));
+
+struct sInfo_C140 {
+    t4Vector pos;
+    t4Vector dir;
+    t4Vector normal;
+    float depth;
+} __attribute__((aligned(16)));
+
+struct sVEnt_C140 { short delta; short index; bool (*fn)(void*); };
+
+// PORT: PS2-only VU0 inline asm (vector times scalar).
+static inline t4Vector vu0Scale_C140(const t4Vector& v, float s)
+{
+    t4Vector r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector subtract).
+static inline t4Vector vu0Sub_C140(const t4Vector& a, const t4Vector& b)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (in-place vector add).
+static inline void vu0AddEq_C140(t4Vector& a, const t4Vector& b)
+{
+    __asm__(
+        "lqc2      $vf3, %0\n"
+        "lqc2      $vf4, %1\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "+m"(a)
+        : "m"(b));
+}
+
+// PORT: PS2-only VU0 inline asm (4-component dot product).
+static inline float vu0Dot_C140(const t4Vector& a, const t4Vector& b)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "lqc2      $vf5, %3\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf5\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "qmfc2.ni  %1, $vf4\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (normalize via rsqrt).
+static inline t4Vector vu0Normalize_C140(const t4Vector& v)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vrsqrt    Q, $vf0w, $vf4x\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf5, $vf3, Q\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(v)
+        : "memory");
+    return r;
+}
+
+static inline bool riderFlag_C140(char* r)
+{
+    char* sub = r + 0x6C0;
+    sVEnt_C140* vt = *(sVEnt_C140**)sub;
+    return vt[8].fn(sub + vt[8].delta);
+}
+
+// PORT: PS2-only VU0 inline asm (4-component vector length).
+static inline float vu0Length_C140(const t4Vector& v)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %1, $vi22\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(v));
+    return r;
+}
+
+#define RIDER (*(char**)((char*)self + 0x50))
+#define RV(off) (*(t4Vector*)(RIDER + (off)))
+
+extern "C" void func_0013C140(void* vself)
+{
+    char* self = (char*)vself;
+    if (func_0011FEE8(RIDER) == 9)
+        return;
+    sHit_C140 hit;
+    sSphere_C140 sph;
+    char* r = RIDER;
+    func_0032F650(&sph, *(void**)(r + 0xAA0), !riderFlag_C140(r));
+    float d = func_003342D0(*(void**)(RIDER + 0x860), &sph, &hit, *(int*)(RIDER + 0x868));
+    if (d < 0.0f)
+        { func_0032F708(&sph, 2); return; }
+    {
+        float dot = vu0Dot_C140(RV(0x370), hit.normal);
+        if (dot < -0.9998999834060669f)
+            { func_0032F708(&sph, 2); return; }
+        if (dot < 0.0f)
+            hit.normal = vu0Normalize_C140(vu0Sub_C140(hit.normal, vu0Scale_C140(RV(0x370), dot)));
+    }
+    t4Vector push = vu0Scale_C140(vu0Scale_C140(hit.normal, 1.100000023841858f), d);
+    func_00106538(RIDER, &push);
+    cRider_updateOrientationImplicit(RIDER);
+    t4Vector delta = vu0Sub_C140(*(t4Vector*)(self + 0x30), RV(0x110));
+    *(t4Vector*)(self + 0x30) = RV(0x110);
+    if (2.0f < vu0Length_C140(delta)) {
+        *(float*)(self + 0x40) = 0.0f;
+    } else {
+        *(float*)(self + 0x40) += 0.01666666753590107f;
+        if (0.5f < *(float*)(self + 0x40)) {
+            // 40 km/h in cm/s. speed stays in $f2 across both arms in the target; a literal is
+            // reloaded in each arm (also when passed through an inline parameter).
+            float speed = 1111.111083984375f;
+            t4Vector front = RV(0x1B0);
+            float fd = vu0Dot_C140(front, hit.normal);
+            if (fd < -0.9990000128746033f) {
+                RV(0x1E0) = vu0Scale_C140(front, speed);
+            } else {
+                t4Vector d = vu0Sub_C140(front, vu0Scale_C140(hit.normal, fd));
+                RV(0x1E0) = vu0Scale_C140(vu0Normalize_C140(d), speed);
+            }
+        }
+    }
+    float dot2 = vu0Dot_C140(vu0Scale_C140(hit.normal, -1.0f), RV(0x1E0));
+    if (dot2 < 0.0f)
+        { func_0032F708(&sph, 2); return; }
+    t4Vector n = vu0Normalize_C140(RV(0x1E0));
+    float k = dot2 * 0.5f < 27.77777862548828f ? 27.77777862548828f : dot2 * 0.5f;
+    vu0AddEq_C140(RV(0x1E0), vu0Scale_C140(hit.normal, dot2 + k));
+    sInfo_C140 info;
+    info.pos = hit.pos;
+    info.dir = n;
+    info.normal = hit.normal;
+    info.depth = k;
+    func_00105D98(RIDER, &info, hit.m4C);
+    func_0032F708(&sph, 2);
+}
+#undef RV
+#undef RIDER
+#endif
 
 //100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_0013C5A0);
