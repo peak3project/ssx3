@@ -2285,7 +2285,148 @@ extern "C" void func_002E39D8(sWkCol39D8* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("visualfx/boardwakefx", func_002E3AF8);
+#ifdef SKIP_ASM
+extern char* D_004A28A8_3AF8 __asm__("D_004A28A8");
+extern int D_00534B30_3AF8[] __asm__("D_00534B30");
+extern signed char D_00535C12[];
+extern "C" void* cBE_getBE();
+void* cBE_getInterface_3AF8(void* be, int kind) __asm__("cBE_getInterface__Fv");
+
+struct sV4c_3AF8 : t4Vector {
+    sV4c_3AF8(float ax, float ay, float az, float aw) { x = ax; y = ay; z = az; w = aw; }
+};
+
+struct sCol_3AF8 {
+    float x, y, z, w;
+};
+
+struct sVtx_3AF8 {
+    float s, t, q, pad;
+    int c[4];
+    t4Vector pos;
+    sVtx_3AF8() {}
+};
+
+struct sGfx_3AF8 {
+    char pad[0xE84];
+    sGs_DAB8* stateTop;
+    char padE88[0xFFC - 0xE88];
+    int fFFC;
+    int GetFFC() { return fFFC; }
+    void PushState() { stateTop[1] = stateTop[0]; stateTop++; }
+};
+
+struct sPlayerIndicator_3AF8 {
+    char* rider;        // 0x0
+    float phase;        // 0x4
+    float a[4];         // 0x8
+    float b[4];         // 0x18
+    sCol_3AF8 out;      // 0x28
+};
+
+struct sVtR_3AF8 { short delta; short index; float* (*fn)(void*); };
+struct sVt71_3AF8 { short delta; short index; void (*fn)(void*, int, sVtx_3AF8*, int); };
+struct sVtB_3AF8 { short delta; short index; int (*fn)(void*); };
+
+// Fills one strip vertex (texture s/t, colour scaled to 0..255 with alpha to 0..128, position). A macro: the
+// vertex stores are frame-relative even for 1.0f, which an inline taking the vertex pointer does not give.
+#define SETVERT_3AF8(V, S, T, COL, POS)              \
+    {                                                    \
+        t4Vector pos_(POS);                              \
+        (V).c[0] = (int)((COL).y * 255.0f);              \
+        (V).c[1] = (int)((COL).z * 255.0f);              \
+        (V).c[2] = (int)((COL).w * 255.0f);              \
+        (V).c[3] = (int)((COL).x * 128.0f);              \
+        (V).q = 1.0f;                                    \
+        (V).pos = pos_;                                  \
+        (V).s = (S);                                     \
+        (V).t = (T);                                     \
+    }
+
+static inline t4Vector BonePos_3AF8(char* o, int off)
+{
+    return ((t4Vector*)(*(char**)(*(char**)(o + 0x780) + 0x30) + (*(int*)(o + off) << 6)))[3];
+}
+
+static inline int netGame_3AF8(void* iface) { return D_00534B30_3AF8[0]; }
+static inline int modeIs4or5_3AF8(void* iface) { return (unsigned int)(D_00535C12[0] - 4) < 2; }
+
+// Player indicator (visualfx/playerindicatorfx.cpp in the prototype): a camera-facing vertical strip above the
+// rider, drawn only when the indicator applies to the current game mode.
+extern "C" void func_002E3AF8(sPlayerIndicator_3AF8* self)
+{
+    int ok = 0;
+    if (*(int*)(*(char**)(*(char**)(D_004A28A8_3AF8 + 0x84) + 0xC) + 0x7C) >= 2) {
+        char* o = self->rider + 0x6C0;
+        sVtB_3AF8* vt = *(sVtB_3AF8**)o;
+        if (vt[8].fn(o + vt[8].delta) != 0) {
+            char* x = *(char**)(*(char**)(D_004A28A8_3AF8 + 0x84) + 0x84);
+            if (*(unsigned int*)(x + 0x10) >= 2) {
+                ok = *(int*)(x + 0x14) != *(int*)(self->rider + 0x870);
+            }
+        }
+        if (netGame_3AF8(cBE_getInterface_3AF8(*(void**)(D_004A28A8_3AF8 + 0x78), 7)) != 0) {
+            ok = *(int*)(self->rider + 0x87C) == 0;
+        }
+    } else {
+        char* o = self->rider + 0x6C0;
+        sVtB_3AF8* vt = *(sVtB_3AF8**)o;
+        if (vt[8].fn(o + vt[8].delta) == 0) {
+            if (modeIs4or5_3AF8(cBE_getInterface_3AF8(cBE_getBE(), 0))) {
+                int st = *(int*)(*(char**)(*(char**)(D_004A28A8_3AF8 + 0x84) + 0x78) + 0x1BC);
+                if (st >= 14 && st <= 16) ok = 1;
+            }
+        }
+    }
+    if (*(int*)(self->rider + 0xAC4) != 0) {
+        ok = 0;
+    }
+    if (ok == 0) {
+        return;
+    }
+    ((sGfx_3AF8*)D_004A289C)->PushState();
+    *((sGfx_3AF8*)D_004A289C)->stateTop = D_00501420_DAB8;
+    ((sGfx_3AF8*)D_004A289C)->stateTop->SetF22(1);
+    ((sGfx_3AF8*)D_004A289C)->stateTop->f4_2 = 7;
+    ((sGfx_3AF8*)D_004A289C)->stateTop->f4_0 = 2;
+    ((sGfx_3AF8*)D_004A289C)->stateTop->f8_10 = 0;
+    ((sGfx_3AF8*)D_004A289C)->stateTop->f8_5 = 7;
+    *(short*)(*(char**)(D_004A289C + 0xE84) + 0x10) = ((sGfx_3AF8*)D_004A289C)->GetFFC();
+    char* gfx = D_004A289C;
+    sVtR_3AF8* vtm = *(sVtR_3AF8**)(gfx + 0x10D8);
+    float* m = vtm[35].fn(gfx + vtm[35].delta);
+    sV4c_3AF8 right(m[0], m[4], m[8], 0.0f);
+    sV4c_3AF8 up(m[1], m[5], m[9], 0.0f);
+    char* r = self->rider;
+    const t4Vector& p = BonePos_3AF8(r, 0x8A8);
+    t4Vector p1 = vu0Add(p, vu0Scale(up, 20260.0f));
+    t4Vector p2 = vu0Add(p, vu0Scale(up, 20130.0f));
+    t4Vector p3 = vu0Add(p, vu0Scale(up, 130.0f));
+    t4Vector off = vu0Scale(right, 85.0f);
+    sCol_3AF8 c;
+    c.x = 0.0f;
+    c.y = self->out.y;
+    c.z = self->out.z;
+    c.w = self->out.w;
+    sVtx_3AF8 v[8];
+    SETVERT_3AF8(v[0], 0.0f, 1.0f, c, vu0Sub(p, off));
+    SETVERT_3AF8(v[1], 1.0f, 1.0f, c, vu0Add(p, off));
+    SETVERT_3AF8(v[2], 0.0f, 0.0f, self->out, vu0Sub(p3, off));
+    SETVERT_3AF8(v[3], 1.0f, 0.0f, self->out, vu0Add(p3, off));
+    SETVERT_3AF8(v[4], 0.0f, 1.0f, self->out, vu0Sub(p2, off));
+    SETVERT_3AF8(v[5], 1.0f, 1.0f, self->out, vu0Add(p2, off));
+    SETVERT_3AF8(v[6], 0.0f, 0.0f, c, vu0Sub(p1, off));
+    SETVERT_3AF8(v[7], 1.0f, 0.0f, c, vu0Add(p1, off));
+    {
+        char* ctx = D_004A289C;
+        sVt71_3AF8* vt = *(sVt71_3AF8**)(ctx + 0x10D8);
+        vt[71].fn(ctx + vt[71].delta, 8, v, 0);
+    }
+    ((sGfx_3AF8*)D_004A289C)->stateTop--;
+}
+#endif
 
 //100%
 INCLUDE_ASM("visualfx/boardwakefx", func_002E4228);
