@@ -687,7 +687,145 @@ extern "C" void func_002464E8(void* self, char* obj)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/festateloadhint", func_00246CF8);
+#ifdef SKIP_ASM
+extern "C" signed char func_00148410(void* self, int rider);
+extern "C" signed char func_001484E0(void* self, int rider);
+extern "C" signed char func_001485B0(void* self, int rider);
+extern "C" signed char func_00148680(void* self, int rider);
+extern "C" signed char func_00148750(void* self, int rider);
+extern "C" signed char func_00148820(void* self, int rider);
+extern "C" signed char func_001488F0(void* self, int rider);
+extern "C" void func_0039C428(void* self, int pos);
+extern void* D_004A2EB8;
+extern char D_004A2C10[];
+extern char D_004A2C18[];
+extern char D_004A2C20[];
+extern char D_004A2C28[];
+extern char D_0047BC98[];
+extern char D_0047BCA8[];
+extern char D_0047BCB8[];
+// The network game state (dirtysock/tagsunk sNetState); the unit declares D_00534B30 as int[] below.
+struct sNetState_6CF8 {
+    int active;                     // 0x000
+    int f4;                         // 0x004
+    char pad_0x008[0x4A8 - 0x8];
+    unsigned char stats[7];         // 0x4A8 (D_00534FD8)
+};
+extern sNetState_6CF8 D_00534B30_6CF8 __asm__("D_00534B30");
+extern unsigned char D_00534FD8[];
+// Inline copy of the BE stat-block getter (func_0015C600).
+static inline unsigned char* GetStats_6CF8() { return D_00534FD8; }
+struct sLoadInfo_6CF8 {
+    char pad0[0x10];
+    int image[2];                   // 0x10: per-player image
+};
+// PORT: the widget name templates are splat-named literals; copied from the symbols as char-array structs.
+struct sName4_6CF8 { char c[4]; };
+struct sName2_6CF8 { char c[2]; };
+struct sName5_6CF8 { char c[5]; };
+
+extern "C" void func_00246CF8(void* self, char player)
+{
+    cBE_getInterface_Fv(cBE_getBE(), 0);
+    if (D_00535C11[0] == 2) {
+        sName4_6CF8 statName = *(sName4_6CF8*)D_004A2C10;
+        sName2_6CF8 picName = *(sName2_6CF8*)D_004A2C18;
+        sName5_6CF8 barName = *(sName5_6CF8*)D_004A2C20;
+        int stats[12];                  // 7 used; the frame has room for 12 (buf sits at sp+0x60)
+        char buf[0x20];
+        unsigned short text[100];
+        picName.c[0] = player + '0';
+        statName.c[0] = player + '1';
+        void* iface1 = cBE_getInterface_Fv(cBE_getBE(), 1);
+        int idx = func_00146E98(iface1, player != 0);
+        void* iface3 = cBE_getInterface_Fv(cBE_getBE(), 3);
+        int rank = func_00148950(iface3, func_00146E98(iface1, player != 0));
+        if (D_005308B8[func_00146E98(iface1, player != 0)].b1) {
+            rank = 1;
+        }
+        cBE_getInterface_Fv(*(void**)(D_004A28A8 + 0x78), 7);
+        if (D_004A2EB8 != 0 && (player == 1 || D_00534B30_6CF8.f4 != 0)) {
+            if (D_00534B30_6CF8.f4 != 0) {
+                rank = 8;
+                for (int i = 0; i < 7; i++) {
+                    stats[i] = 40;
+                }
+            } else if (D_005308B8[idx].b1) {
+                for (int i = 0; i < 7; i++) {
+                    stats[i] = 5;
+                }
+            } else {
+                int sum = 0;
+                for (int i = 0; i < 7; i++) {
+                    sum += D_00534B30_6CF8.stats[i];
+                }
+                rank = sum / 35;
+                unsigned char* s = GetStats_6CF8();
+                for (int i = 0; i < 7; i++) {
+                    stats[i] = s[i];
+                }
+            }
+        } else {
+            if (D_005308B8[idx].b1) {
+                for (int i = 0; i < 7; i++) {
+                    stats[i] = 5;
+                }
+            } else {
+                stats[0] = func_001484E0(iface3, idx);
+                stats[1] = func_00148680(iface3, idx);
+                stats[2] = func_00148410(iface3, idx);
+                stats[3] = func_00148750(iface3, idx);
+                stats[4] = func_001488F0(iface3, idx);
+                stats[5] = func_00148820(iface3, idx);
+                stats[6] = func_001485B0(iface3, idx);
+            }
+        }
+        // fmt stays in $18 across both GetHashValue32/getObjectByHashName calls: the target computes
+        // the full address before the player test (a literal is rematerialised at the sprintf).
+        char* fmt = D_004A2C28;
+        void* obj;
+        if (player == 0) {
+            obj = cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_0047BC98));
+        } else {
+            obj = cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_0047BCA8));
+        }
+        sprintf(buf, fmt, rank);
+        if (obj != 0) {
+            cUIText_setAsciiString((cUIText*)obj, buf);
+        }
+        for (int i = 0; i < 7; i++) {
+            statName.c[2] = i + '0';
+            char* label = (char*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(statName.c));
+            barName.c[0] = player + '0';
+            barName.c[1] = i + '0';
+            char* bar = (char*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(barName.c));
+            if (label != 0 && bar != 0) {
+                int v = stats[i];
+                int level = v / 5;
+                char* o = *(char**)(D_004A28A8 + 0x8C);
+                sVEntry<void*(void*, int)>* vt = *(sVEntry<void*(void*, int)>**)(o + 4);
+                func_002C26D0(text, (unsigned short*)vt[4].fn(o + vt[4].delta, GetHashValue32(D_0047BCB8)), level);
+                sVEntry<void(void*, int)>* vt2 = *(sVEntry<void(void*, int)>**)(label + 8);
+                vt2[9].fn(label + vt2[9].delta, 1);
+                func_003A0E90(label, (char*)text);
+                *(int*)(bar + 0x80) = 0x37;
+                func_0039C428(bar, v);
+            }
+        }
+        char* pic = (char*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(picName.c));
+        sLoadInfo_6CF8* p = *(sLoadInfo_6CF8**)((char*)self + 0x48);
+        if (p != 0 && pic != 0) {
+            int q = p->image[player];
+            if (q != 0) {
+                *(int*)(pic + 0x78) = q;
+                *(int*)(pic + 0x7C) = 0;
+            }
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/festateloadhint", cFELoadState_InitwidgetMultiP);
