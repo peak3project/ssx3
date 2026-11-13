@@ -436,7 +436,152 @@ extern "C" void func_0034B9B0(sFlagSetElem* e)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/flagset", func_0034BCA0);
+#ifdef SKIP_ASM
+extern "C" void* func_002D1CB0();
+extern float D_00504FB8[];
+
+// A flag-grid vector: three floats, element access by index.
+struct sFnVec3 {
+    float x, y, z;
+    sFnVec3() {}
+    sFnVec3(float ax, float ay, float az) : x(ax), y(ay), z(az) {}
+    float& operator[](int i) { return (&x)[i]; }
+    sFnVec3 operator+(const sFnVec3& o) const { return sFnVec3(x + o.x, y + o.y, z + o.z); }
+    sFnVec3& operator+=(const sFnVec3& o)
+    {
+        (*this)[0] += o.x;
+        (*this)[1] += o.y;
+        (*this)[2] += o.z;
+        return *this;
+    }
+};
+
+// The flag element as func_0034BCA0 uses it: wave parameters and the rest-pose vertex grid.
+struct sFlagElem_BCA0 {
+    union {
+        unsigned short both;        // 0x0: the two style bytes as one value
+        struct {
+            signed char sym;        // 0x0
+            signed char mode;       // 0x1
+        } b;
+    } style;
+    signed char pinned;             // 0x2: the first row stays at rest
+    char pad3;
+    float speed[4];                 // 0x4
+    float amp[4];                   // 0x14
+    float freq[4];                  // 0x24
+    sFsVec3 calm;                   // 0x34
+    sFsVec3 gust;                   // 0x40
+    float blend;                    // 0x4C
+    char pad50[0x14];
+    int cols;                       // 0x64
+    int rows;                       // 0x68
+    float colScale;                 // 0x6C
+    float rowScale;                 // 0x70
+    sFnVec3* verts;                 // 0x74
+    float phase[4];                 // 0x78
+};
+
+// Sine table D_00504FB8: 512 entries per turn, cosine = sine + 0x80.
+extern "C" void func_0034BCA0(void* p, void* vp)
+{
+    sFlagElem_BCA0* self = (sFlagElem_BCA0*)p;
+    sFnVec3* out = (sFnVec3*)vp;
+    bool mirror = self->style.b.sym && self->style.b.mode;
+    int loose = self->style.both;
+    char* wind = (char*)func_002D1CB0();
+    loose = !loose;
+    float k = self->blend;
+    float t = k + *(float*)(wind + 0x10) * (1.0f - k);
+    float ang[4];
+    float amp[4];
+    int i;
+    for (i = 0; i < 4; i++) {
+        ang[i] = self->phase[i] * -6.2831855f;
+        amp[i] = self->amp[i] * t;
+    }
+
+    // Per-column displacement from the first two waves and the wind.
+    sFnVec3 disp[10];
+    float fc = 0.0f;
+    float s0 = 0.0f;
+    float s1 = 0.0f;
+    for (i = 0; i < self->cols; i++) {
+        float w = fc / self->colScale;
+        float u = w;
+        int idx = i;
+        if (loose) {
+            w = 1.0f;
+        } else if (mirror) {
+            if (0.5f < u)
+                w = 1.0f - u;
+        } else if (self->style.b.mode == 1) {
+            idx = self->cols - i - 1;
+        }
+        int n = (int)((ang[0] + u * 6.2831855f * self->freq[0]) * 81.4873275756836f) & 0x1FF;
+        float sn = D_00504FB8[n];
+        float cs = D_00504FB8[n + 0x80];
+        if (!mirror)
+            s0 += amp[0] * w * cs;
+        disp[idx] = sFnVec3(amp[0] * w * sn, s0, 0.0f);
+        n = (int)((ang[1] + u * 6.2831855f * self->freq[1]) * 81.4873275756836f) & 0x1FF;
+        sn = D_00504FB8[n];
+        cs = D_00504FB8[n + 0x80];
+        if (!mirror)
+            s1 += amp[1] * w * cs;
+        disp[idx] += sFnVec3(amp[1] * w * sn, s1, 0.0f);
+        sFnVec3 wg(self->gust.x * w * t, self->gust.y * w * t, self->gust.z * w * t);
+        sFnVec3 wc(self->calm.x * w * (1.0f - t), self->calm.y * w * (1.0f - t), self->calm.z * w * (1.0f - t));
+        disp[idx] += wg + wc;
+        fc += 1.0f;
+    }
+
+    // Rest pose plus column displacement plus the two diagonal waves.
+    int idx = 0;
+    float fr = 0.0f;
+    for (int r = 0; r < self->rows; r++) {
+        float fc = 0.0f;
+        for (int c = 0; c < self->cols; c++, fc += 1.0f) {
+            float w = fc / self->colScale;
+            float v = fr / self->rowScale;
+            float u = w;
+            if (mirror) {
+                if (0.5f < u)
+                    w = 1.0f - u;
+            } else if (self->style.b.mode == 1) {
+                u = 1.0f - u;
+                w = u;
+            } else if (loose) {
+                w = 1.0f;
+            }
+            if (self->pinned && v == 0.0f) {
+                out[idx] = self->verts[idx];
+            } else {
+                out[idx] = self->verts[idx] + disp[c];
+                if (0.0f < u && 0.01f < amp[2]) {
+                    int n = (int)((ang[2] + (u + v) * 0.5f * (self->freq[2] * 6.2831855f)) * 81.4873275756836f) & 0x1FF;
+                    float sn = D_00504FB8[n];
+                    float cs = D_00504FB8[n + 0x80];
+                    float fy = (w + v) * 0.5f;
+                    out[idx] += sFnVec3(amp[2] * w * sn, amp[2] * fy * cs, amp[2] * v * sn);
+                }
+                if (0.0f < u && 0.01f < amp[3]) {
+                    int n = (int)((ang[3] + (u + v) * 0.5f * (self->freq[3] * 6.2831855f)) * 81.4873275756836f) & 0x1FF;
+                    float sn = D_00504FB8[n];
+                    float cs = D_00504FB8[n + 0x80];
+                    float fy = (w + v) * 0.5f;
+                    float fz = 1.0f - v;
+                    out[idx] += sFnVec3(amp[3] * w * sn, amp[3] * fy * cs, amp[3] * fz * sn);
+                }
+                idx++;
+            }
+        }
+        fr += 1.0f;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/flagset", func_0034C2E0);
