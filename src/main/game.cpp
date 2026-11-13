@@ -283,7 +283,199 @@ extern "C" void cGame_renderLightHalos(void* self, void* world, int a2)
 }
 #endif
 
+//100%
 INCLUDE_ASM("main/game", func_0022C830);
+#ifdef SKIP_ASM
+struct sV2_C830 {
+    float x, y;
+    sV2_C830() {}
+    sV2_C830(const float& ax, const float& ay) : x(ax), y(ay) {}
+};
+struct sV3_C830 {
+    float x, y, z;
+    sV3_C830(const float& ax, const float& ay, const float& az) : x(ax), y(ay), z(az) {}
+};
+struct sVec4_C830 {
+    float x, y, z, w;
+    sVec4_C830() {}
+    sVec4_C830(const float& ax, const float& ay, const float& az, const float& aw) : x(ax), y(ay), z(az), w(aw) {}
+};
+
+struct sGs_C830 {
+    int w0;
+    int w4;
+    int w8;
+    int wC;
+    unsigned int f10 : 16;
+    unsigned int f12 : 16;
+};
+
+class cGfx_C830 {
+public:
+    char pad0[0x24];
+    int cur;
+    char pad28[0xE84 - 0x28];
+    sGs_C830* stateTop;
+    char padE88[0xF50 - 0xE88];
+    int layer[(0x10D8 - 0xF50) / 4];
+    int GetLayer() { return layer[cur]; }
+    virtual void v0(); virtual void v1(); virtual void v2(); virtual void v3();
+    virtual void v4(); virtual void v5(); virtual void v6(); virtual void v7();
+    virtual void v8();
+    virtual unsigned int GetWidth();
+    virtual unsigned int GetHeight();
+    virtual void v11(); virtual void v12(); virtual void v13();
+    virtual void v14(const sV3_C830&);
+    virtual void v15(); virtual void v16(); virtual void v17(); virtual void v18();
+    virtual void v19();
+    virtual void BeginScene();
+    virtual void EndScene();
+    virtual void v22(float, float, float, float, int);
+    virtual void v23(void*, int);
+    virtual void v24(float, float, float);
+    virtual void SetViewport(float, float, float, float, int, int, float, float);
+    virtual void v26(); virtual void v27(); virtual void v28(); virtual void v29();
+    virtual void Begin2D();
+    virtual void End2D();
+    virtual void v32();
+    virtual void SetTexture(void*);
+};
+
+extern cGfx_C830* D_004A289C_C830 __asm__("D_004A289C");
+
+static inline void SetBits_C830(int* p, int mask, int bits) { *p = (*p & ~mask) | bits; }
+
+static inline void Set1_C830(cGfx_C830* g, int mask, int shift, int v)
+{
+    g->stateTop->w4 = (g->stateTop->w4 & ~mask) | ((v << shift) & mask);
+}
+
+static inline void Set2_C830(cGfx_C830* g, int mask, int shift, int v)
+{
+    g->stateTop->w8 = (g->stateTop->w8 & ~mask) | ((v << shift) & mask);
+}
+
+struct sVE_C830 {
+    short delta;
+    short index;
+    void (*fn)(void*, float, float, float, float, int);
+};
+
+struct sCam_C830 {
+    float x, y, z;
+    char padC[0x40 - 0xC];
+    char tex[1];
+};
+
+struct sView_C830 {
+    float x, y, w, h;
+};
+
+struct sViews_C830 {
+    int f0;
+    sCam_C830* cams[3];
+    unsigned int count;
+    int cur;
+    sView_C830 views[1];
+};
+
+struct sFont_C830 {
+    char pad0[0x28];
+    sV2_C830 scale;     // 0x28
+    float f30;          // 0x30
+    float f34;          // 0x34
+    float f38;          // 0x38
+    float f3C;          // 0x3C
+    sVec4_C830 color;   // 0x40
+    void SetScale(float sx, float sy) { f38 = f30 * sx; f3C = f34 * sy; }
+};
+
+struct sGame_C830 {
+    char pad0[0x24];
+    sFont_C830* font;       // 0x24
+    char pad28[0x48 - 0x28];
+    void* f48;              // 0x48
+    char pad4C[0x84 - 0x4C];
+    sViews_C830* views;     // 0x84
+    char pad88[0x94 - 0x88];
+    void* hudTimer;         // 0x94
+    char pad98[0xA4 - 0x98];
+    void* fA4;              // 0xA4
+    char padA8[0xAC - 0xA8];
+    int frames;             // 0xAC
+};
+
+extern char D_004A5988[4];
+extern void* D_004A3500;
+extern void* D_004A52D4;
+extern void* D_004A28A4;
+extern char D_004FF1A0[];
+extern int D_004A4324;
+extern "C" void func_003550A0(void* self, int index);
+void func_002789C0(void* p);
+extern "C" void func_00397DF8(void* p);
+extern "C" void func_001F31E0(void* p);
+extern "C" int func_002CC098(void* p);
+extern "C" void func_002CC350(void* p);
+extern "C" void func_00285BF8(void* self, int a, float dt);
+extern "C" void func_002B5D78(void* p);
+
+extern "C" void func_0022C830(sGame_C830* self)
+{
+    unsigned int i = 0;
+    if (self->views->count != 0) {
+    do {
+        self->views->cur = i;
+        sCam_C830* cam = self->views->cams[self->views->cur];
+        D_004A289C_C830->v23(&self->views->views[i], 1);
+        D_004A289C_C830->v24(cam->x, cam->y, cam->z);
+        D_004A289C_C830->SetTexture(cam->tex);
+        *(short*)((char*)D_004A289C_C830->stateTop + 0x12) = D_004A289C_C830->GetLayer();
+        cGfx_C830* g = D_004A289C_C830;
+        Set1_C830(g, 0xF80, 7, 7);
+        SetBits_C830(&g->stateTop->w0, 0x30, 0x30);
+        Set1_C830(g, 0x1800000, 23, 1);
+        SetBits_C830(&g->stateTop->w4, 0x300000, 0x300000);
+        Set1_C830(g, 0xFF000, 12, 0xD);
+        Set2_C830(g, 0x3E0, 5, 4);
+        func_003550A0(D_004A5988, 3);
+        i++;
+    } while (i < self->views->count);
+    }
+    {
+        sVE_C830* vt = *(sVE_C830**)((char*)D_004A289C_C830 + 0x10D8);
+        char* thisp = (char*)D_004A289C_C830 + vt[23].delta;
+        void (**pfn)(void*, float, float, float, float, int) = &vt[23].fn;
+        (*pfn)(thisp, 0.0f, 0.0f, (float)D_004A289C_C830->GetWidth(), (float)D_004A289C_C830->GetHeight(), 1);
+    }
+    D_004A289C_C830->SetViewport(0.0f, 0.0f, 640.0f, 480.0f, 0, 0, 0.0f, 1.0f);
+    D_004A289C_C830->SetTexture(D_004FF1A0);
+    cGfx_C830* g = D_004A289C_C830;
+    Set2_C830(g, 0x3E0, 5, 0x18);
+    Set1_C830(g, 0x7C, 2, 5);
+    self->font->SetScale(0.8f, 0.8f);
+    self->font->scale = sV2_C830(2.0f, 2.0f);
+    self->font->color = sVec4_C830(1.0f, 0.8f, 0.8f, 0.0f);
+    func_002789C0(D_004A28A4);
+    func_00397DF8(self->f48);
+    func_001F31E0(self->hudTimer);
+    if (func_002CC098(self->fA4) != 0) {
+        func_002CC350(self->fA4);
+        self->font->scale = sV2_C830(2.0f, 2.0f);
+        self->font->color = sVec4_C830(1.0f, 0.8f, 0.8f, 0.0f);
+    }
+    D_004A289C_C830->v14(sV3_C830(0.0f, 0.0f, 0.0f));
+    // Storing through a pointer keeps the store ahead of the reload of D_004A289C.
+    int* p = &D_004A4324;
+    int saved = *p;
+    *p = 0;
+    D_004A289C_C830->v19();
+    *p = saved;
+    func_00285BF8(D_004A3500, 1, (float)self->frames * (1.0f / 60.0f));
+    func_002B5D78(D_004A52D4);
+    self->frames = 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("main/game", func_0022CCE8);
