@@ -55,7 +55,186 @@ extern "C" void cOVState_REPLAY_onWidgetCreate(void* self, cUIThing* w)
 
 INCLUDE_ASM("fe/ovstatereplay", func_0020DF10);
 
+//100%
 INCLUDE_ASM("fe/ovstatereplay", func_0020DF38);
+#ifdef SKIP_ASM
+// g++ 2.95 vtable slot: this-pointer adjustment, index, function.
+template <class F> struct sVEntry_DF38 {
+    short delta;
+    short index;
+    F* fn;
+};
+
+struct sSnd_DF38 {
+    sVEntry_DF38<void(void*, int)>* vt;
+};
+
+struct sPadEvent_DF38 {
+    char pad_0x0[0x4];
+    unsigned char port;                     // 0x4
+    char pad_0x5[0x3];
+    sVEntry_DF38<int(void*)>* vt;           // 0x8
+};
+
+struct sOwner_DF38 {
+    char pad_0x0[0x14];
+    sSnd_DF38* snd;                         // 0x14
+    char list[1];                           // 0x18
+};
+
+struct sReplay_DF38 {
+    char pad_0x0[0x10];
+    sOwner_DF38* owner;                     // 0x10
+    char pad_0x14[0x2C];
+    void* screen;                           // 0x40
+    char pad_0x44[0x58];
+    int paused;                             // 0x9C
+    int field_0xA0;                                // 0xA0
+    int pos;                                // 0xA4
+    int speed;                              // 0xA8
+    int start;                              // 0xAC
+    int end;                                // 0xB0
+    int field_0xB4;                             // 0xB4
+};
+
+struct cUIScreen;
+int func_00320C48(void* pad, int button);
+unsigned short cUIScreen_getFrameByLabel(cUIScreen* self, int label);
+extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag);
+extern "C" void cUIState_showObjSafe(void* self, char* name);
+extern "C" void cUIState_hideObjSafe(void* self, char* name);
+extern "C" void func_0039F190(void* list, int a1);
+extern "C" void func_0026F980(void* replay);
+extern "C" void func_002706B8(void* replay);
+extern "C" void cGame_exit(void* game, int a);
+extern "C" void func_0020AB50(int state);
+extern "C" int func_0026FB88(void* replay, int a1);
+extern sSnd_DF38 D_004A5A58;
+extern int D_004A2A50;
+extern int D_004A2A54;
+extern int D_005366E8[];
+extern int D_004428F0[];
+extern int D_004428F8[];
+extern char D_00471BE0[];
+extern char D_0046E050[];
+extern char D_004A2720[];
+extern char D_00471BC0[];
+extern char D_00471BD0[];
+
+static inline char* game_DF38()
+{
+    return *(char**)((char*)D_004A28A8 + 0x84);
+}
+
+static inline char* replay_DF38()
+{
+    return *(char**)(game_DF38() + 0x28);
+}
+
+struct sApp_DF38 {
+    char pad_0x0[0x84];
+    char* game;                             // 0x84
+    char pad_0x88[0x28];
+    void* pads[1];                          // 0xB0
+};
+
+static inline void* pad_DF38(int port)
+{
+    return ((sApp_DF38*)D_004A28A8)->pads[port];
+}
+
+static inline void play_DF38(sSnd_DF38* snd, int id)
+{
+    snd->vt[2].fn((char*)snd + snd->vt[2].delta, id);
+}
+
+extern "C" int func_0020DF38(sReplay_DF38* self, sPadEvent_DF38* ev)
+{
+    sSnd_DF38* snd = &D_004A5A58;
+    if (self->owner->snd != 0)
+        snd = self->owner->snd;
+    if (ev->port != *(unsigned int*)(replay_DF38() + 0x28))
+        return 1;
+    if (self->paused == 0 && func_00320C48(pad_DF38(ev->port), 0xCA)) {
+        if (self->pos == self->end || self->speed == 4)
+            play_DF38(snd, 2);
+        self->speed = -4;
+        return 1;
+    } else if (self->paused == 0 && func_00320C48(pad_DF38(ev->port), 0xCB)) {
+        if (self->pos == self->start || self->speed == -4)
+            play_DF38(snd, 2);
+        self->speed = 4;
+        return 1;
+    } else if (ev->vt[3].fn((char*)ev + ev->vt[3].delta) && self->paused == 0) {
+        play_DF38(snd, 6);
+        D_005366E8[++D_004A2A54] = 2;
+        D_004A2A50 = D_004428F8[0];
+        self->paused = 1;
+        char* obj = (char*)cUIScreen_getObjectByHashName(self->screen, GetHashValue32(D_00471BE0));
+        *(int*)(obj + 0x90) &= ~8;
+        return 1;
+    } else if (self->paused != 0 && ev->vt[5].fn((char*)ev + ev->vt[5].delta)) {
+        play_DF38(snd, 6);
+        char* obj = (char*)cUIScreen_getObjectByHashName(self->screen, GetHashValue32(D_00471BE0));
+        switch (*(int*)(*(char**)(obj + 0xA0) + 0x18)) {
+        case 0:
+            func_0026F980(replay_DF38());
+            func_0020AB50(0x12);
+            D_004A2A50 = D_004428F0[D_005366E8[--D_004A2A54]];
+            break;
+        case 1: {
+            func_0039F190(self->owner->list, 1);
+            unsigned short frame = cUIScreen_getFrameByLabel((cUIScreen*)self->screen, GetHashValue32(D_0046E050));
+            if (frame != 0xFFFF)
+                cUIScreen_playFrame(self->screen, frame, 1);
+            func_0026F980(replay_DF38());
+            if (self->field_0xB4 == 0)
+                func_002706B8(replay_DF38());
+            if (*(int*)(replay_DF38() + 0x608) != 0)
+                cGame_exit(game_DF38(), 0);
+            D_004A2A50 = D_004428F0[D_005366E8[--D_004A2A54]];
+            break;
+        }
+        case 2:
+            self->paused = 0;
+            D_004A2A50 = D_004428F0[D_005366E8[--D_004A2A54]];
+            break;
+        }
+        return 1;
+    } else if (self->paused != 0 && ev->vt[6].fn((char*)ev + ev->vt[6].delta)) {
+        play_DF38(snd, 3);
+        D_004A2A50 = D_004428F0[D_005366E8[--D_004A2A54]];
+        self->paused = 0;
+        char* obj = (char*)cUIScreen_getObjectByHashName(self->screen, GetHashValue32(D_00471BE0));
+        *(int*)(obj + 0x90) |= 8;
+        return 1;
+    } else if (self->paused == 0 && func_00320C48(pad_DF38(ev->port), 0xCC)) {
+        play_DF38(snd, 6);
+        self->field_0xA0 ^= 1;
+        if (self->field_0xA0 != 0) {
+            cUIState_hideObjSafe(self, D_004A2720);
+            cUIState_hideObjSafe(self, D_00471BC0);
+            cUIState_showObjSafe(self, D_00471BD0);
+        } else {
+            cUIState_showObjSafe(self, D_004A2720);
+            cUIState_showObjSafe(self, D_00471BC0);
+            cUIState_hideObjSafe(self, D_00471BD0);
+        }
+        return 1;
+    } else if (ev->vt[17].fn((char*)ev + ev->vt[17].delta)) {
+        char* obj = (char*)cUIScreen_getObjectByHashName(self->screen, GetHashValue32(D_00471BE0));
+        if (obj != 0 && self->field_0xB4 != 0 && *(unsigned char*)(obj + 0x95) == 1)
+            return 1;
+    } else if (ev->vt[18].fn((char*)ev + ev->vt[18].delta)) {
+        char* obj = (char*)cUIScreen_getObjectByHashName(self->screen, GetHashValue32(D_00471BE0));
+        if (obj != 0 && self->field_0xB4 != 0 && *(unsigned char*)(obj + 0x95) == 2)
+            return 1;
+    }
+    if (self->paused != 0)
+        return 0;
+    return func_0026FB88(replay_DF38(), 0);
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/ovstatereplay", cOVState_REPLAY_onUpdate);
