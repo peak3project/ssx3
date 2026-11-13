@@ -8543,7 +8543,153 @@ void func_003866E0(void* self, int a1, int a2)
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/particle", func_003866F0);
+#ifdef SKIP_ASM
+struct sRelItem_66F0 {
+    int a;                  // 0x0
+    int b;                  // 0x4
+};
+
+struct sRelSub_66F0 {
+    sRelItem_66F0* items;   // 0x0
+    int count;              // 0x4
+};
+
+struct sRelMat_66F0 {
+    int flags;              // 0x00
+    int tex;                // 0x04
+    short env;              // 0x08
+    short alpha;            // 0x0A
+    int count;              // 0x0C
+    sRelSub_66F0* subs;     // 0x10
+};
+
+struct sRelBone_66F0 {
+    char pad00[0x10];
+    short tex;              // 0x10
+    short off;              // 0x12
+    char pad14[0x3C];
+};
+
+struct sRelBlend_66F0 {
+    int count;              // 0x0
+    unsigned char* w;       // 0x4
+    int index;              // 0x8
+};
+
+struct sRelList_66F0 {
+    int count;              // 0x0
+    int* idx;               // 0x4
+};
+
+struct sRelHdr_66F0 {
+    char pad00[0x18];
+    int bones;              // 0x18
+    char pad1C[0x4];
+    int mats;               // 0x20
+    char pad24[0xC];
+    int lists;              // 0x30
+    int blends;             // 0x34
+    sRelBlend_66F0* pblend; // 0x38
+    sRelList_66F0* plist;   // 0x3C
+    int f40;                // 0x40
+    short nblend;           // 0x44
+    short nlist;            // 0x46
+    short nmat;             // 0x48
+    short nbone;            // 0x4A
+};
+
+struct sTexRemap_66F0 {
+    unsigned short first;   // 0x0
+    short pad;
+};
+
+extern char D_004A4398[];
+extern "C" int func_00416B18(const char* a, const char* b, int n);
+extern "C" int func_003696C8(void* gm, char* name);
+extern "C" void cGraphicsMan_AddBlendedMatrix(void* gm, sRelBlend_66F0* b);
+extern "C" int func_00369A78(sRelBlend_66F0* a, sRelBlend_66F0* b, int c, int d, int e);
+
+// Points the blend at an identical known blend, or appends it to the known list.
+static inline void ShareBlend_66F0(sRelBlend_66F0* b, sRelBlend_66F0* known, int* count)
+{
+    for (int j = 0;; j++) {
+        if (j == *count) {
+            known[j].count = b->count;
+            known[*count].w = b->w;
+            known[*count].index = *count;
+            b->index = *count;
+            (*count)++;
+            return;
+        }
+        if (func_00369A78(b, &known[j], 0, 0, 0)) {
+            b->index = j;
+            return;
+        }
+    }
+}
+
+extern "C" void func_003866F0(void* gm, sRelHdr_66F0* hdr, int base, sTexRemap_66F0* texmap, int* count, sRelBlend_66F0* known, int f40)
+{
+    sRelBone_66F0* bones = (sRelBone_66F0*)(base + hdr->bones);
+    sRelMat_66F0* mats = (sRelMat_66F0*)(base + hdr->mats);
+    hdr->pblend = (sRelBlend_66F0*)(base + hdr->blends);
+    hdr->plist = (sRelList_66F0*)(base + hdr->lists);
+    hdr->f40 = f40;
+    for (int i = 0; i < hdr->nlist; i++) {
+        hdr->plist[i].idx = (int*)(base + (int)hdr->plist[i].idx);
+    }
+    for (int i = 0; i < hdr->nmat; i++) {
+        mats[i].subs = (sRelSub_66F0*)(base + (int)mats[i].subs);
+        for (int j = 0; j < mats[i].count; j++) {
+            mats[i].subs[j].items = (sRelItem_66F0*)(base + (int)mats[i].subs[j].items);
+            for (int k = 0; k < mats[i].subs[j].count; k++) {
+                mats[i].subs[j].items[k].a = base + mats[i].subs[j].items[k].a;
+                mats[i].subs[j].items[k].b += mats[i].subs[j].items[k].a;
+            }
+        }
+        char* name = (char*)(base + mats[i].tex * 32);
+        char* ext = name + 0x10;
+        if (ext[0] != 0) {
+            mats[i].alpha = (int)(*(float*)(name + 0x14) * 128.0f);
+        } else {
+            mats[i].alpha = 0;
+        }
+        if (func_00416B18(name, D_004A4398, 4) == 0 || (name[0] == 'e' && name[1] == 'a')) {
+            mats[i].flags |= 0x8000;
+        }
+        int env = 0;
+        if (ext[0] != 0) {
+            if (ext[0] == 'e' && ext[1] == 'n' && ext[2] == 'v' && (unsigned char)(ext[3] - '0') < 10) {
+                env = ext[3] - '0';
+            }
+        }
+        mats[i].tex = func_003696C8(gm, name);
+        mats[i].env = env;
+    }
+    for (int i = 0; i < hdr->nbone; i++) {
+        if (bones[i].off >= 0) {
+            bones[i].off = texmap[bones[i].tex].first + bones[i].off;
+        }
+    }
+    for (int i = 0; i < hdr->nblend; i++) {
+        sRelBlend_66F0* b = &hdr->pblend[i];
+        b->w = (unsigned char*)(base + (int)b->w);
+        for (int j = 0; j < b->count; j++) {
+            b->w[j * 4 + 2] += *(unsigned char*)&texmap[b->w[j * 4 + 3]];
+        }
+        cGraphicsMan_AddBlendedMatrix(gm, b);
+        ShareBlend_66F0(b, known, count);
+    }
+    for (int i = 0; i < hdr->nlist; i++) {
+        sRelList_66F0* l = &hdr->plist[i];
+        for (int j = 0; j < l->count; j++) {
+            l->idx[j] = hdr->pblend[l->idx[j]].index;
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/particle", func_00386BD0);
