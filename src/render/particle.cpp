@@ -3070,7 +3070,222 @@ extern "C" void func_00376C28(sPartSys* self, float* a, float* b, float* c)
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/particle", func_00376C58);
+#ifdef SKIP_ASM
+struct sPtView6C58 {
+    float x, y, w, h;               // 0x00
+    float zNear;                    // 0x10
+    float zFar;                     // 0x14
+    float fov;                      // 0x18
+    float depth;                    // 0x1C
+    int f20;                        // 0x20
+    char pad_0x24[0x230 - 0x24];
+};
+
+struct sPtVtU6C58 {
+    short delta;
+    short index;
+    unsigned (*fn)(void*);
+};
+
+struct sPtGfx6C58 {
+    char pad_0x0[0x10D8];
+    sPtVtU6C58* vtable;             // 0x10D8
+    int curView;                    // 0x10DC
+    char pad_0x10E0[0x57C0 - 0x10E0];
+    sPtMatrix m57C0;                // 0x57C0
+    char pad_0x5800[0x5840 - 0x5800];
+    sPtQuadF q5840;                 // 0x5840
+    sPtQuadF q5850;                 // 0x5850
+    sPtMatrix m5860;                // 0x5860
+    char pad_0x58A0[0x58E0 - 0x58A0];
+    sPtQuadF q58E0;                 // 0x58E0
+    sPtQuadF q58F0;                 // 0x58F0
+    char pad_0x5900[0x8];
+    float fov;                      // 0x5908
+    float zFar;                     // 0x590C
+    float f5910;                    // 0x5910
+    char pad_0x5914[0xC];
+    sPtQuadF q5920;                 // 0x5920
+    char pad_0x5930[0x5A40 - 0x5930];
+    int mode;                       // 0x5A40
+    char pad_0x5A44[0x6AF0 - 0x5A44];
+    sPtMatrix m6AF0;                // 0x6AF0
+    char pad_0x6B30[0x40];
+    sPtQuadF q6B70;                 // 0x6B70
+    sPtQuadF q6B80;                 // 0x6B80
+    int texReady;                   // 0x6B90
+    int clampMode;                  // 0x6B94
+    float clampTop;                 // 0x6B98
+    float clampBottom;              // 0x6B9C
+    float scaleX;                   // 0x6BA0
+    float scaleY;                   // 0x6BA4
+    char pad_0x6BA8[0x6D20 - 0x6BA8];
+    sPtView6C58 views[1];           // 0x6D20
+};
+
+// PORT: the unit declares func_0031BE50 as (s, c, angle); its real parameter order is (angle, s, c).
+extern void SinCos_6C58(float angle, float* s, float* c) __asm__("func_0031BE50");
+extern "C" float func_0040D588(float x);
+extern "C" void func_00376938(void* self, float x, float y, float w, float h);
+
+// PORT: SN abs.s asm helper (PS2 FPU).
+static inline float fsAbs_6C58(float x)
+{
+    float r;
+    __asm__("abs.s %0,%1" : "=f"(r) : "f"(x));
+    return r;
+}
+
+// Scales a projection pair by the active letterbox mode's factors.
+static inline void ClampScale6C58(sPtGfx6C58* self, float& x, float& y)
+{
+    int mode = self->clampMode;
+    if (mode < 3) {
+        if (mode >= 0) {
+            x *= self->scaleX;
+            y *= self->scaleY;
+        }
+    }
+}
+
+extern "C" void func_00376C58(sPtGfx6C58* self, float fov, float zNear, float zFar)
+{
+    sPtView6C58* v = &self->views[self->curView];
+    v->f20 = 0;
+    v->zNear = zNear;
+    v->zFar = zFar;
+    v->fov = fov;
+    // PORT: int-arithmetic view address (as in func_00376C10); the typed self->views[i] reads score 94-95%.
+    char* p = (char*)self + self->curView * 0x230;
+    float x = *(float*)(p + 0x6D20);
+    float y = *(float*)(p + 0x6D24);
+    float w = *(float*)(p + 0x6D28);
+    float h = *(float*)(p + 0x6D2C);
+    float zlo, zhi, zscale;
+    if (self->mode == 0x31) {
+        zscale = 16777215.0f;
+        zlo = -8388467.5f;
+        zhi = 8388467.5f;
+    } else {
+        zscale = 65535.0f;
+        zlo = -32767.5f;
+        zhi = 32767.5f;
+    }
+    self->zFar = zFar;
+    self->fov = fov;
+    sPtVtU6C58* e = &self->vtable[11];
+    unsigned height = e->fn((char*)self + e->delta);
+    e = &self->vtable[10];
+    unsigned width = e->fn((char*)self + e->delta);
+    float aspect = (float)height * 1.3333334f / (float)width;
+    float s, c;
+    SinCos_6C58(fov, &s, &c);
+    float sx = (w * 0.5f) / (s / c);
+    float sy = sx * aspect;
+    ClampScale6C58(self, sx, sy);
+    e = &self->vtable[10];
+    float offX = 32768.0f - (float)(e->fn((char*)self + e->delta) * 8);
+    e = &self->vtable[11];
+    float offY = 32768.0f - (float)(e->fn((char*)self + e->delta) * 8);
+    float zA = (-zscale * zNear) / (zFar - zNear);
+    self->m6AF0.m[0][0] = sx * 16.0f;
+    self->m6AF0.m[1][0] = 0.0f;
+    self->m6AF0.m[2][0] = (w * 0.5f + x) * 16.0f + offX;
+    self->m6AF0.m[3][0] = 0.0f;
+    self->m6AF0.m[0][1] = 0.0f;
+    self->m6AF0.m[1][1] = -sy * 16.0f;
+    self->m6AF0.m[2][1] = (h * 0.5f + y) * 16.0f + offY;
+    self->m6AF0.m[3][1] = 0.0f;
+    self->m6AF0.m[0][2] = 0.0f;
+    self->m6AF0.m[1][2] = 0.0f;
+    self->m6AF0.m[2][2] = zA;
+    float zB = -zFar * zA + v->depth;
+    self->m6AF0.m[3][2] = zB;
+    self->m6AF0.m[0][3] = 0.0f;
+    self->m6AF0.m[1][3] = 0.0f;
+    self->m6AF0.m[2][3] = 1.0f;
+    self->m6AF0.m[3][3] = 0.0f;
+    self->q6B70.v[0] = x * 16.0f + offX;
+    self->q6B70.v[1] = y * 16.0f + offY;
+    self->q6B70.v[2] = zA * zNear + zB;
+    self->q6B80.v[0] = (x + w) * 16.0f + offX;
+    self->q6B80.v[1] = (y + h) * 16.0f + offY;
+    self->q6B80.v[2] = zA * zFar + zB;
+    self->q6B70.v[3] = 1.0f / zNear;
+    self->q6B80.v[3] = 1.0f / zFar;
+    self->texReady = 0;
+    float aspect2 = aspect * (w / h);
+    float px = 1.0f / func_0040D588(fov);
+    float py = 1.0f / func_0040D588(fov) * aspect2;
+    ClampScale6C58(self, px, py);
+    e = &self->vtable[10];
+    float sw = (float)e->fn((char*)self + e->delta);
+    float cx = (w * 0.5f - sw * 0.5f) + x;
+    e = &self->vtable[11];
+    float sh = (float)e->fn((char*)self + e->delta);
+    float cy = (h * 0.5f - sh * 0.5f) + y;
+    float zz = (zFar + zNear) / (zFar - zNear);
+    float zw = -(2.0f * zFar * zNear) / (zFar - zNear);
+    self->m5860.m[0][0] = px;
+    self->m5860.m[0][1] = 0.0f;
+    self->m5860.m[0][2] = 0.0f;
+    self->m5860.m[0][3] = 0.0f;
+    self->m5860.m[1][0] = 0.0f;
+    self->m5860.m[1][1] = py;
+    self->m5860.m[1][2] = 0.0f;
+    self->m5860.m[1][3] = 0.0f;
+    self->m5860.m[2][0] = 0.0f;
+    self->m5860.m[2][1] = 0.0f;
+    self->m5860.m[2][2] = zz;
+    self->m5860.m[2][3] = 1.0f;
+    self->m5860.m[3][0] = 0.0f;
+    self->m5860.m[3][1] = 0.0f;
+    self->m5860.m[3][2] = zw;
+    self->m5860.m[3][3] = 0.0f;
+    self->q58E0.v[0] = w * 0.5f;
+    self->q58E0.v[1] = -(h * 0.5f);
+    self->q58E0.v[2] = zlo;
+    self->q58E0.v[3] = 0.0f;
+    self->q58F0.v[0] = cx + 2047.5f;
+    self->q58F0.v[1] = cy + 2047.5f;
+    self->q58F0.v[2] = zhi + v->depth;
+    self->q58F0.v[3] = 0.0f;
+    float gw = 2048.0f - 2.0f * fsAbs_6C58(cx);
+    float gh = 2048.0f - 2.0f * fsAbs_6C58(cy);
+    self->m57C0.m[0][0] = (w / gw) * px;
+    self->m57C0.m[0][1] = 0.0f;
+    self->m57C0.m[0][2] = 0.0f;
+    self->m57C0.m[0][3] = 0.0f;
+    self->m57C0.m[1][0] = 0.0f;
+    self->m57C0.m[1][1] = (h / gh) * py;
+    self->m57C0.m[1][2] = 0.0f;
+    self->m57C0.m[1][3] = 0.0f;
+    self->m57C0.m[2][0] = 0.0f;
+    self->m57C0.m[2][1] = 0.0f;
+    self->m57C0.m[2][2] = zz;
+    self->m57C0.m[2][3] = 1.0f;
+    self->m57C0.m[3][0] = 0.0f;
+    self->m57C0.m[3][1] = 0.0f;
+    self->m57C0.m[3][2] = zw;
+    self->m57C0.m[3][3] = 0.0f;
+    self->q5840.v[0] = gw * 0.5f;
+    self->q5840.v[1] = -(gh * 0.5f);
+    self->q5840.v[2] = zlo;
+    self->q5840.v[3] = 0.0f;
+    self->q5850.v[0] = cx + 2047.5f;
+    self->q5850.v[1] = cy + 2047.5f;
+    self->q5850.v[2] = zhi + v->depth;
+    self->q5850.v[3] = 0.0f;
+    func_00376938(self, x, y, w, h);
+    self->f5910 = 40000.0f;
+    self->q5920.v[0] = 1023.0f;
+    self->q5920.v[1] = 0.0f;
+    self->q5920.v[2] = 0.0f;
+    self->q5920.v[3] = 1023.0f / 40000.0f;
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/particle", func_00377278);
