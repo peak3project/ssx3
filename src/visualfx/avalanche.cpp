@@ -944,7 +944,269 @@ extern "C" void func_002D8948(void)
 }
 #endif
 
+//100%
 INCLUDE_ASM("visualfx/avalanche", func_002D8A00);
+#ifdef SKIP_ASM
+struct sRow_8A00 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+struct sVec4_8A00 : sRow_8A00 {
+    sVec4_8A00() {}
+    sVec4_8A00(float ax, float ay, float az, float aw)
+    {
+        x = ax;
+        y = ay;
+        z = az;
+        w = aw;
+    }
+};
+
+struct sVec3_8A00 {
+    float x, y, z;
+    sVec3_8A00() {}
+    sVec3_8A00(float ax, float ay, float az) : x(ax), y(ay), z(az) {}
+    sVec3_8A00(const sVec3_8A00& o) : x(o.x), y(o.y), z(o.z) {}
+};
+
+static inline float Sqrt_8A00(float x)
+{
+    float r;
+    // PORT: sqrt.s (sqrtf without errno check)
+    __asm__("sqrt.s %0, %1" : "=f"(r) : "f"(x));
+    return r;
+}
+
+static inline sVec3_8A00 Normalize_8A00(const sVec3_8A00& a)
+{
+    float len = Sqrt_8A00(a.x * a.x + a.y * a.y + a.z * a.z);
+    if (len != 0.0f) {
+        float inv = 1.0f / len;
+        return sVec3_8A00(a.x * inv, a.y * inv, a.z * inv);
+    }
+    return a;
+}
+
+struct sMat_8A00 {
+    sRow_8A00 v[4];
+} __attribute__((aligned(16)));
+
+struct sRec_8A00 {
+    signed char dx, dy, dz;
+    unsigned char r, g, b;
+    signed char ax, ay, az;
+    unsigned char angle;
+};
+
+struct sObj_8A00 {
+    char pad[0xE0];
+    sRow_8A00 pos;              // 0xE0
+    char padF0[0xC];
+    sRec_8A00* recs;            // 0xFC
+    float count;                // 0x100
+};
+
+struct sNode_8A00 {
+    char pad[0x2E0];
+    sObj_8A00* obj;             // 0x2E0
+};
+
+struct sOut_8A00 {
+    float x, y, z, w;
+    int r;
+    int g;
+    int b;
+    int a;
+    sRow_8A00 pos;
+};
+
+struct sRS_8A00 {
+    int w0;
+    int w1;
+    int w2;
+    int w3;
+    int w4;
+};
+
+struct sVE_8A00 {
+    short delta;
+    short index;
+    void (*fn)(void*, int, void*, int);
+};
+
+struct sCtx_8A00 {
+    char pad[0xE84];
+    sRS_8A00* top;              // 0xE84
+    char pad2[0x10D8 - 0xE88];
+    sVE_8A00* vt;               // 0x10D8
+};
+
+extern sCtx_8A00* D_004A289C_8A00 __asm__("D_004A289C");
+extern int D_004A3A58;
+extern sOut_8A00 D_004D5B70_8A00[] __asm__("D_004D5B70");
+extern sMat_8A00 D_004FF1A0_8A00 __asm__("D_004FF1A0");
+extern sRow_8A00 D_004FF130_8A00 __asm__("D_004FF130");
+extern "C" void func_0031BE50(float* s, float* c, float angle);
+
+// PORT: PS2-only VU0 inline asm (matrix copy).
+static inline void CopyMat_8A00(sMat_8A00* d, const sMat_8A00* s)
+{
+    __asm__ __volatile__(
+        "lqc2      $vf1, 0x0(%1)\n"
+        "lqc2      $vf2, 0x10(%1)\n"
+        "lqc2      $vf3, 0x20(%1)\n"
+        "lqc2      $vf4, 0x30(%1)\n"
+        "sqc2      $vf1, 0x0(%0)\n"
+        "sqc2      $vf2, 0x10(%0)\n"
+        "sqc2      $vf3, 0x20(%0)\n"
+        "sqc2      $vf4, 0x30(%0)\n"
+        :
+        : "r"(d), "r"(s)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (vector add in place).
+static inline void AddTo_8A00(sRow_8A00& a, const sRow_8A00& b)
+{
+    __asm__(
+        "lqc2      $vf3, %0\n"
+        "lqc2      $vf4, %1\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "+m"(a)
+        : "m"(b)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix multiply: a = a * b).
+static inline void MulMat_8A00(sMat_8A00* a, const sMat_8A00* b)
+{
+    __asm__ __volatile__(
+        "lqc2      $vf4, 0x0(%0)\n"
+        "lqc2      $vf5, 0x10(%0)\n"
+        "lqc2      $vf6, 0x20(%0)\n"
+        "lqc2      $vf7, 0x30(%0)\n"
+        "lqc2      $vf8, 0x0(%1)\n"
+        "lqc2      $vf9, 0x10(%1)\n"
+        "lqc2      $vf10, 0x20(%1)\n"
+        "lqc2      $vf11, 0x30(%1)\n"
+        "vmulax.xyzw ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw $vf12, $vf7, $vf8w\n"
+        "vmulax.xyzw ACC, $vf4, $vf9x\n"
+        "vmadday.xyzw ACC, $vf5, $vf9y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf9z\n"
+        "vmaddw.xyzw $vf13, $vf7, $vf9w\n"
+        "vmulax.xyzw ACC, $vf4, $vf10x\n"
+        "vmadday.xyzw ACC, $vf5, $vf10y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf10z\n"
+        "vmaddw.xyzw $vf14, $vf7, $vf10w\n"
+        "vmulax.xyzw ACC, $vf4, $vf11x\n"
+        "vmadday.xyzw ACC, $vf5, $vf11y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf11z\n"
+        "vmaddw.xyzw $vf15, $vf7, $vf11w\n"
+        "sqc2      $vf12, 0x0(%0)\n"
+        "sqc2      $vf13, 0x10(%0)\n"
+        "sqc2      $vf14, 0x20(%0)\n"
+        "sqc2      $vf15, 0x30(%0)\n"
+        :
+        : "r"(a), "r"(b)
+        : "memory");
+}
+
+// matrix *= matrix through VU0. Declared to return the matrix by value but there is no return statement (g++ 2.95
+// accepts it); the ignored by-value result is the unwritten 64-byte call temp in the retail frame.
+static inline sMat_8A00 operator*=(sMat_8A00& a, const sMat_8A00& b)
+{
+    MulMat_8A00(&a, &b);
+}
+
+// Rotate m about axis by angle, keeping its translation.
+static inline void Rotate_8A00(sMat_8A00& m, const sRow_8A00& axis, float angle)
+{
+    sMat_8A00 old;
+    float s;
+    float c;
+    CopyMat_8A00(&old, &m);
+    sRow_8A00 trans = old.v[3];
+    old.v[3] = D_004FF130_8A00;
+    func_0031BE50(&s, &c, angle);
+    float t = 1.0f - c;
+    float x = axis.x;
+    float y = axis.y;
+    float z = axis.z;
+    float tx = t * x;
+    float ty = t * y;
+    float tz = t * z;
+    float sx = s * x;
+    float sy = s * y;
+    float sz = s * z;
+    m.v[3].x = 0.0f;
+    m.v[3].y = 0.0f;
+    m.v[3].z = 0.0f;
+    m.v[3].w = 1.0f;
+    m.v[3] = trans;
+    m.v[0].w = 0.0f;
+    m.v[1].w = 0.0f;
+    m.v[2].w = 0.0f;
+    m.v[0].x = tx * x + c;
+    m.v[1].x = tx * y + sz;
+    m.v[2].x = tx * z - sy;
+    m.v[0].y = ty * x - sz;
+    m.v[1].y = ty * y + c;
+    m.v[2].y = ty * z + sx;
+    m.v[0].z = tz * x + sy;
+    m.v[1].z = tz * y - sx;
+    m.v[2].z = tz * z + c;
+    m *= old;
+}
+
+static inline void PushRS_8A00(sCtx_8A00* ctx)
+{
+    ctx->top[1] = ctx->top[0];
+    ctx->top++;
+}
+
+static inline void SetBits_8A00(int& w, int mask, int shift, int v)
+{
+    w = (w & ~mask) | ((v << shift) & mask);
+}
+
+// Draws the debris particles of an avalanche node.
+extern "C" void func_002D8A00(void* nodep)
+{
+    sNode_8A00* node = (sNode_8A00*)nodep;
+    if (node->obj == 0) {
+        return;
+    }
+    sMat_8A00 m;
+    CopyMat_8A00(&m, &D_004FF1A0_8A00);
+    PushRS_8A00(D_004A289C_8A00);
+    SetBits_8A00(D_004A289C_8A00->top->w1, 0x7C, 2, 1);
+    if (D_004A3A58 != 0) {
+        int i = 0;
+        sRow_8A00 pos = node->obj->pos;
+        for (; i < (int)node->obj->count; i++) {
+            sVec4_8A00 v(node->obj->recs[i].dx * 2.0f, node->obj->recs[i].dy * 2.0f, node->obj->recs[i].dz * 2.0f, 0.0f);
+            AddTo_8A00(pos, v);
+            sVec3_8A00 n = Normalize_8A00(sVec3_8A00(node->obj->recs[i].ax * 0.007874015718698502f, node->obj->recs[i].ay * 0.007874015718698502f, node->obj->recs[i].az * 0.007874015718698502f));
+            v.x = n.x;
+            v.y = n.y;
+            v.z = n.z;
+            v.w = 0.0f;
+            Rotate_8A00(m, v, node->obj->recs[i].angle * 0.008213315159082413f);
+            m.v[3] = pos;
+            D_004D5B70_8A00[i].r = node->obj->recs[i].r;
+            D_004D5B70_8A00[i].g = node->obj->recs[i].g;
+            D_004D5B70_8A00[i].b = node->obj->recs[i].b;
+            D_004D5B70_8A00[i].pos = pos;
+        }
+        D_004A289C_8A00->vt[0x248 / 8].fn((char*)D_004A289C_8A00 + D_004A289C_8A00->vt[0x248 / 8].delta, (int)node->obj->count, D_004D5B70_8A00, 0);
+    }
+    D_004A289C_8A00->top--;
+}
+#endif
 
 //100%
 INCLUDE_ASM("visualfx/avalanche", func_002D8EA8);
