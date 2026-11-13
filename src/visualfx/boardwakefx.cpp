@@ -1347,7 +1347,100 @@ extern "C" void func_002E1598(sWakeFx1598* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("visualfx/boardwakefx", func_002E1A80);
+#ifdef SKIP_ASM
+struct sWakeFx1A80 {
+    char* obj;                  // 0x00
+    char pad4[0x24];            // 0x04
+    char* em;                   // 0x28
+    char* p2C;                  // 0x2C
+    char pad30[0x20];           // 0x30
+    t4Vector v50;               // 0x50
+    char pad60[0x30];           // 0x60
+    t4Vector col;               // 0x90
+    t4Vector pos;               // 0xA0
+    int iB0;                    // 0xB0
+    float fB4;                  // 0xB4
+    float fB8;                  // 0xB8
+    float fBC;                  // 0xBC
+    t4Vector vC0;               // 0xC0
+    char* pD0;                  // 0xD0
+    char padD4[0x58];           // 0xD4
+    float f12C;                 // 0x12C
+};
+
+// PORT: PS2-only VU0 inline asm (cross product, w = 0).
+static inline t4Vector wakeCross1A80(const t4Vector& a, const t4Vector& b)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf4, %1\n"
+        "lqc2      $vf5, %2\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vsub.w    $vf6, $vf6, $vf6\n"
+        "sqc2      $vf6, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+static inline float wakeRamp1A80(float lo, float range, float v)
+{
+    return (v - lo) / range;
+}
+
+static inline t4Vector* wakeVel1A80(sWakeFx1A80* self)
+{
+    char* sub = self->obj + 0x6C0;
+    sVEntry<t4Vector*(void*)>* vt = *(sVEntry<t4Vector*(void*)>**)sub;
+    return vt[2].fn(sub + vt[2].delta);
+}
+
+extern "C" void func_002E1A80(sWakeFx1A80* self)
+{
+    float d = fsAbs(vu0Dot(*(t4Vector*)(self->obj + 0x3B0), self->vC0));
+    d = d + d;
+    char* em = self->em + 0xE70;
+    float k = 1.0f;
+    if (d <= 1.0f)
+        k = d;
+    float ak = fsAbs(k);
+    float s = wakeRamp1A80(416.66668701171875f, 1250.0f, self->fB8);
+    float t = fsAbs(*(float*)(self->obj + 0x1F0)) + ak - 0.10000000149011612f;
+    float m = 1.0f;
+    if (s < 1.0f)
+        m = s;
+    m *= m;
+    float thr = t * m;
+    float r = wakeRand() * 0.4000000059604645f;
+    if (self->iB0 != 0 && r <= thr && *(int*)(self->pD0 + 0x50) != 0 && fsAbs(self->f12C) < 0.20000000298023224f) {
+        t4Vector pos = self->pos;
+        float spd = *(float*)(self->pD0 + 0x54);
+        float u = wakeRand() + 0.5f;
+        vu0AddEq(pos, vu0Sub(vu0Scale(*(t4Vector*)(self->obj + 0x370), u * spd),
+                             vu0Scale(vu0Scale(vu0Scale(*(t4Vector*)(self->obj + 0x1E0), 3.0f), 0.01666666753590107f), u)));
+        t4Vector side = wakeCross1A80(self->v50, *(t4Vector*)(self->obj + 0x370));
+        if (self->fB4 < 0.0f)
+            side = vu0Scale(side, -1.0f);
+        t4Vector n = *(int*)(self->obj + 0x320) != 0 ? vu0Scale(self->v50, -1.0f) : self->v50;
+        t4Vector a = vu0Scale(vu0Scale(n, -1.0f), self->fB8);
+        t4Vector b = vu0Scale(*(t4Vector*)(self->obj + 0x1E0), -1.0f);
+        t4Vector w = vu0Scale(vu0Sub(a, b), 0.30000001192092896f);
+        t4Vector* v = wakeVel1A80(self);
+        t4Vector vel = vu0Add(
+            vu0Add(vu0Add(vu0Add(vu0Scale(*v, *(float*)(self->p2C + 0x730)), vu0Scale(vu0Scale(side, self->fB8), 0.0f)),
+                          vu0Scale(*(t4Vector*)(self->obj + 0x370), *(float*)(self->p2C + 0x734))),
+                   vu0Scale(vu0Scale(*(t4Vector*)(self->obj + 0x370), *(float*)(self->p2C + 0x738)), self->fBC)),
+            w);
+        func_003717C0(em, &pos, &vel, &self->col, 1, 0.01666666753590107f);
+    } else {
+        func_003717C0(em, &self->pos, 0, 0, 0, 0.01666666753590107f);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("visualfx/boardwakefx", func_002E1F70);
