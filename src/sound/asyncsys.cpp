@@ -262,7 +262,217 @@ extern "C" void func_0028A558(void* self, int a1, const char* name, int a3, int 
 
 INCLUDE_ASM("sound/asyncsys", func_0028A728);
 
+//100%
 INCLUDE_ASM("sound/asyncsys", func_0028AAF8);
+#ifdef SKIP_ASM
+extern "C" int func_003DF980(int);
+extern "C" int ASYNCFILE_release(int handle, int* addr, int* size);
+extern "C" void func_00289DF0(void* self, int a);
+extern "C" void func_0028A298(void* self);
+extern "C" int func_003B6098(void* sema, int a1);
+extern "C" int func_003B6300(int id);
+extern "C" int func_003B6528(int id);
+extern "C" int func_003B6548(void* data, int id);
+extern "C" void func_003E6574(void* dst, void* src, int size);
+
+struct sRing_AAF8 {
+    int size;
+    int* data;
+    int head;
+    int tail;
+};
+
+struct sVE_AAF8 {
+    short delta;
+    short index;
+    void (*fn)(void*);
+};
+
+struct sVEAlloc_AAF8 {
+    short delta;
+    short index;
+    int (*fn)(void*, int id, int size, int memType);
+};
+
+struct sVEDone_AAF8 {
+    short delta;
+    short index;
+    void (*fn)(void*, int id, int handle, int status, char* name, int addr, int size);
+};
+
+// vptr at 0x1D4; slot N at vtable offset N*8
+struct sVtbl_AAF8 {
+    sVE_AAF8 v0;
+    sVE_AAF8 v1;
+    sVE_AAF8 v2;
+    sVEAlloc_AAF8 alloc;    // slot 3
+    sVE_AAF8 v4;
+    sVEDone_AAF8 done;      // slot 5
+};
+
+struct sAsync_AAF8 {
+    int handle;             // 0x0
+    int busy;               // 0x4
+    int slot;               // 0x8
+    char names[6][0x40];    // 0xC
+    char pad18C[0x18C - 0xC - 6 * 0x40];
+    sRing_AAF8 q18C;        // 0x18C
+    sRing_AAF8 q19C;        // 0x19C
+    sRing_AAF8 q1AC;        // 0x1AC
+    sRing_AAF8 q1BC;        // 0x1BC
+    void* buf;              // 0x1CC
+    int bufSize;            // 0x1D0
+    sVtbl_AAF8* vt;         // 0x1D4
+};
+
+static inline int Peek18C_AAF8(sAsync_AAF8* s)
+{
+    sRing_AAF8* q = &s->q18C;
+    if (s->q18C.head == s->q18C.tail) {
+        return -1;
+    }
+    return q->data[q->tail];
+}
+
+static inline int Peek19C_AAF8(sAsync_AAF8* s)
+{
+    sRing_AAF8* q = &s->q19C;
+    if (s->q19C.head == s->q19C.tail) {
+        return -1;
+    }
+    return q->data[q->tail];
+}
+
+static inline int Peek1AC_AAF8(sAsync_AAF8* s)
+{
+    sRing_AAF8* q = &s->q1AC;
+    if (s->q1AC.head == s->q1AC.tail) {
+        return -1;
+    }
+    return q->data[q->tail];
+}
+
+static inline int Peek1BC_AAF8(sAsync_AAF8* s)
+{
+    sRing_AAF8* q = &s->q1BC;
+    if (s->q1BC.head == s->q1BC.tail) {
+        return -1;
+    }
+    return q->data[q->tail];
+}
+
+static inline void Finish_AAF8(sAsync_AAF8* s)
+{
+    s->busy = 0;
+    if (s->q18C.head != s->q18C.tail) {
+        s->q18C.tail = s->q18C.tail + 1;
+        if (s->q18C.tail >= s->q18C.size) {
+            s->q18C.tail = 0;
+        }
+    }
+    if (s->q19C.head != s->q19C.tail) {
+        s->q19C.tail = s->q19C.tail + 1;
+        if (s->q19C.tail >= s->q19C.size) {
+            s->q19C.tail = 0;
+        }
+    }
+    if (s->q1AC.head != s->q1AC.tail) {
+        s->q1AC.tail = s->q1AC.tail + 1;
+        if (s->q1AC.tail >= s->q1AC.size) {
+            s->q1AC.tail = 0;
+        }
+    }
+    if (s->q1BC.head != s->q1BC.tail) {
+        s->q1BC.tail = s->q1BC.tail + 1;
+        if (s->q1BC.tail >= s->q1BC.size) {
+            s->q1BC.tail = 0;
+        }
+    }
+    func_0028A298(s);
+}
+
+// PORT: g++ 2.95 virtual calls (vptr at 0x1D4) written out by hand: delta + saved &pfn, args evaluated after.
+extern "C" void func_0028AAF8(void* self)
+{
+    sAsync_AAF8* s = (sAsync_AAF8*)self;
+    if (s->busy == 0) {
+        return;
+    }
+    switch (Peek1AC_AAF8(s)) {
+    case 0:
+    case 2: {
+        int r = func_003DF980(s->handle);
+        if (r == 0) {
+            return;
+        }
+        if (r > 0) {
+            if (r == 1) {
+                int addr = 0;
+                int size = 0;
+                ASYNCFILE_release(s->handle, &addr, &size);
+                if (size > 0) {
+                    if (func_003B6098(&s->handle, addr) != 7) {
+                        func_003B6300(s->handle);
+                        sVEAlloc_AAF8* e = &s->vt->alloc;
+                        int (**pf)(void*, int, int, int) = &e->fn;
+                        int mem = (*pf)((char*)s + e->delta, Peek18C_AAF8(s), size, Peek1BC_AAF8(s));
+                        func_003E6574((void*)mem, (void*)addr, size);
+                        func_003B6098(&s->handle, mem);
+                        sVEDone_AAF8* e2 = &s->vt->done;
+                        void (**pf2)(void*, int, int, int, char*, int, int) = &e2->fn;
+                        (*pf2)((char*)s + e2->delta, Peek18C_AAF8(s), s->handle, 0, s->names[Peek19C_AAF8(s)], mem, size);
+                    } else {
+                        int sz = func_003B6528(s->handle);
+                        sVEAlloc_AAF8* e = &s->vt->alloc;
+                        int (**pf)(void*, int, int, int) = &e->fn;
+                        int mem = (*pf)((char*)s + e->delta, Peek18C_AAF8(s), sz, Peek1BC_AAF8(s));
+                        func_003B6548((void*)mem, s->handle);
+                        sVEDone_AAF8* e2 = &s->vt->done;
+                        void (**pf2)(void*, int, int, int, char*, int, int) = &e2->fn;
+                        (*pf2)((char*)s + e2->delta, Peek18C_AAF8(s), s->handle, 0, s->names[Peek19C_AAF8(s)], mem, sz);
+                    }
+                } else {
+                    sVEDone_AAF8* e2 = &s->vt->done;
+                    void (**pf2)(void*, int, int, int, char*, int, int) = &e2->fn;
+                    (*pf2)((char*)s + e2->delta, Peek18C_AAF8(s), -1, 2, s->names[Peek19C_AAF8(s)], 0, 0);
+                }
+                Finish_AAF8(s);
+                return;
+            }
+        }
+        func_00289DF0(self, 0);
+        break;
+    }
+    case 1: {
+        int r = func_003DF980(s->handle);
+        if (r == 0) {
+            return;
+        }
+        if (r > 0) {
+            if (r == 1) {
+                int addr = 0;
+                int size = 0;
+                ASYNCFILE_release(s->handle, &addr, &size);
+                if (size > 0) {
+                    func_003B6098(&s->handle, addr);
+                    sVEDone_AAF8* e2 = &s->vt->done;
+                    void (**pf2)(void*, int, int, int, char*, int, int) = &e2->fn;
+                    (*pf2)((char*)s + e2->delta, Peek18C_AAF8(s), s->handle, 0, s->names[Peek19C_AAF8(s)], addr, size);
+                } else {
+                    sVEDone_AAF8* e2 = &s->vt->done;
+                    void (**pf2)(void*, int, int, int, char*, int, int) = &e2->fn;
+                    (*pf2)((char*)s + e2->delta, Peek18C_AAF8(s), -1, 2, s->names[Peek19C_AAF8(s)], addr, 0);
+                }
+                Finish_AAF8(s);
+                return;
+            }
+        }
+        func_00289DF0(self, 0);
+        break;
+    }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/asyncsys", func_0028B0F0);
