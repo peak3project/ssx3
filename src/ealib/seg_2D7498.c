@@ -850,7 +850,110 @@ void func_003D76F0(int a0, int n, ...) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003D7760);
+#ifdef SKIP_ASM
+struct L_7760 { int n; unsigned short *ids; };
+
+static __inline__ int has_7760(struct L_7760 *l, unsigned int id) {
+    int i;
+    int found = 0;
+    for (i = 0; i < l->n; i++) {
+        if (l->ids[i] == id) {
+            found = 1;
+            break;
+        }
+    }
+    return found;
+}
+
+static __inline__ int find_7760(unsigned char *k, struct sBank **pres) {
+    int found = 0;
+    int i = 0;
+    do {
+        unsigned char *q = D_0044FFB8[i].p;
+        if (q != 0 && q[9] == k[2] && q[8] == k[3]) {
+            *pres = &D_0044FFB8[i];
+            found = 1;
+            break;
+        }
+        i++;
+    } while (i < 8);
+    return found;
+}
+
+static __inline__ int busy_7760(struct sEvtHdr *p, int *arr) {
+    struct sKey4 key;
+    struct sBank *res;
+    int r = 0;
+
+    key = *(struct sKey4 *)arr;
+    if (find_7760(key.b, &res) && p->h4 < *(unsigned short *)(res->p + 0x16)) {
+        r = 1;
+    }
+    return r;
+}
+
+int func_003D7760(struct L_7760 *list, int idx) {
+    unsigned int bestval;
+    int best;
+    unsigned int bestdiff;
+    int bestp;
+    unsigned int now;
+    int i;
+    struct sEvtHdr *p;
+    int inlist;
+    int expired;
+    int blocked;
+    unsigned int diff;
+    int h4;
+
+    now = func_003DB9A0() + D_004A483C;
+    best = -1;
+    bestdiff = -1;
+    bestp = 0;
+    bestval = 0;
+    for (i = 0; i < 16; i++) {
+        if (D_0044FFF8.r[i].c == 0) continue;
+        if (D_0044FFF8.r[i].d != idx) continue;
+        if (D_0044FFF8.r[i].s8 != 0) continue;
+        p = D_0044FFF8.r[i].p;
+        expired = 0;
+        blocked = 0;
+        inlist = 1;
+        if (list != 0) {
+            inlist = has_7760(list, p->h0);
+        }
+        diff = now - D_0044FFF8.r[i].f0;
+        if (p->h2 != 0 && p->h2 < diff) {
+            expired = 1;
+        }
+        if (D_004506A0[idx] == 1 && (p->bA & 1)) {
+            blocked = busy_7760(p, D_0044FFF8.r[i].arr);
+        }
+        if (expired) {
+            func_003D7C38(i);
+            continue;
+        }
+        if (inlist == 0) continue;
+        if (blocked != 0) continue;
+        h4 = p->h4;
+        if (bestp < h4) {
+            best = i;
+            bestdiff = diff;
+            bestp = h4;
+            bestval = D_0044FFF8.r[best].h;
+        } else if (h4 == bestp) {
+            if (diff < bestdiff || (diff == bestdiff && bestval < D_0044FFF8.r[i].h)) {
+                best = i;
+                bestdiff = diff;
+                bestval = D_0044FFF8.r[best].h;
+            }
+        }
+    }
+    return best;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ealib/seg_2D7498", func_003D7A50);
