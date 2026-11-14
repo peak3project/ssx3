@@ -1559,7 +1559,94 @@ extern "C" void func_0021F9B0(char* self, char* obj, char* rider, int x, float t
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021FD38);
+#ifdef SKIP_ASM
+// 100.00 objdiff + relcmp OK (w9 r38) - NOT COMMITTED, needs owner/coordinator review of two inline helpers:
+//  scaleP(): returns &D_004A5B38 (the static scale vec); the target keeps that address in $20 across 3 calls - a pointer local or
+//    direct &D_004A5B38 gives 120-190 diff lines; only an inline returning the address (return-value pseudo) matches.
+//  PrintAt_FD38(font, float x, float y, const t2Vector& off, f, n): the target loads q.x before half.x but adds half.x + q.x;
+//    by-value position args + reference offset reproduce it (plain call: 99.94, see *_r38_99.94.c; accessor variant *_r38_100_asym.c).
+//  Scale2(out, const float&, const float&, float s): by-value 0.5 param fixes the block-6 FPR order (natural vector-scale helper).
+static inline void Scale2(t2Vector& out, const float& x, const float& y, float s) { out.x = x * s; out.y = y * s; }
+extern int D_004A4E9C;
+extern int D_004A4EA0;
+extern int D_004A4EA4;
+extern float D_004A5B30;
+extern float D_004A5B34;
+extern float D_004A5B38;
+extern float D_004A5B3C;
+extern float D_004A5B40;
+extern float D_004A5B44;
+extern sColour D_004C8828;
+extern sColour D_004C8848;
+extern sColour D_004C8868;
+extern char D_004A2138[];
+extern "C" int func_00153D78(void*, int);
+extern "C" int func_00154240(void*, int);
+extern "C" void func_001DCA40(void* font, float x, float y, const char* fmt, ...);
+
+static inline void PrintAt_FD38(void* font, float x, float y, const t2Vector& off, float f, int n)
+{
+    func_001DCA40(font, off.x + x, (off.y + y) - f, D_004A2138, n);
+}
+static inline float* scaleP() { return &D_004A5B38; }
+extern "C" void func_0021FD38(char* self, char* obj) {
+    t2Vector q;
+    t2Vector half;
+    sColour col;
+    sFloat4 a;
+    t2Vector size;
+    t2Vector p2;
+    if (D_004A4E9C == 0) {
+        D_004A4E9C = 1;
+        D_004A5B3C = D_004A5B38 = 1.0f;
+    }
+    if (D_004A4EA0 == 0) {
+        D_004A4EA0 = 1;
+        D_004A5B34 = D_004A5B30 = 6.0f;
+    }
+    if (D_004A4EA4 == 0) {
+        D_004A4EA4 = 1;
+        D_004A5B44 = D_004A5B40 = 34.0f;
+    }
+    Scale2(half, D_004A5B40, D_004A5B44, 0.5f);
+    q.x = D_004A5B30 + half.x;
+    q.y = D_004A5B34 + half.y;
+    int c = obj[0x9D6];
+    func_001E91F8(obj + 0x9B4, &a);
+    func_001E9220(obj + 0x9B4, &size, *(int*)(self + 0x4CC));
+    func_001F10F8(self, &half, &a, &size, scaleP(), obj[0x9D4], obj[0x9D5], 0);
+    func_001E91A8(obj + 0x9B4, &col);
+    int* w = (int*)(D_004A289C->e84 + 8);
+    *w = (*w & ~0x3E0) | ((c << 5) & 0x3E0);
+    func_001F1190(self, *(int*)(self + 0x4CC), &half, &size, scaleP(), &col);
+    void* be = cBE_getInterface_Fv(cBE_getBE(), 10);
+    if (func_00153D78(be, *(int*)(self + 0x18C)) == 0) {
+        col = D_004C8848;
+    } else {
+        col = D_004C8828;
+    }
+    p2.x = half.x + D_004A5B30;
+    p2.y = half.x + D_004A5B34;
+    w = (int*)(D_004A289C->e84 + 8);
+    *w = (*w & ~0x3E0) | (((++c) << 5) & 0x3E0);
+    func_001F1190(self, *(int*)(self + 0x4D0), &p2, &D_004A5B40, scaleP(), &col);
+    float f = (float)*(int*)(*(char**)(self + 0x42C) + 0x14) * *(float*)(*(char**)(self + 0x42C) + 0x34) * 0.38805678486824036f;
+    int n = func_00154240(be, *(int*)(self + 0x18C));
+    col = D_004C8868;
+    *(sColour*)(*(char**)(self + 0x42C) + 0x40) = col;
+    char* t = *(char**)(self + 0x42C);
+    *(float*)(t + 0x38) = *(float*)(t + 0x30) * 0.7761135697364807f;
+    *(float*)(t + 0x3C) = *(float*)(t + 0x34) * 0.7761135697364807f;
+    w = (int*)(D_004A289C->e84 + 8);
+    *w = (*w & ~0x3E0) | (((c += 2) << 5) & 0x3E0);
+    PrintAt_FD38(*(char**)(self + 0x42C), q.x, q.y, half, f, n + 1);
+    char* t2 = *(char**)(self + 0x42C);
+    *(float*)(t2 + 0x38) = *(float*)(t2 + 0x30);
+    *(float*)(t2 + 0x3C) = *(float*)(t2 + 0x34);
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_002200C0);
