@@ -3170,7 +3170,122 @@ extern "C" void func_002420C8_v(void* self, int i)
 }
 #endif
 
+//100%
 INCLUDE_ASM("movie/movieplayer", func_00242288);
+#ifdef SKIP_ASM
+void func_00244860(void*);
+void func_00244868(void*);
+void func_00244870(void*);
+void func_00244878(void*);
+extern "C" void func_003E6448(void* p, int c, int n);
+extern "C" void* func_0023D570(void* self, int mode);
+extern void* D_0047CBD8[];
+extern int D_004A2C78;
+
+// cMCOverlayManager constructor body: resets the state, the 45 state handlers (0x00-0xB0) and the device records.
+extern "C" void* func_00242288(void* self)
+{
+    int* w = (int*)self;
+    void** fp = (void**)self;
+    sMCDev* dev = ((sMCOverlayMgr*)self)->dev;
+    w[0x2D] = 2;
+    w[0x2F] = 0;
+    w[0x30] = 0;
+    w[0x31] = 0;
+    w[0x1D2] = (int)D_0047CBD8;
+    func_0023D570(self, 1);
+    w[0x4C] = 0;
+    w[0x3E] = 0;
+    w[0x3F] = -1;
+    w[0x43] = 0;
+    w[0x41] = 0;
+    w[0x42] = 0;
+    w[0x32] = 0;
+    w[0x33] = 0;
+    w[0x34] = 0;
+    w[0x35] = 0;
+    w[0x36] = 0;
+    w[0x38] = 0;
+    w[0x3C] = 0;
+    w[0x3A] = 0;
+    w[0x39] = 0;
+    w[0x3D] = 0;
+    w[0x37] = 0;
+    w[0x3B] = 0;
+    w[0x109] = -1;
+    w[0x40] = 0;
+    w[0x4B] = 0;
+    w[0x46] = 0;
+    w[0x47] = 0;
+    w[0x48] = 0;
+    w[0x49] = 0;
+    w[0x4A] = 1;
+    ((float*)self)[0x44] = 1.0f;
+    ((float*)self)[0x45] = 0.016669999808073044f;
+    func_003E6448(dev, 0, 0xE0);
+    w[0x111] = -1;
+    w[0x10A] = 0;
+    w[0x10B] = 0;
+    w[0x10F] = 0;
+    w[0x110] = 0;
+    func_003E6448(w + 0x8D, 0, 0x42);
+    w[0x10D] = 0;
+    w[0xCF] = 5;
+    w[0xD0] = 0;
+    w[0xCE] = 0;
+    D_004A2C78 = 0;
+    w[0x10E] = 0;
+    fp[0] = (void*)func_00244860;
+    fp[1] = (void*)func_00244878;
+    fp[2] = (void*)func_00244860;
+    fp[3] = (void*)func_00244860;
+    fp[4] = (void*)func_00244860;
+    fp[5] = (void*)func_00244860;
+    fp[6] = (void*)func_00244860;
+    fp[7] = (void*)func_00244878;
+    fp[8] = (void*)func_00244868;
+    fp[9] = (void*)func_00244860;
+    fp[10] = (void*)func_00244860;
+    fp[11] = (void*)func_00244860;
+    fp[12] = (void*)func_00244870;
+    fp[13] = (void*)func_00244870;
+    fp[14] = (void*)func_00244860;
+    fp[15] = (void*)func_00244860;
+    fp[16] = (void*)func_00244860;
+    fp[17] = (void*)func_00244860;
+    fp[18] = (void*)func_00244860;
+    fp[19] = (void*)func_00244860;
+    fp[20] = (void*)func_00244860;
+    fp[21] = (void*)func_00244860;
+    fp[22] = (void*)func_00244860;
+    fp[23] = (void*)func_00244860;
+    fp[24] = (void*)func_00244860;
+    fp[25] = (void*)func_00244868;
+    fp[26] = (void*)func_00244868;
+    fp[27] = (void*)func_00244868;
+    fp[28] = (void*)func_00244868;
+    fp[29] = (void*)func_00244868;
+    fp[30] = (void*)func_00244868;
+    fp[31] = (void*)func_00244868;
+    fp[32] = (void*)func_00244868;
+    fp[33] = (void*)func_00244868;
+    fp[34] = (void*)func_00244868;
+    fp[35] = (void*)func_00244860;
+    fp[36] = (void*)func_00244860;
+    fp[37] = (void*)func_00244860;
+    fp[38] = (void*)func_00244860;
+    fp[39] = (void*)func_00244860;
+    fp[40] = (void*)func_00244860;
+    fp[41] = (void*)func_00244860;
+    fp[42] = (void*)func_00244860;
+    fp[43] = (void*)func_00244860;
+    fp[44] = (void*)func_00244868;
+    for (int i = 0; i < 1; i++) {   // every device record (sMCOverlayMgr::dev has one)
+        func_003E6448(&dev[i], 0, 0xE0);
+    }
+    return self;
+}
+#endif
 
 //100%
 INCLUDE_ASM("movie/movieplayer", func_002424C8);
