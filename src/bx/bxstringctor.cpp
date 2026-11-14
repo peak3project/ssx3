@@ -72,7 +72,52 @@ extern "C" void func_00268950(void* self, int flags)
 }
 #endif
 
+//100%
 INCLUDE_ASM("bx/bxstringctor", func_002689B8);
+#ifdef SKIP_ASM
+extern "C" void cBXString__cBXString(void* self, int flags);
+void operator_delete(int*);
+void cMemMan_free(void*);
+
+static inline void Dealloc89B8(void** p, int n)
+{
+    if (p != 0) {
+        if (n == 1) {
+            operator_delete((int*)p);
+        } else {
+            cMemMan_free(p);
+        }
+    }
+}
+
+struct sVec89B8 {
+    int f0;
+    void** mBegin;
+    void** mEnd;
+    void** mCap;
+};
+
+struct sOwner89B8 {
+    char pad[0xA8];
+    sVec89B8 mVecA;   // 0xA8
+    sVec89B8 mVecB;   // 0xB8
+    char padC8[0x24];
+    char str[4];      // 0xEC
+};
+
+// Destructor: string member, then the two pointer vectors (same vector-free shape as feasyncfile func_001A3EA0).
+extern "C" void func_002689B8(sOwner89B8* self, int flags)
+{
+    cBXString__cBXString(self->str, 2);
+    sVec89B8* vb = &self->mVecB;
+    Dealloc89B8(vb->mBegin, self->mVecB.mCap - self->mVecB.mBegin);
+    sVec89B8* va = &self->mVecA;
+    Dealloc89B8(va->mBegin, self->mVecA.mCap - self->mVecA.mBegin);
+    if (flags & 1) {
+        operator_delete((int*)self);
+    }
+}
+#endif
 
 // padded past the 8-byte gp-relative threshold so the compiler emits
 // absolute lui/lo addressing like the target
