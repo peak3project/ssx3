@@ -204,7 +204,185 @@ extern "C" void func_0034FE90(void* self, void* stream)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/instancenode", func_0034FED8);
+#ifdef SKIP_ASM
+// Prototype asserts: assert(inst); assert((mesh >= -1) && (mesh < pModel->m_iNumMeshes)); assert((int(a) & 15) == 0) (bx/math3d.h).
+struct sInV4_FED8 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+struct sInMat_FED8 {
+    sInV4_FED8 r[4];
+};
+
+struct sInPart_FED8 {
+    int parent;
+    int pad4;
+    int pad8;
+    sInMat_FED8* mat;   // 0xC
+};
+
+struct sInModel_FED8 {
+    int pad0;
+    int m_iNumMeshes;       // 0x4
+    sInPart_FED8* parts;    // 0x8
+};
+
+struct sInVE_FED8 {
+    short delta;
+    short index;
+    void* fn;
+};
+
+struct sInOther_FED8 {
+    char pad_0x00[0xC];
+    sInVE_FED8* vt;         // 0xC
+};
+
+struct sInInst_FED8 {
+    char pad_0x00[0xC];
+    sInOther_FED8* other;   // 0xC
+    sInMat_FED8 world;      // 0x10
+    char pad_0x50[0x30];
+    sInModel_FED8* pModel;  // 0x80
+    float scale;            // 0x84
+};
+
+typedef int (*InBoolFn_FED8)(void*);
+typedef sInMat_FED8* (*InMatFn_FED8)(void*);
+typedef sInMat_FED8* (*InPartMatFn_FED8)(void*, int);
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix copy through VU0 registers).
+static inline void vu0CopyMat_FED8(sInMat_FED8* d, const sInMat_FED8* s)
+{
+    __asm__ __volatile__(
+        "lqc2      $vf1, 0x0(%1)\n"
+        "lqc2      $vf2, 0x10(%1)\n"
+        "lqc2      $vf3, 0x20(%1)\n"
+        "lqc2      $vf4, 0x30(%1)\n"
+        "sqc2      $vf1, 0x0(%0)\n"
+        "sqc2      $vf2, 0x10(%0)\n"
+        "sqc2      $vf3, 0x20(%0)\n"
+        "sqc2      $vf4, 0x30(%0)\n"
+        :
+        : "r"(d), "r"(s)
+        : "memory");
+}
+
+static inline sInV4_FED8 row_FED8(const sInMat_FED8* m, int i)
+{
+    return m->r[i];
+}
+
+static inline void mulv_FED8(sInV4_FED8& r, const sInV4_FED8& a, const sInV4_FED8& b)
+{
+    r.x = a.x * b.x;
+    r.y = a.y * b.y;
+    r.z = a.z * b.z;
+    r.w = a.w * b.w;
+}
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix multiply into a VU0 temporary, then d = t).
+static inline void mul_FED8(sInMat_FED8* d, const sInMat_FED8* a, const sInMat_FED8* b)
+{
+    sInMat_FED8 t;
+    __asm__ __volatile__(
+        "lqc2      $vf4, 0x0(%1)\n"
+        "lqc2      $vf5, 0x10(%1)\n"
+        "lqc2      $vf6, 0x20(%1)\n"
+        "lqc2      $vf7, 0x30(%1)\n"
+        "lqc2      $vf8, 0x0(%2)\n"
+        "lqc2      $vf9, 0x10(%2)\n"
+        "lqc2      $vf10, 0x20(%2)\n"
+        "lqc2      $vf11, 0x30(%2)\n"
+        "vmulax.xyzw ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw $vf12, $vf7, $vf8w\n"
+        "vmulax.xyzw ACC, $vf4, $vf9x\n"
+        "vmadday.xyzw ACC, $vf5, $vf9y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf9z\n"
+        "vmaddw.xyzw $vf13, $vf7, $vf9w\n"
+        "vmulax.xyzw ACC, $vf4, $vf10x\n"
+        "vmadday.xyzw ACC, $vf5, $vf10y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf10z\n"
+        "vmaddw.xyzw $vf14, $vf7, $vf10w\n"
+        "vmulax.xyzw ACC, $vf4, $vf11x\n"
+        "vmadday.xyzw ACC, $vf5, $vf11y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf11z\n"
+        "vmaddw.xyzw $vf15, $vf7, $vf11w\n"
+        "sqc2      $vf12, 0x0(%0)\n"
+        "sqc2      $vf13, 0x10(%0)\n"
+        "sqc2      $vf14, 0x20(%0)\n"
+        "sqc2      $vf15, 0x30(%0)\n"
+        :
+        : "r"(&t), "r"(a), "r"(b)
+        : "memory");
+    vu0CopyMat_FED8(d, &t);
+}
+
+// m = a * m
+static inline void mulLeft_FED8(sInMat_FED8* m, const sInMat_FED8* a)
+{
+    sInMat_FED8 t2;
+    mul_FED8(&t2, a, m);
+    vu0CopyMat_FED8(m, &t2);
+}
+
+// dst = (local with its translation row scaled by s) * m.
+static inline void mulScaled_FED8(sInMat_FED8* dst, const sInMat_FED8* local, const sInV4_FED8& s, const sInMat_FED8* m)
+{
+    sInMat_FED8 l;
+    l.r[0] = row_FED8(local, 0);
+    l.r[1] = row_FED8(local, 1);
+    l.r[2] = row_FED8(local, 2);
+    sInV4_FED8 t;
+    sInV4_FED8 r3 = local->r[3];
+    mulv_FED8(t, r3, s);
+    l.r[3] = t;
+    mul_FED8(dst, &l, m);
+}
+
+// Builds the world matrix of mesh `mesh` by walking its parent chain.
+extern "C" void func_0034FED8(sInInst_FED8* self, int mesh, sInMat_FED8* out)
+{
+    sInMat_FED8* base = &self->world;
+    sInModel_FED8* pModel = self->pModel;
+    sInOther_FED8* o = self->other;
+    if (o != 0) {
+        if (mesh != -1 && ((InBoolFn_FED8)o->vt[26].fn)((char*)o + o->vt[26].delta)) {
+            vu0CopyMat_FED8(out, ((InPartMatFn_FED8)self->other->vt[29].fn)((char*)self->other + self->other->vt[29].delta, mesh));
+            return;
+        }
+        base = ((InMatFn_FED8)self->other->vt[24].fn)((char*)self->other + self->other->vt[24].delta);
+    }
+    sInPart_FED8* parts = pModel->parts;
+    if (mesh >= 0) {
+        float k = self->scale;
+        sInV4_FED8 s;
+        s.x = k;
+        s.y = k;
+        s.z = k;
+        s.w = 1.0f;
+        vu0CopyMat_FED8(out, parts[mesh].mat);
+        {
+            sInV4_FED8 t;
+            sInV4_FED8 r3 = out->r[3];
+            mulv_FED8(t, r3, s);
+            out->r[3] = t;
+        }
+        for (mesh = parts[mesh].parent; mesh != -1; mesh = parts[mesh].parent) {
+            sInMat_FED8 t2;
+            mulScaled_FED8(&t2, parts[mesh].mat, s, out);
+            vu0CopyMat_FED8(out, &t2);
+        }
+        mulLeft_FED8(out, base);
+    } else {
+        vu0CopyMat_FED8(out, base);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/instancenode", func_00350288);
