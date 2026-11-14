@@ -6569,7 +6569,172 @@ extern "C" void func_001329B0(sState_29B0* s, sOwner_29B0* o, int flag, float t)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/ai", func_00132A30);
+#ifdef SKIP_ASM
+extern "C" int func_00116120(void* rider, int a, int b);
+extern "C" int func_00312AE8(void* self, int i);
+extern "C" float func_00119BF0(void* self, int a1);
+extern "C" float func_00119C38(void* self);
+extern "C" void func_0010E098(void*, int, float);
+extern "C" void func_00132FB8(void* self, int a1, int a2);
+extern "C" void cRider_doLeanPoseAdjust(void* rider, void* pos);
+extern "C" void cRider_updateOrientationImplicit(void*);
+int func_0011FE98(void* self);
+void func_0011FE78_2A30(void* self, int v) __asm__("func_0011FE78__FPv");
+void func_0011FEC8_2A30(void* self, int v) __asm__("func_0011FEC8__FPv");
+extern "C" char* func_00311B20(void*, int);
+extern "C" bool func_001446A0(void* self, int bit);
+extern "C" int func_00106848(void*);
+extern "C" int cRiderAnimBase_play(void* self, int anim, int flags, float blend);
+
+// PORT: PS2-only inline asm (float absolute value), as an SDK math-header fabsf would.
+static inline float aiAbs_132A30(float x)
+{
+    float r;
+    __asm__("abs.s %0, %1" : "=f"(r) : "f"(x));
+    return r;
+}
+
+struct sAI_2A30 {
+    float timer;            // 0x0
+    float lean;             // 0x4
+    int f8;                 // 0x8
+    int fC;                 // 0xC
+    int dir;                // 0x10
+    cRider* rider;          // 0x14
+};
+
+static inline void setChannel_2A30(cRider* r, int i, float target, float rate)
+{
+    r->unk_1F0[i].target = target;
+    r->unk_1F0[i].rate = rate;
+}
+
+static inline void resetChannel_2A30(cRider* r, int i)
+{
+    r->unk_1F0[i].target = 0.0f;
+    r->unk_1F0[i].cur = 0.0f;
+    r->unk_1F0[i].rate = 0.0f;
+}
+
+static inline float blend_2A30(float lo, float hi, float t)
+{
+    return hi * t + lo * (1.0f - t);
+}
+
+static inline float clamp_2A30(float v, float lo, float hi)
+{
+    return lo <= v ? v <? hi : lo;
+}
+
+extern "C" void func_00132A30(sAI_2A30* self, int* in)
+{
+    if (func_00116120(self->rider, (*in >> 12) & 1, 0))
+        return;
+    int st = self->rider->unk_32C;
+    if (st == 1) {
+        if (func_00312AE8(self->rider->mRiderAnim, 2) == 0)
+            return;
+        if ((*in & 0x2000) && self->f8 == 0) {
+            self->rider->unk_32C = 2;
+            func_0010E098(self->rider, 1, func_00119BF0(self->rider->mMetrix, 1));
+        } else {
+            self->rider->unk_32C = 3;
+            func_0010E098(self->rider, 1, func_00119BF0(self->rider->mMetrix, 2));
+        }
+        func_00132FB8(self, self->rider->unk_32C, self->dir);
+        self->timer = 0.0f;
+        return;
+    }
+    if (st == 2) {
+        float dt = self->rider->unk_300 * 0.01666666753590107f;
+        self->timer += dt;
+        if ((*in & 0x2000) && aiAbs_132A30(self->rider->unk_1F0[8].cur) < 1.0f) {
+            float lean = (float)((*in << 12) >> 26) * 0.032258063554763794f;
+            if (self->rider->unk_320)
+                lean = -lean;
+            if (self->dir == 1)
+                lean = -lean;
+            setChannel_2A30(self->rider, 7, lean, dt * 5.0f);
+            float step = dt * 3.0f;
+            float cur = self->lean;
+            float v;
+            if (lean + step < cur)
+                v = cur - step;
+            else if (cur < lean - step)
+                v = cur + step;
+            else
+                v = lean;
+            self->lean = v;
+            float sgn = v;
+            if (v < 0.0f) {
+                sgn = -1.0f;
+            } else if (0.0f < v) {
+                sgn = 1.0f;
+            } else if (0.5013384222984314f < self->timer || self->rider->unk_1F0[8].cur != 0.0f) {
+                sgn = 1.0f;
+                if (self->rider->unk_1F0[8].cur < 0.0f)
+                    sgn = -1.0f;
+            }
+            float a = (self->timer * 0.19999131560325623f) <? 1.0f;
+            float w = aiAbs_132A30(self->rider->unk_1F0[8].cur);
+            float b = 1.0f - a;
+            setChannel_2A30(self->rider, 8, sgn, blend_2A30(a * 4.0f + b, a * 5.5f + b * 1.5f, w) * dt);
+            return;
+        }
+        if (self->fC != 0 && aiAbs_132A30(self->rider->unk_1F0[8].cur) < 0.25f)
+            self->rider->unk_32C = 6;
+        else if (self->rider->unk_1F0[8].cur < -0.05000000074505806f)
+            self->rider->unk_32C = 4;
+        else
+            self->rider->unk_32C = 5;
+        cRider_doLeanPoseAdjust(self->rider, &self->rider->mPosition);
+        cRider_updateOrientationImplicit(self->rider);
+        resetChannel_2A30(self->rider, 0);
+        resetChannel_2A30(self->rider, 2);
+        resetChannel_2A30(self->rider, 8);
+        func_00132FB8(self, self->rider->unk_32C, self->dir);
+        return;
+    }
+    if (func_0011FE98(self->rider) == 5) {
+        func_0010E098(self->rider, 1, func_00119C38(self->rider->mMetrix));
+        func_0011FE78_2A30(self->rider, 1);
+    }
+    if (func_001446A0(func_00311B20(self->rider->mRiderAnim, 2) + 0xB0, 1)) {
+        if (func_00106848(self->rider))
+            return;
+        if (func_0011FE98(self->rider) == 0) {
+            cRiderAnimBase_play(self->rider->mRiderAnim, 0x3D, 0, -1.0f);
+            func_0011FEC8_2A30(self->rider, 0);
+            return;
+        }
+    } else if (func_0011FE98(self->rider) == 1) {
+        char* ap = (char*)self->rider->mAirPredictor;
+        int s = *(int*)(ap + 0xAC);
+        int ok = 0;
+        if (s == 1 || s == 3)
+            ok = 1;
+        if (ok) {
+            float t = *(float*)((char*)self->rider->mAirPredictor + 0x98) - *(float*)((char*)self->rider->mAirPredictor + 0xA0);
+            if (0.0f < t) {
+                char* an = func_00311B20(self->rider->mRiderAnim, 2);
+                float k = (*(float*)(an + 0x10) - *(float*)(an + 0x8)) / t;
+                *(float*)(an + 0x90) = clamp_2A30(k, 0.5f, 2.0f);
+            }
+        }
+    }
+    if (func_00312AE8(self->rider->mRiderAnim, 2) == 0)
+        return;
+    if (func_0011FE98(self->rider) == 1) {
+        cRiderAnimBase_play(self->rider->mRiderAnim, 0x11F, 0, -1.0f);
+        func_0011FEC8_2A30(self->rider, 4);
+    } else {
+        cRiderAnimBase_play(self->rider->mRiderAnim, 0x3D, 0, -1.0f);
+        func_0011FEC8_2A30(self->rider, 0);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ai/ai", func_00132F98);
