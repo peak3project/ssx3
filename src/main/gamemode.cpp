@@ -871,7 +871,24 @@ extern "C" void func_00239230(cGMBigAirHandler* self, int idx)
 }
 #endif
 
+//100%
 INCLUDE_ASM("main/gamemode", func_002398E8);
+#ifdef SKIP_ASM
+extern "C" int func_002398E8(char* self, int player, int secs)
+{
+    cGameModeMan* m = D_004A2C70;
+    if (m->type == 1) {
+        unsigned int lim = D_004A28A8->game->race->f8;
+        unsigned int t = m->f78 + secs * 60;
+        m->f78 = t;
+        if (t < lim) {
+            return 0;
+        }
+        return 1;
+    }
+    return 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("main/gamemode", func_00239938);
