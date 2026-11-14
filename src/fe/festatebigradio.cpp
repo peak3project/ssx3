@@ -263,7 +263,66 @@ void func_00193318(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/festatebigradio", func_00193338);
+#ifdef SKIP_ASM
+extern "C" int func_00147318(void* iface, int idx);
+extern "C" void cUIMenu_setSelectedByIndex_3338(void* menu, int idx) __asm__("cUIMenu_setSelectedByIndex");
+extern "C" void func_00416210_3338(void* dst, int c, int n) __asm__("func_00416210");
+extern "C" void func_00265700(void* snd);
+extern char D_004A1788[];
+
+struct sStr3_3338 { char c[3]; };
+typedef sVEntry<void(void*, unsigned char)> sVESet_3338;
+typedef sVEntry<int(void*)> sVEGet_3338;
+typedef sVEntry<int(void*, void*)> sVEPtr_3338;
+
+static inline int get6F8_3338(void* p) { return *(int*)((char*)p + 0x6F8); }
+
+extern "C" void func_00193338(sBragging_2DB0* self)
+{
+    int n = isNet_2DB0() ? 1 : 2;
+    int i;
+    void* obj = *(void**)((char*)self->engine + 0xC);
+    void* iface = cBE_getInterface_Fv(cBE_getBE(), 1);
+    for (i = 0; i < n; i++) {
+        int p;
+        char id;
+        if (isNet_2DB0()) {
+            id = func_00147318(iface, 0);
+            p = 0;
+        } else {
+            id = func_00147318(iface, i);
+            p = i;
+        }
+        sVESet_3338* vt = *(sVESet_3338**)((char*)obj + 8);
+        vt[44].fn((char*)obj + vt[44].delta, id);
+        sVEGet_3338* vt2 = *(sVEGet_3338**)((char*)obj + 8);
+        if (vt2[40].fn((char*)obj + vt2[40].delta) != 0 && get6F8_3338((char*)self + p * 0x34) == 0) {
+            void* m = *(void**)((char*)self + p * 0x34 + 0x6D0);
+            sVEPtr_3338* vt3 = *(sVEPtr_3338**)((char*)m + 8);
+            vt3[15].fn((char*)m + vt3[15].delta, obj);
+        } else {
+            sVEGet_3338* vt4 = *(sVEGet_3338**)((char*)obj + 8);
+            if (vt4[6].fn((char*)obj + vt4[6].delta) != 0 && get6F8_3338((char*)self + p * 0x34) != 0) {
+                char label[5];  // "11", "21" for the second panel
+                *(struct sStr3_3338*)label = *(struct sStr3_3338*)D_004A1788;
+                func_00416210_3338(label + 3, 0, 2);
+                func_00192740(&self->panels[p], 0);
+                func_00192970_2DB0(&self->panels[p], self->screen);
+                if (p != 0)
+                    label[0] = '2';
+                cUIMenu_setSelectedByIndex_3338(*(void**)((char*)self + p * 0x34 + 0x6D0), 0);
+                int frame = cUIScreen_getFrameByLabel((struct cUIScreen*)self->screen, GetHashValue32(label));
+                if (frame != 0xFFFF)
+                    cUIScreen_playFrame(self->screen, frame, 1);
+                if (isNet_2DB0())
+                    func_00265700(D_004A33CC);
+            }
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/festatebigradio", func_00193568);
