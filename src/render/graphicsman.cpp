@@ -1725,7 +1725,49 @@ extern "C" void func_0036D400(float* seed)
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/graphicsman", func_0036D428);
+#ifdef SKIP_ASM
+extern "C" void func_0036D3E8(void* self, float val);
+// func_0036D400 also returns the new seed value (it is left in $f0); the result is unused here.
+float func_0036D400_f(float* seed) __asm__("func_0036D400");
+
+struct sVec4_6428 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+// PORT: PS2-only VU0 inline asm (vector add).
+static inline void vu0Add_6428(sVec4_6428& r, const sVec4_6428& a, const sVec4_6428& b)
+{
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        "1:\n"
+        : "=m"(r)
+        : "m"(a), "m"(b));
+}
+
+extern "C" void func_0036D428(void* self_, float val)
+{
+    char* self = (char*)self_;
+    func_0036D3E8(self, val);
+    while ((float)*(int*)self * *(float*)(self + 0xC) < *(float*)(self + 0x8)) {
+        *(float*)(self + 0x8) = *(float*)(self + 0x8) - *(float*)(self + 0xC);
+        vu0Add_6428(*(sVec4_6428*)(self + 0xB0), *(sVec4_6428*)(self + 0xB0), *(sVec4_6428*)(self + 0xE0));
+        func_0036D400_f((float*)(self + 0x38));
+        func_0036D400_f((float*)(self + 0x3C));
+        func_0036D400_f((float*)(self + 0x40));
+        func_0036D400_f((float*)(self + 0x44));
+        func_0036D400_f((float*)(self + 0x48));
+        func_0036D400_f((float*)(self + 0x50));
+        func_0036D400_f((float*)(self + 0x54));
+        func_0036D400_f((float*)(self + 0x58));
+        func_0036D400_f((float*)(self + 0x5C));
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/graphicsman", func_0036D500);
