@@ -155,7 +155,9 @@ enum {
 struct sAvData_5778 {
     char pad0[0xE0];
     sV4_5778 pos;               // 0xE0
-    char padF0[0xFC - 0xF0];
+    unsigned short type;        // 0xF0
+    unsigned char emits;        // 0xF2
+    char padF3[0xFC - 0xF3];
     char* frames;               // 0xFC
     float length;               // 0x100, in frames
     float f104;                 // 0x104
@@ -168,10 +170,12 @@ struct sAvAct_5778 {
     int pad4[3];
     sV4_5778 pos;               // 0x10
     sMat_5778 mat;              // 0x20
-    char pad60[0xB0 - 0x60];
+    sV4_5778 curPos;            // 0x60
+    sMat_5778 curMat;           // 0x70
     float fB0;                  // 0xB0
     float fB4;                  // 0xB4
-    char padB8[0xD0 - 0xB8];
+    char padB8[0xC0 - 0xB8];
+    sV4_5778 curColour;         // 0xC0
     char emitter[0x12C];        // 0xD0
     float f1FC;                 // 0x1FC
     char pad200[0x2E0 - 0x200];
@@ -590,7 +594,36 @@ extern "C" void tActiveAvalancheNode_calculateScale(void* self, float t)
 }
 #endif
 
+//100%
 INCLUDE_ASM("visualfx/avalanche", func_002D7CA8);
+#ifdef SKIP_ASM
+extern "C" void func_002D7DD8(void* self, int force);
+
+// PORT: callers declare it (void*, float); bind the typed definition by asm label
+extern "C" bool func_002D7CA8_7CA8(sAvAct_5778* self, float t) __asm__("func_002D7CA8");
+extern "C" bool func_002D7CA8_7CA8(sAvAct_5778* self, float t)
+{
+    if (self->data == 0) return false;
+    t *= self->data->rate;
+    tFrameData_5778 fd = tActiveAvalancheNode_getFrameData(self, t);
+    if (t * 30.0f < self->data->length) {
+        sV4_5778* pos = &self->curPos;
+        *pos = fd.pos;
+        self->curMat = fd.mat;
+        sV4_5778* col = &self->curColour;
+        *col = fd.colour;
+        if (self->data->type != 2 && self->data->emits) {
+            self->f1FC = self->fB4;
+            func_003717C0(1.0f / 60.0f, self->emitter, pos, &D_004FF120_5778, col, t < self->data->length);
+            return true;
+        }
+    } else if (self->data->type != 2) {
+        func_002D7DD8(self, 0);
+        return false;
+    }
+    return true;
+}
+#endif
 
 //100%
 INCLUDE_ASM("visualfx/avalanche", func_002D7DD8);
