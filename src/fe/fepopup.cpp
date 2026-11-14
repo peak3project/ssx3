@@ -1852,7 +1852,56 @@ extern "C" void func_001C94B0(void* self, void* text, void* strp, void* outp)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/fepopup", cScreenPopup_getMessageLineWrapSize);
+#ifdef SKIP_ASM
+extern "C" float func_00392BA8(void* font, int c);
+extern char D_004660F8[];
+void* operator new[](unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+
+extern "C" void cScreenPopup_getMessageLineWrapSize(void* self, void* text, const char* str, void* outp)
+{
+    float* out = (float*)outp;
+    *(int*)((char*)text + 0x14) |= 0x80;
+    void* font = func_003A04F0(text);
+    if (font == 0)
+        return;
+    int i = 0;
+    float w = 0.0f;
+    int done = 0;
+    char* buf = new (D_004660F8, 0x100, 0) char[strlen(str) + 1];
+    strcpy(buf, str);
+    t3Vector v;
+    t2Vector size;
+    sVEntry<void(void*, t2Vector*)>* vt = *(sVEntry<void(void*, t2Vector*)>**)((char*)text + 8);
+    vt[20].fn((char*)text + vt[20].delta, &size);
+    v = *(t3Vector*)((char*)text + 0x50);
+    while (buf[i] != 0) {
+        char c = buf[i];
+        char next = buf[i + 1];
+        if (c == '\\' && next == '\\') {
+            w = 0.0f;
+            i += 2;
+        } else if (c == '\r') {
+            w = 0.0f;
+            i += 1;
+        } else {
+            float cw = func_00392BA8(font, buf[i]) * v.x;
+            w += cw;
+            if (size.x < w) {
+                done = 1;
+                *out = w - cw;
+                break;
+            }
+            i += 1;
+        }
+    }
+    if (!done)
+        *out = w;
+    if (buf != 0)
+        cMemMan_free(buf);
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/fepopup", func_001C97E0);
