@@ -1130,7 +1130,85 @@ extern "C" int cDirtysock_tag_TagFieldGetFourCC(const char* data, int defval)
 }
 #endif
 
+//100%
 INCLUDE_ASM("dirtysock/tags", func_003ED0F8);
+#ifdef SKIP_ASM
+extern "C" int strlen_m616(const char* s) __asm__("strlen");
+extern unsigned char D_004961C0[];
+extern unsigned char D_004962C0[];
+
+extern "C" int func_003ED0F8(const char* data, char* buf, int len, const char* defval, int index, int sep)
+{
+    int count;
+    unsigned char term;
+    const unsigned char* src;
+
+    // skip to the requested field
+    if (data != 0) {
+        if ((*data == '"') || (*data == '\'')) {
+            term = *data++;
+        } else {
+            term = 0;
+        }
+        for (; index > 0; index--) {
+            while ((*data != term) && (*data >= ' ') && (*data != sep)) {
+                data++;
+            }
+            if (*data++ != sep) {
+                data = 0;
+                break;
+            }
+        }
+    }
+
+    // handle default
+    if (data == 0) {
+        if (defval == 0) {
+            return -1;
+        }
+        if (buf == 0) {
+            return strlen_m616(defval);
+        }
+        for (count = 1; (count < len) && (*defval != 0); count++) {
+            *buf++ = *defval++;
+        }
+        *buf = 0;
+        return count - 1;
+    }
+
+    // calc length
+    if (buf == 0) {
+        for (count = 0, src = (const unsigned char*)data; (*src != term) && (*src >= ' ') && (*src != sep); count++) {
+            if ((src[0] == '%') && (src[1] >= ' ') && (src[2] >= ' ')) {
+                src += 2;
+            }
+            src++;
+        }
+        return count;
+    }
+
+    if (len <= 0) {
+        return -1;
+    }
+
+    for (count = 1, src = (const unsigned char*)data; (count < len) && (*src != term) && (*src >= ' ') && (*src != sep); ) {
+        if ((src[0] == '%') && (src[1] == '%')) {
+            *buf++ = '%';
+            src += 2;
+            count++;
+        } else if ((src[0] == '%') && (src[1] >= ' ') && (src[2] >= ' ')) {
+            *buf++ = D_004961C0[src[1]] | D_004962C0[src[2]];
+            src += 3;
+            count++;
+        } else {
+            *buf++ = *src++;
+            count++;
+        }
+    }
+    *buf = 0;
+    return count - 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("dirtysock/tags", cDirtysock_tag_TagFieldGetString);
