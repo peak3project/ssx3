@@ -5493,7 +5493,99 @@ void func_003BCAE8(int arg0, int n) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003BCBA0);
+#ifdef SKIP_ASM
+void func_003BCBA0(void) {
+    int i;
+    int j;
+    D_0050AC68->f06 = 0;
+    func_003BCAE8(0xF8724E1F, 32);
+    func_003BCAE8(0xB3EE8, 32);
+    func_003BCAE8(0x7FFE8001, 32);
+    func_003BCAE8(0xFC3C7DC, 28);
+    if (D_0050AC68->f00 == 1) {
+        func_003BCAE8(8, 6);
+    } else {
+        func_003BCAE8(9, 6);
+    }
+    func_003BCAE8(0x6E000, 19);
+    func_003BCAE8((D_0050AC68->f01 - 1) | 0x21C0000, 26);
+    for (i = 0; i < D_0050AC68->f01; i++) {
+        func_003BCAE8(22, 5);
+    }
+    for (i = 0; i < D_0050AC68->f01; i++) {
+        func_003BCAE8(23, 5);
+    }
+    for (i = 0; i < D_0050AC68->f01; i++) {
+        func_003BCAE8(0, 3);
+    }
+    for (i = 0; i < D_0050AC68->f01; i++) {
+        func_003BCAE8(3, 2);
+    }
+    for (i = 0; i < D_0050AC68->f01; i++) {
+        func_003BCAE8(6, 3);
+    }
+    for (i = 0; i < D_0050AC68->f01; i++) {
+        func_003BCAE8(6, 3);
+    }
+    for (i = 0; i < D_0050AC68->f01; i++) {
+        func_003BCAE8(1, 1);
+    }
+    for (j = 0; j < 4; j++) {
+        for (i = 0; i < D_0050AC68->f01; i++) {
+            func_003BCAE8(3, 2);
+        }
+    }
+    for (j = 6; j < 11; j++) {
+        for (i = 0; i < D_0050AC68->f01; i++) {
+            func_003BCAE8(7, 3);
+        }
+    }
+    func_003BCAE8(8, 5);
+    for (i = 0; i < D_0050AC68->f01; i++) {
+        func_003BCAE8(0, 24);
+    }
+    for (i = 0; i < D_0050AC68->f01; i++) {
+        j = 0;
+        switch (D_0050AC68->f00) {
+        case 1:
+            for (; j < 14; j++) {
+                func_003BCAE8(13, 5);
+            }
+            for (; j < 24; j++) {
+                func_003BCAE8(11, 5);
+            }
+            break;
+        case 2:
+        default:
+            for (; j < 5; j++) {
+                func_003BCAE8(13, 5);
+            }
+            for (; j < 14; j++) {
+                func_003BCAE8(11, 5);
+            }
+            for (; j < 24; j++) {
+                func_003BCAE8(8, 5);
+            }
+            break;
+        }
+    }
+    for (i = 0; i < D_0050AC68->f01; i++) {
+        func_003BCAE8(0, 24);
+        func_003BCAE8(0, 24);
+    }
+    if (D_0050AC68->f00 == 1) {
+        D_0050AC68->f08[0xE8] = 0;
+        D_0050AC68->f08[0x7CB] = 0xFF;
+        D_0050AC68->f08[0x7CA] = 0xFF;
+    } else {
+        D_0050AC68->f08[0x7D5] |= 7;
+        D_0050AC68->f08[0x7D4] = 0xFF;
+        D_0050AC68->f08[0x7D7] = 0xF8;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003BD078);
