@@ -4656,7 +4656,88 @@ int func_003E2740(int a) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", BIG_locateentryz);
+#ifdef SKIP_ASM
+extern int BIG_debuginfo_LOC(char *, int *, int *) __asm__("BIG_debuginfo");
+extern int BIG_sizeofheader_LOC(char *) __asm__("BIG_sizeofheader");
+extern int BIG_typeofheader_LOC(char *) __asm__("BIG_typeofheader");
+extern int func_003E2490_LOC(char *, char *) __asm__("func_003E2490");
+extern int strlen(const char *);
+
+static inline unsigned rd4_LOC(unsigned char *p, int n) {
+    if (n == 1) return p[0];
+    if (n == 2) return p[0] << 8 | p[1];
+    if (n == 3) return p[0] << 16 | p[1] << 8 | p[2];
+    if (n == 4) return p[0] << 24 | p[1] << 16 | p[2] << 8 | p[3];
+    return 0;
+}
+
+static inline long rd8_LOC(unsigned char *p, int n) {
+    if (n < 5) return rd4_LOC(p, n);
+    {
+        long hi = rd4_LOC(p, n - 4);
+        return (hi << 32) | rd4_LOC(p + n - 4, 4);
+    }
+}
+
+char *BIG_locateentryz_LOC(char *base, char *name, int idx, int *out1, int *out2) __asm__("BIG_locateentryz");
+char *BIG_locateentryz_LOC(char *base, char *name, int idx, int *out1, int *out2) {
+    unsigned char *p = (unsigned char *)base + 0x10;
+    int n1 = 4;
+    int n2 = 4;
+    int i = 0;
+    int dbg;
+    unsigned char *end;
+    int t;
+
+    dbg = BIG_debuginfo_LOC(base, 0, 0);
+    end = (unsigned char *)base + BIG_sizeofheader_LOC(base) - dbg;
+    t = BIG_typeofheader_LOC(base);
+    switch (t) {
+    case 2:
+        break;
+    case 3:
+        n1 = base[3] - 0x30;
+        n2 = n1;
+        if (n1 > 4) n2 = 4;
+        break;
+    case 1:
+        p = (unsigned char *)base + 6;
+        n1 = 3;
+        n2 = 3;
+        break;
+    }
+    if (name != 0) {
+        while (p < end) {
+            unsigned char *key = p + n1 + n2;
+            if (func_003E2490_LOC((char *)key, name) == 0) {
+                if (out1 != 0) *out1 = rd8_LOC(p, n1);
+                if (out2 == 0) return (char *)key;
+                *out2 = rd4_LOC(p + n1, n2);
+                return (char *)key;
+            }
+            i = strlen((char *)key);
+            p = key + i + 1;
+        }
+    } else {
+        while (p < end) {
+            unsigned char *key = p + n1 + n2;
+            if (i == idx) {
+                if (out1 != 0) *out1 = rd8_LOC(p, n1);
+                if (out2 == 0) return (char *)key;
+                *out2 = rd4_LOC(p + n1, n2);
+                return (char *)key;
+            }
+            i++;
+            p = key + strlen((char *)key) + 1;
+        }
+    }
+    if (out1 != 0) *out1 = 0;
+    if (out2 != 0) *out2 = 0;
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E2CE0);
