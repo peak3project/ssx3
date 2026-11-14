@@ -631,7 +631,73 @@ extern "C" void func_0022CEA8_impl(void* self, int idx, int mode)
 }
 #endif
 
+//100%
 INCLUDE_ASM("main/game", func_0022D088);
+#ifdef SKIP_ASM
+struct sGroup_D088 {
+    int f0;
+    int count;
+    int a;
+    int b;
+    int ids[6];
+};
+struct sPair_D088 {
+    int f0;
+    int f4;
+};
+extern sGroup_D088 D_00442488_D088[] __asm__("D_00442488");
+extern sPair_D088 D_00442820_D088[] __asm__("D_00442820");
+extern "C" void func_0022D478(void* self, int id);
+extern "C" void func_0022D668(void* self, int v);
+extern "C" void func_0022D598(void* self, int idx);
+extern "C" void cSectionMan_setSky(void* self, int sky);
+
+extern "C" void func_0022D088(void* self, int idx, int mode)
+{
+    int v;
+    if (mode == 7) {
+        v = D_00442820_D088[idx].f4;
+    } else {
+        v = mode;
+    }
+    int extra = 0x31;
+    if (D_00442488_D088[idx].a >= 0) {
+        extra = D_00442488_D088[idx].a;
+    }
+    for (int i = 0; i < 0x32; i++) {
+        int found = 1;
+        for (int j = 0; j < D_00442488_D088[idx].count; j++) {
+            if (i == D_00442488_D088[idx].ids[j]) {
+                found = 0;
+                break;
+            }
+        }
+        if ((unsigned)(i - 0x2C) <= 4) {
+            found = 0;
+        }
+        if (i == 0x2B) {
+            found = 0;
+        }
+        if (found) {
+            func_0022D598(self, i);
+        }
+    }
+    *(int*)((char*)self + 0x1C0) = 1;
+    *(int*)((char*)self + 0x1BC) = idx;
+    for (int k = 0; k < D_00442488_D088[idx].count; k++) {
+        func_0022D478(self, D_00442488_D088[idx].ids[k]);
+    }
+    cSectionMan_setSky(self, idx);
+    if (IsSection(extra)) {
+        func_0022D478(self, extra);
+    }
+    int b = D_00442488_D088[idx].b;
+    if (b >= 0) {
+        func_0022D478(self, b);
+    }
+    func_0022D668(self, v);
+}
+#endif
 
 //100%
 INCLUDE_ASM("main/game", func_0022D278);
