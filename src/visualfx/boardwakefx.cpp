@@ -2305,7 +2305,68 @@ void* func_002E3110(void* self)
 
 INCLUDE_ASM("visualfx/boardwakefx", func_002E3130);
 
+//100%
 INCLUDE_ASM("visualfx/boardwakefx", func_002E3338);
+#ifdef SKIP_ASM
+struct sRect_3338 {
+    float x, y, w, h;
+};
+
+struct sMtx_3338 {
+    float m[4][4];
+};
+
+struct sSunBlk_3338 { char d[0x210]; };
+
+struct sWakeFx_3338 {
+    sRect_3338 view;                // 0x0
+    sMtx_3338 mtx;                  // 0x10
+    float f50, f54, f58;            // 0x50
+    char pad5C[4];
+    int count[1][2];                // 0x60
+    sWake_2B00 strips[1][2][0x100]; // 0x68
+    char pad6068[0x6070 - 0x6068];
+    sSunBlk_3338 sun[1][2];         // 0x6070
+};
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix copy).
+static inline void CopyMtx_3338(sMtx_3338* dst, const sMtx_3338* src)
+{
+    __asm__(
+        "lqc2      $vf1, 0x00(%1)\n"
+        "lqc2      $vf2, 0x10(%1)\n"
+        "lqc2      $vf3, 0x20(%1)\n"
+        "lqc2      $vf4, 0x30(%1)\n"
+        "sqc2      $vf1, 0x00(%0)\n"
+        "sqc2      $vf2, 0x10(%0)\n"
+        "sqc2      $vf3, 0x20(%0)\n"
+        "sqc2      $vf4, 0x30(%0)\n"
+        :
+        : "r"(dst), "r"(src)
+        : "memory");
+}
+
+extern "C" void func_002F4DB8(void* sun, void* cam, int i);
+
+extern "C" void func_002E3338(void* selfv, int i)
+{
+    sWakeFx_3338* self = (sWakeFx_3338*)selfv;
+    // The wake arrays have a leading bank dimension of one, indexed through a variable:
+    // func_002E3130 keeps it as a zeroed register multiplied by 0x6000 at run time.
+    int bank = 0;
+    char* obj = D_004A5B80;
+    sVEntry<sRect_3338(void*)>* e0 = &(*(sVEntry<sRect_3338(void*)>**)(obj + 0x10D8))[28];
+    self->view = e0->fn(obj + e0->delta);
+    sVEntry<sMtx_3338*(void*)>* e1 = &(*(sVEntry<sMtx_3338*(void*)>**)(obj + 0x10D8))[35];
+    CopyMtx_3338(&self->mtx, e1->fn(obj + e1->delta));
+    sVEntry<void(void*, float*, float*, float*)>* e2 = &(*(sVEntry<void(void*, float*, float*, float*)>**)(obj + 0x10D8))[30];
+    e2->fn(obj + e2->delta, &self->f50, &self->f54, &self->f58);
+    func_002F4DB8(&self->sun[bank][i], self, i);
+    for (int n = 0; n < self->count[bank][i]; n++) {
+        func_002E2B00(&self->strips[bank][i][n], &self->view.x);
+    }
+}
+#endif
 
 INCLUDE_ASM("visualfx/boardwakefx", func_002E3478);
 
