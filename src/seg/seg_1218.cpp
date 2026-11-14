@@ -2857,7 +2857,127 @@ extern "C" void func_00106538(char* self, const t4Vector* d)
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_1218", func_001065B0);
+#ifdef SKIP_ASM
+struct sQuat_65B0 {
+    float x, y, z, w;
+    sQuat_65B0() {}
+    sQuat_65B0(float ax, float ay, float az, float aw) { w = aw; x = ax; y = ay; z = az; }
+} __attribute__((aligned(16)));
+
+struct sHit_65B0 {
+    t4Vector pos;       // 0x00
+    t4Vector n;         // 0x10
+};
+
+// PORT: PS2-only VU0 inline asm (cross product, w = 0).
+static inline t4Vector Cross_65B0(const t4Vector& a, const t4Vector& b)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf4, %1\n"
+        "lqc2      $vf5, %2\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vsub.w    $vf6, $vf6, $vf6\n"
+        "sqc2      $vf6, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 macro-mode asm (quaternion product a * b).
+static inline sQuat_65B0 QuatMul_65B0(const sQuat_65B0& a, const sQuat_65B0& b)
+{
+    sQuat_65B0 r;
+    __asm__(
+        "lqc2       $vf4, %1\n"
+        "lqc2       $vf5, %2\n"
+        "vmul.xyzw  $vf7, $vf4, $vf5\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vmulaw.xyz ACC, $vf4, $vf5w\n"
+        "vmaddaw.xyz ACC, $vf5, $vf4w\n"
+        "vsubax.w   ACC, $vf7, $vf7x\n"
+        "vmsubay.w  ACC, $vf0, $vf7y\n"
+        "vmsubz.w   $vf8, $vf0, $vf7z\n"
+        "vmaddw.xyz $vf8, $vf6, $vf0w\n"
+        "sqc2       $vf8, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+static inline float Atan2_65B0(float y, float x)
+{
+    if (x == 0.0f) {
+        if (y == 0.0f)
+            return y;
+        if (y >= 0.0f)
+            return 1.5707963705062866f;
+        return -1.5707963705062866f;
+    }
+    float a = func_0031C228(y / x);
+    if (x < 0.0f) {
+        if (y > 0.0f)
+            a += 3.1415927410125732f;
+        else
+            a -= 3.1415927410125732f;
+    }
+    return a;
+}
+
+static inline t4Vector GetUp_65B0(cRider* r)
+{
+    return r->mMatrix.row[2];
+}
+
+static inline t4Vector GetFront_65B0(cRider* r)
+{
+    return r->mMatrix.row[1];
+}
+
+static inline sQuat_65B0 AxisAngle_65B0(const t4Vector& axis, float angle)
+{
+    float s, c;
+    func_0031BE50(&s, &c, angle * 0.5f);
+    return sQuat_65B0(s * axis.x, s * axis.y, s * axis.z, c);
+}
+
+// Turn toward the slope: step at most maxStep toward +-maxAngle.
+static inline float Limit_65B0(float a, float maxAngle, float maxStep)
+{
+    if (a > 0.0f)
+        return Clamp(maxAngle - a, 0.0f, maxStep);
+    return Clamp(-maxAngle - a, -maxStep, 0.0f);
+}
+
+// Rotate the rider about a (w = 0) axis by angle: mRotation = mRotation * q(axis, angle).
+static inline void Rotate_65B0(cRider* self, const t4Vector& axis, float angle)
+{
+    *(sQuat_65B0*)&self->mRotation = QuatMul_65B0(*(sQuat_65B0*)&self->mRotation, AxisAngle_65B0(axis, angle));
+}
+
+extern "C" void func_001065B0_65B0(cRider* rider, sHit_65B0* hit) __asm__("func_001065B0");
+extern "C" void func_001065B0_65B0(cRider* rider, sHit_65B0* hit)
+{
+    t4Vector n = Norm(Cross_65B0(GetUp_65B0(rider), hit->n));
+    t4Vector side = Cross_65B0(GetUp_65B0(rider), n);
+    float x = Dot(GetFront_65B0(rider), side);
+    float y = Dot(GetFront_65B0(rider), n);
+    float a = Atan2_65B0(y, x);
+    // maxAngle (110 deg) and maxStep (20 deg) are variables here: the target negates both at run time
+    // (neg.s in the a <= 0 arm), which literal or inline-parameter constants would fold.
+    float maxAngle = 1.9198623895645142f;
+    float maxStep = 0.349065899848938f;
+    float r = Limit_65B0(a, maxAngle, maxStep);
+    if (r != 0.0f)
+        Rotate_65B0(rider, GetUp_65B0(rider), -r);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00106828);
