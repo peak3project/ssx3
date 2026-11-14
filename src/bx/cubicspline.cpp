@@ -195,7 +195,91 @@ extern "C" void func_0031D8B0(sCubicSpline* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("bx/cubicspline", func_0031DEE0);
+#ifdef SKIP_ASM
+// Evaluates the spline at t: tries the last segment and its neighbours first, else binary-searches the
+// segment whose [x, next x] range holds t, remembers it in flags.cur and evaluates it.
+struct sCubicSplineFlags_DEE0 {
+    unsigned int b0 : 1;
+    unsigned int b1 : 1;
+    unsigned int b2 : 1;
+    unsigned int f3 : 8;
+    unsigned int count : 8;
+    unsigned int cur : 8;
+};
+
+struct sCubicSplineSeg_DEE0 {
+    float pad0[4];
+    float x;                    // 0x10
+};
+
+struct sCubicSpline_DEE0 {
+    sCubicSplineFlags_DEE0 flags;
+    float f4;
+    sCubicSplineSeg_DEE0* data;
+};
+
+extern "C" float func_0031D5A8_DEE0(sCubicSplineSeg_DEE0* seg, float t) __asm__("func_0031D5A8");
+
+// Binds the real float-returning body; the unit declares a void prototype used by its callers.
+extern "C" float func_0031DEE0_impl(sCubicSpline_DEE0* self, float t) __asm__("func_0031DEE0");
+extern "C" float func_0031DEE0_impl(sCubicSpline_DEE0* self, float t)
+{
+    int last = self->flags.count - 1;
+    float* end;
+    if (last == self->flags.cur) {
+        end = &self->f4;
+    } else {
+        end = &self->data[self->flags.cur + 1].x;
+    }
+    sCubicSplineSeg_DEE0* data = self->data;
+    sCubicSplineSeg_DEE0* seg = &data[self->flags.cur];
+    if (seg->x <= t) {
+        if (t <= *end) {
+            return func_0031D5A8_DEE0(seg, t);
+        }
+    }
+    if (t < seg->x) {
+        if (t < data[1].x) {
+            self->flags.cur = 0;
+            return func_0031D5A8_DEE0(data, t);
+        }
+    } else {
+        if (self->flags.cur == last - 1) {
+            self->flags.cur = last;
+            return func_0031D5A8_DEE0(&self->data[last], t);
+        }
+        if (t < data[self->flags.cur + 2].x) {
+            self->flags.cur++;
+            return func_0031D5A8_DEE0(&data[self->flags.cur], t);
+        }
+    }
+    int hi = last;
+    int lo = 0;
+    int mid;
+    for (;;) {
+        mid = (hi + lo) / 2;
+        seg = &data[mid];
+        float segX = seg->x;
+        float hiX;
+        if (mid < last) {
+            hiX = seg[1].x;
+        } else {
+            hiX = self->f4;
+        }
+        if (segX <= t) {
+            if (t <= hiX) {
+                self->flags.cur = mid;
+                return func_0031D5A8_DEE0(seg, t);
+            }
+            lo = mid + 1;
+        } else {
+            hi = mid;
+        }
+    }
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("bx/cubicspline", func_0031E0E0);
