@@ -2478,7 +2478,81 @@ int func_003B7410(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B7450);
+#ifdef SKIP_ASM
+extern void f_6210_7450(void *, int, int) __asm__("func_00416210");
+extern int f_6620_7450(void (*)(void *), void (*)(struct sA0A0Node *, unsigned, struct sA0A0Strm *), struct sA0A0Strm *, void *, int) __asm__("func_003C6620");
+extern int func_003E06D8(int, int, int, void *, int);
+extern int func_003E1580(int);
+extern int func_003C65F0(int);
+extern void func_003C6278(void *);
+extern int func_003C6DA0(int);
+extern void func_003C6018(void (*)(void));
+extern int func_003B8120(int, int);
+extern int func_003B78F8(int);
+
+int f_7450(struct sA0A0Parm *src, int n, int a2, char *buf, int size, int h, int ext) __asm__("func_003B7450");
+int f_7450(struct sA0A0Parm *src, int n, int a2, char *buf, int size, int h, int ext) {
+    struct sA0A0Strm *s;
+    int i;
+    int slot;
+    int k;
+    struct sA0A0Node *ents;
+    char *q;
+    int r;
+    for (i = 0; i < D_0050A8E8.setup.cfg.f26; i++) {
+        if (D_0050A0A0[i] == 0) goto found;
+    }
+    return -9;
+found:
+    slot = i;
+    s = (struct sA0A0Strm *)buf;
+    f_6210_7450(s, 0, 0x138);
+    buf += 0x138;
+    ents = (struct sA0A0Node *)buf;
+    buf += n * 0x28;
+    size -= 0x138;
+    size -= n * 0x28;
+    k = func_003C65F0(a2);
+    q = buf;
+    buf += k;
+    size -= k;
+    func_003C6278(&s->f11C);
+    func_003C6278(&s->f128);
+    for (i = 0; i < n; i++) {
+        func_003C6288(&s->f128, &ents[i]);
+    }
+    s->f08 = f_6620_7450(func_003B6AD8, func_003B6B10, s, q, func_003C65F0(a2));
+    if (s->f08 < 0) return s->f08;
+    if (ext) {
+        s->f11 = 1;
+        s->f00 = h;
+    } else {
+        r = func_003E06D8(n + 2, 1, 1, buf, size);
+        if (r == 0) {
+            func_003C6DA0(s->f08);
+            return -9;
+        }
+        s->f00 = r;
+        s->f11 = 0;
+    }
+    s->f0C = 0;
+    s->f04 = -1;
+    s->fEC = *src;
+    if (func_003B7410() == 0) {
+        func_003C6018(func_003B71D8);
+        D_0050A8E8.f1EC = (void (*)(void))func_003B69D8;
+    }
+    D_0050A0A0[slot] = s;
+    if (ext == 0) {
+        func_003B8120(slot, func_003E1580(s->f00) / 3);
+    }
+    s->f84.f18[0] = 0;
+    func_003B78F8(slot);
+    return slot;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B76E8);
