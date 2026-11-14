@@ -2161,7 +2161,32 @@ int func_003D9BD8_impl(int id) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003D9ED0);
+#ifdef SKIP_ASM
+struct R_9ED0 { int x, y, z; };
+struct E_9ED0 { unsigned char x, y, z; };
+int func_003D9ED0(struct sSeqHdr *a, struct sLayer *b, unsigned *tbl) {
+    struct R_9ED0 rec;
+    int n = (signed char)a->f7 >> 4;
+    int ok = 1;
+    if (n != 0) {
+        unsigned *m = (unsigned *)((unsigned char *)b + ((((b->cnt >> 2) + 3) & 0xFFFFFFFC) + 8));
+        struct E_9ED0 *e = (struct E_9ED0 *)((unsigned char *)a + (((a->n * 2 + 3) & 0xFFFFFFFC) + 0xC) + (((a->f7 & 0xF) * 3 + 3) & ~3));
+        int i;
+        for (i = 0; i < n; i++) {
+            rec.x = e[i].x;
+            rec.y = e[i].y;
+            rec.z = e[i].z;
+            if (m[i] != 0 && (m[i] & tbl[rec.y]) == 0) {
+                ok = 0;
+                break;
+            }
+        }
+    }
+    return ok;
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2D7498", func_003D9FB0);
 
