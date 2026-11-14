@@ -550,7 +550,29 @@ extern "C" void func_00398438(s3983F0* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ui/uiengine", func_003984B0);
+#ifdef SKIP_ASM
+static inline void uiFontSetName(s3983F0Entry* e, void* name)
+{
+    e->unk4 = (int)name;
+}
+
+static inline void uiFontSetKey(s3983F0Entry* e, int key)
+{
+    e->key = key;
+}
+
+extern "C" void func_003984B0(void* vself, unsigned int index, void* name, int key)
+{
+    s3983F0* self = (s3983F0*)vself;
+    if (self->count < 4) {
+        uiFontSetName(&self->entries[index], name);
+        uiFontSetKey(&self->entries[index], key);
+        self->count++;
+    }
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ui/uiengine", func_003984E8);
