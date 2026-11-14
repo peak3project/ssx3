@@ -1185,7 +1185,171 @@ extern "C" void func_0013A968(void* self, float v)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_0013AA48);
+#ifdef SKIP_ASM
+extern "C" void cRider_updateOrientationImplicit(void*);
+int func_0011FEE8(void* rider);
+extern "C" float func_003342D0(void* world, void* seg, void* hit, int flags);
+extern "C" void func_00106538(void* rider, void* v);
+extern "C" void func_00105D98(void* rider, void* info, int id);
+extern "C" void* func_0032F650(void* self, void* tree, int flag);
+extern "C" void func_0032F708(void* self, int flags);
+
+struct sHit_AA48 {
+    t4Vector pos;            // 0x00
+    t4Vector normal;         // 0x10
+    t4Vector v20;            // 0x20
+    float pad30[4];         // 0x30
+    float dist;             // 0x40
+    int pad44[2];           // 0x44
+    int m4C;                // 0x4C
+    char* obj;              // 0x50
+    char* tri;              // 0x54
+    int pad58[5];           // 0x58
+    float m6C;              // 0x6C
+    float m70;              // 0x70
+    int pad74[3];           // 0x74
+} __attribute__((aligned(16)));
+
+struct sSphere_AA48 {
+    int state;              // 0x00
+    int f4;                 // 0x04
+    int f8;                 // 0x08
+    int padC;               // 0x0C
+    t4Vector dir;            // 0x10
+    char rest[0x320 - 0x20];
+} __attribute__((aligned(16)));
+
+struct sInfo_AA48 {
+    t4Vector pos;
+    t4Vector dir;
+    t4Vector normal;
+    float depth;
+} __attribute__((aligned(16)));
+
+struct sVEnt_AA48 { short delta; short index; bool (*fn)(void*); };
+
+// PORT: PS2-only VU0 inline asm (vector times scalar).
+static inline t4Vector vu0Scale_AA48(const t4Vector& v, float s)
+{
+    t4Vector r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (in-place vector add).
+static inline void vu0AddEq_AA48(t4Vector& a, const t4Vector& b)
+{
+    __asm__(
+        "lqc2      $vf3, %0\n"
+        "lqc2      $vf4, %1\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "+m"(a)
+        : "m"(b));
+}
+
+// PORT: PS2-only VU0 inline asm (4-component dot product).
+static inline float vu0Dot_AA48(const t4Vector& a, const t4Vector& b)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "lqc2      $vf5, %3\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf5\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "qmfc2.ni  %1, $vf4\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (normalize via rsqrt).
+static inline t4Vector vu0Normalize_AA48(const t4Vector& v)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vrsqrt    Q, $vf0w, $vf4x\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf5, $vf3, Q\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(v)
+        : "memory");
+    return r;
+}
+
+static inline bool riderFlag_AA48(char* r)
+{
+    char* sub = r + 0x6C0;
+    sVEnt_AA48* vt = *(sVEnt_AA48**)sub;
+    return vt[8].fn(sub + vt[8].delta);
+}
+
+static inline t4Vector riderVec_AA48(char* r, int off)
+{
+    return *(t4Vector*)(r + off);
+}
+
+#define RIDER_AA48 (*(char**)((char*)self + 0x4))
+#define RV_AA48(off) (*(t4Vector*)(RIDER_AA48 + (off)))
+
+extern "C" int func_0013AA48(void* self, t4Vector* out)
+{
+    if (func_0011FEE8(RIDER_AA48) == 9)
+        return 0;
+    sHit_AA48 hit;
+    sSphere_AA48 sph;
+    char* r = RIDER_AA48;
+    func_0032F650(&sph, *(void**)(r + 0xAA0), !riderFlag_AA48(r));
+    sph.dir = riderVec_AA48(RIDER_AA48, 0x180);
+    sph.f8 = 1;
+    float d = func_003342D0(*(void**)(RIDER_AA48 + 0x860), &sph, &hit, *(int*)(RIDER_AA48 + 0x868));
+    if (d < 0.0f)
+        { func_0032F708(&sph, 2); return 0; }
+    {
+        t4Vector push = vu0Scale_AA48(vu0Scale_AA48(hit.normal, 1.100000023841858f), d);
+        func_00106538(RIDER_AA48, &push);
+        float dot2 = vu0Dot_AA48(vu0Scale_AA48(hit.normal, -1.0f), RV_AA48(0x1E0));
+        if (dot2 < 0.0f)
+            { func_0032F708(&sph, 2); return 0; }
+        t4Vector n = vu0Normalize_AA48(RV_AA48(0x1E0));
+        float k = dot2 * 0.05000000074505806f < 27.77777862548828f ? 27.77777862548828f : dot2 * 0.05000000074505806f;
+        vu0AddEq_AA48(RV_AA48(0x1E0), vu0Scale_AA48(hit.normal, dot2 + k));
+        cRider_updateOrientationImplicit(RIDER_AA48);
+        sInfo_AA48 info;
+        info.pos = hit.pos;
+        info.dir = n;
+        info.normal = hit.normal;
+        info.depth = dot2;
+        func_00105D98(RIDER_AA48, &info, hit.m4C);
+        *out = hit.normal;
+    }
+    func_0032F708(&sph, 2);
+    return 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_0013ACB0);
