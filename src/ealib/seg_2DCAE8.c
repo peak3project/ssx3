@@ -5631,7 +5631,37 @@ void func_003E4D68(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E4DB8);
+#ifdef SKIP_ASM
+// PORT: PS2-only COP0 (enable interrupts) and memory barrier.
+#define SYNC_4DB8() __asm__ volatile("sync")
+#define EI_4DB8() __asm__ volatile("ei")
+extern unsigned short D_00450DE0;
+extern void (*D_00450DA8[])(void);
+extern volatile int D_00450DD0_4DB8 __asm__("D_00450DD0");
+extern int D_00450DE4;
+extern volatile int D_00450DCC_4DB8 __asm__("D_00450DCC");
+
+int func_003E4DB8(void) {
+    int i;
+    *(volatile int *)0x10000820 = D_00450DE0 + *(volatile int *)0x10000820 - *(volatile int *)0x10000800;
+    *(volatile int *)0x10000800 = 0;
+    *(volatile int *)0x10000810 |= 0x400;
+    D_00450DCC_4DB8++;
+    D_00450DD0_4DB8++;
+    for (i = 0; i < 8; i++) {
+        if (D_00450DA8[i]) {
+            D_00450DE4 = 1;
+            D_00450DA8[i]();
+            D_00450DE4 = 0;
+        }
+    }
+    SYNC_4DB8();
+    EI_4DB8();
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E4E98);
