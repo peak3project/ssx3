@@ -2904,7 +2904,45 @@ extern "C" void* func_00376468(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/particle", func_003764C0);
+#ifdef SKIP_ASM
+struct sPartTexEnt_3764C0 {
+    char pad_0x00[0x80];
+    unsigned int a1;    // 0x80
+    unsigned int a2;    // 0x84
+    unsigned int w;     // 0x88
+    unsigned int h;     // 0x8C
+    unsigned int psm;   // 0x90
+    unsigned int psm2;  // 0x94
+    unsigned int zpsm;  // 0x98
+    bool flag;             // 0x9C
+    int id;             // 0xA0
+};
+
+struct sPartTexCache_3764C0 {
+    char pad_0x00[0x59C8];
+    int cur;                         // 0x59C8
+    sPartTexEnt_3764C0* textures;    // 0x59CC
+};
+
+int func_0037BD98_3764C0(void* self, unsigned int a1, unsigned int a2, unsigned int w, unsigned int h,
+                         unsigned int psm, unsigned int psm2, unsigned int zpsm, short s0, short s1, short s2,
+                         int flag) __asm__("func_0037BD98");
+
+extern "C" int func_003764C0(sPartTexCache_3764C0* self, int idx)
+{
+    if (self->cur == idx) {
+        return 1;
+    }
+    func_0037BD98_3764C0(self, self->textures[idx].a1, self->textures[idx].a2, self->textures[idx].w,
+                         self->textures[idx].h, self->textures[idx].psm, self->textures[idx].psm2,
+                         self->textures[idx].zpsm, 0, self->textures[idx].flag ? 1 : 0,
+                         self->textures[idx].flag ? 0 : 1, self->textures[idx].id);
+    self->cur = idx;
+    return 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/particle", func_00376560);
