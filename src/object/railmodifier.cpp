@@ -6519,7 +6519,175 @@ extern "C" void func_00362CC8(char* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/railmodifier", func_00362DE8);
+#ifdef SKIP_ASM
+// A texture key (texture and palette index) as the deferred-render state lookup takes it by value.
+struct cTexKey_2DE8 {
+    int tex : 16;
+    int pal : 16;
+    cTexKey_2DE8(short t, short p)
+    {
+        tex = t;
+        pal = p;
+    }
+};
+
+// One queued draw (0x80 bytes): render state, texture key, packet and tail, user arg and the immediate flag.
+struct sRmQueued_2DE8 {
+    sRmState_29B8 state;    // 0x00 (tex[0] / tex[1] = texture key)
+    unsigned int packet;    // 0x14
+    unsigned int tail;      // 0x18
+    short arg;              // 0x1C
+    short imm;              // 0x1E
+    char pad20[0x60];
+};
+
+// A deferred draw state node (32 bytes).
+struct sRmNode_2DE8 {
+    sRmState_29B8* state;   // 0x00
+    cTexKey_2DE8 key;       // 0x04
+    int arg;                // 0x08
+    unsigned int packet;    // 0x0C
+    unsigned int tail;      // 0x10
+    int chained;            // 0x14
+    sRmNode_2DE8* next;     // 0x18
+    sRmNode_2DE8* hashNext; // 0x1C
+};
+
+struct sRmSort_2DE8 {
+    unsigned int key;
+    sRmNode_2DE8* draw;
+};
+
+// The deferred-render manager (render/bxps2deferman.cpp) as the queue flush uses it.
+struct sRmDeferMan_2DE8 {
+    int count;                          // 0x0
+    char pad04[0x7C];
+    sRmQueued_2DE8 queue[0xA28];        // 0x80
+    char pad51480[0x57494 - 0x51480];
+    int mUsedStates;                    // 0x57494
+    sRmNode_2DE8 states[0x800];         // 0x57498
+    char pad67498[0x678A0 - 0x67498];
+    sRmNode_2DE8* buckets[256];         // 0x678A0
+    sRmNode_2DE8* mImmState;            // 0x67CA0
+    int nSort;                          // 0x67CA4
+    sRmSort_2DE8 sortList[0x400];       // 0x67CA8
+};
+
+struct sRmRing_2DE8 {
+    char pad[0x10];
+    unsigned int size;                  // 0x10
+};
+
+extern void* D_004A4474;
+extern "C" void func_00424698(void* begin, void* end);
+extern "C" void* func_0038F4F8(void* ring, void* addr, int size, int flags);
+extern "C" void func_0038F6A8(void* ring);
+extern "C" void func_0038F7B0();
+extern "C" sRmState_29B8* func_00394ED0(sRmDeferMan_2DE8* self, const sRmState_29B8* state, unsigned char hash);
+extern "C" sRmNode_2DE8* func_00395000(sRmDeferMan_2DE8* self, sRmState_29B8* state, cTexKey_2DE8 key,
+                                       unsigned char hash, int arg);
+// func_00364240 (the sort key of a state + texture key), seen with its by-value cTexKey.
+unsigned int func_00364240_2DE8(const sRmState_29B8* state, cTexKey_2DE8 key) __asm__("func_00364240");
+
+static inline int hash_2DE8(int h)
+{
+    return h * 0x21 ^ (((h >> 8) * 0x20 + h) >> 8) ^ (((h >> 16) * 0x20 + h) >> 16) ^ (((h >> 24) * 0x20 + h) >> 24);
+}
+
+// The texture key of a queued draw.
+static inline cTexKey_2DE8 texKey_2DE8(const sRmQueued_2DE8* e)
+{
+    return cTexKey_2DE8(e->state.tex[0], e->state.tex[1]);
+}
+
+static inline int hashKey_2DE8(const sRmState_29B8* state, cTexKey_2DE8 key)
+{
+    return hash_2DE8((int)state ^ (key.tex | ((key.pal + 2) << 16))) & 0xFF;
+}
+
+// Takes a fresh draw node from the pool.
+static inline sRmNode_2DE8* newNode_2DE8(sRmDeferMan_2DE8* self, sRmState_29B8* a, cTexKey_2DE8 key, int arg)
+{
+    sRmNode_2DE8* ns = &self->states[self->mUsedStates++];
+    ns->arg = arg;
+    ns->state = a;
+    ns->key = key;
+    ns->packet = 0;
+    ns->chained = 0;
+    ns->next = 0;
+    return ns;
+}
+
+static inline sRmNode_2DE8* getNode_2DE8(sRmDeferMan_2DE8* self, sRmQueued_2DE8* e, sRmState_29B8* a, cTexKey_2DE8 key)
+{
+    sRmNode_2DE8* s;
+    if (e->imm != 0) {
+        s = 0;
+    } else {
+        s = func_00395000(self, a, key, hashKey_2DE8(a, key), e->arg);
+    }
+    if (s == 0) {
+        s = newNode_2DE8(self, a, key, e->arg);
+        if (e->imm != 0 && self->mImmState != 0) {
+            s->chained = 1;
+        } else {
+            unsigned int r = func_00364240_2DE8(a, key);
+            int h = hashKey_2DE8(a, key);
+            s->hashNext = self->buckets[h];
+            self->buckets[h] = s;
+            self->sortList[self->nSort].key = r;
+            self->sortList[self->nSort++].draw = s;
+        }
+    }
+    return s;
+}
+
+// Chains a draw node behind another one.
+static inline void link_2DE8(sRmNode_2DE8* prev, sRmNode_2DE8* s)
+{
+    prev->next = s;
+    prev->chained = 1;
+}
+
+static inline void process_2DE8(sRmDeferMan_2DE8* self, sRmQueued_2DE8* e)
+{
+    sRmState_29B8* a = func_00394ED0(self, &e->state, hash_2DE8(e->state.w0 ^ e->state.w1 ^ e->state.w2 ^ e->state.w3) & 0xFF);
+    sRmNode_2DE8* s = getNode_2DE8(self, e, a, texKey_2DE8(e));
+    func_00362978(s, e->packet, e->tail);
+    if (e->imm != 0 && self->mImmState != 0) {
+        link_2DE8(self->mImmState, s);
+    }
+    self->mImmState = s;
+}
+
+extern "C" void func_00362DE8(void* vself)
+{
+    sRmDeferMan_2DE8* self = (sRmDeferMan_2DE8*)vself;
+    self->mImmState = 0;
+    func_00424698(self->queue, (char*)&self->queue[self->count] - 1);
+    sRmRing_2DE8* ring = (sRmRing_2DE8*)D_004A4474;
+    int chunk = (ring->size << 4) / sizeof(sRmQueued_2DE8);
+    int n = self->count / chunk;
+    int bytes = chunk * sizeof(sRmQueued_2DE8);
+    sRmQueued_2DE8* cur = (sRmQueued_2DE8*)func_0038F4F8(ring, self->queue, bytes, 4);
+    for (int i = 0; i < n; i++) {
+        sRmQueued_2DE8* next = (sRmQueued_2DE8*)func_0038F4F8(ring, &self->queue[(i + 1) * chunk], bytes, 4);
+        for (int k = 0; k < chunk; k++) {
+            process_2DE8(self, &cur[k]);
+        }
+        func_0038F6A8(ring);
+        cur = next;
+        func_0038F7B0();
+    }
+    func_0038F7B0();
+    for (int j = 0; j < self->count - chunk * n; j++) {
+        process_2DE8(self, &cur[j]);
+    }
+    func_0038F6A8(ring);
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/railmodifier", func_00363490);
