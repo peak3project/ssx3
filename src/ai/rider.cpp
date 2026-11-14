@@ -170,7 +170,112 @@ extern t4Vector D_004FF150;
 extern t4Vector D_004FF160;
 extern t4Vector D_004FF220;
 
+//100%
 INCLUDE_ASM("ai/rider", cRider_cRider);
+#ifdef SKIP_ASM
+struct sP8_RC { char b[8]; } __attribute__((packed));
+// World sphere-tree query results (same layout as sSelf_2DB8 in intersect/worldsphtree): the tree root, the
+// frame it was last run for, and three result lists with their counts (count = 0xFFFFFFFF marks "never run").
+struct sWsQuery_RC {
+    void* root;
+    int f04;
+    unsigned int count;
+    void* list[0x40];
+    unsigned int count2;
+    void* list2[0x40];
+    unsigned int count3;
+    void* list3[0x200];
+    sWsQuery_RC(void* r) : root(r), f04(0), count(0xFFFFFFFF), count2(0xFFFFFFFF), count3(0xFFFFFFFF) {}
+};
+void* operator new(unsigned int size, const char* tag, unsigned int flags, int d) __asm__("cMemMan_alloc");
+extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
+extern "C" void* func_00140738(void* self);
+extern "C" void* func_0027F968(void* self);
+extern "C" void* func_002F1850(void* mem, void* rider);
+extern "C" void* func_002EC9E0(void* mem, void* rider, void* a);
+extern "C" void func_003E6448_RC(void* dst, int c, int n) __asm__("func_003E6448");
+extern "C" void* func_003758F8__FPv(void* mem);
+extern "C" void func_00283298(void* p);
+extern "C" void* func_0028B180();
+void func_00289AF0_RC(void* mgr, void* rider) __asm__("func_00289AF0__FPv");
+extern void* D_004A28A8;
+extern void* D_00459CC8[];
+extern void* D_00459BD0[];
+extern void* D_00459B90_RC[] __asm__("D_00459B90");
+extern void* D_00459C18[];
+extern char D_004A5960[];
+extern const char D_004578A8[], D_004578C8[], D_004578E0[], D_004578F0[], D_00457908[], D_00457920[], D_00457938[], D_00457950[];
+
+cRider* cRider_cRider_RC(cRider* self) __asm__("cRider_cRider");
+cRider* cRider_cRider_RC(cRider* self)
+{
+    func_00140738(self);
+    self->mVtbl = D_00459CC8;
+    func_0027F968(&self->mScriptObjRiderVtbl);
+    self->mScriptObjectVtbl = D_00459BD0;
+    self->mAIIndex = -1;
+    self->mViewIndex = -1;
+    self->mSafeRenderTick = -1;
+    self->mScriptObjRiderVtbl = D_00459B90_RC;
+    self->mVtbl = D_00459C18;
+    self->unk_434 = 0x31;
+    self->unk_880 = 0;
+    self->mRenderFlag = 1;
+    self->mIsHuman = 0;
+    self->mIsActor = 0;
+    self->mIsLocal = 1;
+    self->mRiderAnim = 0;
+    self->mAnimModel = 0;
+    self->mSphereTree = 0;
+    self->unk_3FC = 0;
+    self->unk_430 = 0xFFFFFFFF;
+    *(sP8_RC*)&self->unk_AAC = *(sP8_RC*)D_004A5960;
+    self->unk_AC0 = (int*)cMemMan_alloc(0x20, D_004578A8, 0, 0);
+    self->unk_ABC = (int*)cMemMan_alloc(0x20, D_004578C8, 0, 0);
+    self->unk_860 = new (D_004578E0, 0, 0) sWsQuery_RC(*(void**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x20));
+    self->unk_88C = func_002F1850(cMemMan_alloc(0xA8, D_004578F0, 0, 0), self);
+    self->unk_890 = func_002EC9E0(cMemMan_alloc(0xC8, D_00457908, 0, 0), self, self->unk_88C);
+    self->unk_864 = cMemMan_alloc(0x10, D_00457920, 0, 0);
+    self->unk_868 = cMemMan_alloc(0x10, D_00457938, 0, 0);
+    func_003E6448_RC(self->unk_794, 0, 0x20);
+    self->mFocusBox = 0;
+    self->unk_5B0 = 0;
+    self->mIsInNIS = 0;
+    self->unk_AC8 = 0;
+    self->unk_AD0 = 0;
+    *(cQuad128*)&self->unk_AE0 = 0;
+    self->unk_AF0 = 0;
+    self->unk_AF4 = 0;
+    self->unk_AF8 = 0;
+    self->unk_AFC = 0;
+    self->unk_B00 = 1;
+    self->unk_B04 = 0;
+    for (int i = 0; i < 4; i++) {
+        self->unk_B08[i] = -1;
+    }
+    self->mShadow = func_003758F8__FPv(cMemMan_alloc(0x1A0, D_00457950, 0, 0));
+    self->unk_450 = -1;
+    self->unk_AA4 = 0;
+    self->mIsOnScreen = 0;
+    self->unk_B1C = 0;
+    func_00283298(self->unk_6DC);
+    self->mWipeoutSlideHandle = -1;
+    self->mWipeoutTumbleHandle = -1;
+    func_00289AF0_RC(func_0028B180(), self);
+    self->unk_B24 = 0;
+    self->unk_304 = 1;
+    self->unk_B20 = 1;
+    self->unk_B28 = 31;
+    self->unk_B2C = 3;
+    self->unk_B30 = 0;
+    self->unk_B34 = 0;
+    self->unk_308 = 1;
+    self->unk_30C = 4000.0f;
+    self->unk_310 = 0.18f;
+    self->unk_314 = 0.015f;
+    return self;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ai/rider", func_0011B978);
