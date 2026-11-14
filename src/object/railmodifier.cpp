@@ -7846,7 +7846,95 @@ extern "C" int func_003668F8(sRailNodeMan* self, int size, int skipA, int skipB,
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/railmodifier", func_003669F0);
+#ifdef SKIP_ASM
+extern "C" void func_003663D8(void* selfp, int idx);
+
+// Frees the cheapest run of neighbouring blocks (in address order) that together hold at least 'size' bytes;
+// locked blocks and blocks of the two given owners break a run, owners above 'level' cost size*weight.
+// The two 'skip kept blocks' loops are test-first (if + do/while): the plain while form compiles to an
+// unrotated loop (92.15%).
+extern "C" void func_003669F0(sRailNodeMan* self, int size, int skipA, int skipB, int level)
+{
+    int freeList[292];
+    int bestIdx = -1;
+    int best = 0x7FFFFFFF;
+    int fl;
+    int Start = self->headsB[17].next;
+    sRailNode* StartPtr = &self->nodes[Start];
+    if (Start >= 0 && ((fl = StartPtr->field_0x0) & 1)) {
+        do {
+            if (((fl >> 1) & 1) == 0 && StartPtr->field_0x8 != skipA && StartPtr->field_0x8 != skipB) {
+                break;
+            }
+            Start = StartPtr->next;
+            StartPtr = &self->nodes[Start];
+        } while (Start >= 0 && ((fl = StartPtr->field_0x0) & 1));
+    }
+    int End = Start;
+    sRailNode* EndPtr = StartPtr;
+    int sum = 0;
+    int cost = 0;
+    while (End >= 0 && best > 0) {
+        if (sum >= size) {
+            if (cost < best) {
+                best = cost;
+                bestIdx = Start;
+            }
+            sRailPair* pr = &((sRailPair*)D_0053AB80)[StartPtr->field_0x8];
+            sum -= StartPtr->size;
+            if ((StartPtr->field_0x0 & 1) && level < pr->a) {
+                cost -= StartPtr->size * pr->b;
+            }
+            Start = StartPtr->next;
+            StartPtr = &self->nodes[Start];
+        } else {
+            if ((EndPtr->field_0x0 & 1) && (((EndPtr->field_0x0 >> 1) & 1) || EndPtr->field_0x8 == skipA || EndPtr->field_0x8 == skipB)) {
+                Start = EndPtr->next;
+                StartPtr = &self->nodes[Start];
+                if (Start >= 0 && ((fl = StartPtr->field_0x0) & 1)) {
+                    do {
+                        if (((fl >> 1) & 1) == 0 && StartPtr->field_0x8 != skipA && StartPtr->field_0x8 != skipB) {
+                            break;
+                        }
+                        Start = StartPtr->next;
+                        StartPtr = &self->nodes[Start];
+                    } while (Start >= 0 && ((fl = StartPtr->field_0x0) & 1));
+                }
+                End = Start;
+                EndPtr = StartPtr;
+                sum = 0;
+                cost = 0;
+            } else {
+                sRailPair* pr = &((sRailPair*)D_0053AB80)[EndPtr->field_0x8];
+                sum += EndPtr->size;
+                if ((EndPtr->field_0x0 & 1) && level < pr->a) {
+                    cost += EndPtr->size * pr->b;
+                }
+                End = EndPtr->next;
+                EndPtr = &self->nodes[End];
+            }
+        }
+    }
+    if (sum >= size && cost < best) {
+        best = cost;
+        bestIdx = Start;
+    }
+    int n = 0;
+    int i = bestIdx;
+    for (int got = 0; got < size; ) {
+        if (self->nodes[i].field_0x0 & 1) {
+            freeList[n++] = i;
+        }
+        got += self->nodes[i].size;
+        i = self->nodes[i].next;
+    }
+    for (int k = 0; k < n; k++) {
+        func_003663D8(self, freeList[k]);
+    }
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("object/railmodifier", func_00366CE0);
