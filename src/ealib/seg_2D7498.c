@@ -1979,7 +1979,84 @@ void func_003D9AC8(struct sSelSet *h, int id, int a2, unsigned char *a3, int a4,
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003D9BD8);
+#ifdef SKIP_ASM
+// PORT: 64-bit `long` (8 bytes on EE, 4 on Windows); use int64_t/uint64_t off-PS2.
+extern void func_003DB040_9BD8(struct sKey4 *, int, int, int *) __asm__("func_003DB040");
+extern int func_003DB3E0_9BD8(int, int) __asm__("func_003DB3E0");
+
+/* The body of func_003DAE48, inlined. */
+static __inline__ void layerHits_9BD8(void *a0, int a1, struct sLayer *l, int a3) {
+    struct sShapeInfo o;
+    int out;
+    int i;
+    int j;
+    int cnt;
+    unsigned char *tbl;
+    unsigned char *shp;
+    unsigned char b;
+    int h;
+    unsigned yy;
+    long m;
+
+    if (D_0044FF90.f08 != 0) {
+        func_003D8330(a0, &out);
+        cnt = l->cnt >> 2;
+        for (i = 0; i < cnt; i++) {
+            tbl = (unsigned char *)l + l->list[i] * 4 + 0xC;
+            for (j = 0; j < 4; j++) {
+                if ((b = tbl[j]) != 0xFF) {
+                    h = func_003DB3E0_9BD8(a1, b);
+                    yy = D_00450710[i + a3].y;
+                    shp = D_004A4824[D_0045070C[i + a3].x];
+                    if (func_003DB838(shp, yy, &o)) {
+                        m = 1 << o.col[j];
+                        D_0044FF90.f08(a0, h, (int)m, out);
+                    }
+                }
+            }
+        }
+    }
+}
+
+/* func_003DA3F0, inlined. */
+static __inline__ int reqOwned_9BD8(int x) {
+    int r = 0;
+    if (D_00450700.f0 == x)
+        r = D_00450700.f4 > 0;
+    return r;
+}
+
+int func_003D9BD8_impl(int id) __asm__("func_003D9BD8");
+int func_003D9BD8_impl(int id) {
+    struct sKey4 key;
+    int ret = 0;
+    int n;
+    int k;
+
+    if (reqOwned_9BD8(id)) {
+        n = D_00450700.f4;
+        for (k = 0; k < n; k++) {
+            key = *(struct sKey4 *)D_00450700.r[k].data;
+            func_003DB040_9BD8(&key, D_00450700.r[k].f0, D_00450700.r[k].b8, D_00450700.r[k].data);
+            layerHits_9BD8(&key, D_00450700.r[k].f0, (struct sLayer *)D_00450700.r[k].f4, ret);
+            func_003D9830(D_00450700.r[k].f4, &key, ret);
+            ret += D_00450700.r[k].f4[4] >> 2;
+            if (k == 0) {
+                if (*(unsigned short *)&key == D_00450660[id].h) {
+                    D_00450660[id].w++;
+                } else {
+                    *(struct sKey4 *)&D_00450660[id] = key;
+                    D_00450660[id].w = 1;
+                }
+            }
+        }
+    }
+    func_003D9A40();
+    return ret;
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2D7498", func_003D9ED0);
 
