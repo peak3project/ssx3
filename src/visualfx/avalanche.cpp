@@ -655,7 +655,143 @@ extern "C" void tActiveAvalanche_buildArray(tActiveAvalanche* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("visualfx/avalanche", func_002D7EF8);
+#ifdef SKIP_ASM
+struct sAvV4_7EF8 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+struct sAvObj_7EF8 {
+    char pad_0x00[0xC];
+    void* spawned;          // 0xC
+    char pad_0x10[0x30];
+    sAvV4_7EF8 pos;         // 0x40
+    char pad_0x50[0x10];
+    sAvV4_7EF8 sndPos;      // 0x60
+};
+
+struct sAvEvent_7EF8 {
+    float time;             // 0x0
+    sAvObj_7EF8* obj;       // 0x4
+};
+
+struct sAvSound_7EF8 {
+    unsigned short frame;   // 0x0
+    unsigned short obj;     // 0x2
+};
+
+struct sAvData_7EF8 {
+    char pad_0x00[0xC];
+    unsigned short nEvents;     // 0xC
+    unsigned short nSounds;     // 0xE
+    sAvEvent_7EF8 events[32];   // 0x10
+    sAvSound_7EF8 sounds[1];    // 0x110
+};
+
+struct sAvNode_7EF8 {
+    char pad_0x000[0x2E4];
+    sAvNode_7EF8* next;     // 0x2E4
+};
+
+struct sAvActive_7EF8 {
+    sAvData_7EF8* data;         // 0x0
+    sAvNode_7EF8* nodes;        // 0x4
+    sAvObj_7EF8** objs;         // 0x8
+    int pad_0xC;
+    int nextEvent;              // 0x10
+    int nextSound;              // 0x14
+    float time;                 // 0x18
+};
+
+struct sAvEnd_7EF8 {};  // empty trailing member of the defaults record; its value-init copies a byte through a stack temp
+
+extern float D_004A3A64;
+extern int D_004A54C8;
+// Defaults record of an animated-float spawn (read by func_00341AA0, sSphFloatDef_1AA0 in intersect/worldsphtree).
+// The original keeps it as a function-local static; the ctor's float parameters are what lets loop.c hoist -1.0f/30.0f.
+struct sAvFloatDef_7EF8 {
+    unsigned id;        // 0x00
+    int f04;            // 0x04
+    int dir;            // 0x08
+    float min;          // 0x0C
+    float max;          // 0x10
+    float speed;        // 0x14
+    float speedVar;     // 0x18
+    float value;        // 0x1C
+    int random;         // 0x20
+    int f24;            // 0x24
+    sAvEnd_7EF8 end;    // 0x28
+    sAvFloatDef_7EF8(float aMin = -1.0f, float aMax = -1.0f, float aSpeed = 30.0f) : id(0xFFFFFFFF), f04(1), dir(0), min(aMin), max(aMax), speed(aSpeed), speedVar(0), value(-1.0f), random(0), f24(1), end() {}
+};
+
+// PORT: placement new; builds the defaults record in place in its retail storage.
+inline void* operator new(unsigned int, void* p) { return p; }
+
+extern sAvFloatDef_7EF8 D_004D5770;
+extern char D_00487558[];
+extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
+extern "C" void* func_00341AA0(void* self, int a, int type, void* b, void* c);
+extern "C" bool func_002D7CA8(void* node, float t);
+extern "C" void* func_0028B180();
+extern "C" void func_002D81B0(void* self);
+void func_0029E560_7EF8(void* snd, const sAvV4_7EF8& pos) __asm__("func_0029E560__FPv");
+
+static inline unsigned short soundFrame_7EF8(const sAvActive_7EF8* a)
+{
+    return a->data->sounds[a->nextSound].frame;
+}
+
+static inline float toFrames_7EF8(float t)
+{
+    return t * 30.0f;
+}
+
+static inline sAvV4_7EF8 pos_7EF8(const sAvObj_7EF8* o)
+{
+    return o->pos;
+}
+
+extern "C" void func_002D7EF8_7EF8(sAvActive_7EF8* self) __asm__("func_002D7EF8");
+extern "C" void func_002D7EF8_7EF8(sAvActive_7EF8* self)
+{
+    if (self->data == 0) {
+        return;
+    }
+    bool alive = false;
+    self->time += D_004A3A64;
+    int i = 0;
+    for (sAvNode_7EF8* n = self->nodes; n != 0; n = n->next, i++) {
+        bool ok = func_002D7CA8(n, self->time);
+        alive = ok | alive;
+        if (!ok) {
+            self->objs[i] = 0;
+        }
+    }
+    while (self->nextEvent < self->data->nEvents && self->data->events[self->nextEvent].time <= self->time) {
+        if (self->data->events[self->nextEvent].obj->spawned == 0) {
+            // NOTE: function-local static of the original (guard D_004A54C8), written out as its guarded in-place construction.
+            if (D_004A54C8 == 0) {
+                new (&D_004D5770) sAvFloatDef_7EF8();
+                D_004A54C8 = 1;
+            }
+            func_00341AA0(cMemMan_alloc(0x6C, D_00487558, 0x20000000, 0), 1, 1, self->data->events[self->nextEvent].obj, &D_004D5770);
+        }
+        func_0029E560_7EF8(func_0028B180(), pos_7EF8(self->data->events[self->nextEvent].obj));
+        self->nextEvent++;
+    }
+    while (self->nextSound < self->data->nSounds && (float)soundFrame_7EF8(self) <= toFrames_7EF8(self->time)) {
+        sAvObj_7EF8* o = self->objs[self->data->sounds[self->nextSound].obj];
+        if (o != 0) {
+            func_0029E560_7EF8(func_0028B180(), o->sndPos);
+        }
+        self->nextSound++;
+    }
+    if (!alive) {
+        func_002D81B0(self);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("visualfx/avalanche", func_002D81B0);
