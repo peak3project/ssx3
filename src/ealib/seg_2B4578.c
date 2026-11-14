@@ -581,7 +581,7 @@ struct sB40 {
     float f100[1];                  /* effect send gain */
     struct sB40Node *f104[6];
     struct sB40Node *f11C[6];
-    char pad134[0x1DC - 0x134];
+    struct sB40Node f134[6];        /* one chain head node per channel */
     struct sB40Ent *f1DC;           /* also D_00515D1C */
     void (*f1E0)(int, float *, float *, float);                 /* add a voice into a buffer */
 };
@@ -10927,7 +10927,85 @@ void func_003C7CE0(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C7D00);
+#ifdef SKIP_ASM
+typedef struct { int w[3]; } sB40Cfg_7D00;
+extern unsigned int D_00515D24;         /* mixer pool bytes left */
+extern struct { int raw[2]; float *buf[2]; } D_00515BE8;  /* D_00515B40.fA8: the two mix buffers, raw and 64-byte aligned */
+extern void func_003CC918_7D00(void (*)(void)) __asm__("func_003CC918");
+extern void func_003CC928_7D00(void (*)(void)) __asm__("func_003CC928");
+extern void *func_003B5C60_7D00(int) __asm__("func_003B5C60");
+extern void *func_00416210_7D00(void *, int, int) __asm__("func_00416210");
+extern void func_003C9268(void);
+extern void func_003C92B0(void);
+extern void func_003C92F8(void);
+extern void func_003C8128(void);
+extern void func_003CA7A0_7D00(struct sB40Node *) __asm__("func_003CA7A0");
+extern void func_003C8F48_7D00(struct sB40Node **, struct sB40Node *) __asm__("func_003C8F48");
+
+void func_003C7D00(sB40Cfg_7D00 *cfg) {
+    int i;
+    unsigned int mem;
+
+    func_003CC918_7D00(func_003C7CC0);
+    func_003CC928_7D00(func_003C7CE0);
+    for (i = 0; i < 1; i++) {
+        D_00515B40.f0F[i] = 0;
+    }
+    *(sB40Cfg_7D00 *)&D_00515B40 = *cfg;
+    func_003B58A0();
+    D_00515D24 = D_0050A8E8.setup.cfg.f48;
+    mem = D_0050A8E8.setup.cfg.f44;
+    for (i = 0; i < 2; i++) {
+        if (D_00515D24 >= 0x2058) {
+            D_00515D24 -= 0x2058;
+            D_00515BE8.raw[i] = mem;
+            D_00515BE8.buf[i] = (float *)mem;
+            mem += 0x2058;
+        } else {
+            float *m = func_003B5C60_7D00(0x2058);
+            D_00515BE8.raw[i] = (int)m;
+            D_00515BE8.buf[i] = m;
+        }
+        while ((unsigned int)D_00515BE8.buf[i] & 0x3F) {
+            D_00515BE8.buf[i]++;
+        }
+    }
+    for (i = 0; i < D_00515B40.f05; i++) {
+        if (D_00515D24 >= 0x840) {
+            D_00515D24 -= 0x840;
+            D_00515B40.fB8[i] = mem;
+            D_00515B40.fD0[i] = (float *)mem;
+            mem += 0x840;
+        } else {
+            float *m = func_003B5C60_7D00(0x840);
+            D_00515B40.fB8[i] = (int)m;
+            D_00515B40.fD0[i] = m;
+        }
+        while ((unsigned int)D_00515B40.fD0[i] & 0x3F) {
+            D_00515B40.fD0[i]++;
+        }
+    }
+    if (D_00515B40.f04 != 0) {
+        D_00515B40.f1DC = func_003B5C60_7D00(D_00515B40.f04 * sizeof(struct sB40Ent));
+        func_00416210_7D00(D_00515B40.f1DC, 0, D_00515B40.f04 * sizeof(struct sB40Ent));
+    }
+    func_003B58D8();
+    func_003C9268();
+    func_003C92B0();
+    func_003C92F8();
+    func_003C8128();
+    for (i = 0; i < D_00515B40.f05; i++) {
+        D_00515B40.f104[i] = 0;
+        func_003CA7A0_7D00(&D_00515B40.f134[i]);
+        D_00515B40.f134[i].f18 = 0;
+        D_00515B40.f134[i].f1A = 0;
+        func_003C8F48_7D00(&D_00515B40.f104[i], &D_00515B40.f134[i]);
+        func_00416210_7D00(D_00515B40.fD0[i], 0, 0x800);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C8018);
