@@ -709,7 +709,130 @@ extern "C" void func_0031A6B8(void)
 }
 #endif
 
+//100%
 INCLUDE_ASM("bx/memblockman", func_0031A6D8);
+#ifdef SKIP_ASM
+// 100.00 objdiff; blocked only by the symbol name: needs 0x4A30F0 named _gp (linker symbol in SLUS_207.72.ld) instead of D_004A30F0.
+// gas never makes '_gp' gp-relative, gcc treats 'extern int _gp' as small data (one unsplit la insn -> cse'd, hoisted, no tie).
+extern "C" void func_0031A308(void* p);
+extern "C" void func_0031ABD0();
+extern "C" void func_0031AC08();
+extern "C" void func_0031AC60();
+extern "C" int func_00416210(void* p, int c, int n);
+extern "C" int func_00423C90();
+extern "C" int func_00423CA0(int id, void* st);
+extern "C" int func_00423DA0(void* sema);
+extern "C" int func_00423BA0(void* tp);
+extern "C" void func_00423BC0(int id, void* arg);
+extern "C" void func_00424880(int n);
+extern "C" int func_00423A90(int n, void (*a)(), int b, void (*c)());
+extern "C" int func_004248E8(int n);
+extern int _gp;     // linker-defined $gp base (0x4A30F0; splat names it D_004A30F0)
+extern int D_004A3ECC;
+
+struct sMgr_31A6D8 {
+    char pad0[0xC];
+    int fC;
+    int f10;
+    int f14;
+    int f18;
+    int f1C;
+    volatile int f20;
+    char pad24[0xC];
+    char stack2[0x4000];
+    int f4030;
+    int f4034;
+    int f4038;
+    int pad403C;
+    char stack1[0x10000];
+    int f14040;
+    int f14044;
+    int f14048;
+    int pad1404C;
+    char pad14050[0x30];
+    char vu0[0x210];
+    int f14290;
+};
+// Sony EE kernel ThreadParam / SemaParam.
+struct sThreadParam_31A6D8 {
+    int status;
+    void (*entry)();
+    void* stack;
+    int stackSize;
+    void* gpReg;
+    int initPriority;
+    int currentPriority;
+    unsigned int attr;
+    unsigned int option;
+    int waitType;
+    int waitId;
+    int wakeupCount;
+};
+struct sSemaParam_31A6D8 {
+    int count;
+    int maxCount;
+    int initCount;
+    int numWaitThreads;
+    unsigned int attr;
+    unsigned int option;
+};
+
+extern "C" void func_0031A6D8(sMgr_31A6D8* self)
+{
+    sThreadParam_31A6D8 st;
+    sSemaParam_31A6D8 s1;
+    sSemaParam_31A6D8 s2;
+    sSemaParam_31A6D8 s3;
+    sThreadParam_31A6D8 tp;
+    self->f20 = 0;
+    func_0031A308(self->vu0);
+    self->f10 = func_00423C90();
+    func_00416210(&st, 0, 0x30);
+    func_00423CA0(self->f10, &st);
+    self->f14 = st.currentPriority;
+    func_00416210(&s1, 0, 0x18);
+    self->fC = func_00423DA0(&s1);
+    func_00416210(&s2, 0, 0x18);
+    self->f18 = func_00423DA0(&s2);
+    self->f1C = 0;
+    func_00416210(&s3, 0, 0x18);
+    s3.maxCount = 0x400;
+    self->f14044 = func_00423DA0(&s3);
+    self->f14048 = 0;
+    func_00416210(&tp, 0, 0x30);
+    tp.status = 0x10;
+    tp.entry = func_0031AC60;
+    tp.stack = self->stack1;
+    tp.stackSize = 0x10000;
+    tp.initPriority = self->f14 + 1;
+    tp.gpReg = &_gp;
+    tp.currentPriority = self->f14 + 1;
+    tp.attr = 0;
+    tp.option = 0;
+    self->f14040 = func_00423BA0(&tp);
+    D_004A3ECC = self->f14040;
+    func_00423BC0(self->f14040, self);
+    self->f4038 = 0;
+    func_00416210(&s3, 0, 0x18);
+    s3.maxCount = 0x400;
+    self->f4034 = func_00423DA0(&s3);
+    func_00416210(&tp, 0, 0x30);
+    tp.status = 0x10;
+    tp.entry = func_0031AC08;
+    tp.stack = self->stack2;
+    tp.stackSize = 0x4000;
+    tp.gpReg = &_gp;
+    tp.initPriority = self->f14 - 1;
+    tp.currentPriority = self->f14 - 1;
+    tp.attr = 0;
+    tp.option = 0;
+    self->f4030 = func_00423BA0(&tp);
+    func_00423BC0(self->f4030, self);
+    func_00424880(3);
+    self->f14290 = func_00423A90(3, (void (*)())func_0031A490, 0, func_0031ABD0);
+    func_004248E8(3);
+}
+#endif
 
 //100%
 INCLUDE_ASM("bx/memblockman", func_0031A920);
