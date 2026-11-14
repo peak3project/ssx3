@@ -1561,7 +1561,134 @@ extern "C" void func_0021F9B0(char* self, char* obj, char* rider, int x, float t
 
 INCLUDE_ASM("fe/all_in_one_fe", func_0021FD38);
 
+//100%
 INCLUDE_ASM("fe/all_in_one_fe", func_002200C0);
+#ifdef SKIP_ASM
+// PORT: PS2-only inline asm; needs a C fallback off-PS2.
+struct sSettings_00C0 {
+    unsigned int pad0 : 19;
+    unsigned int metric : 1;
+    unsigned int pad1 : 12;
+    int rest[0xA1];
+};
+struct sVec4_00C0 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+struct sV2_00C0 {
+    float x, y;
+    sV2_00C0() {}
+    sV2_00C0(const float& ax, const float& ay) : x(ax), y(ay) {}
+};
+extern sSettings_00C0 D_00535610_00C0 __asm__("D_00535610");
+extern char D_004A2308[];
+extern char D_004A2310[];
+extern char D_004A2138[];
+extern "C" void func_00391FB0(void* self, const char* str, float* rect, int n, float sx, float sy);
+extern "C" void func_00391CB0(void*, float, float, char*);
+extern "C" void func_00392908(void*, float, float, char*);
+extern "C" unsigned int strlen(const char*);
+void func_001F10F8_00C0(void*, t2Vector*, void*, t2Vector*, const sV2_00C0&, int, int, int) __asm__("func_001F10F8");
+
+// PORT: PS2-only VU0 inline asm (4-component vector length).
+static inline float vu0Length_00C0(const sVec4_00C0& v)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %1, $vi22\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(v));
+    return r;
+}
+
+static inline void ScaleV2_00C0(sV2_00C0& v, float s)
+{
+    v.x *= s;
+    v.y *= s;
+}
+
+struct sFont_00C0 {
+    char pad_0x0[0x14];
+    int lineHeight;                 // 0x14
+    char pad_0x18[0x18];
+    float scaleX;                   // 0x30
+    float scaleY;                   // 0x34
+    float drawScaleX;               // 0x38
+    float drawScaleY;               // 0x3C
+    sColour colour;                 // 0x40
+};
+
+static inline sFont_00C0* font_00C0(char* self)
+{
+    return *(sFont_00C0**)(self + 0x42C);
+}
+
+static inline void SetScale_00C0(sFont_00C0* f, const sV2_00C0& s)
+{
+    f->drawScaleX = f->scaleX * s.x;
+    f->drawScaleY = f->scaleY * s.y;
+}
+
+static inline void TextSize_00C0(sFont_00C0* f, const char* str, float* rect, t2Vector& size)
+{
+    func_00391FB0(f, str, rect, 0, f->drawScaleX, f->drawScaleY);
+    size.x = rect[2];
+    size.y = rect[3];
+}
+
+extern "C" void func_002200C0(char* self, char* obj, char* rider, int x)
+{
+    sSettings_00C0 settings;
+    t2Vector a;
+    sV2_00C0 sc;
+    sColour col;
+    float rect[4];
+    t2Vector p;
+    t2Vector size;
+    cBE_getInterface_Fv(cBE_getBE(), 4);
+    settings = D_00535610_00C0;
+    // Both unit labels are taken up front: the target computes "MPH" before the velocity call and keeps it in
+    // $30 across that call (a literal in the branch would be materialised inside it).
+    char* kmh = D_004A2308;
+    char* mph = D_004A2310;
+    char* units = kmh;
+    cBeing* being = (cBeing*)(rider + 0x6C0);
+    float speed = vu0Length_00C0(*(const sVec4_00C0*)being->getVelocity()) * 0.035999998450279236f;
+    if (!settings.metric) {
+        speed *= 0.6209999918937683f;
+        units = mph;
+    }
+    char* e = obj + 0x384;
+    func_001E91F8(e, &a);
+    func_001E9290(e, &sc);
+    func_001E91A8(e, &col);
+    font_00C0(self)->colour = col;
+    SetScale_00C0(font_00C0(self), sc);
+    TextSize_00C0(font_00C0(self), units, rect, size);
+    func_001F10F8_00C0(self, &p, &a, &size, sV2_00C0(1.0f, 1.0f), obj[0x3A4], obj[0x3A5], x);
+    func_00391CB0(font_00C0(self), p.x, p.y, units);
+    char buf[8];
+    sprintf(buf, D_004A2138, (int)(speed + 0.5f));
+    if (strlen(buf) > 2)
+        ScaleV2_00C0(sc, 1.1214120388031006f);
+    else
+        ScaleV2_00C0(sc, 1.3623675107955933f);
+    SetScale_00C0(font_00C0(self), sc);
+    p.x += size.x * 0.5f;
+    p.y -= (float)font_00C0(self)->lineHeight * font_00C0(self)->scaleY * sc.y * 0.5f + 14.003287315368652f;
+    func_00392908(font_00C0(self), p.x, p.y, buf);
+    SetScale_00C0(font_00C0(self), sV2_00C0(1.0f, 1.0f));
+}
+#endif
 
 INCLUDE_ASM("fe/all_in_one_fe", func_002204A0);
 
