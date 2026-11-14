@@ -2288,7 +2288,18 @@ extern "C" int func_001807C8(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/debugfe", func_001807D8);
+#ifdef SKIP_ASM
+struct sDbg_1807D8 { char pad[0xEC]; char text[0x40]; char mask[0x40]; };
+extern "C" char* func_001807D8(sDbg_1807D8* self)
+{
+    int n = strlen(self->text);
+    for (int i = 0; i < n; i++) self->mask[i] = '*';
+    self->mask[n] = 0;
+    return self->mask;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/debugfe", func_00180840);
