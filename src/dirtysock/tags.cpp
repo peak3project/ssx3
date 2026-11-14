@@ -784,7 +784,48 @@ extern "C" int cDirtysock_tag_TagFieldSetStructure(char* record, int len, char* 
 }
 #endif
 
+//100%
 INCLUDE_ASM("dirtysock/tags", cDirtysock_tag_TagFieldSetCrypt);
+#ifdef SKIP_ASM
+extern "C" int cDirtysock_tag__TagFieldSetupTerm(char* record, int len, char* temp);
+extern const unsigned char kHexHi[] __asm__("D_00495FC0");
+extern const unsigned char kHexLo[] __asm__("D_004960C0");
+extern char D_004A4A88[];
+
+// Same key handling as the matched TagFieldGetCrypt: a working copy kbase of the key, defaulted when empty.
+extern "C" int cDirtysock_tag_TagFieldSetCrypt(char* record, int len, char* name, const unsigned char* key, const unsigned char* data)
+{
+    char temp[4096 + 256];
+    const unsigned char* kbase = key;
+    const unsigned char* p = data;
+    const unsigned char* k;
+    unsigned int h;
+    unsigned int c;
+    char* out;
+    if (kbase == 0 || *kbase == 0) {
+        kbase = (const unsigned char*)D_004A4A88;
+    }
+    out = cDirtysock_tag__TagFieldSetupAppend(record, temp, name);
+    h = 0;
+    *out++ = '$';
+    k = kbase;
+    c = *data;
+    while (c != 0) {
+        unsigned int x = c ^ h;
+        unsigned int kc = *k++;
+        p++;
+        if (*k == 0) {
+            k = kbase;
+        }
+        h = (kc ^ ((x << 3) | (x >> 5))) & 0xFF;
+        *out++ = kHexHi[h];
+        *out++ = kHexLo[h];
+        c = *p;
+    }
+    *out = 0;
+    return cDirtysock_tag__TagFieldSetupTerm(record, len, temp);
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("dirtysock/tags", cDirtysock_tag_TagFieldSetEpoch);
