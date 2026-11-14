@@ -555,7 +555,81 @@ extern "C" void func_0022CD40(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("main/game", func_0022CEA8);
+#ifdef SKIP_ASM
+struct sGroup_CEA8 {
+    int f0;
+    int count;      // 0x4
+    int a;          // 0x8
+    int b;          // 0xC
+    int ids[6];     // 0x10
+};
+struct sMode_CEA8 {
+    int f0;
+    int mode;       // 0x4
+};
+extern sGroup_CEA8 D_00442488_CEA8[] __asm__("D_00442488");
+extern sMode_CEA8 D_00442820_CEA8[] __asm__("D_00442820");
+extern "C" void func_0022D598(void* self, int idx);
+extern "C" void func_0022D3D8(void* self, int idx);
+extern "C" void func_0022D640(void* self, int a1);
+
+// PORT: the unit's other callers declare (void*, int, char*); the body reads three ints, bound by asm label
+extern "C" void func_0022CEA8_impl(void* self, int idx, int mode) __asm__("func_0022CEA8");
+
+// Shared with func_0022D088: true for a real section id (0x31 = no section).
+static inline bool IsSection(const int& id)
+{
+    return id != 0x31;
+}
+
+extern "C" void func_0022CEA8_impl(void* self, int idx, int mode)
+{
+    int v;
+    if (mode == 7) {
+        v = D_00442820_CEA8[idx].mode;
+    } else {
+        v = mode;
+    }
+    int extra = 0x31;
+    if (D_00442488_CEA8[idx].a >= 0) {
+        extra = D_00442488_CEA8[idx].a;
+    }
+    for (int i = 0; i < 0x32; i++) {
+        int found = 1;
+        for (int j = 0; j < D_00442488_CEA8[idx].count; j++) {
+            if (i == D_00442488_CEA8[idx].ids[j]) {
+                found = 0;
+                break;
+            }
+        }
+        if ((unsigned)(i - 0x2C) <= 4) {
+            found = 0;
+        }
+        if (i == 0x2B) {
+            found = 0;
+        }
+        if (found) {
+            func_0022D598(self, i);
+        }
+    }
+    *(int*)((char*)self + 0x1BC) = idx;
+    *(int*)((char*)self + 0x1C0) = 0;
+    for (int k = 0; k < D_00442488_CEA8[idx].count; k++) {
+        func_0022D3D8(self, D_00442488_CEA8[idx].ids[k]);
+    }
+    if (IsSection(extra)) {
+        *(int*)((char*)self + 0x1A4) = 0;
+        func_0022D3D8(self, extra);
+    }
+    int b = D_00442488_CEA8[idx].b;
+    if (b >= 0) {
+        func_0022D3D8(self, b);
+    }
+    func_0022D640(self, v);
+}
+#endif
 
 INCLUDE_ASM("main/game", func_0022D088);
 
