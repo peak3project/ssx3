@@ -599,7 +599,7 @@ INCLUDE_ASM("visualfx/avalanche", func_002D7CA8);
 #ifdef SKIP_ASM
 extern "C" void func_002D7DD8(void* self, int force);
 
-// PORT: callers declare it (void*, float); bind the typed definition by asm label
+// Callers declare it (void*, float); the typed definition is bound by asm label.
 extern "C" bool func_002D7CA8_7CA8(sAvAct_5778* self, float t) __asm__("func_002D7CA8");
 extern "C" bool func_002D7CA8_7CA8(sAvAct_5778* self, float t)
 {
