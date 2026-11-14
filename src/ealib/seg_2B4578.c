@@ -5985,7 +5985,86 @@ int func_003BECA0(int a, int b, int *o1, int *o2) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003BED30);
+#ifdef SKIP_ASM
+extern float D_0044CA40_ED30[] __asm__("D_0044CA40");
+extern float D_0044C700_ED30[] __asm__("D_0044C700");
+
+int func_003BED30(int mode, int rate, char *buf) {
+    int i;
+    int j;
+
+    buf = (char *)((((int)buf - 1) | 0xF) + 1);
+    D_0050AC68 = (struct sAC68 *)buf;
+    buf += 0x98;
+    if (rate < 0) {
+        return -2;
+    }
+    if (rate < 0x22) {
+        D_0050AC68->f04 = 0xE0;
+    } else if (rate < 0x43) {
+        D_0050AC68->f04 = 0x160;
+    } else if (rate < 0x65) {
+        D_0050AC68->f04 = 0x1E0;
+    } else {
+        return -2;
+    }
+    if (mode == 1) {
+        D_0050AC68->f01 = 4;
+    } else if (mode == 2) {
+        D_0050AC68->f01 = 5;
+    } else {
+        return -1;
+    }
+    D_0050AC68->f08 = 0;
+    D_0050AC68->f00 = mode;
+    for (i = 0; i < D_0050AC68->f01; i++) {
+        struct sAC68Blk *blk;
+        buf = (char *)((((int)buf - 1) | 0xF) + 1);
+        blk = (struct sAC68Blk *)buf;
+        D_0050AC68->f84[i] = blk;
+        buf = (char *)((((int)buf + 0x1C - 1) | 0xF) + 1);
+        blk->f00 = (int)buf;
+        buf += D_0050AC68->f04 * 4;
+        for (j = 0; j < D_0050AC68->f04; j++) {
+            ((int *)D_0050AC68->f84[i]->f00)[j] = 0;
+        }
+    }
+    for (i = 0; i < 6; i++) {
+        D_0050AC68->f6C[i] = 0;
+    }
+    i = 0;
+    switch (mode) {
+    case 1:
+        for (; i < 14; i++) {
+            D_0050AC68->f0C[i] = 0.00195694715f;
+            D_0044CA40_ED30[i] = D_0044C700_ED30[i] / 0.010999918f;
+        }
+        for (; i < 24; i++) {
+            D_0050AC68->f0C[i] = 0.00787401572f;
+            D_0044CA40_ED30[i] = D_0044C700_ED30[i] / 0.0350000858f;
+        }
+        break;
+    case 2:
+    default:
+        for (; i < 5; i++) {
+            D_0050AC68->f0C[i] = 0.00195694715f;
+            D_0044CA40_ED30[i] = D_0044C700_ED30[i] / 0.010999918f;
+        }
+        for (; i < 14; i++) {
+            D_0050AC68->f0C[i] = 0.00787401572f;
+            D_0044CA40_ED30[i] = D_0044C700_ED30[i] / 0.0350000858f;
+        }
+        for (; i < 24; i++) {
+            D_0050AC68->f0C[i] = 0.0666666701f;
+            D_0044CA40_ED30[i] = D_0044C700_ED30[i] / 0.190000057f;
+        }
+        break;
+    }
+    return 0;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ealib/seg_2B4578", func_003BF0F0);
