@@ -1404,7 +1404,276 @@ extern "C" void func_0011EB98_impl(cRider* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/rider", func_0011F3D8);
+#ifdef SKIP_ASM
+struct sXf_F3D8 {
+    t4Vector pos;
+    t4Vector rot;
+};
+// Quaternion slerp from *a towards *b by t.
+extern "C" sVec4W func_0031BCB0(const t4Vector* a, const t4Vector* b, float t);
+
+// PORT: PS2-only VU0 inline asm (vector subtract).
+static inline sVec4W Sub_F3D8(const t4Vector& a, const t4Vector& b)
+{
+    sVec4W r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "o"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector * scalar).
+static inline sVec4W Scale_F3D8(const t4Vector& v, float s)
+{
+    sVec4W r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "o"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector add).
+static inline sVec4W Add_F3D8(const t4Vector& a, const t4Vector& b)
+{
+    sVec4W r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4-component dot product).
+static inline float Dot_F3D8(const t4Vector& a, const t4Vector& b)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "lqc2      $vf5, %3\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf5\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "qmfc2.ni  %1, $vf4\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (normalize via rsqrt).
+static inline sVec4W Normalize_F3D8(const t4Vector& v)
+{
+    sVec4W r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vrsqrt    Q, $vf0w, $vf4x\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf5, $vf3, Q\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(v)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (cross product, w = 0).
+static inline sVec4W Cross_F3D8(const t4Vector& a, const t4Vector& b)
+{
+    sVec4W r;
+    __asm__(
+        "lqc2      $vf4, %1\n"
+        "lqc2      $vf5, %2\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vsub.w    $vf6, $vf6, $vf6\n"
+        "sqc2      $vf6, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector length).
+static inline float Length_F3D8(const t4Vector& v)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %1, $vi22\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(v));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (in-place vector / scalar via vdiv).
+static inline void DivEq_F3D8(sVec4W& r, float s)
+{
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vdiv      Q, $vf0w, $vf3x\n"
+        "lqc2      $vf4, %2\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf5, $vf4, Q\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(r), "f"(s)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 macro-mode asm (quaternion product a * b).
+static inline sVec4W QuatMul_F3D8(const t4Vector& a, const t4Vector& b)
+{
+    sVec4W r;
+    __asm__(
+        "lqc2       $vf4, %1\n"
+        "lqc2       $vf5, %2\n"
+        "vmul.xyzw  $vf7, $vf4, $vf5\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vmulaw.xyz ACC, $vf4, $vf5w\n"
+        "vmaddaw.xyz ACC, $vf5, $vf4w\n"
+        "vsubax.w   ACC, $vf7, $vf7x\n"
+        "vmsubay.w  ACC, $vf0, $vf7y\n"
+        "vmsubz.w   $vf8, $vf0, $vf7z\n"
+        "vmaddw.xyz $vf8, $vf6, $vf0w\n"
+        "sqc2       $vf8, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (v rotated by quaternion q).
+static inline sVec4W Rot_F3D8(const t4Vector& q, const t4Vector& v)
+{
+    sVec4W r;
+    __asm__(
+        "lqc2      $vf4, %1\n"
+        "lqc2      $vf5, %2\n"
+        "vsub.w    $vf8, $vf8, $vf8\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vopmula.xyz ACC, $vf4, $vf6\n"
+        "vopmsub.xyz $vf7, $vf6, $vf4\n"
+        "vmulaw.xyz ACC, $vf5, $vf0w\n"
+        "vmaddaw.xyz ACC, $vf6, $vf4w\n"
+        "vmaddaw.xyz ACC, $vf6, $vf4w\n"
+        "vmaddaw.xyz ACC, $vf7, $vf0w\n"
+        "vmaddw.xyz $vf8, $vf7, $vf0w\n"
+        "sqc2      $vf8, %0\n"
+        : "=m"(r)
+        : "m"(q), "m"(v)
+        : "memory");
+    return r;
+}
+
+static inline sVec4W AxisAngle_F3D8(const t4Vector& axis, float angle)
+{
+    float s, c;
+    func_0031BE50(&s, &c, angle * 0.5f);
+    return sVec4W(s * axis.x, s * axis.y, s * axis.z, c);
+}
+
+// Bone i's local offset scaled by the model's scale.
+static inline sVec4W LocalPos_F3D8(cAnimModel* am, int i)
+{
+    return sVec4W(am->localPos[i].x * am->unk_140.x, am->localPos[i].y * am->unk_140.y, am->localPos[i].z * am->unk_140.z, am->localPos[i].w * am->unk_140.w);
+}
+
+// v limited to [lo, hi].
+static inline float Clamp_F3D8(float v, float lo, float hi)
+{
+    return lo <= v ? v <? hi : lo;
+}
+
+// Point p (local to transform a) in a's parent space.
+static inline sVec4W XformPt_F3D8(const sXf_F3D8& a, const t4Vector& p)
+{
+    return Add_F3D8(Rot_F3D8(a.rot, Sub_F3D8(p, D_004FF130)), a.pos);
+}
+
+// Child transform = parent transform a composed with local transform b.
+static inline sXf_F3D8 Combine_F3D8(const sXf_F3D8& a, const sXf_F3D8& b)
+{
+    sXf_F3D8 r;
+    r.rot = QuatMul_F3D8(a.rot, b.rot);
+    r.pos = Add_F3D8(Rot_F3D8(a.rot, Sub_F3D8(b.pos, D_004FF130)), a.pos);
+    return r;
+}
+
+// Two-bone IK: blends bone idx[2] towards target by t, then bends bones idx[0] / idx[1] so the chain reaches it.
+extern "C" void func_0011F3D8_impl(cRider* self, int* idx, sXf_F3D8* target, float t) __asm__("func_0011F3D8");
+extern "C" void func_0011F3D8_impl(cRider* self, int* idx, sXf_F3D8* target, float t)
+{
+    sXf_F3D8* end = (sXf_F3D8*)&self->mAnimModel->bones[idx[2]];
+    if (t == 1.0f) {
+        *end = *target;
+    } else {
+        end->pos = Add_F3D8(end->pos, Scale_F3D8(Sub_F3D8(target->pos, end->pos), t));
+        end->rot = func_0031BCB0(&end->rot, &target->rot, t);
+    }
+    cAnimModel* am = self->mAnimModel;
+    sAnimModelBone* bones = am->bones;
+    float a = LocalPos_F3D8(am, idx[1]).x;
+    sXf_F3D8* mid = (sXf_F3D8*)&bones[idx[1]];
+    float b = LocalPos_F3D8(am, idx[2]).x;
+    sXf_F3D8* root = (sXf_F3D8*)&bones[idx[0]];
+    sVec4W d = Sub_F3D8(end->pos, root->pos);
+    float c = ((Dot_F3D8(d, d) - a * a) - b * b) * 0.5f / (a * b);
+    float bend = func_0031C128(Clamp_F3D8(c, -1.0f, 1.0f)) - 1.5707963705062866f;
+    sXf_F3D8 upper;
+    upper.pos = sVec4(a, 0.0f, 0.0f, 1.0f);
+    upper.rot = AxisAngle_F3D8(D_004FF160, bend);
+    sXf_F3D8 m = Combine_F3D8(*root, upper);
+    sVec4W dir = Sub_F3D8(XformPt_F3D8(m, sVec4XW(b, 0.0f, 0.0f, 1.0f)), root->pos);
+    sVec4W axis = Cross_F3D8(Normalize_F3D8(dir), Normalize_F3D8(d));
+    float len = Length_F3D8(axis);
+    if (len > 9.999999747378752e-06f) {
+        DivEq_F3D8(axis, len);
+        sVec4W q;
+        q = AxisAngle_F3D8(axis, func_0031C128(len));
+        root->rot = QuatMul_F3D8(q, root->rot);
+    }
+    *mid = Combine_F3D8(*root, upper);
+}
+#endif
 
 //100%
 INCLUDE_ASM("ai/rider", cRider_doLeanPoseAdjust);
