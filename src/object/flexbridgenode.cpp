@@ -1293,7 +1293,431 @@ extern "C" void func_003480C8(char* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/flexbridgenode", func_00348290);
+#ifdef SKIP_ASM
+struct sFbV4_8290 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+// Cubic coefficient matrix of one bridge segment (rows t^3, t^2, t, 1).
+struct sFbMat_8290 {
+    sFbV4_8290 row[4];
+};
+
+struct sFbBoneEnt_8290 {
+    short f0;
+    short id;           // 0x2
+    int f4;
+    int f8;
+};
+
+struct sFbModel_8290 {
+    char pad_0x00[0x88];
+    char* bones;        // 0x88: entries from +0x18
+};
+
+struct sFbVE_8290 {
+    short delta;
+    short index;
+    int (*fn)(void*, int);
+};
+
+struct sFbObj_8290 {
+    char pad_0x00[0xC];
+    sFbVE_8290* vt;         // 0x0C
+    char pad_0x10[0x8];
+    sFbModel_8290* model;   // 0x18
+    char pad_0x1C[0x4];
+    int count;              // 0x20
+    unsigned int mask;      // 0x24
+    char pad_0x28[0x28];
+    sFbMat_8290* segs;      // 0x50
+};
+
+// PORT: PS2-only VU0 inline asm (v * s).
+static inline sFbV4_8290 vu0Scale_8290(const sFbV4_8290& v, const float& s)
+{
+    sFbV4_8290 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+// Hit record (position, normal, distance, type, ids, spline parameter).
+struct sFbHit_8290 {
+    sFbV4_8290 pos;       // 0x00
+    sFbV4_8290 nrm;       // 0x10
+    sFbV4_8290 v20;       // 0x20
+    sFbV4_8290 v30;       // 0x30
+    float dist;         // 0x40
+    int type;           // 0x44
+    int pad48;
+    int id;             // 0x4C
+    void* model;        // 0x50
+    void* obj;          // 0x54
+    void* spline;       // 0x58
+    int bone;           // 0x5C
+    int f60;            // 0x60
+    int f64;            // 0x64
+    float t;            // 0x68
+    float u;            // 0x6C
+    float v;            // 0x70
+    int pad74[3];
+};
+
+// A direction (w = 0); stores w first, like sVec4W in ai/rider.cpp.
+struct sFbDir_8290 : sFbV4_8290 {
+    sFbDir_8290(const float& ax, const float& ay, const float& az)
+    {
+        w = 0.0f;
+        x = ax;
+        y = ay;
+        z = az;
+    }
+};
+
+// Power basis (t^3, t^2, t, w) of a cubic parameter, built up from t.
+struct sFbPow_8290 : sFbV4_8290 {
+    sFbPow_8290(const float& t, const float& aw)
+    {
+        w = aw;
+        z = t;
+        y = t * t;
+        x = t * y;
+    }
+};
+
+// Five floats (the golden-section start brackets for the five sample points).
+struct sFbF5_8290 {
+    float v[5];
+};
+
+extern sFbV4_8290 D_004FF120_8290 __asm__("D_004FF120");
+extern const sFbF5_8290 D_0048E7D8;
+extern const sFbF5_8290 D_0048E7F0;
+
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix multiply, d = b * a).
+static inline void vu0MulMat_8290(sFbMat_8290* d, const sFbMat_8290* a, const sFbMat_8290* b)
+{
+    __asm__ __volatile__(
+        "lqc2      $vf4, 0x0(%1)\n"
+        "lqc2      $vf5, 0x10(%1)\n"
+        "lqc2      $vf6, 0x20(%1)\n"
+        "lqc2      $vf7, 0x30(%1)\n"
+        "lqc2      $vf8, 0x0(%2)\n"
+        "lqc2      $vf9, 0x10(%2)\n"
+        "lqc2      $vf10, 0x20(%2)\n"
+        "lqc2      $vf11, 0x30(%2)\n"
+        "vmulax.xyzw ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw $vf12, $vf7, $vf8w\n"
+        "vmulax.xyzw ACC, $vf4, $vf9x\n"
+        "vmadday.xyzw ACC, $vf5, $vf9y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf9z\n"
+        "vmaddw.xyzw $vf13, $vf7, $vf9w\n"
+        "vmulax.xyzw ACC, $vf4, $vf10x\n"
+        "vmadday.xyzw ACC, $vf5, $vf10y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf10z\n"
+        "vmaddw.xyzw $vf14, $vf7, $vf10w\n"
+        "vmulax.xyzw ACC, $vf4, $vf11x\n"
+        "vmadday.xyzw ACC, $vf5, $vf11y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf11z\n"
+        "vmaddw.xyzw $vf15, $vf7, $vf11w\n"
+        "sqc2      $vf12, 0x0(%0)\n"
+        "sqc2      $vf13, 0x10(%0)\n"
+        "sqc2      $vf14, 0x20(%0)\n"
+        "sqc2      $vf15, 0x30(%0)\n"
+        :
+        : "r"(d), "r"(a), "r"(b)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix copy through VU0 registers).
+static inline void vu0CopyMat_8290(sFbMat_8290* d, const sFbMat_8290* s)
+{
+    __asm__ __volatile__(
+        "lqc2      $vf1, 0x0(%1)\n"
+        "lqc2      $vf2, 0x10(%1)\n"
+        "lqc2      $vf3, 0x20(%1)\n"
+        "lqc2      $vf4, 0x30(%1)\n"
+        "sqc2      $vf1, 0x0(%0)\n"
+        "sqc2      $vf2, 0x10(%0)\n"
+        "sqc2      $vf3, 0x20(%0)\n"
+        "sqc2      $vf4, 0x30(%0)\n"
+        :
+        : "r"(d), "r"(s)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (vector * matrix, row-vector convention).
+static inline sFbV4_8290 vu0MtxMul_8290(const sFbMat_8290* m, const sFbV4_8290& v)
+{
+    sFbV4_8290 r;
+    __asm__(
+        "lqc2         $vf8, %1\n"
+        "lqc2         $vf4, 0x0(%2)\n"
+        "lqc2         $vf5, 0x10(%2)\n"
+        "lqc2         $vf6, 0x20(%2)\n"
+        "lqc2         $vf7, 0x30(%2)\n"
+        "vmulax.xyzw  ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw  $vf12, $vf7, $vf8w\n"
+        "sqc2         $vf12, %0\n"
+        : "=m"(r)
+        : "m"(v), "r"(m)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (a - b).
+static inline sFbV4_8290 vu0Sub_8290(const sFbV4_8290& a, const sFbV4_8290& b)
+{
+    sFbV4_8290 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (a + b).
+static inline sFbV4_8290 vu0Add_8290(const sFbV4_8290& a, const sFbV4_8290& b)
+{
+    sFbV4_8290 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (dot product).
+static inline float vu0Dot_8290(const sFbV4_8290& a, const sFbV4_8290& b)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "lqc2      $vf5, %3\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf5\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "qmfc2.ni  %1, $vf4\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4-component vector length).
+static inline float vu0Length_8290(const sFbV4_8290& v)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %1, $vi22\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(v));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (normalised copy of a 4-vector).
+static inline sFbV4_8290 vu0Normal_8290(const sFbV4_8290& v)
+{
+    sFbV4_8290 r;
+    __asm__(
+        "lqc2       $vf3, %1\n"
+        "vaddw.x    $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw  $vf4, $vf3, $vf3\n"
+        "vadday.x   ACC, $vf4, $vf4y\n"
+        "vmaddaz.x  ACC, $vf6, $vf4z\n"
+        "vmaddw.x   $vf4, $vf6, $vf4w\n"
+        "vrsqrt     Q, $vf0w, $vf4x\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf5, $vf3, Q\n"
+        "sqc2       $vf5, %0\n"
+        : "=m"(r)
+        : "m"(v)
+        : "memory");
+    return r;
+}
+
+// Point on a cubic segment at parameter t.
+static inline sFbV4_8290 evalSeg_8290(const sFbMat_8290* c, float t)
+{
+    sFbPow_8290 v(t, 1.0f);
+    return vu0MtxMul_8290(c, v);
+}
+
+// PORT: SN abs.s asm helper (PS2 FPU).
+static inline float fsAbs_8290(float x)
+{
+    float r;
+    __asm__("abs.s %0,%1" : "=f"(r) : "f"(x));
+    return r;
+}
+
+// Tangent of a cubic segment at parameter t.
+static inline sFbV4_8290 evalTan_8290(const sFbMat_8290* c, const float& t)
+{
+    sFbDir_8290 v(t * (3.0f * t), 2.0f * t, 1.0f);
+    return vu0MtxMul_8290(c, v);
+}
+
+static inline float clamp_8290(float x, float lo, float hi)
+{
+    return x >= lo ? x <? hi : lo;
+}
+
+static inline void resetHit_8290(sFbHit_8290* h)
+{
+    h->type = 2;
+    h->obj = 0;
+    h->model = 0;
+    h->spline = 0;
+    h->bone = -1;
+    h->f60 = -1;
+    h->f64 = -1;
+    h->id = -1;
+    h->v20 = D_004FF120_8290;
+    h->v30 = D_004FF120_8290;
+    h->t = 0;
+    h->u = 0;
+    h->v = 0;
+}
+
+extern "C" void func_00348290(sFbObj_8290* self, void* box, void* box2, const sFbV4_8290* point, unsigned int mask,
+                              int* found, float* bestDist, sFbHit_8290* out)
+{
+    if ((self->mask & mask) == 0) {
+        return;
+    }
+    for (int i = 0; i < self->count - 1; i++) {
+        float a = 0.0f;
+        float b = 1.0f;
+        sFbV4_8290 pos;
+        sFbV4_8290 next;
+        sFbV4_8290 dir;
+        sFbMat_8290* c = &self->segs[i];
+        pos = evalSeg_8290(c, a);
+        float best = vu0Length_8290(vu0Sub_8290(*point, pos));
+        int bestIdx = 0;
+        int k;
+        for (k = 1; k < 5; k++) {
+            next = evalSeg_8290(c, k * 0.25f);
+            dir = vu0Sub_8290(next, pos);
+            float u = vu0Dot_8290(vu0Sub_8290(*point, pos), dir) / vu0Dot_8290(dir, dir);
+            dir = vu0Add_8290(pos, vu0Scale_8290(dir, clamp_8290(u, 0.0f, 1.0f)));
+            float d = vu0Length_8290(vu0Sub_8290(*point, dir));
+            if (d < best) {
+                best = d;
+                bestIdx = k;
+            }
+            pos = next;
+        }
+        sFbF5_8290 lo = D_0048E7D8;
+        sFbF5_8290 hi = D_0048E7F0;
+        a = lo.v[bestIdx];
+        b = hi.v[bestIdx];
+        float tc = a + (b - a) * 0.381966f;
+        float td = a + (b - a) * 0.618034f;
+        // Golden-section search on [a, b]. f(a) and f(b) are evaluated but never read (the binary keeps both
+        // evaluations; their lengths drop out).
+        float fa, fb, fc, fd;
+        pos = evalSeg_8290(c, a);
+        fa = vu0Length_8290(vu0Sub_8290(pos, *point));
+        pos = evalSeg_8290(c, tc);
+        fc = vu0Length_8290(vu0Sub_8290(pos, *point));
+        pos = evalSeg_8290(c, td);
+        fd = vu0Length_8290(vu0Sub_8290(pos, *point));
+        float t = td;
+        float dist = fd;
+        pos = evalSeg_8290(c, b);
+        fb = vu0Length_8290(vu0Sub_8290(pos, *point));
+        for (k = 0; k < 24; k++) {
+            if (fsAbs_8290(b - a) <= 0.0005f) {
+                break;
+            }
+            if (fd < fc) {
+                a = tc;
+                tc = td;
+                td = tc * 0.618034f + b * 0.381966f;
+                pos = evalSeg_8290(c, td);
+                float f = vu0Length_8290(vu0Sub_8290(pos, *point));
+                fc = fd;
+                fd = f;
+                t = td;
+                dist = fd;
+            } else {
+                b = td;
+                td = tc;
+                tc = td * 0.618034f + a * 0.381966f;
+                pos = evalSeg_8290(c, tc);
+                float f = vu0Length_8290(vu0Sub_8290(pos, *point));
+                fd = fc;
+                fc = f;
+                t = tc;
+                dist = fc;
+            }
+        }
+        if (*found == 0 || dist < *bestDist) {
+            *found = 1;
+            *bestDist = dist;
+            resetHit_8290(out);
+            out->pos = pos;
+            out->nrm = vu0Normal_8290(evalTan_8290(c, t));
+            out->model = self->model;
+            sFbVE_8290* vt = self->vt;
+            int bone = vt[49].fn((char*)self + vt[49].delta, i);
+            out->bone = bone;
+            out->f64 = i;
+            out->t = t;
+            out->spline = 0;
+            int idx = bone;
+            if (idx <= 0) {
+                idx = 0;
+            }
+            int id = ((sFbBoneEnt_8290*)(self->model->bones + 0x18))[idx].id;
+            if (id == -1) {
+                out->id = 0;
+            } else {
+                out->id = id;
+            }
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/flexbridgenode", func_00348B40);
