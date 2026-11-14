@@ -3691,7 +3691,98 @@ extern "C" void func_001CC848(void* self, int a1)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/fepopup", func_001CC8D8);
+#ifdef SKIP_ASM
+extern "C" char* strncpy(char* dst, const char* src, int n);
+extern "C" void func_001CE4C8(void* self, void* obj);
+extern char D_00466540[];
+extern char D_00466558[];
+
+struct sRect_C8D8 {
+    float x, y, w, h;
+    void Measure(char* f, const char* str, int flag)
+    {
+        func_00391FB0(f, str, this, flag, *(float*)(f + 0x38), *(float*)(f + 0x3C));
+    }
+};
+
+struct sPopup_C8D8 {
+    char pad0[0x40];
+    void* screen;       // 0x40
+    char pad44[0x60 - 0x44];
+    int len;            // 0x60
+    char pad64[0x74 - 0x64];
+    char text[0x40];    // 0x74
+    char buf[0x80];     // 0xB4
+    int cursor;         // 0x134
+    int start;          // 0x138
+    int end;            // 0x13C
+    char pad140[0x3F4 - 0x140];
+    float width;        // 0x3F4
+    char pad3F8[0x400 - 0x3F8];
+    float margin;       // 0x400
+};
+
+// Scrolls the visible window [start, end) of the edited text so it fits the text box, then updates the two
+// scroll arrows. The unit declares this function with a void* self.
+extern "C" void func_001CC8D8_C8D8(sPopup_C8D8* self, int dir) __asm__("func_001CC8D8");
+extern "C" void func_001CC8D8_C8D8(sPopup_C8D8* self, int dir)
+{
+    sRect_C8D8 size;
+    int n;
+    if (strlen(self->text) != 0) {
+        void* obj = cUIScreen_getObjectByHashName(self->screen, GetHashValue32(D_00466530));
+        n = self->end - self->start;
+        strncpy(self->buf, self->text + self->start, n);
+        self->buf[n] = 0;
+        func_001CE4C8(self, obj);
+        size.Measure((char*)func_003A04F0(obj), self->buf, 0);
+        float w = self->width;
+        if (self->cursor == strlen(self->text)) {
+            w -= self->margin;
+            if (w < size.w && dir != 0)
+                w += self->margin;
+        }
+        while (w < size.w) {
+            if (dir != 0)
+                self->end--;
+            else
+                self->start++;
+            n = self->end - self->start;
+            strncpy(self->buf, self->text + self->start, n);
+            self->buf[n] = 0;
+            func_001CE4C8(self, obj);
+            size.Measure((char*)func_003A04F0(obj), self->buf, 0);
+        }
+        while (size.w < self->width - self->margin) {
+            if (self->end >= self->len)
+                break;
+            self->end++;
+            n = self->end - self->start;
+            strncpy(self->buf, self->text + self->start, n);
+            self->buf[n] = 0;
+            func_001CE4C8(self, obj);
+            size.Measure((char*)func_003A04F0(obj), self->buf, 0);
+        }
+    } else {
+        self->buf[0] = 0;
+    }
+    char* o = (char*)cUIScreen_getObjectByHashName(self->screen, GetHashValue32(D_00466540));
+    {
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(o + 8);
+        vt[9].fn(o + vt[9].delta, self->start != 0);
+    }
+    o = (char*)cUIScreen_getObjectByHashName(self->screen, GetHashValue32(D_00466558));
+    if (strlen(self->text) != 0) {
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(o + 8);
+        vt[9].fn(o + vt[9].delta, (unsigned)self->end < (unsigned)strlen(self->text));
+    } else {
+        sVEntry<void(void*, int)>* vt = *(sVEntry<void(void*, int)>**)(o + 8);
+        vt[9].fn(o + vt[9].delta, 0);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/fepopup", func_001CCC30);
