@@ -798,7 +798,28 @@ int func_003EF640(unsigned short* out, char* src) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EF6F8);
+#ifdef SKIP_ASM
+int c6F8(char* dst, unsigned short c) __asm__("func_003EF6F8");
+int c6F8(char* dst, unsigned short c) {
+    int n;
+    if (c < 0x80) {
+        n = 1;
+        dst[0] = c;
+    } else if (c < 0x800) {
+        n = 2;
+        dst[0] = (c >> 6) | 0xC0;
+        dst[1] = (c & 0x3F) | 0x80;
+    } else {
+        n = 3;
+        dst[0] = (c >> 12) | 0xE0;
+        dst[1] = ((c >> 6) & 0x3F) | 0x80;
+        dst[2] = (c & 0x3F) | 0x80;
+    }
+    return n;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EF770);
