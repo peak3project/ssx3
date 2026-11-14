@@ -260,7 +260,182 @@ extern "C" void func_0028A558(void* self, int a1, const char* name, int a3, int 
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/asyncsys", func_0028A728);
+#ifdef SKIP_ASM
+extern "C" void func_00289DF0(void* self, int a);
+extern "C" void func_0028A298(void* self);
+
+struct sRing_A728 {
+    int size;
+    int* data;
+    int head;
+    int tail;
+};
+
+struct sAsync_A728 {
+    int handle;             // 0x0
+    int busy;               // 0x4
+    int slot;               // 0x8
+    char names[6][0x40];    // 0xC
+    char pad18C[0x18C - 0xC - 6 * 0x40];
+    sRing_A728 q18C;        // 0x18C
+    sRing_A728 q19C;        // 0x19C
+    sRing_A728 q1AC;        // 0x1AC
+    sRing_A728 q1BC;        // 0x1BC
+};
+
+static inline int IsEmpty18C_A728(sAsync_A728* s)
+{
+    return s->q18C.head == s->q18C.tail;
+}
+
+static inline int IsEmpty19C_A728(sAsync_A728* s)
+{
+    return s->q19C.head == s->q19C.tail;
+}
+
+static inline int IsEmpty1AC_A728(sAsync_A728* s)
+{
+    return s->q1AC.head == s->q1AC.tail;
+}
+
+static inline int IsEmpty1BC_A728(sAsync_A728* s)
+{
+    return s->q1BC.head == s->q1BC.tail;
+}
+
+static inline int Peek18C_A728(sAsync_A728* s)
+{
+    sRing_A728* q = &s->q18C;
+    if (IsEmpty18C_A728(s)) {
+        return -1;
+    }
+    return q->data[q->tail];
+}
+
+static inline int Pop18C_A728(sAsync_A728* s)
+{
+    sRing_A728* q = &s->q18C;
+    if (IsEmpty18C_A728(s)) {
+        return -1;
+    }
+    int v = q->data[q->tail];
+    if (++s->q18C.tail >= s->q18C.size) {
+        s->q18C.tail = 0;
+    }
+    return v;
+}
+
+static inline int Pop19C_A728(sAsync_A728* s)
+{
+    sRing_A728* q = &s->q19C;
+    if (IsEmpty19C_A728(s)) {
+        return -1;
+    }
+    int v = q->data[q->tail];
+    if (++s->q19C.tail >= s->q19C.size) {
+        s->q19C.tail = 0;
+    }
+    return v;
+}
+
+static inline int Pop1AC_A728(sAsync_A728* s)
+{
+    sRing_A728* q = &s->q1AC;
+    if (IsEmpty1AC_A728(s)) {
+        return -1;
+    }
+    int v = q->data[q->tail];
+    if (++s->q1AC.tail >= s->q1AC.size) {
+        s->q1AC.tail = 0;
+    }
+    return v;
+}
+
+static inline int Pop1BC_A728(sAsync_A728* s)
+{
+    sRing_A728* q = &s->q1BC;
+    if (IsEmpty1BC_A728(s)) {
+        return -1;
+    }
+    int v = q->data[q->tail];
+    if (++s->q1BC.tail >= s->q1BC.size) {
+        s->q1BC.tail = 0;
+    }
+    return v;
+}
+
+static inline void Push18C_A728(sAsync_A728* s, int v)
+{
+    sRing_A728* q = &s->q18C;
+    if ((s->q18C.head + 1) % s->q18C.size != s->q18C.tail) {
+        q->data[q->head] = v;
+        if (++s->q18C.head >= s->q18C.size) {
+            s->q18C.head = 0;
+        }
+    }
+}
+
+static inline void Push19C_A728(sAsync_A728* s, int v)
+{
+    sRing_A728* q = &s->q19C;
+    if ((s->q19C.head + 1) % s->q19C.size != s->q19C.tail) {
+        q->data[q->head] = v;
+        if (++s->q19C.head >= s->q19C.size) {
+            s->q19C.head = 0;
+        }
+    }
+}
+
+static inline void Push1AC_A728(sAsync_A728* s, int v)
+{
+    sRing_A728* q = &s->q1AC;
+    if ((s->q1AC.head + 1) % s->q1AC.size != s->q1AC.tail) {
+        q->data[q->head] = v;
+        if (++s->q1AC.head >= s->q1AC.size) {
+            s->q1AC.head = 0;
+        }
+    }
+}
+
+static inline void Push1BC_A728(sAsync_A728* s, int v)
+{
+    sRing_A728* q = &s->q1BC;
+    if ((s->q1BC.head + 1) % s->q1BC.size != s->q1BC.tail) {
+        q->data[q->head] = v;
+        if (++s->q1BC.head >= s->q1BC.size) {
+            s->q1BC.head = 0;
+        }
+    }
+}
+
+extern "C" void func_0028A728(void* self, int id)
+{
+    sAsync_A728* s = (sAsync_A728*)self;
+    if (s->busy != 0 && Peek18C_A728(s) == id) {
+        func_00289DF0(self, 0);
+        return;
+    }
+    int n = (s->q18C.head - s->q18C.tail + s->q18C.size) % s->q18C.size;
+    for (int i = 0; i < n; i++) {
+        int e = Pop18C_A728(s);
+        if (e == id) {
+            Pop19C_A728(s);
+            Pop1AC_A728(s);
+            Pop1BC_A728(s);
+        } else {
+            Push18C_A728(s, e);
+            Push19C_A728(s, Pop19C_A728(s));
+            Push1AC_A728(s, Pop1AC_A728(s));
+            Push1BC_A728(s, Pop1BC_A728(s));
+        }
+    }
+    if (s->busy == 0) {
+        func_0028A298(self);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/asyncsys", func_0028AAF8);
