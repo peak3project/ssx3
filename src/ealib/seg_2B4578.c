@@ -363,13 +363,13 @@ struct sA0A0Node {                  /* 0x28: a queued stream request */
     int f04;
     int f08;
     volatile int f0C;               /* handle */
-    unsigned int f10;
+    volatile unsigned int f10;
     volatile unsigned int f14;
     volatile unsigned int f18;
     volatile unsigned int f1C;
     volatile int f20;
     unsigned char f24;
-    char pad25[0x28 - 0x25];
+    char f25[0x28 - 0x25];
 };
 struct sA0A0List {                  /* 0xC */
     struct sA0A0Node *f00;          /* first */
@@ -382,7 +382,9 @@ struct sA0A0Fmt {                   /* 4 bytes, copied as a whole: rate (u16), c
 struct sA0A0Hdr {                   /* 0x68 */
     char pad00[0x18];
     int f18[6];                     /* one per channel */
-    char pad30[0x68 - 0x30];
+    char pad30[0x48 - 0x30];
+    int f48[4];
+    int f58[4];
 };
 struct sA0A0Parm {                  /* 0x18, handed to func_003C6760 */
     signed char f00;
@@ -420,7 +422,7 @@ struct sA0A0Strm {                  /* 0x138 */
     struct sA0A0Trk f104[1];
     struct sA0A0List f11C;          /* queued requests */
     struct sA0A0List f128;          /* free requests */
-    struct sA0A0Node *f134;
+    volatile struct sA0A0Node *f134; /* current request */
 };
 extern struct sA0A0Strm *D_0050A0A0[32];
 
@@ -2295,7 +2297,61 @@ void func_003B6B10(struct sA0A0Node *node, unsigned n, struct sA0A0Strm *s) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B6BD0);
+#ifdef SKIP_ASM
+struct Ext_6BD0 { int f00; int pos[6]; };
+struct Ev_6BD0 { int a; int b; int c; int d; int e; int rest[3]; };
+extern void func_003BB820_6BD0(int, int *, struct sA0A0Fmt *, struct sA0A0Hdr *, struct Ext_6BD0 *, char *) __asm__("func_003BB820");
+extern void func_003E13E8_6BD0(int, int *) __asm__("func_003E13E8");
+extern int func_00415FC8(void *, void *, int);
+
+int func_003B6BD0(int h, int *chunk) {
+    struct sA0A0Strm *p = D_0050A0A0[h];
+    struct sA0A0Node *n;
+    struct Ext_6BD0 ext;
+    struct Ev_6BD0 ev;
+    int i = 0;
+    int j;
+
+    if (p->f134 == 0) {
+        p->f134 = p->f11C.f00;
+    } else {
+        p->f134 = p->f134->f00;
+    }
+    n = (struct sA0A0Node *)p->f134;
+    func_003BB820_6BD0(0, chunk + 2, &p->f18, &p->f84, &ext, n->f25);
+    n->f18 = ext.f00;
+    n->f24 = 0;
+    while (p->f84.f48[i] != 0) {
+        ev.a = 3;
+        ev.b = p->f84.f48[i];
+        ev.c = p->f84.f58[i];
+        ev.e = n->f0C;
+        p->f84.f48[i] = 0;
+        p->f84.f58[i++] = 0;
+        for (j = 0; j < D_0050A8E8.f179; j++) {
+            D_0050A8E8.f1C8[j](&ev);
+        }
+    }
+    func_003E13E8_6BD0(p->f00, chunk);
+    n->f10 = func_003B6948((unsigned char *)&p->f18);
+    if (func_00415FC8(&p->f14, &p->f18, 4) != 0 || func_00415FC8(&p->f1C, &p->f84, 0x68) != 0 || p->f84.f18[0] != 0) {
+        if (*(unsigned short *)&p->f14 != 0) {
+            p->f10 = 2;
+            return 0;
+        }
+        p->f14 = p->f18;
+        __builtin_memcpy(&p->f1C, &p->f84, sizeof(p->f1C));
+        p->f84.f18[0] = 0;
+    }
+    if (p->f10 != 1) {
+        func_003B68B8(p);
+        p->f10 = 1;
+    }
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003B6EA8);
 
@@ -2329,7 +2385,7 @@ INCLUDE_ASM("ealib/seg_2B4578", func_003B70F8);
 extern unsigned int f_14C8_70F8(int) __asm__("func_003E14C8");
 extern int f_14F8_70F8(int) __asm__("func_003E14F8");
 int func_003B70F8(struct sA0A0Strm *self) {
-    struct sA0A0Node *t = self->f134;
+    volatile struct sA0A0Node *t = self->f134;
     if (t == 0) {
         return 0;
     }
