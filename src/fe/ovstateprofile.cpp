@@ -649,7 +649,9 @@ struct sProfileK211BC8 {
     int f1DC;                // 0x1DC
     int f1E0;                // 0x1E0
     int f1E4;                // 0x1E4
-    char pad1E8[0x214 - 0x1E8];
+    char pad1E8[0x1F0 - 0x1E8];
+    int f1F0;                // 0x1F0
+    char pad1F4[0x214 - 0x1F4];
     int f214;                // 0x214
     char pad218[0x220 - 0x218];
     int f220;                // 0x220
@@ -820,7 +822,45 @@ extern "C" void cOVState_AUTOSAVE_onCreateScreen(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/ovstateprofile", func_00212208);
+#ifdef SKIP_ASM
+extern "C" void func_001D8DE0(void* self);
+// The overlay manager's 0xE0-byte device records at 0x344 (see movie/movieplayer sMCDev).
+struct sMCDev_2208 {
+    int f0;                     // 0x00
+    int f4;                     // 0x04
+    int f8;                     // 0x08
+    int fC;                     // 0x0C
+    char rest[0xE0 - 0x10];
+};
+struct sMCMgr_2208 {
+    char pad[0x344];
+    sMCDev_2208 dev[1];         // 0x344
+    int f424;                   // 0x424
+    int cur;                    // 0x428
+};
+
+extern "C" void func_00212208(sProfileK211BC8* self)
+{
+    sMCMgr_2208* mp = (sMCMgr_2208*)func_00227F80(D_004A28A8);
+    if (self->state == 1 && self->f1A8 == 0) {
+        func_0023CAE8(mp, 1, 0);
+        self->state = 3;
+        self->f1A8 = 1;
+        self->f1DC = 1;
+        self->f1F0 = 1;
+    } else if (self->state == 3) {
+        if (mp->dev[mp->cur].fC == 0 || mp->dev[mp->cur].f0 == 0 || mp->dev[mp->cur].f4 == 0) {
+            self->f1E4 = 1;
+            self->state = 6;
+            self->f1DC = 0;
+            self->f1A8 = 0;
+        }
+    }
+    func_001D8DE0(self);
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/ovstateprofile", func_002122E0__FPv);
