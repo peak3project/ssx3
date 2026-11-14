@@ -8439,7 +8439,78 @@ extern "C" void func_00385530(sPartGrid_5530* self, float* verts, float* colors)
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/particle", func_003856B8);
+#ifdef SKIP_ASM
+struct sPartRow_56B8 {
+    int cnt;
+    void* verts;                    // 0x4
+    void* uv;                       // 0x8
+    void* colors;                   // 0xC
+};
+
+struct sPartGrid_56B8 {
+    char pad_0x0[0x190];
+    unsigned short width;           // 0x190
+    char pad_0x192[0x1A0 - 0x192];
+    int sel;                        // 0x1A0
+    int done;                       // 0x1A4
+    char pad_0x1A8[0xC];
+    sPartRow_56B8* rows[2];         // 0x1B4
+    int height;                     // 0x1BC
+};
+
+extern "C" void func_003856B8(sPartGrid_56B8* self, float* verts, float* colors, float* uvs)
+{
+    int first = 0;
+    if (self->sel < 0) {
+        self->sel = 0;
+        first = 1;
+    }
+    int z = self->sel == 0;
+    int r;
+    for (r = 0; r < self->height; r++) {
+        sPartRow_56B8* strip = &self->rows[z][r];
+        int i0 = r * self->width;
+        int i1 = i0 + self->width;
+        int idx = 0;
+        for (int c = 0; c < self->width; c++) {
+            func_00385BA0_uv(self, strip->uv, idx, uvs + i0 * 2);
+            func_00385AA0_col(self, strip->colors, idx, colors + i0 * 4);
+            func_00385A38_vt(self, strip->verts, idx, verts + i0 * 3);
+            func_00385BA0_uv(self, strip->uv, idx + 1, uvs + i1 * 2);
+            func_00385AA0_col(self, strip->colors, idx + 1, colors + i1 * 4);
+            func_00385A38_vt(self, strip->verts, idx + 1, verts + i1 * 3);
+            idx += 2;
+            i0++;
+            i1++;
+        }
+    }
+    // First update: fill the other buffer too. The binary has a second copy of the loop sharing the
+    // row counter (one spill slot) and indexing rows[z] with z reset to 0, so it is written out here.
+    if (first) {
+        z = 0;
+        for (r = 0; r < self->height; r++) {
+            sPartRow_56B8* strip = &self->rows[z][r];
+            int i0 = r * self->width;
+            int i1 = i0 + self->width;
+            int idx = 0;
+            for (int c = 0; c < self->width; c++) {
+                func_00385BA0_uv(self, strip->uv, idx, uvs + i0 * 2);
+                func_00385AA0_col(self, strip->colors, idx, colors + i0 * 4);
+                func_00385A38_vt(self, strip->verts, idx, verts + i0 * 3);
+                func_00385BA0_uv(self, strip->uv, idx + 1, uvs + i1 * 2);
+                func_00385AA0_col(self, strip->colors, idx + 1, colors + i1 * 4);
+                func_00385A38_vt(self, strip->verts, idx + 1, verts + i1 * 3);
+                idx += 2;
+                i0++;
+                i1++;
+            }
+        }
+    }
+    self->done = 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/particle", func_00385A38);
