@@ -1402,7 +1402,159 @@ extern "C" void func_00372660(void* self, int flags)
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/particle", func_003726C8);
+#ifdef SKIP_ASM
+struct sTrailVert_26C8 {
+    float uv[4];            // 0x00
+    int rgba[4];            // 0x10
+    t4Vector pos;           // 0x20
+};
+
+struct sTrail_26C8 {
+    void** vt;              // 0x0
+    int n;                  // 0x4
+    t4Vector* pts;          // 0x8
+};
+
+struct sPtVtVIPI {
+    short delta;
+    short index;
+    void (*fn)(void*, int, void*, int);
+};
+
+extern int D_004A41D4;
+extern float D_004A41D8;
+extern float D_004A41DC;
+extern t4Vector D_004FF160;
+extern sTrailVert_26C8 D_00501440_26C8[] __asm__("D_00501440");
+
+// PORT: PS2-only VU0 inline asm (a - b).
+static inline t4Vector Sub_26C8(const t4Vector& a, const t4Vector& b)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (a + b).
+static inline t4Vector Add_26C8(const t4Vector& a, const t4Vector& b)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (normalize).
+static inline t4Vector Norm_26C8(const t4Vector& v)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vrsqrt    Q, $vf0w, $vf4x\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf5, $vf3, Q\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(v)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (cross product, w = 0).
+static inline t4Vector Cross_26C8(const t4Vector& a, const t4Vector& b)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf4, %1\n"
+        "lqc2      $vf5, %2\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vsub.w    $vf6, $vf6, $vf6\n"
+        "sqc2      $vf6, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector * scalar).
+static inline t4Vector Scale_26C8(const t4Vector& v, float s)
+{
+    t4Vector r;
+    __asm__(
+        "mfc1      $3, %2\n"
+        "lqc2      $vf4, %1\n"
+        "qmtc2.ni  $3, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(v), "f"(s)
+        : "$3", "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (a -= b).
+static inline void SubEq_26C8(t4Vector& a, const t4Vector& b)
+{
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(a)
+        : "m"(a), "m"(b)
+        : "memory");
+}
+
+// Draws the trail as two ribbons: points offset to both sides (edgeB, edgeA) joined by degenerate vertices.
+extern "C" void func_003726C8(sTrail_26C8* self)
+{
+    if (D_004A41D4 == 0)
+        return;
+    t4Vector fwd = Norm_26C8(Sub_26C8(self->pts[self->n], self->pts[0]));
+    t4Vector edgeA = Scale_26C8(Norm_26C8(Cross_26C8(fwd, D_004FF160)), D_004A41D8);
+    t4Vector edgeB = Scale_26C8(edgeA, -1.0f);
+    SubEq_26C8(edgeA, Scale_26C8(D_004FF160, D_004A41DC));
+    SubEq_26C8(edgeB, Scale_26C8(D_004FF160, D_004A41DC));
+    for (int i = 0; i < self->n + 1; i++) {
+        D_00501440_26C8[i * 2].pos = Add_26C8(self->pts[i], edgeB);
+        D_00501440_26C8[i * 2 + 1].pos = self->pts[i];
+        D_00501440_26C8[(self->n + 2) * 2 + i * 2].pos = self->pts[i];
+        D_00501440_26C8[(self->n + 2) * 2 + 1 + i * 2].pos = Add_26C8(self->pts[i], edgeA);
+    }
+    cPS2GraphicsMan* g = D_004A5B80;
+    D_00501440_26C8[self->n * 2 + 2] = D_00501440_26C8[self->n * 2 + 1];
+    D_00501440_26C8[self->n * 2 + 3] = D_00501440_26C8[self->n * 2 + 4];
+    g->top[1] = *g->top;
+    g->top++;
+    *g->top = D_00501420_rs;
+    sPtVtVIPI* vt = (sPtVtVIPI*)g->vtable;
+    vt[71].fn((char*)g + vt[71].delta, ((self->n + 1) * 4) | 2, D_00501440_26C8, 0);
+    for (int i = 0; i < self->n + 1; i++) {
+        D_00501440_26C8[i].pos = self->pts[i];
+    }
+    vt = (sPtVtVIPI*)g->vtable;
+    vt[73].fn((char*)g + vt[73].delta, self->n + 1, D_00501440_26C8, 0);
+    g->top--;
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/particle", func_00372AA0);
