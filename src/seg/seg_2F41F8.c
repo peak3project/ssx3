@@ -4012,7 +4012,239 @@ void func_003FA818_impl(char *a, char *b, int unused, char *str) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FA8F8);
+#ifdef SKIP_ASM
+extern char D_00497410[];
+extern char D_00497420[];
+extern void fa8f8_86F0(int) __asm__("func_003F86F0");
+extern char *fa8f8_A7A0(char *, char *, char *) __asm__("func_003FA7A0");
+extern void fa8f8_A818(char *, char *, char *, char *) __asm__("func_003FA818");
+extern int fa8f8_8720(struct sMcReqBody *, int *) __asm__("func_003F8720");
+extern int fa8f8_8768(struct sMcReqBody *, int *) __asm__("func_003F8768");
+/* Step of the save request (ops 1 and 4): res = result of the previous card call, data = its output.
+   The cases follow the state flow 1-5, 0xE, 0x10, 0x11, 6-0xD, 0x1A. */
+int func_003FA8F8(int res, int *out, int *data) {
+    char buf[0x50];
+    if (out == 0) return 0x12;
+    if (data == 0) return 0x12;
+    if (D_004A4BD8->op != 1 && D_004A4BD8->op != 4) return 0x12;
+    *out = 1;
+    switch (D_004A4BD8->st) {
+    case 1:
+        if (res == 0) {
+            fa8f8_A7A0(buf, D_004A4BDC->f50, D_004A4BD8->body.name);
+            D_004A4BD8->st = 2;
+            ((void (*)(char *, int))D_004A4BDC->f04)(buf, D_004A4BD8->body.slot);
+            break;
+        }
+        if (res != 3) {
+            *out = 2;
+            return res;
+        }
+        if (D_004A4BD8->op == 1) {
+            int slot = func_003F85C0(D_004A4BDC->ports, D_004A4BD8->f6C);
+            D_004A4BD8->body.slot = slot;
+            if (slot != -1) {
+                D_004A4BD8->st = 1;
+                D_004A4BDC->f10(slot);
+                return 0;
+            }
+            *out = 2;
+            return func_003F8710();
+        }
+        *out = 2;
+        return 3;
+    case 2:
+        if (res == 0) {
+            if (*data == 0) {
+                D_004A4BD8->st = 3;
+                ((void (*)(int))D_004A4BDC->f08)(D_004A4BD8->body.slot);
+                break;
+            }
+            if (*data != 1) {
+                *out = 2;
+                return 10;
+            }
+            fa8f8_86F0(8);
+            D_004A4BD8->st = 0x1A;
+            D_004A4BDC->f14(D_004A4BD8->body.slot);
+            break;
+        }
+        fa8f8_86F0(res);
+        return func_003F87B0(D_004A4BD8->body.slot, out);
+    case 3:
+        if (res == 0) {
+            if (*data < 0) {
+                *out = 2;
+                return 10;
+            }
+            if ((unsigned)*data >= (unsigned)D_004A4BDC->f420) {
+                D_004A4BD8->st = 4;
+                ((void (*)(int))D_004A4BDC->f0C)(D_004A4BD8->body.slot);
+                break;
+            }
+            fa8f8_86F0(0xE);
+            D_004A4BD8->st = 0x1A;
+            D_004A4BDC->f14(D_004A4BD8->body.slot);
+            break;
+        }
+        fa8f8_86F0(res);
+        return func_003F87B0(D_004A4BD8->body.slot, out);
+    case 4:
+        if (res == 0) {
+            if (*data < 0) {
+                *out = 2;
+                return 10;
+            }
+            if ((unsigned)*data >= (unsigned)D_004A4BDC->f424) {
+                fa8f8_A818((char *)&D_004A4BD8->body.path[0], (char *)&D_004A4BD8->body.path[0x20], D_004A4BDC->f50, D_004A4BD8->body.name);
+                D_004A4BD8->st = 5;
+                ((void (*)(char *, int, int))D_004A4BDC->f20)((char *)&D_004A4BD8->body.path[0], D_004A4BDC->f420, D_004A4BD8->body.slot);
+                break;
+            }
+            fa8f8_86F0(0xE);
+            D_004A4BD8->st = 0x1A;
+            D_004A4BDC->f14(D_004A4BD8->body.slot);
+            break;
+        }
+        fa8f8_86F0(res);
+        return func_003F87B0(D_004A4BD8->body.slot, out);
+    case 5:
+        if (res == 0) {
+            D_004A4BD8->st = 0xE;
+            ((void (*)(char *, char *, int, int))D_004A4BDC->f18)((char *)&D_004A4BD8->body.path[0], (char *)&D_004A4BD8->body.path[0], D_004A4BD8->body.slot, 0x203);
+            break;
+        }
+        fa8f8_86F0(res);
+        return func_003F87B0(D_004A4BD8->body.slot, out);
+    case 0xE:
+        if (res == 0) {
+            int fd = *data;
+            if (fd >= 0) {
+                D_004A4BD8->st = 0x10;
+                D_004A4BD8->body.port = fd;
+                D_004A4BDC->f38(D_004A4BD8->body.port);
+                break;
+            }
+            /* Same tail as the res != 0 path; the binary keeps both copies (one test merged into && does not). */
+            fa8f8_86F0(res);
+            return fa8f8_8720(&D_004A4BD8->body, out);
+        }
+        fa8f8_86F0(res);
+        return fa8f8_8720(&D_004A4BD8->body, out);
+    case 0x10:
+        if (res == 0) {
+            D_004A4BD8->st = 0x11;
+            D_004A4BDC->f1C(D_004A4BD8->body.port);
+            break;
+        }
+        fa8f8_86F0(res);
+        return fa8f8_8768(&D_004A4BD8->body, out);
+    case 0x11:
+        if (res == 0) {
+            D_004A4BD8->st = 6;
+            ((void (*)(char *, char *, int, int))D_004A4BDC->f18)((char *)&D_004A4BD8->body.path[0], D_00497410, D_004A4BD8->body.slot, 0x203);
+            break;
+        }
+        fa8f8_86F0(res);
+        return func_003F87B0(D_004A4BD8->body.slot, out);
+    case 6:
+        if (res == 0) {
+            int fd = *data;
+            D_004A4BD8->st = 7;
+            D_004A4BD8->body.port = fd;
+            D_004A4BDC->f30(fd, *(int *)&D_004A4BDC->f50[0], *(int *)&D_004A4BDC->f50[4]);
+            break;
+        }
+        fa8f8_86F0(res);
+        return func_003F87B0(D_004A4BD8->body.slot, out);
+    case 7:
+        if (res == 0) {
+            D_004A4BD8->st = 8;
+            D_004A4BDC->f38(D_004A4BD8->body.port);
+            break;
+        }
+        fa8f8_86F0(res);
+        return fa8f8_8720(&D_004A4BD8->body, out);
+    case 8:
+        if (res == 0) {
+            D_004A4BD8->st = 9;
+            D_004A4BDC->f1C(D_004A4BD8->body.port);
+            break;
+        }
+        fa8f8_86F0(res);
+        return fa8f8_8768(&D_004A4BD8->body, out);
+    case 9:
+        if (res == 0) {
+            D_004A4BD8->st = 10;
+            ((void (*)(char *, char *, int, int))D_004A4BDC->f18)((char *)&D_004A4BD8->body.path[0], D_00497420, D_004A4BD8->body.slot, 0x203);
+            break;
+        }
+        fa8f8_86F0(res);
+        return func_003F87B0(D_004A4BD8->body.slot, out);
+    case 10:
+        if (res == 0) {
+            int fd = *data;
+            D_004A4BD8->body.port = fd;
+            D_004A4BD8->st = 0xB;
+            D_004A4BDC->f30(fd, (int)&D_004A4BDC->f50[8], 0x3C4);
+            break;
+        }
+        fa8f8_86F0(res);
+        return func_003F87B0(D_004A4BD8->body.slot, out);
+    case 11:
+        if (res == 0) {
+            D_004A4BD8->st = 0xC;
+            D_004A4BDC->f38(D_004A4BD8->body.port);
+            break;
+        }
+        fa8f8_86F0(res);
+        return fa8f8_8720(&D_004A4BD8->body, out);
+    case 12:
+        if (res == 0) {
+            D_004A4BD8->st = 0xD;
+            D_004A4BDC->f1C(D_004A4BD8->body.port);
+            break;
+        }
+        fa8f8_86F0(res);
+        return fa8f8_8768(&D_004A4BD8->body, out);
+    case 13:
+        if (res == 0) {
+            D_004A4BD8->st = 0x1A;
+            D_004A4BDC->f14(D_004A4BD8->body.slot);
+            break;
+        }
+        fa8f8_86F0(res);
+        return func_003F87B0(D_004A4BD8->body.slot, out);
+    case 0x1A:
+        if (res == 0) {
+            if (D_004A4BD8->op != 4) {
+                int slot;
+                if (func_003F8710() == 0) {
+                    *out = 2;
+                    return 0;
+                }
+                slot = func_003F85C0(D_004A4BDC->ports, D_004A4BD8->f6C);
+                D_004A4BD8->body.slot = slot;
+                if (slot != -1) {
+                    D_004A4BD8->st = 1;
+                    D_004A4BDC->f10(slot);
+                    return 0;
+                }
+            }
+            *out = 2;
+            return func_003F8710();
+        }
+        *out = 2;
+        return res;
+    default:
+        *out = 2;
+        return 0x12;
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FAE50);
