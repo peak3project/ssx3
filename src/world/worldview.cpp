@@ -327,7 +327,104 @@ extern "C" void func_003A9D60(sWV_9D60* self, int cam)
 }
 #endif
 
+//100%
 INCLUDE_ASM("world/worldview", func_003A9E50);
+#ifdef SKIP_ASM
+// PORT: sqrt.s (sqrtf without errno check)
+static inline float sqrt_A9E50(float v)
+{
+    float r;
+    __asm__("sqrt.s %0, %1" : "=f"(r) : "f"(v));
+    return r;
+}
+
+struct sV3_A9E50 {
+    float x, y, z;
+};
+
+// Distance from pos to the box [bmin, bmax] (Euclidean when two or more axes are outside, else along the one
+// axis); -1.0 when pos is inside.
+extern "C" float func_003A9E50(void* self, void* vpos, void* vmin, void* vmax)
+{
+    const sV3_A9E50* pos = (const sV3_A9E50*)vpos;
+    const sV3_A9E50* bmin = (const sV3_A9E50*)vmin;
+    const sV3_A9E50* bmax = (const sV3_A9E50*)vmax;
+    int inX = 0;
+    if (bmin->x <= pos->x && pos->x <= bmax->x)
+        inX = 1;
+    int inY = 0;
+    if (bmin->y <= pos->y && pos->y <= bmax->y)
+        inY = 1;
+    int inZ = 0;
+    if (bmin->z <= pos->z && pos->z <= bmax->z)
+        inZ = 1;
+    if (inX && inY && inZ)
+        return -1.0f;
+    float dist = 0.0f;
+    int useX = 0;
+    int useY = 0;
+    int useZ = 0;
+    int squared = 0;
+    if (inX) {
+        if (inY) {
+            useZ = 1;
+        } else if (inZ) {
+            useY = 1;
+        } else {
+            useY = 1;
+            useZ = 1;
+            squared = 1;
+        }
+    } else if (inY) {
+        if (inZ) {
+            useX = 1;
+        } else {
+            useX = 1;
+            useZ = 1;
+            squared = 1;
+        }
+    } else if (inZ) {
+        useX = 1;
+        useY = 1;
+        squared = 1;
+    } else {
+        useX = 1;
+        useY = 1;
+        useZ = 1;
+        squared = 1;
+    }
+    if (useX) {
+        float fXdist = pos->x - bmax->x;
+        if (fXdist < 0.0f)
+            fXdist = bmin->x - pos->x;
+        if (squared)
+            dist += fXdist * fXdist;
+        else
+            dist += fXdist;
+    }
+    if (useY) {
+        float fYdist = pos->y - bmax->y;
+        if (fYdist < 0.0f)
+            fYdist = bmin->y - pos->y;
+        if (squared)
+            dist += fYdist * fYdist;
+        else
+            dist += fYdist;
+    }
+    if (useZ) {
+        float fZdist = pos->z - bmax->z;
+        if (fZdist < 0.0f)
+            fZdist = bmin->z - pos->z;
+        if (squared)
+            dist += fZdist * fZdist;
+        else
+            dist += fZdist;
+    }
+    if (squared)
+        dist = sqrt_A9E50(dist);
+    return dist;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("world/worldview", func_003AA028);
