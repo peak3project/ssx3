@@ -4497,7 +4497,57 @@ INCLUDE_ASM("render/particle", func_00379860);
 
 INCLUDE_ASM("render/particle", func_00379BD0);
 
+//100%
 INCLUDE_ASM("render/particle", func_0037A260);
+#ifdef SKIP_ASM
+extern int D_004A4380;
+extern char D_12B0[];
+extern char D_12B8[];
+
+static inline unsigned long gsPrim_A260(int prim)
+{
+    return ((unsigned long)prim << 47) | ((unsigned long)0x8000 << 31);
+}
+
+// PORT: PS2-only GS packet build (DMA tag + GIF tag + PRIM/TEX registers).
+// Opens an in-place triangle list of n vertices in the pending packet and returns where the vertices go.
+extern "C" unsigned long* func_0037A260(cPS2GraphicsMan* self, int n)
+{
+    unsigned int addr = (D_004A4380 ? (unsigned int)D_12B0 : (unsigned int)D_12B8) >> 3;
+    int a;
+    long b;
+    D_004A4380 = 0;
+    self->top->f0 = (self->top->f0 & ~0x3C0) | 0xC0;
+    self->top->fC &= 0xC0000000;
+    if (self->texReady == 0) {
+        func_0037D968(self);
+    }
+    if (self->top->tex >= 0) {
+        a = 0x5C;
+        b = 0x412;
+    } else {
+        a = 0x4C;
+        b = 0x41F;
+    }
+    unsigned int buf = self->bufAddr;
+    self->pendBuf = buf;
+    self->pend = func_0038F460(D_004A4474, buf, -1, 0);
+    self->pend[0] = (n * 3 + 4) | 0x10000000;
+    self->pend[1] = 0;
+    self->pend[2] = 0;
+    self->pend[3] = (unsigned long)((n * 3 + 2) << 16 | 0x6C008000U) << 32;
+    self->pend[4] = (unsigned long)(n | 0x8000) | gsPrim_A260(a) | ((unsigned long)0xC000 << 46);
+    self->pend[5] = b;
+    self->pend[6] = (long)n * 3;
+    self->pend[7] = 0;
+    unsigned long* verts = self->pend + 8;
+    self->pend = verts + n * 6;
+    self->pend[0] = 0;
+    self->pend[1] = (unsigned long)(addr | 0x14000000) << 32;
+    self->pend += 2;
+    return verts;
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/particle", func_0037A430);
