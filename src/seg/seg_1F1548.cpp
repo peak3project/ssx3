@@ -1113,7 +1113,131 @@ extern "C" void func_002F2598_2598(sPart_2598* p, const sV2_2598& pos, sV2_2598*
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_1F1548", func_002F2810);
+#ifdef SKIP_ASM
+extern int D_004A3AFC;
+struct sTun_2810 {
+    float v;
+};
+extern sTun_2810 D_004A4288_2810 __asm__("D_004A4288");
+extern sTun_2810 D_004A42A0_2810 __asm__("D_004A42A0");
+extern sTun_2810 D_004A42A4_2810 __asm__("D_004A42A4");
+extern sTun_2810 D_004A42A8_2810 __asm__("D_004A42A8");
+extern sTun_2810 D_004A42AC_2810 __asm__("D_004A42AC");
+extern sTun_2810 D_004A42B0_2810 __asm__("D_004A42B0");
+extern sTun_2810 D_004A42B4_2810 __asm__("D_004A42B4");
+extern sTun_2810 D_004A42B8_2810 __asm__("D_004A42B8");
+extern sTun_2810 D_004A42BC_2810 __asm__("D_004A42BC");
+extern sTun_2810 D_004A42C0_2810 __asm__("D_004A42C0");
+extern sTun_2810 D_004A42C4_2810 __asm__("D_004A42C4");
+extern sTun_2810 D_004A42C8_2810 __asm__("D_004A42C8");
+extern sTun_2810 D_004A55B8_2810 __asm__("D_004A55B8");
+extern sTun_2810 D_004A55BC_2810 __asm__("D_004A55BC");
+
+// PORT: sqrt.s (sqrtf without errno check)
+static inline float sqrtf_2810(float x)
+{
+    float r;
+    __asm__("sqrt.s %0,%1" : "=f"(r) : "f"(x));
+    return r;
+}
+
+struct sV2_2810 {
+    float x, y;
+    sV2_2810() {}
+    sV2_2810(float ax, float ay) : x(ax), y(ay) {}
+    sV2_2810(const sV2_2810& o) : x(o.x), y(o.y) {}
+    float Length() const { return sqrtf_2810(x * x + y * y); }
+};
+
+struct sPart_2810 {
+    int active;
+    sV2_2810 pos;
+    sV2_2810 size;
+    sV2_2810 vel;
+    float age;
+    float life;
+};
+
+static inline float randf_2810()
+{
+    D_004A3AFC = ((D_004A3AFC * 0x18FCD + 0xE9507C) & 0x7FFFFF) | 0x3F800000;
+    return *(float*)&D_004A3AFC - 1.0f;
+}
+
+static inline float randRange_2810(float lo, float hi)
+{
+    return lo + (hi - lo) * randf_2810();
+}
+
+static inline sV2_2810 randScale_2810(const float& x, const float& y, float lo, float hi)
+{
+    return sV2_2810(randRange_2810(x * lo, x * hi), randRange_2810(y * lo, y * hi));
+}
+
+static inline float clamp_2810(float v, float lo, float hi)
+{
+    return (v >= lo) ? (v <? hi) : lo; // PORT: g++ <? operator
+}
+
+static inline sV2_2810 operator*(const sV2_2810& a, float s)
+{
+    return sV2_2810(a.x * s, a.y * s);
+}
+
+static inline float Length2_2810(const float& x, const float& y)
+{
+    return sqrtf_2810(x * x + y * y);
+}
+
+static inline sV2_2810 Normalize_2810(const sV2_2810& v)
+{
+    float len = v.Length();
+    if (len != 0.0f) {
+        float inv = 1.0f / len;
+        return sV2_2810(v.x * inv, v.y * inv);
+    }
+    return v;
+}
+
+static inline void addRand_2810(float& v, float lo, float hi)
+{
+    v += randRange_2810(lo, hi);
+}
+
+extern "C" void func_002F2810_2810(sPart_2810* p, float t) __asm__("func_002F2810");
+extern "C" void func_002F2810_2810(sPart_2810* p, float t)
+{
+    p->age += 0.016666667f;
+    addRand_2810(p->vel.x, D_004A42A0_2810.v, D_004A42A4_2810.v);
+    addRand_2810(p->vel.y, D_004A42A8_2810.v, D_004A42AC_2810.v);
+    sV2_2810 dir = Normalize_2810(sV2_2810(p->pos.x - D_004A55B8_2810.v, p->pos.y - D_004A55BC_2810.v));
+    float k = clamp_2810((t - D_004A4288_2810.v) / (120.0f - D_004A4288_2810.v), 0.0f, 1.0f);
+    {
+        sV2_2810 a = dir * k * randRange_2810(D_004A42B8_2810.v, D_004A42BC_2810.v);
+        p->vel.x += a.x;
+        p->vel.y += a.y;
+    }
+    float speed = Length2_2810(p->vel.x, p->vel.y);
+    addRand_2810(p->size.x, D_004A42B0_2810.v, D_004A42B4_2810.v);
+    addRand_2810(p->size.y, D_004A42B0_2810.v, D_004A42B4_2810.v);
+    float maxSpeed = D_004A42C0_2810.v;
+    if (speed > maxSpeed) {
+        sV2_2810& v = p->vel;
+        v = (speed != 0.0f ? sV2_2810(p->vel.x * (1.0f / speed), p->vel.y * (1.0f / speed)) : v) * maxSpeed;
+    }
+    {
+        sV2_2810 d = randScale_2810(p->vel.x, p->vel.y, D_004A42C4_2810.v, D_004A42C8_2810.v);
+        p->pos.x += d.x;
+        p->pos.y += d.y;
+    }
+    if (p->age >= p->life || p->pos.x + p->size.x <= 0.0f || 640.0f <= p->pos.x - p->size.x
+        || p->pos.y + p->size.y <= 0.0f || 480.0f <= p->pos.y - p->size.y) {
+        p->active = 0;
+    }
+}
+#endif
 
 INCLUDE_ASM("seg/seg_1F1548", func_002F2C30);
 
