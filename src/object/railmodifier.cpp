@@ -1989,7 +1989,71 @@ extern "C" void* func_0035F1A8(void* self, func_0035F1A8_cObj* obj)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/railmodifier", func_0035F218);
+#ifdef SKIP_ASM
+struct sRailItemF218 {
+    char pad_0x0[0xC];
+    int fC;                 // 0xC
+    char* data;             // 0x10
+};
+
+struct sRailOutF218 {
+    unsigned short value;   // 0x0
+    short slot[3];          // 0x2
+    int f8;
+    int fC;
+    int f10;
+};
+
+struct sRailSelF218 {
+    char pad_0x0[0x14];
+    int index;              // 0x14
+    char* owner;            // 0x18
+    int count;              // 0x1c
+    int f20;
+    int f24;
+    sRailOutF218* src[8];   // 0x28
+    sRailOutF218 out[1];    // 0x48
+};
+
+extern void sel_F218(sRailSelF218* self, int i) __asm__("func_0035F378");
+extern void ms_F218(void* p, int v, int n) __asm__("func_003E6448");
+
+extern "C" void func_0035F218(void* selfv)
+{
+    sRailSelF218* self = (sRailSelF218*)selfv;
+    int i;
+    self->f20 = 0;
+    self->count = **(int**)(self->owner + 0x94);
+    for (i = 0; i < self->count; i++) {
+        sRailItemF218* item = *(sRailItemF218**)(*(char**)(self->owner + 0x94) + (i << 2) + 4);
+        int* table = (int*)item->data;
+        if (table != 0) {
+            self->f20 = *table;
+            break;
+        }
+    }
+    sel_F218(self, self->index);
+    ms_F218(&self->f24, 0, 0xC4);
+    self->f24 = self->count;
+    for (i = 0; i < self->count; i++) {
+        sRailItemF218* item = *(sRailItemF218**)(*(char**)(self->owner + 0x94) + (i << 2) + 4);
+        if (item->data != 0) {
+            self->src[i] = &self->out[i];
+            self->src[i]->fC = item->fC;
+            // writes slots 1..3 of out[0] for every entry, as func_003443A8 does (bug in the original)
+            short* p = (short*)self->out;
+            for (int j = 1; j < 4; j++) {
+                p[j] = -1;
+            }
+            self->out[i].value = *(unsigned short*)(item->data + (self->index << 2) + 4);
+        } else {
+            self->src[i] = (sRailOutF218*)item;
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/railmodifier", func_0035F378);
