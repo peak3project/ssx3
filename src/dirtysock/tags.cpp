@@ -17,7 +17,128 @@ char* cDirtysock_tag__TagFieldSetupAppend(char* buf, char* dst, char* name)
 }
 #endif
 
+//100%
 INCLUDE_ASM("dirtysock/tags", cDirtysock_tag__TagFieldSetupTerm);
+#ifdef SKIP_ASM
+extern unsigned char D_004964C0[];
+extern signed char D_004A4A70;
+extern "C" int func_00415FC8(void* a, const void* b, int n);
+extern "C" void func_0041610C(void* dst, const void* src, int n);
+extern "C" void func_0041605C(void* dst, const void* src, int n);
+
+extern "C" int cDirtysock_tag__TagFieldSetupTerm(char* record_, int len, char* tag)
+{
+    unsigned char* record = (unsigned char*)record_;
+    unsigned char* p;
+    unsigned char* start;
+    unsigned char* q;
+    unsigned char* e;
+    int n;
+    int delta;
+    int oldlen;
+    if (record == 0) {
+        return -1;
+    }
+    if (tag == 0 || (unsigned char)tag[0] < 0x21) {
+        return -1;
+    }
+    if (tag[0] == '~') {
+        for (p = record; *p != 0; p++) {
+        }
+        if (p != record && p[-1] >= 0x20 && p[-1] != D_004A4A70 && p < record + len - 1) {
+            *p = D_004A4A70;
+            p++;
+            *p = 0;
+        }
+        q = p;
+        start = p;
+    } else {
+        for (p = record;;) {
+            unsigned a;
+            unsigned b;
+            unsigned sum;
+            if (*p == 0) {
+                if (p != record && p[-1] >= 0x20 && p[-1] != D_004A4A70 && p < record + len - 1) {
+                    *p = D_004A4A70;
+                    p++;
+                    *p = 0;
+                }
+                q = p;
+                start = p;
+                break;
+            }
+            if (*p <= 0x20) {
+                p++;
+                continue;
+            }
+            if (D_004964C0[*p] == 1) {
+                q = p;
+                start = p;
+                break;
+            }
+            a = D_004964C0[*p];
+            b = D_004964C0[tag[0]];
+            n = 0;
+            if (a == b && a >= 2) {
+                char* t = tag;
+                for (;;) {
+                    n++;
+                    t++;
+                    a = D_004964C0[p[n]];
+                    b = D_004964C0[*t];
+                    if (a != b || a < 2) {
+                        break;
+                    }
+                }
+            }
+            sum = a + b;
+            if (sum == 2) {
+                start = q = p;
+                while (*q >= 0x20) {
+                    q++;
+                }
+                if (*q != 0) {
+                    q++;
+                }
+                break;
+            }
+            do {
+                p++;
+            } while (*p >= 0x20);
+        }
+    }
+    for (n = 0; tag[n] >= 0x20; n++) {
+    }
+    oldlen = q - p;
+    n++;
+    delta = n - oldlen;
+    p = q;
+    while (*p != 0) {
+        p++;
+    }
+    p++;
+    if (delta > 0 && record + len - p < delta) {
+        return -1;
+    }
+    if (delta == 0 && func_00415FC8(start, tag, n) == 0) {
+        return 0;
+    }
+    if (delta > 0) {
+        func_0041610C(q + delta, q, p - q);
+    }
+    if (delta < 0) {
+        e = start - delta;
+        func_0041610C(start, e, p - e);
+    }
+    func_0041605C(start, tag, n);
+    if (start[n] == 0 && D_004A4A70 != '\n') {
+        start[n - 1] = 0;
+    } else {
+        start[n - 1] = D_004A4A70;
+    }
+    return n - 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("dirtysock/tags", func_003EB578);
