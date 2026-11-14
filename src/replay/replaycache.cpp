@@ -1321,7 +1321,83 @@ extern "C" void func_00271708(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("replay/replaycache", func_00271758);
+#ifdef SKIP_ASM
+struct sRcSelf_1758 {
+    int state;                      // 0x0
+    char pad_0x4[0x14];
+    int a;                          // 0x18
+    char pad_0x1C[0x3B0 - 0x1C];
+    char list[0xC];                 // 0x3B0
+    char pad_0x3BC[0x3C8 - 0x3BC];
+    int c;                          // 0x3C8
+    int d;                          // 0x3CC
+    void* tail;                     // 0x3D0
+    char pad_0x3D4[0x484 - 0x3D4];
+    int pos;                        // 0x484
+    void* frame;                    // 0x488
+    void* streams[2];               // 0x48C
+    char pad_0x494[0x608 - 0x494];
+    int loaded;                     // 0x608
+    char pad_0x60C[4];
+    int b;                          // 0x610
+    char pad_0x614[4];
+    int ready;                      // 0x618
+};
+
+struct sRcWorld_1758 {
+    char pad_0x0[0x7C];
+    int numRiders;                  // 0x7C
+};
+
+struct sRcGame_1758 {
+    char pad_0x0[0xC];
+    sRcWorld_1758* world;           // 0xC
+};
+
+struct sRcApp_1758 {
+    char pad_0x0[0x84];
+    sRcGame_1758* game;             // 0x84
+};
+
+void func_0026E5C0(void* list);
+extern "C" void* func_00270130(void* self);
+extern "C" int func_0026D678(void* node, char** pp);
+extern "C" int func_0026D558(void* self, char** pp);
+
+extern "C" int func_00271758(sRcSelf_1758* self, char* cur)
+{
+    char** pc = &cur;
+    sReplayHdr_1228* hdr = (sReplayHdr_1228*)cur;
+    int i;
+    if (hdr->mode != ((sRcApp_1758*)D_004A28A8)->game->world->numRiders) {
+        return 0;
+    }
+    self->loaded = 1;
+    self->a = hdr->a;
+    self->b = hdr->b != 0;
+    self->c = hdr->c;
+    self->d = hdr->d;
+    self->tail = 0;
+    self->pos = 0;
+    func_0026E5C0(self->list);
+    cur = (char*)(hdr + 1);
+    for (i = 0; i < hdr->count; i++) {
+        void* node = func_00270130(self);
+        func_0026D678(node, pc);
+        func_0026E5D0(self->list, node);
+    }
+    for (i = 0; i < hdr->mode; i++) {
+        if (self->streams[i] != 0) {
+            func_0026D558(self->streams[i], pc);
+        }
+    }
+    self->state = 8;
+    self->ready = 1;
+    return 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("replay/replaycache", func_002718A8);
