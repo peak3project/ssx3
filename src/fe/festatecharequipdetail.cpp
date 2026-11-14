@@ -2806,7 +2806,28 @@ extern "C" int func_0019DE18(const int* a, const int* b)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019DF20);
+#ifdef SKIP_ASM
+extern "C" void func_00418EF8(void* base, int n, int size, int (*cmp)(const int*, const int*));
+
+extern "C" void func_0019DF20(sFileCache* self, int bank)
+{
+    int keys[256];
+    for (int i = 0; i < 256; i++)
+        keys[i] = (bank << 16) | i;
+    func_00418EF8(keys, 256, 4, func_0019DD10);
+    for (int i = 0; i < 256; i++) {
+        unsigned short idx = keys[i] & 0xFFFF;
+        sFileSlot* s = &self->banks[bank].slots[idx];
+        if (s->stamp != 0 || s->type != 8)
+            break;
+        s->stamp = self->counts[bank]++;
+        if (self->nPending <= 0 && s->state == 3)
+            func_0019D8B8(self, bank, idx);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/festatecharequipdetail", func_0019E070);
