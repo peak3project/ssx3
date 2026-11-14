@@ -923,7 +923,30 @@ __asm__(
     ".set pop\n");
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B3D40);
+#ifdef SKIP_ASM
+// Next attachment of an EA shape: the low byte is the attachment id, the upper 24 bits its offset (0 = last).
+static inline unsigned char *nextAttach_3D40(unsigned char *p) {
+    int off = *(int *)p >> 8;
+    return off ? p + off : 0;
+}
+
+unsigned char *func_003B3D40(unsigned char *p) {
+    unsigned char *r = 0;
+    while (p) {
+        if (*p == 0x69) {
+            r = p + 0x10;
+            if ((*(unsigned short *)(p + 6) & 0x10) == 0) {
+                r = 0;
+            }
+            break;
+        }
+        p = nextAttach_3D40(p);
+    }
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B3DA8);
