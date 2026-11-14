@@ -2205,7 +2205,147 @@ extern "C" void func_0030BEE8(void* self, cWScriptListHead* list, func_0030BEE8_
 }
 #endif
 
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030BFC0);
+#ifdef SKIP_ASM
+struct sRiderTbl_BFC0 {
+    char pad_0x0[0x28];
+    char* riders[1];        // 0x28
+};
+struct sRace_BFC0 {
+    char pad_0x0[0xC];
+    sRiderTbl_BFC0* tbl;    // 0xC
+};
+struct sGame_BFC0 {
+    char pad_0x0[0x84];
+    sRace_BFC0* race;       // 0x84
+};
+extern sGame_BFC0* D_004A28A8_BFC0 __asm__("D_004A28A8");
+
+struct sV4_BFC0 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+struct sRefSet_BFC0 {
+    char pad_0x0[0x1C];
+    unsigned int* refs;     // 0x1C
+};
+struct sRefWorld_BFC0 {
+    char pad_0x0[0x8];
+    sRefSet_BFC0** sets;    // 0x8
+};
+extern sRefWorld_BFC0** D_004A47B8_BFC0 __asm__("D_004A47B8");
+
+struct sVEi_BFC0 { short delta; short index; int (*fn)(void*, char*); };
+struct sVEp_BFC0 { short delta; short index; const sV4_BFC0* (*fn)(void*); };
+
+// PORT: PS2-only VU0 inline asm (vector subtract).
+static inline sV4_BFC0 vu0Sub_BFC0(const sV4_BFC0& a, const sV4_BFC0& b)
+{
+    sV4_BFC0 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4-component vector length).
+static inline float vu0Length_BFC0(const sV4_BFC0& v)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %1, $vi22\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(v));
+    return r;
+}
+
+static inline void* refToPtr_BFC0(unsigned int p)
+{
+    return (void*)(p << 2);
+}
+
+static inline void* toObj_BFC0(unsigned int p)
+{
+    if (p == 0)
+        return 0;
+    return refToPtr_BFC0(p);
+}
+
+// Same shape as seg_1FBE38's matched reference lookup (toObj result named, then assigned).
+static inline void* lookup_BFC0(unsigned int id)
+{
+    void* r;
+    sRefSet_BFC0* set = (*D_004A47B8_BFC0)->sets[id & 0xFF];
+    if (set == 0) {
+        r = 0;
+    } else {
+        void* t = toObj_BFC0(set->refs[id >> 8] >> 8);
+        r = t;
+    }
+    return r;
+}
+
+static inline sV4_BFC0 objPos_BFC0(char* o)
+{
+    return *(sV4_BFC0*)(o + 0x40);
+}
+
+extern "C" int func_0030BFC0(int* self, unsigned int id1, unsigned int id2, unsigned int id3)
+{
+    char* a = 0;
+    char* b = 0;
+    char* c = 0;
+    if (~id1 != 0)
+        a = (char*)lookup_BFC0(id1);
+    if (~id2 != 0)
+        b = (char*)lookup_BFC0(id2);
+    if (~id3 != 0)
+        c = (char*)lookup_BFC0(id3);
+    char* r = D_004A28A8_BFC0->race->tbl->riders[self[0]];
+    char* o = r + 0x6C0;
+    sVEi_BFC0* vt = *(sVEi_BFC0**)o;
+    if (vt[3].fn(o + vt[3].delta, b))
+        return 1;
+    sVEp_BFC0* vt2 = *(sVEp_BFC0**)o;
+    const sV4_BFC0* pos = vt2[5].fn(o + vt2[5].delta);
+    float d;
+    float span;
+    if (a) {
+        d = vu0Length_BFC0(vu0Sub_BFC0(*pos, objPos_BFC0(a)));
+        span = vu0Length_BFC0(vu0Sub_BFC0(objPos_BFC0(b), objPos_BFC0(a))) * 1.1f;
+    } else {
+        d = vu0Length_BFC0(vu0Sub_BFC0(*pos, objPos_BFC0(b)));
+        span = vu0Length_BFC0(vu0Sub_BFC0(objPos_BFC0(c), objPos_BFC0(b))) * 1.5f;
+    }
+    if (d <= span)
+        return 0;
+    if (c) {
+        d = vu0Length_BFC0(vu0Sub_BFC0(*pos, objPos_BFC0(b)));
+        span = vu0Length_BFC0(vu0Sub_BFC0(objPos_BFC0(c), objPos_BFC0(b))) * 1.1f;
+    } else {
+        d = vu0Length_BFC0(vu0Sub_BFC0(*pos, objPos_BFC0(b)));
+        span = vu0Length_BFC0(vu0Sub_BFC0(objPos_BFC0(b), objPos_BFC0(a))) * 1.5f;
+    }
+    if (d <= span)
+        return 0;
+    return -1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("wscript/wscriptman", func_0030C390);
