@@ -1116,7 +1116,184 @@ extern "C" void func_00352780(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/instanceman", func_00352810);
+#ifdef SKIP_ASM
+// Resource handle: section (0xFF = the local table) and the entry's index.
+struct tResourceID_352810 {
+    unsigned int m_uiSectionID : 8;
+    unsigned int m_uiUID : 24;
+    tResourceID_352810(unsigned int section, unsigned int uid)
+    {
+        m_uiSectionID = section;
+        m_uiUID = uid;
+    }
+};
+
+struct sResTable_352810 {
+    char pad_0x0[0x4C];
+    unsigned int* entries;      // 0x4C
+    unsigned int count;         // 0x50
+};
+
+struct sResHdr_352810 {
+    char pad_0x0[0x8];
+    unsigned int numSections;   // 0x8
+};
+
+struct sResMgr_352810 {
+    sResHdr_352810* hdr;        // 0x0
+    sResTable_352810* local;    // 0x4
+    sResTable_352810** tables;  // 0x8
+};
+
+extern sResMgr_352810** D_004A47B8_352810 __asm__("D_004A47B8");
+
+static inline bool HasEntry_352810(sResTable_352810* t, unsigned int uid)
+{
+    if (t->count < uid) {
+        return false;
+    }
+    return (t->entries[uid] & 0xFFFFFF00) != 0;
+}
+
+static inline bool IsValid_352810(tResourceID_352810 rid)
+{
+    unsigned int section = rid.m_uiSectionID;
+    unsigned int uid = rid.m_uiUID;
+    sResMgr_352810* mgr = *D_004A47B8_352810;
+    if (section == 0xFF) {
+        return HasEntry_352810(mgr->local, uid);
+    } else if (section < mgr->hdr->numSections) {
+        sResTable_352810* t = mgr->tables[section];
+        if (t != 0) {
+            return HasEntry_352810(t, uid);
+        }
+    }
+    return false;
+}
+
+struct sTex_352810 {
+    short id;
+};
+
+struct sMesh_352810 {
+    int f0;
+    sTex_352810* tex[1];        // 0x4
+};
+
+struct sCount_352810 {
+    int count;
+};
+
+struct sSkel_352810 {
+    char pad_0x0[0x4];
+    int count;                  // 0x4
+    char pad_0x8[0x4];
+    sCount_352810* texCount;    // 0xC
+};
+
+struct sModel_352810 {
+    char pad_0x0[0x80];
+    sSkel_352810* skel;         // 0x80
+    char pad_0x84[0x10];
+    sMesh_352810* mesh;         // 0x94
+};
+
+struct sInst_352810 {
+    char pad_0x00[0x18];
+    sModel_352810* model;       // 0x18
+    float f1C;                  // 0x1C
+    float f20;                  // 0x20
+    float f24;                  // 0x24
+    char pad_0x28[0x8];
+    sImV4 rot[24];              // 0x30
+    sImV4 arr1[24];             // 0x1B0
+    char pad_0x330[0x80];
+    sImV4 pos[24];              // 0x3B0
+};
+
+struct sGfxVEntry_352810 {
+    short delta;
+    short index;
+    void (*fn)(void*, float, sModel_352810*, sMesh_352810*, sImMat44_351480*, sImMtx*, int, int);
+};
+
+struct sGfx_352810 {
+    char pad_0x0[0x10D8];
+    sGfxVEntry_352810* vt;      // 0x10D8
+};
+
+extern sGfx_352810* D_004A5B80_352810 __asm__("D_004A5B80");
+
+// PORT: PS2-only VU0 inline asm (unit quaternion -> 3x3 rotation, row 3 = (0,0,0,1)).
+static inline void vu0QuatPosToMtx_352810(sImMtx* m, const sImV4& q, const sImV4& p)
+{
+    __asm__ __volatile__(
+        "lqc2       $vf4, %1\n"
+        "vaddw.xyz  $vf1, $vf0, $vf0w\n"
+        "vadd.xyz   $vf5, $vf4, $vf4\n"
+        "vsub.w     $vf10, $vf10, $vf10\n"
+        "vsub.w     $vf11, $vf11, $vf11\n"
+        "vsub.w     $vf12, $vf12, $vf12\n"
+        "vmul.xyz   $vf6, $vf5, $vf4\n"
+        "vmulw.xyz  $vf7, $vf5, $vf4w\n"
+        "vopmula.xyz ACC, $vf5, $vf4\n"
+        "vmadd.xyz  $vf8, $vf0, $vf0\n"
+        "vsubay.x   ACC, $vf1, $vf6y\n"
+        "vmsubz.x   $vf10, $vf1, $vf6z\n"
+        "vsubaz.y   ACC, $vf1, $vf6z\n"
+        "vmsubx.y   $vf11, $vf1, $vf6x\n"
+        "vsubax.z   ACC, $vf1, $vf6x\n"
+        "vmsuby.z   $vf12, $vf1, $vf6y\n"
+        "vaddaz.y   ACC, $vf0, $vf8z\n"
+        "vmaddz.y   $vf10, $vf1, $vf7z\n"
+        "vaddax.z   ACC, $vf0, $vf8x\n"
+        "vmaddx.z   $vf11, $vf1, $vf7x\n"
+        "vaddax.y   ACC, $vf0, $vf8x\n"
+        "vmsubx.y   $vf12, $vf1, $vf7x\n"
+        "vadday.z   ACC, $vf0, $vf8y\n"
+        "vmsuby.z   $vf10, $vf1, $vf7y\n"
+        "vaddaz.x   ACC, $vf0, $vf8z\n"
+        "vmsubz.x   $vf11, $vf1, $vf7z\n"
+        "vadday.x   ACC, $vf0, $vf8y\n"
+        "vmaddy.x   $vf12, $vf1, $vf7y\n"
+        "sqc2       $vf0, 0x30(%0)\n"
+        "sqc2       $vf10, 0x0(%0)\n"
+        "sqc2       $vf11, 0x10(%0)\n"
+        "sqc2       $vf12, 0x20(%0)\n"
+        :
+        : "r"(m), "m"(q)
+        : "memory");
+    *(sImV4*)m->m[3] = p;
+}
+
+// Draws the debris pieces once every texture of the model is resident: each piece's matrix is built from its
+// quaternion and position.
+extern "C" void func_00352810(sInst_352810* self)
+{
+    if (self->f1C <= 0.0f) {
+        return;
+    }
+    int n = self->model->skel->texCount->count;
+    for (int i = 0; i < n; i++) {
+        if (!IsValid_352810(tResourceID_352810(0xFF, self->model->mesh->tex[i]->id))) {
+            return;
+        }
+    }
+    sImMtx mats[24];
+    sSkel_352810* skel = self->model->skel;
+    for (int i = 0; i < skel->count; i++) {
+        vu0QuatPosToMtx_352810(&mats[i], self->rot[i], self->pos[i]);
+    }
+    float alpha = 1.0f;
+    if (self->f24 >= 0.0f && self->f24 >= self->f1C) {
+        alpha = self->f1C;
+    }
+    sGfx_352810* gfx = D_004A5B80_352810;
+    gfx->vt[95].fn((char*)gfx + gfx->vt[95].delta, alpha, self->model, self->model->mesh, &D_004FF1A0, mats, 0, 0x420);
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/instanceman", func_00352A58);
