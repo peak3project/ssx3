@@ -1783,7 +1783,129 @@ extern "C" void func_002F39C8(void *arg0) {
 
 INCLUDE_ASM("seg/seg_1F1548", func_002F39E0);
 
+//100%
 INCLUDE_ASM("seg/seg_1F1548", func_002F3E28);
+#ifdef SKIP_ASM
+struct sRect_3E28 {
+    float x, y, w, h;
+};
+
+struct sGs_3E28 {
+    unsigned int w0;
+    unsigned int f4_0 : 2;
+    unsigned int f4_2 : 5;
+    unsigned int f4_7 : 5;
+    unsigned int f4_12 : 8;
+    unsigned int f4_20 : 2;
+    unsigned int f4_22 : 1;
+    unsigned int f4_23 : 2;
+    unsigned int f4_25 : 7;
+    unsigned int f8_0 : 5;
+    unsigned int f8_5 : 5;
+    unsigned int f8_10 : 19;
+    unsigned int f8_29 : 3;
+    unsigned int wC;
+    unsigned int f10 : 16;
+    unsigned int f10hi : 16;
+    void SetF22(int v) { f4_22 = v; }
+};
+
+extern sGs_3E28 D_00501420_3E28 __asm__("D_00501420");
+extern char D_004FF1A0[];
+
+class cGfx_3E28 {
+public:
+    char pad[0xE84];
+    sGs_3E28* stateTop;
+    void PushState() { stateTop[1] = stateTop[0]; stateTop++; }
+    char padE88[0x10D8 - 0xE88];
+    virtual void v0(); virtual void v1(); virtual void v2(); virtual void v3();
+    virtual void v4(); virtual void v5(); virtual void v6(); virtual void v7();
+    virtual void v8(); virtual void v9(); virtual void v10(); virtual void v11();
+    virtual void v12(); virtual void v13(); virtual void v14(); virtual void v15();
+    virtual void v16(); virtual void v17(); virtual void v18(); virtual void v19();
+    virtual void Begin();
+    virtual void End();
+    virtual void v22(); virtual void v23();
+    virtual void v24();
+    virtual void SetViewport(float, float, float, float, float, float, int, int);
+    virtual void v26();
+    virtual sRect_3E28 GetViewport();
+    virtual void v28(); virtual void v29();
+    virtual void PushMatrix();
+    virtual void PopMatrix();
+    virtual void v32();
+    virtual void SetMatrix(void*);
+};
+
+struct sVE_3E28 {
+    short delta;
+    short index;
+    void (*fn)(void*);
+};
+struct sPartA_3E28 { char d[0x3C]; };
+struct sPartB_3E28 { char d[0x4C]; };
+struct sList_3E28 { int pad0; char* items[3]; unsigned count; int cur; };
+struct sEmit_3E28 {
+    char pad0[0xC];
+    sVE_3E28* vt;
+    int idx;
+    int nA;
+    int nB;
+    sPartA_3E28 a[30];
+    sPartB_3E28 b[30];
+};
+
+extern int D_004A424C;
+extern int D_004A4250;
+extern int D_004A3B60;
+extern void* D_004A28A8;
+extern cGfx_3E28* D_004A5B80_3E28 __asm__("D_004A5B80");
+extern "C" void func_002F2C30(void* item, const sV2_3418* off);
+extern "C" void func_002F3418_3E28(void* item, const sV2_3418* off) __asm__("func_002F3418");
+
+extern "C" void func_002F3E28(sEmit_3E28* self)
+{
+    if (D_004A424C == 0)
+        return;
+    if (D_004A4250 == 0)
+        return;
+    sList_3E28* list = *(sList_3E28**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x84);
+    if (self->idx != list->cur)
+        return;
+    if (D_004A3B60 != 0) {
+        sVE_3E28* vt = self->vt;
+        vt[14].fn((char*)self + vt[14].delta);
+        return;
+    }
+    cGfx_3E28* gfx = D_004A5B80_3E28;
+    int i;
+    gfx->Begin();
+    sRect_3E28 vp = gfx->GetViewport();
+    sV2_3418 off;
+    off.x = vp.x;
+    off.y = vp.y;
+    gfx->SetViewport(0.0f, 0.0f, 640.0f, 480.0f, 0.0f, 1.0f, 1, 0);
+    gfx->PushMatrix();
+    gfx->SetMatrix(D_004FF1A0);
+    gfx->PushState();
+    *gfx->stateTop = D_00501420_3E28;
+    gfx->stateTop->f8_5 = 8;
+    gfx->stateTop->f4_23 = 2;
+    gfx->stateTop->f4_20 = 0;
+    gfx->stateTop->f4_12 = 0;
+    gfx->stateTop->f4_0 = 0;
+    gfx->stateTop->f8_10 = 0;
+    gfx->stateTop->SetF22(1);
+    for (i = 0; i < self->nA; i++)
+        func_002F2C30(&self->a[i], &off);
+    for (i = 0; i < self->nB; i++)
+        func_002F3418_3E28(&self->b[i], &off);
+    gfx->stateTop--;
+    gfx->PopMatrix();
+    gfx->End();
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_1F1548", func_002F4118);
