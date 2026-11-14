@@ -7962,7 +7962,67 @@ extern "C" int func_00383770(void *arg0, int arg1, int arg2, int arg3, int arg4,
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/particle", func_00383808);
+#ifdef SKIP_ASM
+// PORT: PS2-only GS image upload: builds BITBLTBUF/TRXPOS/TRXREG/TRXDIR + IMAGE GIF packets in scratchpad and kicks DMA2.
+extern "C" void func_00383808(void* self, int src, int dbp, int w, int h, int bufw, int psm, int dsax, int dsay)
+{
+    int bpp = 0;
+    unsigned long* p = (unsigned long*)0x70000000;
+    switch (psm) {
+    case 0:
+        bpp = w << 2;
+        break;
+    case 1:
+        bpp = w * 3;
+        break;
+    case 2:
+    case 10:
+        bpp = w << 1;
+        break;
+    case 19:
+        bpp = w;
+        break;
+    case 20:
+        bpp = w >> 1;
+        break;
+    }
+    while (*(volatile int*)0x1000A000 & 0x100) {
+    }
+    do {
+        int rows = 0x7FFF0 / bpp;
+        if (h < rows) {
+            rows = h;
+        }
+        p[0] = 0x10000007;
+        p[1] = 0;
+        p[2] = (unsigned long)0x10000000 << 32 | 5;
+        p[3] = 0xE;
+        p[4] = (unsigned long)dbp << 32 | (unsigned long)(bufw >> 6) << 48 | (unsigned long)psm << 56;
+        p[5] = 0x50;
+        p[6] = (unsigned long)dsax << 32 | (unsigned long)dsay << 48;
+        p[7] = 0x51;
+        p[8] = (unsigned long)w | (unsigned long)rows << 32;
+        p[9] = 0x52;
+        p[10] = 0;
+        p[11] = 0x3F;
+        p[12] = 0;
+        p[13] = 0x53;
+        h -= rows;
+        int qwc = bpp * rows >> 4;
+        p[14] = qwc | 0x8000 | (unsigned long)2 << 58;
+        p[15] = 0;
+        unsigned long* tag = &p[16];
+        *tag = qwc | (unsigned long)(h != 0 ? 3 : 0) << 28 | (unsigned long)src << 32;
+        p[17] = 0;
+        dsay += rows;
+        src += bpp * rows;
+        p += 18;
+    } while (h != 0);
+    func_00371F98(0x70000000, 6);
+}
+#endif
 //100%
 INCLUDE_ASM("render/particle", func_00383A10);
 #ifdef SKIP_ASM
