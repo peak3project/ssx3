@@ -38,7 +38,230 @@ extern "C" void func_00284C28()
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/ssxAudio", func_00284C68);
+#ifdef SKIP_ASM
+extern "C" void* func_002ADE88(void* self, int heap);
+extern "C" void* cBankManager_cBankManager(void* self, int embedded, int count, int heap);
+extern "C" void* cStreamSys_cStreamSys(void* self, int inchrg, int banks, int count, int heap);
+extern "C" char* func_002AB200(char* self, int embedded, int a2, int a3, int heap);
+extern "C" void* operator_new__FUi(unsigned int size, const char* tag, int flags, int d);
+// PORT: func_00287700's real parameter order is (self, int, float).
+void func_00287700_4C68(void*, int, float) __asm__("func_00287700");
+extern "C" void func_00288F60(void* self, int mode);
+extern "C" void func_00289470(void* self);
+extern "C" void func_00289520(void* self, const char* name);
+void func_00287FC8_4C68(void* self) __asm__("func_00287FC8");
+extern "C" void func_00297F70(void* self);
+extern "C" void func_003B5A28(void (*cb)(void*));
+extern "C" void func_00289650(void* msg);
+extern "C" void func_002948A0(void* self);
+extern "C" void func_002A4590(void* self, int flag);
+extern "C" void func_0029ED90(char* self, int restart);
+extern "C" void SPCH_Init(void* self);
+extern "C" void* func_00287968(void* self, int a1, int a2);
+extern "C" void func_002B0E60(void* self, int a, int b, char* name, int c, int d, int e);
+extern "C" void func_0028F700(void* self);
+extern char D_00482820[];
+extern char D_004A3568[];
+extern void* D_00483688[];
+extern void* D_004836B8[];
+extern void* D_004836D8[];
+
+struct sSaVEntry4C68 {
+    short delta;
+    short index;
+    void* fn;
+};
+struct sSaVtbl4_4C68 {
+    sSaVEntry4C68 e[4];
+} __attribute__((aligned(8)));
+struct sSaVtbl8_4C68 {
+    sSaVEntry4C68 e[8];
+} __attribute__((aligned(8)));
+struct sSaVtbl7_4C68 {
+    sSaVEntry4C68 e[7];
+} __attribute__((aligned(8)));
+extern const sSaVtbl4_4C68 D_00483708_4C68 __asm__("D_00483708");
+extern const sSaVtbl8_4C68 D_00483648_4C68 __asm__("D_00483648");
+extern const sSaVtbl7_4C68 D_00483728_4C68 __asm__("D_00483728");
+
+// Member arrays whose element class has an empty constructor (only the vec_new loop counter remains;
+// element counts 30 and 3 come from the binary, element sizes and offsets are unknown and only placeholders).
+struct sEmpty34_4C68 {
+    void* operator new[](unsigned int, void* p) { return p; }
+    char pad[0x34];
+    sEmpty34_4C68() {}
+};
+struct sEmpty4_4C68 {
+    void* operator new[](unsigned int, void* p) { return p; }
+    char pad[4];
+    sEmpty4_4C68() {}
+};
+
+// Member arrays of cSSXAudio touched by the constructor; m5560 and m60A4 are subobjects whose real extents are unknown.
+struct sAudioArrs4C68 {
+    char pad0[0x5560];
+    char m5560[0x579C - 0x5560];
+    int m579C[23];
+    char pad57F8[0x6030 - 0x57F8];
+    int m6030[3];
+    char pad603C[0x60A4 - 0x603C];
+    char m60A4[0x6394 - 0x60A4];
+    float m6394[11];
+    char pad63C0[0x63E4 - 0x63C0];
+    float m63E4[11];
+    char pad6410[0x6C70 - 0x6410];
+    int m6C70[2];
+    int m6C78[2];
+};
+#define A_4C68 ((sAudioArrs4C68*)self)
+#define S_4C68 ((char*)self)
+#define BM_4C68 (**(char***)(S_4C68 + 0x118))
+
+// PORT: g++ 2.95 constructor of a class with virtual bases (stack vtable this-adjust fix-ups written out by hand).
+extern "C" char* func_00284C68(void* self, int inchrg, int a2, int a3, int heap)
+{
+    if (inchrg) {
+        *(char**)(S_4C68 + 0x5560) = S_4C68 + 0x7768;
+        *(char**)(S_4C68 + 0x7768) = S_4C68 + 0x6C98;
+        *(char**)S_4C68 = S_4C68 + 0x6C98;
+        *(char**)(S_4C68 + 0x6E70) = S_4C68 + 0x6C90;
+        *(char**)(S_4C68 + 0x118) = S_4C68 + 0x7768;
+        func_002ADE88(S_4C68 + 0x6C90, heap);
+        cBankManager_cBankManager(*(void**)(S_4C68 + 0x7768), 0, a2, heap);
+        cStreamSys_cStreamSys(*(void**)(S_4C68 + 0x5560), 0, a2, a3, heap);
+    }
+    func_002AB200(S_4C68, 0, a2, a3, heap);
+    *(const sSaVtbl4_4C68**)(*(char**)(BM_4C68 + 0x1D8) + 4) = &D_00483708_4C68;
+    *(const sSaVtbl8_4C68**)(BM_4C68 + 0xAB0) = &D_00483648_4C68;
+    *(const sSaVtbl7_4C68**)(BM_4C68 + 0x1D4) = &D_00483728_4C68;
+    if (inchrg == 0) {
+        sSaVtbl4_4C68 v1 = D_00483708_4C68;
+        *(sSaVtbl4_4C68**)(*(char**)(BM_4C68 + 0x1D8) + 4) = &v1;
+        char* base1 = *(char**)(BM_4C68 + 0x1D8) - 0x6C90;
+        int d1 = S_4C68 - base1;
+        v1.e[1].delta = D_00483708_4C68.e[1].delta + d1;
+        v1.e[2].delta = D_00483708_4C68.e[2].delta + d1;
+        sSaVtbl8_4C68 v2 = D_00483648_4C68;
+        *(sSaVtbl8_4C68**)(BM_4C68 + 0xAB0) = &v2;
+        char* base2 = BM_4C68 - 0x6C98;
+        int d2 = S_4C68 - base2;
+        v2.e[1].delta = D_00483648_4C68.e[1].delta + d2;
+        v2.e[2].delta = D_00483648_4C68.e[2].delta + d2;
+        v2.e[3].delta = D_00483648_4C68.e[3].delta + d2;
+        v2.e[5].delta = D_00483648_4C68.e[5].delta + d2;
+        v2.e[6].delta = D_00483648_4C68.e[6].delta + d2;
+        sSaVtbl7_4C68 v3 = D_00483728_4C68;
+        *(sSaVtbl7_4C68**)(BM_4C68 + 0x1D4) = &v3;
+        v3.e[1].delta = D_00483728_4C68.e[1].delta + d2;
+    }
+    *(void***)(S_4C68 + 0x5558) = D_00483688;
+    *(void***)(S_4C68 + 0x571C) = D_004836D8;
+    *(void***)(S_4C68 + 0xC) = D_004836B8;
+    *(int*)(S_4C68 + 0x5728) = 0;
+    *(int*)(S_4C68 + 0x572C) = -1;
+    *(float*)(S_4C68 + 0x5730) = 1.0f;
+    *(int*)(S_4C68 + 0x5734) = 0;
+    *(int*)(S_4C68 + 0x5740) = 0;
+    *(int*)(S_4C68 + 0x5744) = 0;
+    *(int*)(S_4C68 + 0x574C) = 0;
+    *(int*)(S_4C68 + 0x5750) = 0;
+    *(int*)(S_4C68 + 0x5754) = 0;
+    *(int*)(S_4C68 + 0x5758) = 0;
+    *(int*)(S_4C68 + 0x5764) = -1;
+    *(int*)(S_4C68 + 0x5768) = 0;
+    *(int*)(S_4C68 + 0x576C) = 0;
+    *(int*)(S_4C68 + 0x5770) = 0;
+    *(int*)(S_4C68 + 0x5774) = 0;
+    *(int*)(S_4C68 + 0x577C) = 0;
+    *(int*)(S_4C68 + 0x5780) = 1;
+    *(int*)(S_4C68 + 0x5784) = 0;
+    *(int*)(S_4C68 + 0x5788) = 0;
+    *(int*)(S_4C68 + 0x578C) = 0;
+    *(int*)(S_4C68 + 0x5790) = 1;
+    *(int*)(S_4C68 + 0x5794) = 1;
+    *(int*)(S_4C68 + 0x5798) = -1;
+    *(int*)(S_4C68 + 0x5818) = 0;
+    *(int*)(S_4C68 + 0x581C) = -1;
+    *(int*)(S_4C68 + 0x5820) = 0;
+    *(int*)(S_4C68 + 0x5828) = 0;
+    *(int*)(S_4C68 + 0x597C) = 200;
+    *(int*)(S_4C68 + 0x5984) = 0;
+    *(int*)(S_4C68 + 0x5988) = 0;
+    *(void**)(S_4C68 + 0x5980) = operator_new__FUi(800, D_00482820, 0, 0);
+    new (S_4C68 + 0x5990) sEmpty34_4C68[30];
+    *(unsigned int*)(S_4C68 + 0x5FC0) = 0xFFFFFFFF;
+    *(int*)(S_4C68 + 0x5FC8) = -1;
+    *(int*)(S_4C68 + 0x5FD4) = 0;
+    *(int*)(S_4C68 + 0x5FD8) = 0;
+    *(int*)(S_4C68 + 0x5FDC) = -1;
+    new (S_4C68 + 0x5FF4) sEmpty4_4C68[3];
+    *(int*)(S_4C68 + 0x603C) = -1;
+    *(int*)(S_4C68 + 0x6040) = 0;
+    *(int*)(S_4C68 + 0x608C) = 0;
+    *(int*)(S_4C68 + 0x6090) = 0;
+    *(long*)(S_4C68 + 0x6098) = 0;
+    *(int*)(S_4C68 + 0x6254) = 0;
+    *(int*)(S_4C68 + 0x627C) = 1;
+    *(int*)(S_4C68 + 0x6284) = 23;
+    *(int*)(S_4C68 + 0x6294) = 0;
+    *(int*)(S_4C68 + 0x6298) = 0;
+    *(int*)(S_4C68 + 0x62A4) = -1;
+    *(int*)(S_4C68 + 0x62A8) = -1;
+    *(int*)(S_4C68 + 0x62B4) = 0;
+    *(int*)(S_4C68 + 0x62B8) = 0;
+    *(int*)(S_4C68 + 0x63C0) = 0;
+    *(float*)(S_4C68 + 0x63D0) = 1.0f;
+    *(int*)(S_4C68 + 0x63D4) = 3;
+    *(float*)(S_4C68 + 0x63D8) = 1.0f;
+    *(int*)(S_4C68 + 0x63DC) = 0;
+    *(int*)(S_4C68 + 0x646C) = -1;
+    *(int*)(S_4C68 + 0x6474) = 0;
+    *(int*)(S_4C68 + 0x6C54) = 60;
+    *(int*)(S_4C68 + 0x6C58) = 0;
+    *(int*)(S_4C68 + 0x6C60) = 1;
+    *(int*)(S_4C68 + 0x6C88) = 1;
+    *(int*)(S_4C68 + 0x62B0) = heap;
+    *(int*)(S_4C68 + 0x6250) = 0;
+    for (int i = 0; i < 11; i++) {
+        A_4C68->m6394[i] = 1.0f;
+        A_4C68->m63E4[i] = 1.0f;
+    }
+    func_00287700_4C68(self, 0, 0.9090909361839294f);
+    *(int*)(S_4C68 + 0x6470) = 0;
+    func_00288F60(self, 0);
+    func_00289470(self);
+    func_00289520(self, A_4C68->m60A4);
+    func_00287FC8_4C68(self);
+    func_00297F70(self);
+    func_003B5A28(func_00289650);
+    *(int*)(S_4C68 + 0x5FB0) = 0;
+    *(int*)(S_4C68 + 0x5FB4) = 0;
+    for (int i = 0; i < 2; i++) {
+        A_4C68->m6C70[i] = 0;
+        A_4C68->m6C78[i] = -1;
+    }
+    *(int*)(S_4C68 + 0x5FE0) = 0;
+    *(int*)(S_4C68 + 0x5FE4) = 0;
+    *(int*)(S_4C68 + 0x5FEC) = 0;
+    *(int*)(S_4C68 + 0x5FF0) = 0;
+    for (int i = 0; i < 3; i++)
+        A_4C68->m6030[i] = -1;
+    func_002948A0(self);
+    for (int i = 0; i < 23; i++)
+        A_4C68->m579C[i] = 0;
+    func_002A4590(self, 1);
+    func_0029ED90(S_4C68, 0);
+    SPCH_Init(A_4C68->m5560);
+    func_002B0E60(A_4C68->m5560, 0, 0, D_004A3568, (int)func_00287968(self, 4, 0), 1, -1);
+    func_0028F700(self);
+    return S_4C68;
+}
+#undef S_4C68
+#undef BM_4C68
+#undef A_4C68
+#endif
 
 //100%
 INCLUDE_ASM("sound/ssxAudio", func_00285210);
