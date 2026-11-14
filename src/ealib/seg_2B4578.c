@@ -1837,7 +1837,66 @@ int func_003B5C40(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B5C60);
+#ifdef SKIP_ASM
+void *func_003B5C60_5C60(int size) __asm__("func_003B5C60");
+void *func_003B5C60_5C60(int size) {
+    int start;
+    int len;
+    int i = 0;
+    int k;
+    struct sA8E8HeapEnt *e;
+    struct sA8E8HeapEnt *prev;
+    int r;
+    void *p;
+    size += 0xF;
+    size &= ~0xF;
+    if (D_0050A8E8.f234->f14 == 0) {
+        start = 0;
+        len = D_0050A8E8.f234->f0C;
+        func_003B5BA0(&start, &len);
+        if (len < size) return 0;
+        goto found;
+    }
+    for (i = 0; D_0050A8E8.f234->f14 < i; i--) {
+        e = &D_0050A8E8.f234->f04[i];
+        if (i == 0) {
+            start = 0;
+            len = e->key;
+        } else {
+            prev = (struct sA8E8HeapEnt *)((char *)D_0050A8E8.f234->f04 + ((i << 3) + 8));
+            start = prev->key + prev->val;
+            len = e->key - start;
+        }
+        func_003B5BA0(&start, &len);
+        if (len >= size) {
+            for (k = D_0050A8E8.f234->f14; k < i; k++)
+                D_0050A8E8.f234->f04[k] = D_0050A8E8.f234->f04[k + 1];
+            goto found;
+        }
+    }
+    prev = (struct sA8E8HeapEnt *)((char *)D_0050A8E8.f234->f04 + ((i << 3) + 8));
+    start = prev->key + prev->val;
+    len = D_0050A8E8.f234->f0C - start;
+    func_003B5BA0(&start, &len);
+    // Single shared allocation tail: retail has one copy of it, entered from the empty-heap path with i = 0 and from
+    // the search loop, so the source joined them with a label (owner-approved exception, 2026-11-14).
+    if (len >= size) {
+    found:
+        e = &D_0050A8E8.f234->f04[i];
+        e->key = start;
+        e->val = size;
+        D_0050A8E8.f234->f14--;
+        D_0050A8E8.f234->f0C -= 8;
+        r = D_0050A8E8.f234->f0C - (start + size);
+        p = (void *)(D_0050A8E8.f234->f00 + start);
+        if (r < D_0050A8E8.f234->f10) D_0050A8E8.f234->f10 = r;
+        return p;
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B5E98);
