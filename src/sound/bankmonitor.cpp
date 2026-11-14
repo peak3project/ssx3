@@ -3035,7 +3035,45 @@ void func_002B1758(void* self, int a1)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/bankmonitor", func_002B1780);
+#ifdef SKIP_ASM
+extern "C" void func_002AA870(void* self, int idx, int heap, char* mem, int size, int n, int m);
+extern "C" int func_002AB128(void* self, int idx);
+
+extern "C" int func_002B1780(sSndOptsRec* opts, int n, int m, char* mem, int size)
+{
+    cBankManager* t = **(cBankManager***)D_004A37EC;
+    sSndPlayer* s = &t->sub;
+    t->sub.cur++;
+    s->ch[t->sub.cur] = s->def;
+    t->sub.tgt[t->sub.cur] = 0;
+    s->p34[t->sub.cur] = 0;
+    s->vals[t->sub.cur] = s->ch[t->sub.cur].vol;
+    s->p3C[t->sub.cur] = 0;
+    func_00416210((char*)s + t->sub.cur * 8 + 0x40, 0, 8);
+    s->p60[t->sub.cur] = 0;
+    s->p64[t->sub.cur] = 0;
+    s->p68[t->sub.cur] = 0;
+    s->p6C[t->sub.cur] = 0;
+    s->p70[t->sub.cur].f4 = 0;
+    s->p70[t->sub.cur].f0 = 100;
+    s->p70[t->sub.cur].f8 = 90;
+    s->p70[t->sub.cur].fC = 50;
+    s->p74[t->sub.cur] = 0;
+    s->p80[t->sub.cur] = 0;
+    s->p84[t->sub.cur] = 0;
+    s->p78[t->sub.cur] = 0x7F;
+    s->p7C[t->sub.cur] = 1;
+    cBankManager* t2 = **(cBankManager***)D_004A37EC;
+    sSndOptsRec* rec = &t2->sub.ch[t2->sub.cur];
+    *rec = *opts;
+    func_002AA870(*D_004A37EC, 2, 0, mem, size, n, m);
+    cBankManager* t3 = **(cBankManager***)D_004A37EC;
+    t3->sub.cur--;
+    return func_002AB128(*D_004A37EC, 2);
+}
+#endif
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002B1A70);
 #ifdef SKIP_ASM
