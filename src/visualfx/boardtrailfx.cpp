@@ -1828,5 +1828,97 @@ extern "C" void func_002EBF48(float u, float v, float* out, float* col)
 }
 #endif
 
+//100%
 INCLUDE_ASM("visualfx/boardtrailfx", func_002EC060);
+#ifdef SKIP_ASM
+extern float D_00504FB8[];
+
+struct sBTVert_C060 {
+    float f[12];
+    sBTVert_C060() {}
+} __attribute__((aligned(16)));
+
+struct sBTVEntryDraw {
+    short delta;
+    short index;
+    void (*fn)(void*, int, sBTVert_C060*, int);
+};
+
+static inline float clampBT(float v, float lo, float hi)
+{
+    float r;
+    if (lo <= v)
+        r = v <? hi;
+    else
+        r = lo;
+    return r;
+}
+
+// Points of a half circle of radius r around x = cx, one every `step` radians: ys gets the sine part, xs the
+// x position clamped to the screen. D_00504FB8 is a 512-entry sine table (index = angle * 256/pi, +0x80 = cosine).
+static inline void BuildArc_C060(float* ys, float* xs, const float& cx, float r, float step)
+{
+    float ang = 0.0f;
+    for (int i = 0; i < 40; i++, ang += step) {
+        int idx = (int)(ang * 81.4873275756836f) & 0x1FF;
+        ys[i] = r * D_00504FB8[idx];
+        float x = cx + r * D_00504FB8[idx + 0x80];
+        xs[i] = clampBT(x, 0.0f, 640.0f);
+    }
+}
+
+extern "C" void func_002EC060(char* self, float t)
+{
+    float r = (1.0f - t) * 800.0f;
+    float x1 = *(float*)(self + 0x14) + r;
+    float x0 = *(float*)(self + 0x14) - r;
+    sBTRect4 pos;
+    sBTRect4 rect;
+    pos.x = 0.0f;
+    pos.y = 0.0f;
+    pos.z = x0;
+    pos.w = 480.0f;
+    rect.z = D_004A3B30 + D_004A3B38 * 0.0015625000232830644f * x0;
+    rect.x = D_004A3B30;
+    rect.y = D_004A3B3C;
+    rect.w = D_004A3B44;
+    func_002EB938(&pos, &rect, (sBTRect4*)(self + 4), 0.0f);
+    float w = 640.0f - x1;
+    pos.x = x1;
+    pos.y = 0.0f;
+    pos.z = w;
+    pos.w = 480.0f;
+    rect.x = D_004A3B30 + D_004A3B38 * 0.0015625000232830644f * x1;
+    rect.y = D_004A3B3C;
+    rect.z = D_004A3B30 + D_004A3B38 * w * 0.0015625000232830644f;
+    rect.w = D_004A3B44;
+    func_002EB938(&pos, &rect, (sBTRect4*)(self + 4), 0.0f);
+
+    float ys[40];
+    float xs[40];
+    BuildArc_C060(ys, xs, *(float*)(self + 0x14), r, 0.08055365830659866f); // pi / 39
+
+    sBTVert_C060 top[80];
+    sBTVert_C060 bot[80];
+    for (int i = 0; i < 40; i++) {
+        sBTVert_C060* t0 = top + i * 2;
+        func_002EBF48(xs[i], 0.0f, t0->f, (float*)(self + 4));
+        sBTVert_C060* t1 = top + i * 2 + 1;
+        float y0 = clampBT(*(float*)(self + 0x18) - ys[i], 0.0f, 480.0f);
+        func_002EBF48(xs[i], y0, t1->f, (float*)(self + 4));
+        float y1 = clampBT(*(float*)(self + 0x18) + ys[i], 0.0f, 480.0f);
+        sBTVert_C060* b0 = bot + i * 2;
+        func_002EBF48(xs[i], y1, b0->f, (float*)(self + 4));
+        sBTVert_C060* b1 = bot + i * 2 + 1;
+        func_002EBF48(xs[i], 480.0f, b1->f, (float*)(self + 4));
+    }
+
+    char* obj = D_004A5B80;
+    sBTVEntryDraw* e = &(*(sBTVEntryDraw**)(obj + 0x10D8))[71];
+    e->fn(obj + e->delta, 0x50, top, 0);
+    obj = D_004A5B80;
+    e = &(*(sBTVEntryDraw**)(obj + 0x10D8))[71];
+    e->fn(obj + e->delta, 0x50, bot, 0);
+}
+#endif
 
