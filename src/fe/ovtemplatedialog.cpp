@@ -1677,7 +1677,258 @@ extern "C" int func_0020D568(void* self, int a1, unsigned int key)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/ovtemplatedialog", cOVTemplate_Dialog_onWidgetEvent);
+#ifdef SKIP_ASM
+unsigned short cUIScreen_getFrameByLabel(cUIScreen* self, int label);
+extern "C" void* func_0039F190(void* self, int a1);
+extern char D_0046E050[];
+extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
+extern "C" void cUIStateStack_pushSpecial(void* stack, void* state, int a2, int a3);
+extern "C" void cOVStateManager_addPDATemplate();
+extern "C" void func_00238348__FPv(void* gm);
+extern "C" void func_00230180(void* game);
+extern "C" void func_00128A10(void* p);
+extern "C" void func_0011DE60(void* rider, int a1, int a2);
+extern "C" void func_0011DF18(void* rider, int notify);
+extern "C" void cRider_quitEvent(void* rider);
+extern "C" void func_0030B758(void* p);
+extern "C" void cBE_setState(int state);
+extern "C" int cBENewRaceInterface_setGameMode(void* self, int mode);
+extern "C" void cBENewRaceInterface_setGameEvent(void* self, int ev);
+extern "C" void cGameModeMan_initGameMode(void* self, unsigned int type);
+extern "C" void cGame_restart(void* game);
+extern int D_004A2708;
+extern int D_004A2A50;
+extern int D_004A2A54;
+extern int D_005366E8[];
+extern int D_004428F0[];
+extern int D_004A11B8;
+extern int D_004A11BC;
+extern char D_00535C11[];
+extern char D_0046F9C0[];
+
+// The game-object chain this handler walks: app -> game -> world -> player -> rider.
+struct sPlayer_DLG {
+    char pad00[0x18];
+    void* rider;                // 0x18
+};
+
+struct sWorld_DLG {
+    char pad00[0x40];
+    sPlayer_DLG* player;        // 0x40
+};
+
+struct sGame_DLG {
+    char pad00[0xC];
+    sWorld_DLG* world;          // 0x0C
+    char pad10[0x28 - 0x10];
+    void* replay;               // 0x28
+    char pad2C[0x48 - 0x2C];
+    char* uiOwner;              // 0x48 (its UI state stack sits at +0x18)
+};
+
+struct sApp_DLG {
+    char pad00[0x78];
+    void* be;                   // 0x78
+    char pad7C[0x84 - 0x7C];
+    sGame_DLG* game;            // 0x84
+    char pad88[0xC0 - 0x88];
+    void* modeMan;              // 0xC0
+};
+
+// Online interface (backend interface 7).
+struct sOnlineIface_DLG {
+    char pad00[0x10];
+    unsigned char flags;        // 0x10
+};
+
+#define APP_DLG ((sApp_DLG*)D_004A28A8)
+
+// Pops the game-state stack (the counterpart of the push in seg_156860).
+static inline void popState_DLG()
+{
+    D_004A26FC = 3;
+    int idx = D_004A2A54 - 1;
+    D_004A2A50 = D_004428F0[D_005366E8[idx]];
+    D_004A2A54 = idx;
+}
+
+static inline void stopReplay_DLG()
+{
+    cReplay_stopAutoReplay(APP_DLG->game->replay);
+}
+
+// The dialog overlay state (cOVTemplate_Dialog); only the fields this handler touches.
+struct sOVDialog_DLG {
+    char pad00[0x10];
+    char* owner;                // 0x10
+    unsigned char player;       // 0x14
+    char pad15[0x40 - 0x15];
+    cUIScreen* screen;          // 0x40
+    char pad44[0x54 - 0x44];
+    int result;                 // 0x54
+    char pad58[0x9C - 0x58];
+    int type;                   // 0x9C
+};
+
+static inline void playOut_DLG(sOVDialog_DLG* self)
+{
+    int frame = cUIScreen_getFrameByLabel(self->screen, GetHashValue32(D_0046E050));
+    if (frame != 0xFFFF)
+        cUIScreen_playFrame(self->screen, frame, 1);
+}
+
+// Backend interface 10; only the flag at 0x10 is touched here.
+struct sIface10_DLG {
+    char pad00[0x10];
+    int f10;                    // 0x10
+};
+
+// cBENewRaceInterface: its vptr sits at 0xC.
+struct sRaceIface_DLG {
+    char pad[0xC];
+    sVEntry<void(void*)>* vt;   // 0xC
+};
+
+static inline void startRace_DLG(sRaceIface_DLG* iface)
+{
+    iface->vt[1].fn((char*)iface + iface->vt[1].delta);
+}
+
+extern "C" void cOVTemplate_Dialog_onWidgetEvent(sOVDialog_DLG* self, char* w, int event)
+{
+    cBE_getInterface_Fv(cBE_getBE(), 0);
+    if (w == 0)
+        return;
+    switch (event) {
+    case 5:
+        playOut_DLG(self);
+        switch (*(int*)(w + 0x18)) {
+        case 0:
+            self->result = 1;
+            switch (self->type) {
+            case 0: {
+                int ev = D_00535BC8[0x4A];
+                if ((unsigned)(ev - 6) < 6) {
+                    if (D_004A2708)
+                        popState_DLG();
+                    else {
+                        stopReplay_DLG();
+                        D_004A26FC = 3;
+                    }
+                    int mode = 0xE;
+                    if (ev == 7 || ev == 10)
+                        mode = 0xF;
+                    else if (ev == 8 || ev == 11)
+                        mode = 0x10;
+                    sRaceIface_DLG* iface = (sRaceIface_DLG*)cBE_getInterface_Fv(APP_DLG->be, 0);
+                    void* gm = APP_DLG->modeMan;
+                    cBE_setState(0);
+                    cBENewRaceInterface_setGameMode(iface, D_00535BC8[0x48]);
+                    cBENewRaceInterface_setGameEvent(iface, ev);
+                    *(int*)(D_00535BC8 + 0x40) = mode;
+                    D_004A11BC = mode;
+                    D_004A11B8 = 1;
+                    startRace_DLG(iface);
+                    cGameModeMan_initGameMode(gm, D_00535BC8[0x4A]);
+                    cGame_exit(APP_DLG->game, 1);
+                } else if (D_004A2708) {
+                    popState_DLG();
+                    cGame_restart(APP_DLG->game);
+                } else {
+                    stopReplay_DLG();
+                    func_00238348__FPv(APP_DLG->modeMan);
+                    func_00231250(APP_DLG->game, 0xD, 0, 1);
+                    D_004A26FC = 3;
+                }
+                break;
+            }
+            case 1: {
+                stopReplay_DLG();
+                self->result = 0;
+                cBE_getInterface_Fv(cBE_getBE(), 4);
+                if (D_004A2EEC)
+                    func_00257610(D_004A2EEC, 0);
+                sOnlineIface_DLG* online = (sOnlineIface_DLG*)cBE_getInterface_Fv(APP_DLG->be, 7);
+                // The binary keeps this dead popup branch behind a flag test that only combine folds to
+                // false (an 8-bit field tested against bit 8): the zero lands in $16 before the calls.
+                bool pending = (online->flags & 0x100) != 0;
+                cBE_getInterface_Fv(cBE_getBE(), 0);
+                if (D_00535C11[0] == 0) {
+                    if (pending) {
+                        char* owner = APP_DLG->game->uiOwner;
+                        char* popup = (char*)func_00212138(cMemMan_alloc(0x234, D_0046F9C0, 0x100, 0), self->owner, 1);
+                        *(int*)(popup + 0x1C) = (*(int*)(popup + 0x1C) & ~0x3F00) | 0x100;
+                        cUIStateStack_pushSpecial(owner + 0x18, popup, 0, 0);
+                    } else {
+                        func_0020AB50(0x26);
+                        cOVStateManager_addPDATemplate();
+                    }
+                } else {
+                    cGame_exit(APP_DLG->game, 0);
+                }
+                break;
+            }
+            case 2:
+                func_0020AB50(0x1D);
+                break;
+            case 3:
+                popState_DLG();
+                func_0030B758(D_004A3DD8);
+                break;
+            case 4: {
+                stopReplay_DLG();
+                D_004A26FC = 3;
+                sRaceIface_DLG* iface = (sRaceIface_DLG*)cBE_getInterface_Fv(cBE_getBE(), 0);
+                sIface10_DLG* x = (sIface10_DLG*)cBE_getInterface_Fv(cBE_getBE(), 0xA);
+                cBE_setState(0);
+                cBENewRaceInterface_setGameEvent(iface, 0xC);
+                cBENewRaceInterface_setGameMode(iface, 4);
+                startRace_DLG(iface);
+                cGameModeMan_initGameMode(APP_DLG->modeMan, 0xC);
+                func_00128A10(APP_DLG->game->world);
+                x->f10 = 1;
+                func_00231250(APP_DLG->game, 1, 1, 0);
+                func_00230180(APP_DLG->game);
+                func_0011DE60(APP_DLG->game->world->player->rider, 1, 2);
+                func_0011DF18(APP_DLG->game->world->player->rider, 1);
+                break;
+            }
+            case 5:
+                popState_DLG();
+                cRider_quitEvent(APP_DLG->game->world->player->rider);
+                break;
+            case 6: {
+                self->result = 0;
+                char* owner = APP_DLG->game->uiOwner;
+                char* popup = (char*)func_00211088(cMemMan_alloc(0x27C, D_0046F9C0, 0x100, 0), self->owner, self->player, 0x18);
+                *(int*)(popup + 0x1C) = (*(int*)(popup + 0x1C) & ~0x3F00) | 0x100;
+                cUIStateStack_pushSpecial(owner + 0x18, popup, 0, 0);
+                break;
+            }
+            }
+            break;
+        case 1:
+            if (self->type != 6) {
+                func_0039F190(self->owner + 0x18, 1);
+            } else {
+                self->result = 1;
+                cGame_exit(APP_DLG->game, 0);
+            }
+            break;
+        }
+        break;
+    case 6:
+        if (self->type != 6) {
+            playOut_DLG(self);
+            func_0039F190(self->owner + 0x18, 1);
+        }
+        break;
+    }
+}
+#undef APP_DLG
+#endif
 
 //100%
 INCLUDE_ASM("fe/ovtemplatedialog", func_0020DBD0);
