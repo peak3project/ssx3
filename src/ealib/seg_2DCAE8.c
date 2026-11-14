@@ -5642,7 +5642,73 @@ void func_003E4AA0(void (*a)(void)) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E4AF0);
+#ifdef SKIP_ASM
+extern int D_00450DDC_4AF0 __asm__("D_00450DDC");
+extern int D_00450DC8_4AF0 __asm__("D_00450DC8");
+extern int D_00450DA0_4AF0 __asm__("D_00450DA0");
+extern volatile int D_00450DCC_4AF0 __asm__("D_00450DCC");
+extern unsigned short D_00450DE0_4AF0 __asm__("D_00450DE0");
+extern int func_00423A80_4AF0(int, void *, int) __asm__("func_00423A80");
+extern int func_004248E8_4AF0(int) __asm__("func_004248E8");
+extern void func_003E6690_4AF0(int) __asm__("func_003E6690");
+extern void func_003E4A30_4AF0(void *) __asm__("func_003E4A30");
+extern char func_003E4DB8_4AF0[] __asm__("func_003E4DB8");
+extern char func_003E4D68_4AF0[] __asm__("func_003E4D68");
+
+int func_003E4AF0(int hz) {
+    int mode;
+    int d;
+    int a, b, end;
+    if (D_00450DDC_4AF0 != 0) return D_00450DC8_4AF0;
+    if (hz == 0) hz = 100;
+    if (hz < 0xC4E) {
+        if (hz < 0xC4) {
+            D_00450DE0_4AF0 = (0x8CA00 + hz / 2) / hz;
+            D_00450DC8_4AF0 = 0x8CA00 / D_00450DE0_4AF0;
+            mode = 2;
+        } else {
+            D_00450DE0_4AF0 = (0x8CA000 + hz / 2) / hz;
+            D_00450DC8_4AF0 = 0x8CA000 / D_00450DE0_4AF0;
+            mode = 1;
+        }
+    } else {
+        D_00450DE0_4AF0 = (0x8CA0000 + hz / 2) / hz;
+        D_00450DC8_4AF0 = 0x8CA0000 / D_00450DE0_4AF0;
+        mode = 0;
+    }
+    *(volatile int *)0x10000800 = 0;
+    *(volatile int *)0x10000820 = D_00450DE0_4AF0;
+    *(volatile int *)0x10000810 = mode | 0x180;
+    D_00450DDC_4AF0 = func_00423A80_4AF0(0xA, func_003E4DB8_4AF0, 0);
+    func_004248E8_4AF0(0xA);
+    if (D_00450DA0_4AF0 == 0) {
+        a = *(volatile int *)0x10000000;
+        b = *(volatile int *)0x10000010;
+        *(volatile int *)0x10000010 = 0x83;
+        end = D_00450DCC_4AF0 + D_00450DC8_4AF0;
+        for (;;) {
+            if (D_00450DCC_4AF0 >= end)
+                break;
+        }
+        d = *(volatile int *)0x10000000;
+        *(volatile int *)0x10000000 = a;
+        *(volatile int *)0x10000000 = b;
+        d -= a;
+        if (d < 0) d += 0x10000;
+        if ((unsigned)(d - 0x3D55) < 0x63) {
+            func_003E6690_4AF0(1);
+        } else if ((unsigned)(d - 0x3CD8) < 0x63) {
+            func_003E6690_4AF0(2);
+        } else if ((unsigned)(d - 0x7081) < 0xC7F) {
+            func_003E6690_4AF0(3);
+        }
+    }
+    func_003E4A30_4AF0(func_003E4D68_4AF0);
+    return D_00450DC8_4AF0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2DCAE8", func_003E4D68);
