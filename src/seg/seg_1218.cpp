@@ -317,7 +317,7 @@ public:
     char pad[0x34];
     virtual int Query(sTrackRec* buf, int max, float x, float y);
 };
-extern "C" t4Vector func_0026AB20(cTrack*, int, float);
+extern "C" t4Vector func_0026AB20(cTrack*, float, int);
 
 // The save / load stream: slot 1 writes, slot 2 reads (func_00103480 / func_00103578 and func_00104D68 /
 // func_00104DE0 are save / load pairs), ReadPtr restores a pointer, WriteInt writes one word.
@@ -4035,7 +4035,7 @@ extern "C" void func_0010AA70(char* self, sPad_AA70* pad)
         char* r = *(char**)(self + 0x18);
         t4Vector half = Sub(*(t4Vector*)(r + 0x490), *(t4Vector*)(r + 0x110));
         half = Scale(half, 0.5f);
-        t4Vector pos = func_0026AB20(trk, 0, buf[sel].b);
+        t4Vector pos = func_0026AB20(trk, buf[sel].b, 0);
         t4Vector d = Sub(pos, half);
         pad->w0 = (int)(func_00100348(self, &d) * 31.0f);
     }
@@ -4275,8 +4275,8 @@ extern "C" int func_0010B980(char* self, float* speed, int* below, int* o3, int*
             *o5 = (fl >> 1) & 1;
             *o6 = fl & 1;
             *below = (buf[i].a <= *(float*)(*(char**)(self + 0x18) + 0x4C4)) ? 1 : 0;
-            *(t4Vector*)(self + 0xE50) = func_0026AB20(trk, 0, buf[i].a);
-            *(t4Vector*)(self + 0xE60) = func_0026AB20(trk, 0, buf[i].b);
+            *(t4Vector*)(self + 0xE50) = func_0026AB20(trk, buf[i].a, 0);
+            *(t4Vector*)(self + 0xE60) = func_0026AB20(trk, buf[i].b, 0);
             return 1;
         }
     }

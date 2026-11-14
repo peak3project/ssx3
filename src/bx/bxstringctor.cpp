@@ -1654,7 +1654,7 @@ struct sBXVec4K2 {
 } __attribute__((aligned(16)));
 struct sBXPath;
 // sBXVec4 (defined later in the unit) has this layout.
-sBXVec4K2 func_0026AB20_K2(sBXPath* self, int* inRange, float t) __asm__("func_0026AB20");
+sBXVec4K2 func_0026AB20_K2(sBXPath* self, float t, int* inRange) __asm__("func_0026AB20");
 
 struct sBXRangeK2 {
     int type;   // 0x0
@@ -1692,7 +1692,7 @@ extern "C" sBXVec4K2 func_00269F18(sBXPath* path, float* t)
         *t = lo;
     else
         *t = hi;
-    return func_0026AB20_K2(path, 0, *t);
+    return func_0026AB20_K2(path, *t, 0);
 }
 #endif
 
@@ -2490,7 +2490,7 @@ static inline sBXVec4 bxVu0Add(const sBXVec4& a, sBXVec4 b)
     return r;
 }
 
-extern "C" sBXVec4 func_0026AB20(sBXPath* self, int* inRange, float t)
+extern "C" sBXVec4 func_0026AB20(sBXPath* self, float t, int* inRange)
 {
     sBXVec4 pos;
     pos.x = self->x;

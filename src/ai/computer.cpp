@@ -3094,7 +3094,7 @@ extern "C" float func_00115B08(void* self);
 
 void func_0011D660_112180(void* self, t4Vector* a, t4Vector* b, int n, float t) __asm__("func_0011D660");
 extern "C" float func_0026A638(void* path, void* a1, void* a2, void* a3, void* hint, int n);
-t4Vector func_0026AB20_112180(void* path, int* inRange, float t) __asm__("func_0026AB20");
+t4Vector func_0026AB20_112180(void* path, float t, int* inRange) __asm__("func_0026AB20");
 
 // PORT: PS2-only VU0 inline asm (vector times scalar).
 static inline t4Vector vu0Scale_112180(const t4Vector& v, float s)
@@ -3162,7 +3162,7 @@ extern "C" void func_00112180(char* self, int flag)
     *(float*)(self + 0x4D0) = *(float*)(self + 0x4D4) = t - res;
     res = func_0026A638(*(void**)(self + 0xAB8), self + 0x110, self + 0x490, self + 0x4C8, *(void**)(self + 0xABC), 1);
     *(float*)(self + 0x4C0) = *(float*)(self + 0x4C4) = res;
-    t4Vector pos2 = func_0026AB20_112180(*(void**)(self + 0xAB8), 0, res + 796.0f);
+    t4Vector pos2 = func_0026AB20_112180(*(void**)(self + 0xAB8), res + 796.0f, 0);
     *(t4Vector*)(self + 0x4A0) = pos2;
 }
 #endif
@@ -3277,7 +3277,7 @@ bool func_001125B8_b(void* self) __asm__("func_001125B8__FPv");
 cQuad128 func_001125A8_2(void* self, int a) __asm__("func_001125A8");
 extern "C" float func_0026A638(void* path, void* a1, void* a2, void* a3, void* hint, int n);
 extern "C" float func_0026A428(void* path, void* a1, void* a2, void* a3, int n);
-t4Vector func_0026AB20_1125C0(void* path, int* inRange, float t) __asm__("func_0026AB20");
+t4Vector func_0026AB20_1125C0(void* path, float t, int* inRange) __asm__("func_0026AB20");
 extern "C" float func_0026AC48(void* self);
 extern "C" void func_00112A50(void* self, int a);
 
@@ -3312,7 +3312,7 @@ extern "C" void func_001125C0(char* self)
     else
         *(float*)(self + 0x4C4) = func_0026A428(*(void**)(self + 0xAB8), self + 0x110, self + 0x490, self + 0x4C8, 0);
     float k = func_00112588(self, nf);
-    *(t4Vector*)(self + 0x4A0) = func_0026AB20_1125C0(*(void**)(self + 0xAB8), 0, *(float*)(self + 0x4C4) + k);
+    *(t4Vector*)(self + 0x4A0) = func_0026AB20_1125C0(*(void**)(self + 0xAB8), *(float*)(self + 0x4C4) + k, 0);
     func_001125A8_2(self, nf);
     if (0.0f < *(float*)(self + 0x4D4))
     {
@@ -3340,7 +3340,7 @@ INCLUDE_ASM("ai/computer", func_001127F0);
 extern char D_004D33A0[];
 extern "C" int func_0026B178(void* tree, void* pos, void** out, int maxOut);
 extern "C" float func_0026A428(void* path, void* a1, void* a2, void* a3, int n);
-t4Vector func_0026AB20_1127F0(void* path, int* inRange, float t) __asm__("func_0026AB20");
+t4Vector func_0026AB20_1127F0(void* path, float t, int* inRange) __asm__("func_0026AB20");
 
 // PORT: PS2-only VU0 inline asm (vector length).
 static inline float vu0Length_1127F0(const t4Vector& v)
@@ -3455,7 +3455,7 @@ extern "C" void func_001127F0(void* vself, int skipCur)
             }
         }
         t += 796.0f;
-        t4Vector d1 = vu0Sub_1127F0(pos, func_0026AB20_1127F0(paths[i], 0, t));
+        t4Vector d1 = vu0Sub_1127F0(pos, func_0026AB20_1127F0(paths[i], t, 0));
         t4Vector d0 = vu0Sub_1127F0(*(t4Vector*)(self + 0x110), out);
         float dist = vu0Dot_1127F0(d0, d0) + vu0Dot_1127F0(d1, d1);
         if (dist < bestD) {
@@ -3475,7 +3475,7 @@ extern "C" int func_0026AFB8(void* tree, void* pos, void** out, int maxOut, int 
 extern "C" float func_0026AC48(void* self);
 extern "C" float func_0026A638(void* path, void* a1, void* a2, void* a3, void* hint, int n);
 extern "C" float func_0026A428(void* path, void* a1, void* a2, void* a3, int n);
-t4Vector func_0026AB20_112A50(void* path, int* inRange, float t) __asm__("func_0026AB20");
+t4Vector func_0026AB20_112A50(void* path, float t, int* inRange) __asm__("func_0026AB20");
 
 // PORT: PS2-only VU0 inline asm (vector length).
 static inline float vu0Length_112A50(const t4Vector& v)
@@ -3587,7 +3587,7 @@ extern "C" void func_00112A50(void* vself, int keep)
         if (func_0026AC48(paths[i]) - 200.0f < t) {
             continue;
         }
-        t4Vector d1 = vu0Sub_112A50(pos, func_0026AB20_112A50(paths[i], 0, t + 796.0f));
+        t4Vector d1 = vu0Sub_112A50(pos, func_0026AB20_112A50(paths[i], t + 796.0f, 0));
         t4Vector d0 = vu0Sub_112A50(*(t4Vector*)(self + 0x110), out);
         float dist = vu0Dot_112A50(d0, d0) + vu0Dot_112A50(d1, d1);
         char* o = self + 0x6C0;
@@ -3617,7 +3617,7 @@ extern "C" void func_00112A50(void* vself, int keep)
         *(int*)(*(char**)(self + 0xABC) + 0x14) = -1;
         float r = func_0026A638(*(void**)(self + 0xAB8), self + 0x110, self + 0x490, self + 0x4C8, *(void**)(self + 0xABC), 1);
         *(float*)(self + 0x4C4) = r;
-        *(t4Vector*)(self + 0x4A0) = func_0026AB20_112A50(*(void**)(self + 0xAB8), 0, r + 796.0f);
+        *(t4Vector*)(self + 0x4A0) = func_0026AB20_112A50(*(void**)(self + 0xAB8), r + 796.0f, 0);
         *(float*)(self + 0x4C0) = *(float*)(self + 0x4C4);
     }
 }

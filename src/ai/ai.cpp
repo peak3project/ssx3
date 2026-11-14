@@ -1311,7 +1311,7 @@ extern "C" float func_0026A138(void* obj);
 extern "C" void func_0011FEC8_2A560(void* self, int v) __asm__("func_0011FEC8__FPv");
 extern "C" void func_0011FE78_2A560(void* self, int v) __asm__("func_0011FE78__FPv");
 
-t4Vector func_0026AB20_2A560(void* path, int* inRange, float t) __asm__("func_0026AB20");
+t4Vector func_0026AB20_2A560(void* path, float t, int* inRange) __asm__("func_0026AB20");
 void func_0011D660_2A560(void* self, t4Vector* a, t4Vector* b, int n, float t) __asm__("func_0011D660");
 
 // PORT: PS2-only VU0 inline asm (a - b).
@@ -1385,8 +1385,8 @@ extern "C" void func_0012A560(char* self, int which)
         if (t < 0.0f)
             t = 0.0f;
         int j = 0;
-        t4Vector a = func_0026AB20_2A560(obj, 0, f);
-        t4Vector b = func_0026AB20_2A560(obj, 0, t);
+        t4Vector a = func_0026AB20_2A560(obj, f, 0);
+        t4Vector b = func_0026AB20_2A560(obj, t, 0);
         for (j = 0; j < *(int*)(self + 0x78); j++)
         {
             if (which == -1 || which == j)
@@ -1410,7 +1410,48 @@ extern "C" void func_0012A560(char* self, int which)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/ai", func_0012A768);
+#ifdef SKIP_ASM
+extern "C" void func_0012A768(char* self, int count)
+{
+    int n = D_004D33A0.count;
+    int i;
+    for (i = 0; i < n; i++)
+    {
+        void* obj = func_0026AF70(&D_004D33A0, i);
+        float f = func_0026A138(obj);
+        if (f == -1.0f)
+            continue;
+        int j;
+        for (j = 0; j < *(int*)(self + 0x78); j++)
+        {
+            if (count == 0)
+                return;
+            float t = f - (float)count * 1000.0f;
+            count--;
+            if (t < 0.0f)
+                t = 0.0f;
+            t4Vector a = func_0026AB20_2A560(obj, f, 0);
+            t4Vector b = func_0026AB20_2A560(obj, t, 0);
+            func_0011FEC8_2A560(((sAi_2A560*)self)->riders[j], 0);
+            func_0011FE78_2A560(((sAi_2A560*)self)->riders[j], 0);
+            *(int*)(((sAi_2A560*)self)->riders[j] + 0x47C) = count * 0xE10 + 0xE10;
+            t4Vector d = vu0Sub_2A560(a, b);
+            float len = vu0Length_2A560(d);
+            if (1.0f < len)
+                vu0Normalize_2A560(d, len);
+            else
+            {
+                t4Vector t2 = *(t4Vector*)(((sAi_2A560*)self)->riders[j] + 0x1B0);
+                d = t2;
+            }
+            func_0011D660_2A560(((sAi_2A560*)self)->riders[j], &b, &d, 5, 0.0f);
+        }
+        return;
+    }
+}
+#endif
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ai/ai", func_0012A998);
 #ifdef SKIP_ASM
