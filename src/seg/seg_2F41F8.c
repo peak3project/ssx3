@@ -2940,7 +2940,103 @@ INCLUDE_ASM("seg/seg_2F41F8", func_003F8C30);
 int func_003F8C30(int a0) { return a0; }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F8C38);
+#ifdef SKIP_ASM
+extern char *c8C38_A7A0(char *, char *, char *) __asm__("func_003FA7A0");
+extern void c8C38_A818(char *, char *, char *, char *) __asm__("func_003FA818");
+extern void c8C38_86F0(int) __asm__("func_003F86F0");
+int func_003F8C38(int r, int *p, int *q) {
+    char buf[0x50];
+    int v;
+    if (p == 0) return 0x12;
+    if (q == 0) return 0x12;
+    if (D_004A4BD8->op != 3 && D_004A4BD8->op != 6) return 0x12;
+    *p = 1;
+    switch ((unsigned)D_004A4BD8->st) {
+    case 1:
+        if (r == 0) {
+            c8C38_A7A0(buf, D_004A4BDC->f50, D_004A4BD8->body.name);
+            D_004A4BD8->st = 2;
+            D_004A4BDC->f04(buf, D_004A4BD8->body.slot);
+            break;
+        }
+        if (r != 3) {
+            *p = 2;
+            return r;
+        }
+        if (D_004A4BD8->op == 3) {
+            v = func_003F85C0(D_004A4BDC->ports, D_004A4BD8->f6C);
+            D_004A4BD8->body.slot = v;
+            if (v != -1) {
+                D_004A4BD8->st = 1;
+                D_004A4BDC->f10(v);
+                return 0;
+            }
+        }
+        *p = 2;
+        return r;
+    case 2:
+        if (r == 0) {
+            if (*q == 1) {
+                c8C38_A818(D_004A4BD8->body.path, D_004A4BD8->body.path + 0x20, D_004A4BDC->f50, D_004A4BD8->body.name);
+                D_004A4BD8->st = 0x16;
+                ((void (*)(char *, char *, int, int))D_004A4BDC->f18)(D_004A4BD8->body.path, D_004A4BD8->body.path + 0x20, D_004A4BD8->body.slot, 3);
+                break;
+            }
+            if (*q == 0) {
+                c8C38_86F0(4);
+                D_004A4BD8->st = 0x1A;
+                D_004A4BDC->f14(D_004A4BD8->body.slot);
+                break;
+            }
+            *p = 2;
+            return 10;
+        }
+        c8C38_86F0(r);
+        return func_003F87B0(D_004A4BD8->body.slot, p);
+    case 0x16:
+        if (r == 0) {
+            if (*q >= 0) {
+                D_004A4BD8->body.port = *q;
+                *p = 2;
+                return 0;
+            }
+            D_004A4BD8->body.port = *q;
+            *p = 2;
+            return 10;
+        }
+        c8C38_86F0(r);
+        return func_003F87B0(D_004A4BD8->body.slot, p);
+    case 0x1A:
+        if (r == 0) {
+            if (D_004A4BD8->op == 4 || D_004A4BD8->op == 6) {
+                *p = 2;
+                return func_003F8710();
+            }
+            if (func_003F8710() == 0) {
+                *p = 2;
+                return 0;
+            }
+            v = func_003F85C0(D_004A4BDC->ports, D_004A4BD8->f6C);
+            D_004A4BD8->body.slot = v;
+            if (v != -1) {
+                D_004A4BD8->st = 1;
+                D_004A4BDC->f10(v);
+                return 0;
+            }
+            *p = 2;
+            return func_003F8710();
+        }
+        *p = 2;
+        return r;
+    default:
+        *p = 2;
+        return 0x12;
+    }
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F8EF8);
 
