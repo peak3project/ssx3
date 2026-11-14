@@ -1699,7 +1699,22 @@ extern "C" void func_002B77C0(sTriggerIdSlot120* self, int id)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/icepick/worldtriggermanager", func_002B7848);
+#ifdef SKIP_ASM
+extern "C" void func_002B7908(void* self, const sV4_75D0* pos, int vp, int id);
+
+extern "C" void func_002B7848(void* self, const sV4_75D0* pos, int vp)
+{
+    sTriggerIdSlot120* slots = (sTriggerIdSlot120*)self;
+    func_002B75D0((sWtm_75D0*)&slots[vp], pos);
+    for (int i = 0; i < slots[vp].count; i++) {
+        if (getTriggerId(&slots[vp], i) != 0) {
+            func_002B7908(self, pos, vp, getTriggerId(&slots[vp], i));
+        }
+    }
+}
+#endif
 
 INCLUDE_ASM("sound/icepick/worldtriggermanager", func_002B7908);
 
