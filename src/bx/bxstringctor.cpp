@@ -2724,7 +2724,61 @@ int func_0026AF98_impl(void* self, void* a1, void** out, int maxOut)
 }
 #endif
 
+//100%
 INCLUDE_ASM("bx/bxstringctor", func_0026AFB8);
+#ifdef SKIP_ASM
+struct sBXBox;
+struct sPathItem_AFB8 {
+    char pad[0x3C];
+    int active;             // 0x3C
+};
+
+struct sPathList_AFB8 {
+    char pad_0x0[0x8];
+    int count;                  // 0x8
+    sPathItem_AFB8* items;      // 0xC
+};
+
+extern "C" float func_0026A9B0(sBXBox* self, float* p);
+
+int func_0026AFB8_t(sPathList_AFB8* self, float* pos, sPathItem_AFB8** out, int maxListLen, int flag) __asm__("func_0026AFB8");
+
+int func_0026AFB8_t(sPathList_AFB8* self, float* pos, sPathItem_AFB8** out, int maxListLen, int flag)
+{
+    float dist[200];
+    int n = 0;
+    if (self->count < maxListLen)
+        maxListLen = self->count;
+    int i;
+    for (i = 0; i < self->count; i++) {
+        dist[i] = func_0026A9B0((sBXBox*)&self->items[i], pos);
+        if (flag != 0 && self->items[i].active == 0) {
+            dist[i] = 1e37f;
+        }
+        if (dist[i] == 0.0f) {
+            dist[i] = 1e37f;
+            out[n++] = &self->items[i];
+            if (n == maxListLen) {
+                break;
+            }
+        }
+    }
+    while (n < maxListLen) {
+        float best = dist[0];
+        int bi = 0;
+        for (i = 1; i < self->count; i++) {
+            if (dist[i] < best) {
+                best = dist[i];
+                bi = i;
+            }
+        }
+        dist[bi] = 1e37f;
+        out[n] = &self->items[bi];
+        n++;
+    }
+    return n;
+}
+#endif
 
 //100%
 INCLUDE_ASM("bx/bxstringctor", func_0026B178);
