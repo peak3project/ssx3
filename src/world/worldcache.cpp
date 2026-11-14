@@ -1742,7 +1742,84 @@ extern "C" void func_003A95C0(void** self, void* node, int* ok)
 }
 #endif
 
+//100%
 INCLUDE_ASM("world/worldcache", func_003A9658);
+#ifdef SKIP_ASM
+// PORT: PS2-only VU0 inline asm (vector subtract).
+static inline void vu0Sub_9658(sWCQuad& r, const sWCQuad& a, const sWCQuad& b)
+{
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b));
+}
+
+// PORT: PS2-only VU0 inline asm (vector add).
+static inline void vu0Add_9658(sWCQuad& r, const sWCQuad& a, const sWCQuad& b)
+{
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b));
+}
+
+struct sWCExt_9658 : sWCQuad {
+    sWCExt_9658(float x, float y, float z, float w)
+    {
+        v[0] = x;
+        v[1] = y;
+        v[2] = z;
+        v[3] = w;
+    }
+};
+
+struct sWCAabb_9658 {
+    sWCQuad min;
+    sWCQuad max;
+    sWCAabb_9658(const sWCQuad& lo, const sWCQuad& hi)
+    {
+        min = lo;
+        max = hi;
+    }
+};
+struct sWCBox_9658 {
+    char pad00[0x244];
+    int active;      // 0x244
+    int f248;        // 0x248
+    char pad24C[4];
+    sWCQuad pos;     // 0x250
+    sWCAabb_9658 box; // 0x260
+    float radius;    // 0x280
+    float f284;
+    float f288;
+    char pad28C[4];
+};
+
+// An earlier caller declares this symbol with a different vector type; bound by asm label.
+extern "C" void func_003A9658_impl(void* self, int idx, const sWCQuad* center, float r) __asm__("func_003A9658");
+
+extern "C" void func_003A9658_impl(void* self, int idx, const sWCQuad* center, float r)
+{
+    sWCBox_9658& b = *(sWCBox_9658*)((char*)self + idx * 0x50);
+    b.pos = *center;
+    b.radius = r >? 0.0f; // PORT: g++ >? (max) operator, removed in GCC 4.3.
+    b.box = sWCAabb_9658(*center, *center);
+    sWCExt_9658 e(r, r, r, 0.0f);
+    vu0Sub_9658(b.box.min, b.box.min, e);
+    vu0Add_9658(b.box.max, b.box.max, e);
+
+    b.active = 1;
+    b.f284 = 0.0f;
+    b.f288 = 0.0f;
+    b.f248 = 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("world/worldcache", func_003A96E0);
