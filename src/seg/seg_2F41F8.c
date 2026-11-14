@@ -2898,7 +2898,87 @@ INCLUDE_ASM("seg/seg_2F41F8", func_003F9208);
 int func_003F9208(void) { return D_004A4BDC != 0; }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F9218);
+#ifdef SKIP_ASM
+struct sMcCbs {
+    void (*f04)(char *, int);
+    int f08;
+    int f0C;
+    void (*f10)(int);
+    void (*f14)(int);
+    int f18;
+    void (*f1C)(int);
+    int f20;
+    void (*f24)(char *, char *, int);
+    void (*f28)(char *, int);
+    void (*f2C)(int, int, int);
+    void (*f30)(int, int, int);
+    void (*f34)(int, int, int);
+    void (*f38)(int);
+    int f3C;
+    int (*f40)(int *, int *);
+    void (*f44)(char *);
+};
+extern int (*D_00451468[])(int, int *, int *);
+extern int (*D_004514A0[])(int, int, int);
+static inline void f9218_addPort(unsigned short port) { D_004A4BDC->ports |= 1 << port; }
+extern void *f9218_6728(int, int, int) __asm__("func_00266728");
+int f9218(int *list, struct sMcCbs *cb, int heap) __asm__("func_003F9218");
+int f9218(int *list, struct sMcCbs *cb, int heap) {
+    unsigned char n = 0;
+    signed char k;
+    int *p;
+    if (func_003F9208() != 0) return 1;
+    if (list == 0) return 12;
+    if (*list == -1) return 12;
+    if (cb == 0 || cb->f04 == 0 || cb->f08 == 0 || cb->f0C == 0 || cb->f10 == 0 || cb->f14 == 0 || cb->f18 == 0 ||
+        cb->f1C == 0 || cb->f20 == 0 || cb->f24 == 0 || cb->f28 == 0 || cb->f2C == 0 || cb->f30 == 0 ||
+        cb->f34 == 0 || cb->f38 == 0 || cb->f3C == 0 || cb->f40 == 0 || cb->f44 == 0)
+        return 12;
+    if (D_004A4BDC != 0 || D_004A4BD8 != 0) return 1;
+    D_004A4BDC = f9218_6728(heap, 0x42C, 4);
+    if (D_004A4BDC == 0) return 7;
+    D_004A4BD8 = f9218_6728(heap, 0x74, 4);
+    if (D_004A4BD8 == 0) return 7;
+    D_004A4BDC->h = heap;
+    D_004A4BDC->ports = 0;
+    p = list;
+    while (*p != -1) {
+        if ((unsigned)*p >= 8 && *p != 9) return 9;
+        if (n == 8) return 12;
+        if (*p == 9) {
+            for (k = 0; k < 8; k++) f9218_addPort(k);
+        } else {
+            f9218_addPort(*p);
+        }
+        p++;
+        n++;
+    }
+    D_004A4BDC->f04 = cb->f04;
+    D_004A4BDC->f08 = cb->f08;
+    D_004A4BDC->f0C = cb->f0C;
+    D_004A4BDC->f10 = cb->f10;
+    D_004A4BDC->f14 = cb->f14;
+    D_004A4BDC->f18 = cb->f18;
+    D_004A4BDC->f1C = cb->f1C;
+    D_004A4BDC->f20 = cb->f20;
+    D_004A4BDC->f24 = cb->f24;
+    D_004A4BDC->f28 = cb->f28;
+    D_004A4BDC->f2C = cb->f2C;
+    D_004A4BDC->f30 = cb->f30;
+    D_004A4BDC->f34 = cb->f34;
+    D_004A4BDC->f38 = cb->f38;
+    D_004A4BDC->f3C = cb->f3C;
+    D_004A4BDC->f40 = cb->f40;
+    D_004A4BDC->f44 = cb->f44;
+    D_004A4BDC->f48 = D_00451468;
+    D_004A4BDC->f4C = D_004514A0;
+    D_004A4BD8->op = 0;
+    D_004A4BD8->st = 0;
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F9530);
