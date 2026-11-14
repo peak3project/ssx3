@@ -6082,7 +6082,33 @@ extern "C" void func_00265700(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00265768);
+#ifdef SKIP_ASM
+struct sTagMsg5768 {
+    int type;           // 0x0
+    unsigned int state; // 0x4
+    int id;             // 0x8
+    int pad[2];
+};
+extern "C" void func_00265768(int* self, int ev)
+{
+    if (self[0] != 10) {
+        int code = ev;
+        if (ev == 0xF9) {
+            code = 0xF8;
+            postMsg((char*)D_004A3028, 0x10C);
+        }
+        sTagMsg5768 msg;
+        msg.type = code;
+        msg.state = 0xFFFFFFFF;
+        msg.id = 0;
+        func_00264BE8(self, &msg, sizeof(msg));
+        func_0025F740(D_004A3028, ev);
+        self[0] = 11;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("dirtysock/tagsunk", func_00265880);
