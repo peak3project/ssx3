@@ -32,7 +32,112 @@ void* func_002D1CF0(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("util/objectinterface", func_002D1D10);
+#ifdef SKIP_ASM
+extern char* D_004A289C;
+
+// A render-state record of the graphics manager's state stack (D_00501420 holds the default).
+struct sRS_2D1D10 {
+    unsigned int w0;
+    unsigned int w1;
+    unsigned int w2;
+    unsigned int w3;
+    short tex;
+    short f12;
+};
+extern sRS_2D1D10 D_00501420;
+
+struct sVec2_2D1D10 {
+    float x, y;
+    sVec2_2D1D10(const float& ax, const float& ay) : x(ax), y(ay) {}
+};
+
+struct sVec4_2D1D10 {
+    float x, y, z, w;
+};
+
+struct sVE91_2D1D10 { short delta; short index; int (*fn)(void*, void*); };
+struct sVE78_2D1D10 { short delta; short index; int (*fn)(void*, void*, const sVec2_2D1D10&, const sVec2_2D1D10&, const sVec2_2D1D10&, sVec4_2D1D10*); };
+struct sVE79_2D1D10 { short delta; short index; int (*fn)(void*, void*, const sVec2_2D1D10&, const sVec2_2D1D10&, const sVec2_2D1D10&, sVec4_2D1D10*, float, int); };
+
+struct sCtx_2D1D10 {
+    char pad0[0xE84];
+    sRS_2D1D10* top;        // 0xE84
+    char pad_0xE88[0xF50 - 0xE88];
+    int tex[64];            // 0xF50
+    char pad_0x1050[0x10D8 - 0x1050];
+    void* vt;               // 0x10D8
+};
+
+extern sCtx_2D1D10* D_004A5B80_2D1D10 __asm__("D_004A5B80");
+
+static inline void push_2D1D10(sCtx_2D1D10* ctx)
+{
+    ctx->top[1] = ctx->top[0];
+    ctx->top++;
+}
+
+static inline int texId_2D1D10(sCtx_2D1D10* ctx, int i)
+{
+    return ctx->tex[i];
+}
+
+static inline void pop_2D1D10(sCtx_2D1D10* ctx)
+{
+    ctx->top--;
+}
+
+static inline void set1_2D1D10(sCtx_2D1D10* ctx, unsigned int mask, int shift, unsigned int v)
+{
+    ctx->top->w1 = (ctx->top->w1 & ~mask) | ((v << shift) & mask);
+}
+
+static inline void set2_2D1D10(sCtx_2D1D10* ctx, unsigned int mask, int shift, unsigned int v)
+{
+    ctx->top->w2 = (ctx->top->w2 & ~mask) | ((v << shift) & mask);
+}
+
+extern "C" void func_002D1D10(void* obj, float* c, int mode, float size, float angle)
+{
+    char* g = D_004A289C;
+    sVE91_2D1D10* vt = *(sVE91_2D1D10**)(g + 0x10D8);
+    if (vt[91].fn(g + vt[91].delta, obj) != 0)
+        return;
+    sVec4_2D1D10 col;
+    col.x = c[3];
+    col.y = c[0];
+    col.z = c[1];
+    col.w = c[2];
+    sCtx_2D1D10* ctx = D_004A5B80_2D1D10;
+    push_2D1D10(ctx);
+    *ctx->top = D_00501420;
+    set1_2D1D10(ctx, 0x400000, 22, 1);
+    set1_2D1D10(ctx, 0x3, 0, 0);
+    set2_2D1D10(ctx, 0x1FFFFC00, 10, 0);
+    set1_2D1D10(ctx, 0x7C, 2, 7);
+    set2_2D1D10(ctx, 0x3E0, 5, 8);
+    set1_2D1D10(ctx, 0x1800000, 23, 1);
+    set1_2D1D10(ctx, 0x300000, 20, 0);
+    set1_2D1D10(ctx, 0xFF000, 12, 0x14);
+    ctx->top->tex = texId_2D1D10(ctx, mode + 0x25);
+    if (angle != 0.0f) {
+        sVE79_2D1D10* vt1 = (sVE79_2D1D10*)ctx->vt;
+        vt1[79].fn((char*)ctx + vt1[79].delta, obj, sVec2_2D1D10(size, size), sVec2_2D1D10(0.0f, 0.0f),
+                   sVec2_2D1D10(1.0f, 1.0f), &col, angle * 0.01745329424738884f, 1);
+        if (mode == 1 || mode == 4) {
+            sVE79_2D1D10* vt2 = (sVE79_2D1D10*)ctx->vt;
+            vt2[79].fn((char*)ctx + vt2[79].delta, obj, sVec2_2D1D10(size, size), sVec2_2D1D10(0.0f, 0.0f),
+                       sVec2_2D1D10(1.0f, 1.0f), &col, -angle * 0.01745329424738884f, 1);
+        }
+    } else {
+        sVE78_2D1D10* vt3 = (sVE78_2D1D10*)ctx->vt;
+        vt3[78].fn((char*)ctx + vt3[78].delta, obj, sVec2_2D1D10(size, size), sVec2_2D1D10(0.0f, 0.0f),
+                   sVec2_2D1D10(1.0f, 1.0f), &col);
+    }
+    pop_2D1D10(ctx);
+}
+#endif
 
 //100%
 INCLUDE_ASM("util/objectinterface", func_002D2058);
