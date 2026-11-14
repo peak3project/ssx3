@@ -1484,7 +1484,76 @@ int func_003D8540(int arg0, int *arg1) {
 
 INCLUDE_ASM("ealib/seg_2D7498", func_003D8598);
 
+//100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003D85C8);
+#ifdef SKIP_ASM
+// Rotated loop (`i = 0; if (i < n) do ... while (i < n);`): plain for/while forms are 18 insns larger.
+struct K_85C8 { char b[4]; };
+
+static __inline__ int hasBit_85C8(unsigned mask, unsigned bit) {
+    return bit < 32 && ((1 << bit) & mask) != 0;
+}
+int func_003D85C8(unsigned char *h, struct sCond *p, int *k, unsigned char *vals) {
+    int n;
+    int i;
+    int ok;
+    unsigned char b;
+    unsigned char t;
+    unsigned char c;
+    unsigned m;
+    unsigned w;
+    struct K_85C8 kc;
+    unsigned char *q;
+    unsigned *mp;
+    unsigned *tab;
+
+    ok = 1;
+    n = p->n;
+    if (n >= 5) {
+        ok = 0;
+    } else {
+        i = 0;
+        if (i < n) {
+            mp = p->m;
+            do {
+                b = vals[i];
+                ok = 0;
+                if (b >= 0x20) {
+                    break;
+                }
+                m = 1 << b;
+                t = p->a[i];
+                if (m & *mp) {
+                    if (t == 0 || t == 0xFE) {
+                        ok = 1;
+                    } else if (t == 0xFF) {
+                        c = p->b[i];
+                        if (c & 0x80) {
+                            c &= 0x7F;
+                            tab = (unsigned *)(h + ((((h[4] >> 2) + 3) & 0xFFFFFFFCu) + 8) + (((h[6] * 4) + 3) & 0xFFFFFFFCu));
+                            w = tab[c];
+                            ok = hasBit_85C8(w, b);
+                        } else {
+                            kc = *(struct K_85C8 *)k;
+                            if (func_003D83B8((unsigned char *)&kc, &q) != 0) {
+                                ok = b < 32 && b == q[c];
+                            }
+                        }
+                    } else {
+                        ok = hasBit_85C8(k[t], b);
+                    }
+                }
+                if (ok == 0) {
+                    break;
+                }
+                i++;
+                mp++;
+            } while (i < n);
+        }
+    }
+    return ok;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003D8780);
