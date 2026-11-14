@@ -9276,7 +9276,50 @@ extern "C" int func_002A8FD8(sSndSys8CB0* self, int size)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/soundsys", func_002A9128);
+#ifdef SKIP_ASM
+extern "C" void func_002A92F8_v(sSndSys8CB0* self, sSndVoice8CB0* e) __asm__("func_002A92F8");
+extern "C" void func_002A9128(sSndSys8CB0* self, int i)
+{
+    sSndVoice8CB0* n = &self->voices[i];
+    n->d = 1;
+    if (n->a == self->f30C) {
+        func_002A92F8_v(self, n);
+        while (self->f318 >= 0) {
+            sSndVoice8CB0* e = &self->voices[self->f318];
+            if (e->a != self->f30C) return;
+            self->f318 = e->next;
+            func_002A92F8_v(self, e);
+        }
+    } else if (self->f318 < 0) {
+        n->next = self->f318;
+        self->f318 = n->idx;
+    } else {
+        sSndVoice8CB0* prev = 0;
+        sSndVoice8CB0* b = &self->voices[self->f318];
+        for (;;) {
+            if (n->a < b->a) {
+                if (prev) {
+                    n->next = prev->next;
+                    prev->next = n->idx;
+                } else {
+                    n->next = self->f318;
+                    self->f318 = n->idx;
+                }
+                return;
+            }
+            if (b->next < 0) {
+                b->next = n->idx;
+                n->next = -1;
+                return;
+            }
+            prev = b;
+            b = &self->voices[b->next];
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A9250);
