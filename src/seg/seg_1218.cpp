@@ -3336,7 +3336,104 @@ extern "C" int func_00106F78_6F78(cRider* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_1218", func_00107578);
+#ifdef SKIP_ASM
+struct sHit_7578 {
+    sVec4 pos;
+    sVec4 normal;
+    char pad[0x80 - 0x20];
+};
+
+extern "C" void func_002F6AC8(void*, int);
+extern "C" int func_00334680_7578(void*, sVec4*, sHit_7578*, int, float) __asm__("func_00334680");
+extern "C" void func_00138BA0(float, void*, sHit_7578*);
+extern "C" void func_001329B0(float, void*, sHit_7578*, int);
+
+// PORT: PS2-only VU0 inline asm (vector times scalar, sVec4 operands).
+static inline sVec4 ScaleV_7578(const sVec4& v, float s)
+{
+    sVec4 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector add, sVec4 operands; "memory" clobber).
+static inline sVec4 AddV_7578(const sVec4& a, const sVec4& b)
+{
+    sVec4 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: `>?` is the g++ maximum operator (EE max.s).
+static inline float Max_7578(float a, float b)
+{
+    return a >? b;
+}
+
+static inline sVec4 Up_7578(char* self) { return *(sVec4*)(self + 0x180); }
+static inline sVec4 Front_7578(char* self) { return *(sVec4*)(self + 0x1B0); }
+
+// Speeds are written in km/h and converted to game units (m/s).
+static inline float Kph_7578(float kph) { return kph / 3.6f; }
+extern "C" int func_00107578(char* self)
+{
+    func_002F6AC8(*(char**)(self + 0x77C) + 0xD20, 2);
+    if (func_0011FE98(self) == 1) {
+        if (*(float*)(self + 0x1E8) < Kph_7578(-2000.0f))
+            return 0;
+        if (Up_7578(self).z < 0.0f)
+            return 0;
+        if ((unsigned int)(func_00311AE8(*(void**)(self + 0x784), 2) - 0x12) < 3)
+            return 0;
+    }
+    float spd = Len(*(sVec4*)(self + 0x1E0));
+    sVec4 dir;
+    sHit_7578 hit;
+    if (spd > Kph_7578(100.0f))
+        dir = DivV(*(sVec4*)(self + 0x1E0), spd);
+    else
+        dir = Front_7578(self);
+    sVec4 p = AddV_7578(*(sVec4*)(self + 0x110), ScaleV_7578(dir, 300.0f));
+    if (!func_00334680_7578(*(void**)(self + 0x860), &p, &hit, 2, 300.0f))
+        return 0;
+    if (Abs(hit.normal.z) > 0.8999999761581421f)
+        return 0;
+    sVec4 d = SubV(hit.pos, p);
+    if (Len(d) > 300.0f)
+        return 0;
+    d = SubV(hit.pos, *(sVec4*)(self + 0x110));
+    if (Dot(*(sVec4*)(self + 0x1E0), d) < 0.0f)
+        return 0;
+    spd = Max_7578(spd, Kph_7578(1000.0f));
+    float r = Clamp(Kph_7578(5000.0f) / spd, 0.5f, 1.5f);
+    float s = r * 0.5f;
+    if (Dot(hit.normal, *(sVec4*)(self + 0x1E0)) < 0.0f)
+        ScaleEq(hit.normal, -1.0f);
+    func_0011FEC8_2(self, 0xD);
+    func_00138BA0(s, *(char**)(self + 0x77C) + 0x110, &hit);
+    func_001329B0(s, *(char**)(self + 0x77C) + 0x370, &hit, *(int*)(*(char**)(self + 0x77C) + 0x1A4));
+    func_0011FEC8_2(self, 0xB);
+    func_0011FE78_6848(self, 5);
+    return 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_1218", func_00107888);
