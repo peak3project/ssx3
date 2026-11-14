@@ -302,7 +302,46 @@ extern "C" int func_00153688(void* self, int profile, int character, int owner)
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/beintmission", func_00153708);
+#ifdef SKIP_ASM
+struct sMissionOwnerView_00153708
+{
+    int owner;
+    char pad_0x04[0x60];
+};
+extern sMissionOwnerView_00153708 D_0043D9A4_v[] __asm__("D_0043D9A4");
+extern "C" int cBEMissionInterface_getCurrentCollectForPeak(void* self, int rider, int owner);
+int cBELibrary_getRiderIndex(int);
+
+extern "C" int func_00153708(void* self, int profile, int character, int owner)
+{
+    if (*(void**)((char*)D_004A28A8 + 0x84) != 0)
+    {
+        return cBEMissionInterface_getCurrentCollectForPeak(self, cBELibrary_getRiderIndex(profile), owner);
+    }
+    int sum = 0;
+    for (int i = 0; i < 1; i++)
+    {
+        for (int j = 0; j < 22; j++)
+        {
+            if (D_0043D9A4_v[j].owner == owner)
+            {
+                int off = profile * 0x9B50 + character * 0xF88;
+                sBEMissionRec* rec = (sBEMissionRec*)(D_004A6CAC + (i * 12 + (j * 12 + off)));
+                int n = 0;
+                for (int k = 0; k < 64; k++)
+                {
+                    if (rec->bits[k / 32] & (1 << (k % 32)))
+                        n++;
+                }
+                sum += n;
+            }
+        }
+    }
+    return sum;
+}
+#endif
 
 //100%
 INCLUDE_ASM("be/beintmission", func_00153858);
