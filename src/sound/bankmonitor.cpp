@@ -2979,7 +2979,88 @@ extern "C" int func_002B1458(sBankEntries* self, int a, int b, int c, int d, int
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/bankmonitor", func_002B1520);
+#ifdef SKIP_ASM
+struct sVEntry1520 {
+    short delta;
+    short index;
+    int (*fn)(void*);
+};
+
+struct sBmSub1520 {
+    sVEntry1520* vt;
+};
+
+struct sBmPlayer1520 {
+    char pad_0x0[0x6C0];
+    sBmSub1520 sub;         // 0x6C0
+    char pad_0x6C4[0x870 - 0x6C4];
+    int f870;               // 0x870
+};
+
+struct sBankEntry1520 {
+    int used;               // 0x0
+    int timer;              // 0x4
+    int a;                  // 0x8
+    int b;                  // 0xC
+    sBmPlayer1520* player;  // 0x10
+    int d;                  // 0x14
+    float f;                // 0x18
+    int e;                  // 0x1C
+};
+
+struct sBankEntries1520 {
+    char pad_0x0[0x4];
+    sBankList** lists;      // 0x4
+    char pad_0x8[0x4];
+    int fC;                 // 0xC
+    int f10;                // 0x10
+    char pad_0x14[0x4];
+    sBankEntry1520 entries[10];  // 0x18
+};
+
+extern "C" int func_002B1520_impl(sBankEntries1520* self, int a, int b) __asm__("func_002B1520");
+
+extern "C" int func_002B1520_impl(sBankEntries1520* self, int a, int b)
+{
+    for (int i = 0; i < 10; i++) {
+        if (self->entries[i].used != 0 && self->entries[i].a == a && self->entries[i].b == b) {
+            int v0 = 0;
+            int v1 = 0;
+            int v2 = -1;
+            if (self->entries[i].player != 0) {
+                {
+                    char* s = (char*)&self->entries[i].player->sub;
+                    sVEntry1520* vt = *(sVEntry1520**)s;
+                    v0 = vt[5].fn(s + vt[5].delta);
+                }
+                {
+                    char* s = (char*)&self->entries[i].player->sub;
+                    sVEntry1520* vt = *(sVEntry1520**)s;
+                    v1 = vt[8].fn(s + vt[8].delta);
+                }
+                v2 = self->entries[i].player->f870;
+            }
+            self->lists[a]->f8CC = v0;
+            self->lists[a]->f8F8 = v1;
+            self->lists[a]->f8FC = v2;
+            self->lists[a]->f8F4 = self->entries[i].f;
+            self->lists[a]->f8D0 = self->entries[i].d;
+            int e = self->entries[i].e;
+            if (e != 0) {
+                self->fC = e;
+                self->f10 = a;
+            } else {
+                self->fC = 0;
+                self->f10 = -1;
+            }
+            return 1;
+        }
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/bankmonitor", func_002B16A0);
