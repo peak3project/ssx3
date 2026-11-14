@@ -730,7 +730,269 @@ extern "C" void func_0016D320(char* self, char* cam)
 }
 #endif
 
+//100%
 INCLUDE_ASM("camera/trigger/cameratriggerman", func_0016E1D8);
+#ifdef SKIP_ASM
+extern "C" void func_00162060_p(void* cam, int mode, void* arg, float blend) __asm__("func_00162060");
+
+struct sCtPlayerList_E1D8 {
+    int count;
+    char* players[1];
+};
+
+struct sCamTrigData_E1D8 {
+    int mode;   // 0x0
+    int f04;    // 0x4
+    int type;   // 0x8
+    float time; // 0xC
+};
+
+extern "C" void func_0016E1D8(void* selfv, void* playerv)
+{
+    sCamTrigData_E1D8* self = (sCamTrigData_E1D8*)selfv;
+    char* player = (char*)playerv;
+    int mode = self->mode;
+    sCtPlayerList_E1D8* list = *(sCtPlayerList_E1D8**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x84);
+    void* cam = *(void**)(list->players[*(int*)(player + 0x870)] + 0xA8);
+    switch (mode) {
+    case 2: {
+        float rate = self->time == 0.0f ? 1.0f : (1.0f / self->time) * 0.01666666753590107f;
+        func_00162060_p(cam, 0x5C, self, rate);
+        break;
+    }
+    case 1: {
+        float rate = self->time == 0.0f ? 1.0f : (1.0f / self->time) * 0.01666666753590107f;
+        func_00162060_p(cam, 0x5B, self, rate);
+        break;
+    }
+    case 0: {
+        int r;
+        float rate = 0.0f;
+        if (self->time == 0.0f) {
+            rate = 1.0f;
+        } else {
+            rate = (1.0f / self->time) * 0.01666666753590107f;
+        }
+        switch (self->type) {
+        case 3:
+            r = 4;
+            break;
+        case 7:
+            r = 3;
+            break;
+        case 1:
+            r = 2;
+            break;
+        case 2:
+            r = 1;
+            break;
+        case 4:
+            r = 7;
+            break;
+        case 5:
+            r = 5;
+            break;
+        case 6:
+            r = 6;
+            break;
+        case 8:
+            r = 8;
+            break;
+        case 10:
+            r = 9;
+            break;
+        case 9:
+            r = 10;
+            break;
+        case 11:
+            r = 11;
+            break;
+        case 12:
+            r = 12;
+            break;
+        case 13:
+            r = 13;
+            break;
+        case 14:
+            r = 14;
+            break;
+        case 15:
+            r = 15;
+            break;
+        case 16:
+            r = 16;
+            break;
+        case 17:
+            r = 17;
+            break;
+        case 18:
+            r = 18;
+            break;
+        case 19:
+            r = 19;
+            break;
+        case 20:
+            r = 20;
+            break;
+        case 21:
+            r = 21;
+            break;
+        case 22:
+            r = 22;
+            break;
+        case 23:
+            r = 23;
+            break;
+        case 24:
+            r = 24;
+            break;
+        case 25:
+            r = 25;
+            break;
+        case 26:
+            r = 26;
+            break;
+        case 27:
+            r = 27;
+            break;
+        case 28:
+            r = 28;
+            break;
+        case 29:
+            r = 29;
+            break;
+        case 30:
+            r = 30;
+            break;
+        case 31:
+            r = 31;
+            break;
+        case 32:
+            r = 32;
+            break;
+        case 33:
+            r = 41;
+            break;
+        case 34:
+        case 35:
+        case 36:
+        case 37:
+        case 38:
+        case 39:
+        case 40:
+        case 41:
+            r = self->type - 1;
+            break;
+        case 44:
+            r = 42;
+            break;
+        case 45:
+            r = 43;
+            break;
+        case 46:
+            r = 44;
+            break;
+        case 47:
+            r = 45;
+            break;
+        case 48:
+            r = 46;
+            break;
+        case 49:
+            r = 47;
+            break;
+        case 50:
+            r = 48;
+            break;
+        case 51:
+            r = 49;
+            break;
+        case 52:
+            r = 50;
+            break;
+        case 53:
+            r = 51;
+            break;
+        case 54:
+            r = 52;
+            break;
+        case 55:
+            r = 53;
+            break;
+        case 56:
+            r = 54;
+            break;
+        case 57:
+            r = 55;
+            break;
+        case 58:
+            r = 56;
+            break;
+        case 59:
+            r = 57;
+            break;
+        case 60:
+            r = 58;
+            break;
+        case 61:
+            r = 59;
+            break;
+        case 62:
+            r = 60;
+            break;
+        case 63:
+            r = 61;
+            break;
+        case 64:
+            r = 62;
+            break;
+        case 65:
+            r = 63;
+            break;
+        case 66:
+            r = 64;
+            break;
+        case 67:
+            r = 65;
+            break;
+        case 68:
+            r = 66;
+            break;
+        case 69:
+            r = 67;
+            break;
+        case 70:
+            r = 68;
+            break;
+        case 71:
+            r = 69;
+            break;
+        case 72:
+            r = 70;
+            break;
+        case 73:
+            r = 71;
+            break;
+        case 74:
+            r = 72;
+            break;
+        case 75:
+            r = 73;
+            break;
+        case 42:
+            r = 76;
+            break;
+        case 0:
+        default:
+            r = 0;
+            break;
+        }
+        func_00162060_p(cam, r, 0, rate);
+        break;
+    }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerman", func_0016E560);
