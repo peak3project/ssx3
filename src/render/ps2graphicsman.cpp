@@ -660,7 +660,133 @@ extern "C" void func_00368138(void* self, ulong** pkt)
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/ps2graphicsman", func_00368170);
+#ifdef SKIP_ASM
+typedef int cQuad128_8170 __attribute__((mode(TI)));
+
+struct sBXTex_8170 {
+    char pad_0x00[0xC];
+    int psm;                // 0xC
+    char pad_0x10[0x8];
+    int bpp;                // 0x18
+    int src;                // 0x1C
+    char pad_0x20[0x4];
+    int levels;             // 0x24
+    int dbp;                // 0x28
+    char pad_0x2C[0xC];
+    ulong tex0;             // 0x38
+
+    int Width() { return 1 << (int)((tex0 >> 26) & 0xF); }
+    int Height() { return 1 << (int)((tex0 >> 30) & 0xF); }
+    int BPP() { return bpp; }
+};
+
+struct sTexMgr_8170 {
+    char pad_0x0[0x8];
+    sBXTex_8170* texs[1];   // 0x8
+};
+
+template <class T> static inline T Max_8170(T a, T b)
+{
+    return a >= b ? a : b;
+}
+
+// PORT: 64-bit `ulong` GIF/DMA packet words.
+extern "C" void func_00368170(void* self_, int idx, ulong** dma, ulong** gif)
+{
+    sTexMgr_8170* self = (sTexMgr_8170*)self_;
+    sBXTex_8170* t = self->texs[idx];
+    int psm = t->psm;
+    ulong* d = *dma;
+    int w = t->Width();
+    int h = t->Height();
+    int fmt = (int)((t->tex0 >> 20) & 0x3F);
+    ulong* p = *gif;
+    int src = t->src;
+    int dbp = t->dbp;
+    int shift = 8;
+    if (psm == 10) {
+        fmt = 0;
+        w >>= 1;
+        h >>= 1;
+    } else if (psm == 9) {
+        fmt = 0x1B;
+        shift = 6;
+    } else if (psm == 12) {
+        fmt = 0;
+        if (w == h) {
+            w >>= 1;
+            h >>= 2;
+        } else {
+            w >>= 2;
+            h >>= 1;
+        }
+    }
+    for (int i = 0; i <= t->levels; i++) {
+        int lw = t->Width() >> i;
+        int lh = t->Height() >> i;
+        int size = Max_8170(lw * lh * t->BPP() / 8, 256);
+        int bpp = t->BPP();
+        int pw, ph;
+        switch (bpp) {
+        case 4:
+            pw = 0x80;
+            ph = 0x80;
+            break;
+        case 8:
+            pw = 0x80;
+            ph = 0x40;
+            break;
+        case 15:
+        case 16:
+            pw = 0x40;
+            ph = 0x40;
+            break;
+        case 32:
+        default:
+            pw = 0x40;
+            ph = 0x20;
+            break;
+        }
+        int vram = Max_8170(lw, pw) * Max_8170(lh, ph) * bpp / 8;
+        vram += -vram & 0xFF;
+        *(cQuad128_8170*)p = 0x10000006;
+        p[2] = ((ulong)0x10000000 << 32) | 4;
+        p[3] = 0xE;
+        p[4] = ((ulong)dbp << 32) | ((ulong)((w + 63) >> 6) << 48) | ((ulong)fmt << 56);
+        p[5] = 0x50;
+        p[6] = 0;
+        p[7] = 0x51;
+        p[8] = w | ((ulong)h << 32);
+        p[9] = 0x52;
+        p[10] = 0;
+        p[11] = 0x53;
+        int nloop = size >> 4;
+        if (nloop < 1) nloop = 1;
+        p[12] = nloop | ((ulong)2 << 58);
+        p[13] = 0;
+        int qwc = size >> 4;
+        if (qwc < 1) qwc = 1;
+        p[14] = qwc | 0x30000000 | ((ulong)src << 32);
+        p[15] = 0;
+        p[16] = 0x10000002;
+        p[17] = 0;
+        p[18] = i == t->levels ? ((ulong)0x10000000 << 32) | 0x8001 : ((ulong)0x10000000 << 32) | 1;
+        p[19] = 0xE;
+        p[20] = 0;
+        p[21] = 0x3F;
+        src += size;
+        dbp += vram >> shift;
+        w >>= 1;
+        h >>= 1;
+        p += 22;
+    }
+    func_00368138(self, &d);
+    *dma = d;
+    *gif = p;
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/ps2graphicsman", func_003684F0);
