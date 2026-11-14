@@ -1583,7 +1583,120 @@ extern "C" void func_002D9130(void)
 }
 #endif
 
+//100%
 INCLUDE_ASM("visualfx/avalanche", cAvalanche_addAvalancheNode);
+#ifdef SKIP_ASM
+// PORT: cMemMan_alloc called as the game's operator new(size, tag, flags, d): gcc then treats the
+// result as malloc-like (no aliasing), as the target shows. On PC use a real operator new.
+void* operator new(unsigned int size, const char* tag, unsigned int flags, int d) __asm__("cMemMan_alloc");
+extern const char D_00487568[];
+extern const char D_00487578[];
+extern char D_00538450[];
+extern int D_004A3AC0;
+extern int D_004A3ABC;
+
+// The object an avalanche node is attached to: its bounding box and a flags word.
+struct sAvObj_9330 {
+    char pad0[0x60];
+    float min[3];                   // 0x60
+    float max[3];                   // 0x6C
+    char pad78[0x92 - 0x78];
+    unsigned short flags;           // 0x92, low byte kept, node slot in the high bits
+};
+
+struct sAvNode_9330 {
+    char pad0[0xF0];
+    unsigned short type;            // 0xF0
+    unsigned char emit;             // 0xF2
+    unsigned char fF3;              // 0xF3
+    sAvNode_9330* next;             // 0xF4
+    sAvObj_9330* obj;               // 0xF8
+    int fFC;                        // 0xFC
+    float scale[3];                 // 0x100, given in seconds, stored in frames (30 per second)
+    float w;                        // 0x10C
+    float radius;                   // 0x110
+    int f114;                       // 0x114
+    char pad118[8];
+};
+
+struct sAvGroup_9330;
+extern sAvGroup_9330* D_004A3AB0_9330 __asm__("D_004A3AB0");
+
+struct sAvGroup_9330 {
+    int id;                         // 0x0
+    sAvNode_9330* nodes;            // 0x4
+    sAvGroup_9330* next;            // 0x8
+    unsigned short nlinks;          // 0xC
+    unsigned short npairs;          // 0xE
+    char pad10[0x200];
+    void Init(int aid, sAvGroup_9330* anext)
+    {
+        id = aid;
+        next = anext;
+        nlinks = 0;
+        npairs = 0;
+        nodes = 0;
+    }
+};
+
+// PORT: PS2-only FPU asm (absolute value).
+static inline float Abs_9330(float x)
+{
+    float r;
+    __asm__("abs.s %0,%1" : "=f"(r) : "f"(x));
+    return r;
+}
+
+#define MIN_9330(a, b) ((a) < (b) ? (a) : (b))
+
+extern "C" void cAvalanche_addAvalancheNode(float a, float b, float c, float d, int id, sAvObj_9330* obj, int kind)
+{
+    sAvGroup_9330* g;
+    for (g = D_004A3AB0_9330; g != 0; g = g->next) {
+        if (g->id == id)
+            break;
+    }
+    if (g == 0) {
+        g = new (D_00487568, 0, 0) sAvGroup_9330;
+        ASSERT_5778(g != 0); // compiled-out allocation check
+        g->Init(id, D_004A3AB0_9330);
+        D_004A3AB0_9330 = g;
+    }
+    sAvNode_9330* n = new (D_00487578, 0, 0) sAvNode_9330;
+    n->next = g->nodes;
+    g->nodes = n;
+    n->w = d;
+    n->scale[0] = a * 30.0f;
+    n->scale[1] = b * 30.0f;
+    n->scale[2] = c * 30.0f;
+    n->obj = obj;
+    float& radius = n->radius;
+    radius = MIN_9330(MIN_9330(Abs_9330(obj->max[0] - obj->min[0]),
+                                  Abs_9330(obj->max[1] - obj->min[1])),
+                         Abs_9330(obj->max[2] - obj->min[2])) * 0.2f;
+    n->fFC = 0;
+    n->fF3 = 0;
+    switch (kind) {
+    case 5:
+        n->type = 2;
+        break;
+    case 2:
+        n->type = 0;
+        break;
+    default:
+        n->type = 1;
+        break;
+    }
+    n->emit = 0;
+    n->f114 = 0;
+    int slot = D_004A3AC0;
+    ((sAvNode_9330**)D_00538450)[slot] = n;
+    n->obj->flags &= 0xFF;
+    n->obj->flags |= (slot << 8) | 2;
+    D_004A3AC0 = slot + 1;
+    D_004A3ABC = 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("visualfx/avalanche", func_002D9538);
