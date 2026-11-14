@@ -672,19 +672,19 @@ struct sAD00 {
     int f1AA4;
     int f1AA8;
     char f1AAC;
-    unsigned char f1AAD;
+    signed char f1AAD;
     unsigned short f1AAE;
-    char pad1AB0[0x1AB2 - 0x1AB0];
+    short f1AB0;
     unsigned short f1AB2;           /* fill offset while func_003C1638 lays out f1AB4 */
     char *f1AB4;
     int f1AB8;
     void *f1ABC[6];
     int f1AD4;
     int f1AD8;
-    char pad1ADC[0x1AF4 - 0x1ADC];
+    char f1ADC[0x1AF4 - 0x1ADC];
     void *f1AF4;
     int f1AF8;
-    char pad1AFC[0x1B00 - 0x1AFC];
+    int f1AFC;
     void *f1B00;
     int f1B04;
     int f1B08;
@@ -8348,7 +8348,58 @@ int func_003C1980(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C19A8);
+#ifdef SKIP_ASM
+extern int func_00423DE0_19A8(int) __asm__("func_00423DE0");
+extern void func_003C8968(int *, int);
+extern void func_003C51E8(void *, void *, int);
+extern void func_003C7080(void);
+extern void func_00424020(int);
+extern int func_00424160(void *, int);
+extern void (*D_0044C470)(void);
+extern char D_0050C910[];
+extern char D_0050C800[];
+
+void func_003C19A8(void) {
+    int s;
+
+    for (;;) {
+        func_00423DE0_19A8(D_0050AD00.f1AA4);
+        if (D_0050AD00.f1AAD == 0) continue;
+        D_0044C46C();
+        if (D_0050A8E8.f328 != 0) D_0050A8E8.f328();
+        func_003B5540(0x5E);
+        if (D_0050AD00.f1AA8 < 0) D_0050A8E8.f1C0++;
+        func_003B54E0();
+        func_003C51E8(D_0050AD00.f000 + 0x800, (char *)&D_0050AD00 + 0xA40, 0x240);
+        func_003C1298();
+        func_003C0858(D_0050C910);
+        if (D_0050AD00.f1AAE != 0) func_003C09B8();
+        func_003C8968((int *)D_0050AD00.f1ABC, D_0050AD00.f1AB0);
+        if (D_0050A8E8.setup.cfg.f29 & 2) {
+            ((void (*)(void *, void *, int))D_0050C848)(D_0050AD00.f1ADC, D_0050AD00.f1AF4, D_0050AD00.f1AFC);
+        } else if (D_0050A8E8.setup.cfg.f27 == 1) {
+            func_003C51E8(D_0050AD00.f1ABC[1], D_0050AD00.f1ABC[0], D_0050AD00.f1AB0 << 1);
+        }
+        if (D_0050AD00.f1AAE != 0) func_003C0A60();
+        func_003C08F8(D_0050C910);
+        func_003C7080();
+        *D_0050AD00.fCB4 = D_0050A8E8.f330;
+        *(int *)D_0050AD00.fCB8 = D_0050A8E8.f330;
+        func_00424020(0);
+        do {
+            DI_2B45();
+            SYNCP_2B45();
+            MFC0_STATUS_2B45(s);
+        } while (s & 0x10000);
+        func_00424160(D_0050C800, 1);
+        EI_2B45();
+        if (D_0050A8E8.f32C != 0) D_0050A8E8.f32C();
+        D_0044C470();
+    }
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003C1B80);
 
