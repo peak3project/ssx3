@@ -3107,7 +3107,42 @@ int func_003F8C38(int r, int *p, int *q) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F8EF8);
+#ifdef SKIP_ASM
+extern int c8EF8_8720(struct sMcReqBody *, int *) __asm__("func_003F8720");
+extern void c8EF8_86F0(int) __asm__("func_003F86F0");
+int func_003F8EF8(int r, int *p, int *q) {
+    if (p == 0) return 0x12;
+    if (q == 0) return 0x12;
+    if (D_004A4BD8->op != 8 && D_004A4BD8->op != 0xA && D_004A4BD8->op != 9) return 0x12;
+    *p = 1;
+    switch ((unsigned)D_004A4BD8->st) {
+    case 0x1B:
+        if (r == 0) {
+            *p = 2;
+            return 0;
+        }
+        c8EF8_86F0(r);
+        return c8EF8_8720(&D_004A4BD8->body, p);
+    case 0x1C:
+    case 0x1D:
+        if (r == 0) {
+            if (D_004A4BD8->f70 == *q) {
+                *p = 2;
+                return 0;
+            }
+            *p = 2;
+            return 10;
+        }
+        c8EF8_86F0(r);
+        return c8EF8_8720(&D_004A4BD8->body, p);
+    default:
+        *p = 2;
+        return 0x12;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F8FF0);
