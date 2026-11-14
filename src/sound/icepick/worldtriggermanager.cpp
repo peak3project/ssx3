@@ -1602,6 +1602,8 @@ INCLUDE_ASM("sound/icepick/worldtriggermanager", func_002B75D0);
 #ifdef SKIP_ASM
 struct sV4_75D0 {
     float x, y, z, w;
+    sV4_75D0() {}
+    sV4_75D0(float ax, float ay, float az, float aw) : x(ax), y(ay), z(az), w(aw) {}
 } __attribute__((aligned(16)));
 
 struct sOctRoot_75D0 {
@@ -1638,13 +1640,14 @@ static inline sV4_75D0 Sub_75D0(const sV4_75D0& a, const sV4_75D0& b)
     return r;
 }
 
-// PORT: PS2-only VU0 inline asm (4-component vector length).
+// PORT: PS2-only VU0 inline asm (4-component vector length): VU0 Q-register read + GPR->FPR transfer.
+// The transfer is its own instruction (the compiler schedules a load between cfc2/mtc1 and the first use).
 static inline float Length_75D0(const sV4_75D0& v)
 {
     float r;
     int t;
     __asm__(
-        "lqc2      $vf3, %2\n"
+        "lqc2      $vf3, %1\n"
         "vaddw.x   $vf6, $vf0, $vf0w\n"
         "vmul.xyzw $vf4, $vf3, $vf3\n"
         "vadday.x  ACC, $vf4, $vf4y\n"
@@ -1652,10 +1655,10 @@ static inline float Length_75D0(const sV4_75D0& v)
         "vmaddw.x  $vf4, $vf6, $vf4w\n"
         "vsqrt     Q, $vf4x\n"
         "vwaitq\n"
-        "cfc2.ni   %1, $vi22\n"
-        "mtc1      %1, %0\n"
-        : "=f"(r), "=&r"(t)
+        "cfc2.ni   %0, $vi22\n"
+        : "=r"(t)
         : "m"(v));
+    __asm__("mtc1      %1, %0" : "=f"(r) : "r"(t));
     return r;
 }
 
@@ -1738,7 +1741,175 @@ extern "C" void func_002B7848(void* self, const sV4_75D0* pos, int vp)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/icepick/worldtriggermanager", func_002B7908);
+#ifdef SKIP_ASM
+struct sWtShape_7908 {
+    int type;
+    int id;
+    float cx, cy, cz;   // 0x08
+    float f14;          // 0x14
+    float f18;          // 0x18
+    float f1C;          // 0x1C
+    float f20;          // 0x20
+    float f24;          // 0x24
+    float f28;          // 0x28
+    float f2C;          // 0x2C
+};
+
+static inline sVec3_2B6CF8 operator-(const sVec3_2B6CF8& a, const sVec3_2B6CF8& b)
+{
+    return sVec3_2B6CF8(a.x - b.x, a.y - b.y, a.z - b.z);
+}
+
+static inline void operator*=(sVec3_2B6CF8& a, float s)
+{
+    a.x *= s;
+    a.y *= s;
+    a.z *= s;
+}
+
+static inline float Dot_7908(const sVec3_2B6CF8& a, const sVec3_2B6CF8& b)
+{
+    return a.x * b.x + a.y * b.y + a.z * b.z;
+}
+
+// Builds the orthonormal frame of a box trigger from its axis.
+static inline void Basis_7908(const sWtShape_7908* s, sVec3_2B6CF8& a, sVec3_2B6CF8& b, sVec3_2B6CF8& c)
+{
+    sVec3_2B6CF8 z;
+    a = sVec3_2B6CF8(s->f20, s->f24, s->f28);
+    z = sVec3_2B6CF8(0.0f, 0.0f, 1.0f);
+    b = Cross_2B6F40(z, a);
+    b = b * (1.0f / wtSqrt_2B6F40(b.x * b.x + b.y * b.y + b.z * b.z));
+    c = Cross_2B6F40(a, b);
+}
+
+extern "C" float wtCurve_7908(void* self, float curve, float t) __asm__("func_002B82B8");
+extern "C" void wtSet_7908(void* mgr, void* obj, int i, int c, int id, int flag, float v, const sVec3_2B6CF8& pos) __asm__("func_002B5C68");
+extern "C" float func_0031C128(float x);
+
+static inline float Acos_7908(float x)
+{
+    return 1.5707964f - func_0031C128(x);
+}
+
+struct sWtTrig_7908 {
+    char pad[0xC];
+    char* obj;          // 0x0C
+    int* info;          // 0x10
+};
+
+extern "C" void wtEval_7908(void* self, const sV4_75D0* listener, int c, sWtTrig_7908* e) __asm__("func_002B7908");
+
+extern "C" void wtEval_7908(void* self, const sV4_75D0* listener, int c, sWtTrig_7908* e)
+{
+    sVec3_2B6CF8 org;
+    sWtShape_7908* recs[4];
+    sVec3_2B6CF8 pos;
+    sVec3_2B6CF8 d;
+    int i;
+    float dist;
+    float v;
+
+    org = sVec3_2B6CF8(*(float*)(e->obj + 0x40), *(float*)(e->obj + 0x44), *(float*)(e->obj + 0x48));
+    int* info = e->info;
+    char* base = (char*)info + 8;
+    char* p = base + (info[0] << 2);
+    int n = info[1];
+
+    for (int j = 0; j < n; j++) {
+        recs[j] = (sWtShape_7908*)p;
+        switch (*(int*)p) {
+        case 0:
+            p += 0x1C;
+            break;
+        case 1:
+            p += 0x30;
+            break;
+        case 2:
+            p += 0x30;
+            break;
+        case 3:
+            p += 0x18;
+            break;
+        }
+    }
+
+    for (i = 0; i < n; i++) {
+        sWtShape_7908* s = recs[i];
+        switch (s->type) {
+        case 0: {
+            pos = org + sVec3_2B6CF8(s->cx, s->cy, s->cz);
+            sV4_75D0 diff = Sub_75D0(*listener, sV4_75D0(pos.x, pos.y, pos.z, 0.0f));
+            d.x = diff.x;
+            d.y = diff.y;
+            d.z = diff.z;
+            dist = __builtin_fabsf(wtSqrt_2B6F40(d.x * d.x + d.y * d.y + d.z * d.z));
+            if (dist < s->f14) {
+                wtSet_7908(D_004A52D4, e->obj, i, c, s->id, 1, wtCurve_7908(self, s->f18, dist / s->f14), pos);
+            }
+            break;
+        }
+        case 1: {
+            pos = org + sVec3_2B6CF8(s->cx, s->cy, s->cz);
+            {
+                sV4_75D0 diff = Sub_75D0(*listener, sV4_75D0(pos.x, pos.y, pos.z, 0.0f));
+                d.x = diff.x;
+                d.y = diff.y;
+                d.z = diff.z;
+            }
+            sVec3_2B6CF8 a;
+            sVec3_2B6CF8 b;
+            sVec3_2B6CF8 cc;
+            Basis_7908(s, a, b, cc);
+            float da = Dot_7908(a, d);
+            float db = Dot_7908(b, d);
+            float dc = Dot_7908(cc, d);
+            float ta = s->f14 != 0.0f ? (da * da) / (s->f14 * s->f14) : 0.0f;
+            float tb = s->f18 != 0.0f ? (db * db) / (s->f18 * s->f18) : 0.0f;
+            float tc = s->f1C != 0.0f ? (dc * dc) / (s->f1C * s->f1C) : 0.0f;
+            dist = ta + tb + tc;
+            if (dist < 1.0f) {
+                wtSet_7908(D_004A52D4, e->obj, i, c, s->id, 1, wtCurve_7908(self, s->f2C, dist), pos);
+            }
+            break;
+        }
+        case 2: {
+            pos = org + sVec3_2B6CF8(s->cx, s->cy, s->cz);
+            sVec3_2B6CF8 dir = sVec3_2B6CF8(listener->x, listener->y, listener->z) - pos;
+            dist = __builtin_fabsf(wtSqrt_2B6F40(dir.x * dir.x + dir.y * dir.y + dir.z * dir.z));
+            if (dist < s->f14) {
+                dir *= 1.0f / dist;
+                float dot = Dot_7908(dir, sVec3_2B6CF8(s->f18, s->f1C, s->f20));
+                if (dot > s->f28) {
+                    v = wtCurve_7908(self, s->f24, dist / s->f14);
+                    float cone = Acos_7908(s->f28);
+                    v *= wtCurve_7908(self, s->f2C, Acos_7908(dot) / cone);
+                    wtSet_7908(D_004A52D4, e->obj, i, c, s->id, 1, v, pos);
+                }
+            }
+            break;
+        }
+        case 3: {
+            pos = org + sVec3_2B6CF8(s->cx, s->cy, s->cz);
+            sV4_75D0 diff = Sub_75D0(*listener, sV4_75D0(pos.x, pos.y, pos.z, 0.0f));
+            dist = __builtin_fabsf(Length_75D0(diff));
+            if (dist < s->f14) {
+                if (dist <= 0.9f) {
+                    v = 1.0f;
+                } else {
+                    v = 1.0f - dist;
+                    v *= 10.0f;
+                }
+                wtSet_7908(D_004A52D4, e->obj, i, c, s->id, 0, v, pos);
+            }
+            break;
+        }
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/icepick/worldtriggermanager", func_002B8190);
