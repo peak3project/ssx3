@@ -3709,7 +3709,46 @@ extern "C" void func_00112D58(char* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/computer", func_00112FB0);
+#ifdef SKIP_ASM
+extern "C" float func_0026A638(void* path, void* a1, void* a2, void* a3, void* hint, int n);
+struct sVE_12FB0 { short delta; short index; int (*fn)(void*, float, float, void*, int); };
+struct sE_12FB0 { int id; float dist; };
+struct sTbl_12FB0 { char pad[0x18]; sE_12FB0 e[6]; };
+extern sTbl_12FB0 D_004D33A0_12FB0 __asm__("D_004D33A0");
+
+extern "C" void func_00112FB0(void* vself, float* a, float* b, t4Vector* c)
+{
+    char* self = (char*)vself;
+    float res = func_0026A638(*(void**)(self + 0xAB4), self + 0x110, c, a, *(void**)(self + 0xAC0), 1);
+    *b = res;
+    float t = *(float*)(*(char**)(self + 0xAB4) + 0x38) - res;
+    float lim = *(float*)(self + 0x4D4);
+    *(float*)(self + 0x4D0) = t;
+    if (t < lim) {
+        sTbl_12FB0* tbl = &D_004D33A0_12FB0;
+        for (int i = 0; i < 6; i++) {
+            float d = tbl->e[i].dist;
+            sE_12FB0* e = &tbl->e[i];
+            if (d == 0.0f)
+                break;
+            if (d < *(float*)(self + 0x4D0))
+                break;
+            if (e->dist < *(float*)(self + 0x4D4))
+                func_0010E558(self, &e->id);
+        }
+        char* o = *(char**)(self + 0xAB4);
+        sVE_12FB0* ve = &(*(sVE_12FB0**)(o + 0x34))[1];
+        *(int*)(self + 0x59C) = ve->fn(o + ve->delta, *(float*)(self + 0x4D4), *(float*)(self + 0x4D0), self + 0x4DC, 12);
+        *(float*)(self + 0x4D4) = *(float*)(self + 0x4D0);
+    } else {
+        char* o = *(char**)(self + 0xAB4);
+        sVE_12FB0* ve = &(*(sVE_12FB0**)(o + 0x34))[1];
+        *(int*)(self + 0x59C) = ve->fn(o + ve->delta, lim, lim, self + 0x4DC, 12);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ai/computer", func_00113128__FPv);
