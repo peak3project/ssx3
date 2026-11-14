@@ -251,7 +251,9 @@ struct sPathVoice {                 /* 0x110, sPath.f58[] */
     signed char f34;
     char pad35;
     short f36;
-    char pad38[0x48 - 0x38];
+    char pad38[0x40 - 0x38];
+    unsigned int f40;
+    char pad44[0x48 - 0x44];
     unsigned int f48;
     unsigned int f4C;
     char pad50[0x54 - 0x50];
@@ -17287,7 +17289,83 @@ int *func_003D32A8(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D32B8);
+#ifdef SKIP_ASM
+extern int func_002AEC58(int idx, unsigned int *outA, unsigned int *outB);
+
+struct Span_32B8 { int a; unsigned int len; };
+struct Node_32B8 {
+    short span;                 /* 1-based index into sPath.f50 */
+    unsigned short h2;
+    union {
+        unsigned int w;
+        struct {
+            unsigned int pad : 20;
+            unsigned int rows : 4;
+            unsigned int cols : 4;
+            unsigned int rest : 4;
+        } b;
+    } f4;
+    unsigned int f8lo : 4;
+    unsigned int kind : 4;
+    unsigned int wC;
+};
+struct Out_32B8 {
+    unsigned int cols : 4;
+    unsigned int kind : 4;
+    unsigned int n : 8;
+    unsigned int pad : 16;
+    int fw;
+    int fh;
+    unsigned int len;
+    int f10;
+    int f14;
+    int f18;
+};
+
+int func_003D32B8_impl(struct sPathVoice *v, struct Out_32B8 *out) __asm__("func_003D32B8");
+int func_003D32B8_impl(struct sPathVoice *v, struct Out_32B8 *out) {
+    struct sPath *g = D_0044F420;
+    struct Node_32B8 *e = (struct Node_32B8 *)(g->f34 + g->f38[v->f36]);
+    struct Span_32B8 s = ((struct Span_32B8 *)g->f50)[e->span - 1];
+    unsigned int ua, ub;
+    float fw, fh, fa, fb, f14, f10;
+    int n;
+
+    fw = (float)s.len;
+    if (e->f4.w & 0xF000000)
+        fw = fw / (float)(((e->f4.w >> 24) & 0xF) * ((e->f4.w >> 20) & 0xF));
+    fh = (float)s.len / (float)((e->f4.w >> 20) & 0xF);
+    func_002AEC58(v->f54, &ua, &ub);
+    if (v->ch > 0 && (e->wC & 2)) {
+        fa = (float)ub + (float)v->f40 *
+                             (float)((((e->f4.w >> 24) & 0xF) * ((e->f4.w >> 20) & 0xF)) - (v->ch - 1));
+        fb = (float)s.len;
+        fb = fb - fa;
+    } else {
+        fa = (float)ub;
+        fb = (float)ua;
+    }
+    fb = fb / fw;
+    n = (int)fb;
+    fb = fb * fw;
+    f14 = fh - fb;
+    f10 = (float)(n + 1) * fw - fb;
+    if (out) {
+        out->cols = e->f4.b.cols;
+        out->kind = e->kind;
+        out->f18 = (int)fa;
+        out->len = s.len;
+        out->fw = (int)fw;
+        out->fh = (int)fh;
+        out->f14 = (int)f14;
+        out->f10 = (int)f10;
+        out->n = n;
+    }
+    return n;
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003D3658);
 
