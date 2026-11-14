@@ -3109,7 +3109,48 @@ int func_003F8C38(int r, int *p, int *q) {
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F8EF8);
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F8FF0);
+#ifdef SKIP_ASM
+extern void c8FF0_86F0(int) __asm__("func_003F86F0");
+extern int c8FF0_8768(struct sMcReqBody *, int *) __asm__("func_003F8768");
+int func_003F8FF0(int r, int *p, int *q) {
+    if (p == 0) return 0x12;
+    if (q == 0) return 0x12;
+    if (D_004A4BD8->op != 7) return 0x12;
+    *p = 1;
+    switch ((unsigned)D_004A4BD8->st) {
+    case 0x18:
+        if (r == 0) {
+            D_004A4BD8->st = 0x19;
+            D_004A4BDC->f1C(D_004A4BD8->body.port);
+            break;
+        }
+        c8FF0_86F0(r);
+        return c8FF0_8768(&D_004A4BD8->body, p);
+    case 0x19:
+        if (r == 0) {
+            D_004A4BD8->st = 0x1A;
+            D_004A4BDC->f14(D_004A4BD8->body.slot);
+            break;
+        }
+        c8FF0_86F0(r);
+        return func_003F87B0(D_004A4BD8->body.slot, p);
+    case 0x1A:
+        // Both outcomes store 2; retail keeps the r == 0 test with its own return-0 copy.
+        if (r == 0) {
+            *p = 2;
+            return 0;
+        }
+        *p = 2;
+        return r;
+    default:
+        *p = 2;
+        return 0x12;
+    }
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2F41F8", func_003F9130);
 
