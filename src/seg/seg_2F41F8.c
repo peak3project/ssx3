@@ -1908,7 +1908,76 @@ int func_003F6EE0(int *out) {
 
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F6F68);
+#ifdef SKIP_ASM
+typedef struct { unsigned char b[0x18]; } B6F68;
+extern int func_003F7D98(void);
+int func_003F6F68(int *out) {
+    int a;
+    int st;
+    int c;
+    int err = 0;
+    *out = 0;
+    if (out == 0) err = 7;
+    if (D_004A4BC4->cur.mode > 8) {
+        err = D_004A4BC4->cur.mode == 10 ? 0xC : 0xD;
+    }
+    if (err != 0) goto fail;
+    switch (D_004A4BC4->cur.fEC) {
+    case 4:
+        *(B6F68 *)&D_004A4BC4->saved.fEC = *(B6F68 *)&D_004A4BC4->cur.fEC;
+        D_004A4BC4->cur.fEC = 0;
+        *out = 1;
+        break;
+    case 0:
+        err = ((int (*)(void))D_004A4BC4->cur.fF0)();
+        if (err == 0) {
+            *(B6F68 *)&D_004A4BC4->saved.fEC = *(B6F68 *)&D_004A4BC4->cur.fEC;
+            D_004A4BC4->cur.fEC = 1;
+            *out = 1;
+        } else {
+            *(B6F68 *)&D_004A4BC4->saved.fEC = *(B6F68 *)&D_004A4BC4->cur.fEC;
+            D_004A4BC4->cur.fEC = 2;
+            ((int (*)(int *))D_004A4BC4->cur.fDC)(&a);
+            func_003F7D98();
+        }
+        break;
+    case 1:
+        err = ((int (*)(int *))D_004A4BC4->cur.fF4)(&st);
+        if (err == 0) {
+            *out = 1;
+            if (st == 2) {
+                *out = st;
+                func_003F7D98();
+            }
+        } else {
+            *(B6F68 *)&D_004A4BC4->saved.fEC = *(B6F68 *)&D_004A4BC4->cur.fEC;
+            D_004A4BC4->cur.fEC = 2;
+            ((int (*)(int *))D_004A4BC4->cur.fDC)(&c);
+            func_003F7D98();
+        }
+        break;
+    case 2:
+        err = ((int (*)(void))D_004A4BC4->cur.fF8)();
+        break;
+    case 5:
+        err = 0x10;
+        break;
+    default:
+        err = 0x11;
+        break;
+    }
+    if (err == 0) {
+        if (*out == 2)
+            ((int (*)(int *, int *))D_004A4BC4->cur.fE0)(out, &err);
+        return err;
+    }
+fail:
+    ((int (*)(int *, int *))D_004A4BC4->cur.fE4)(out, &err);
+    return err;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F71B8);
