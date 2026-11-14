@@ -891,7 +891,29 @@ extern "C" int func_002B6550(void* self, int type, int* a, int* b, int* c, int a
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/icepick/worldtriggermanager", func_002B65B0);
+#ifdef SKIP_ASM
+extern "C" char* strcpy(char* d, const char* s);
+// func_002B6628 is an empty stub (`return 0`) that ignores its arguments; it is the type-4 handler of this
+// lookup and takes the same (self, idx, dst) arguments - idx/dst stay live into the call ($5/$6 unchanged).
+int func_002B6628_3arg(void* self, int idx, char* dst) __asm__("func_002B6628__FPv");
+
+extern "C" int func_002B65B0(void* self, int idx, char* dst)
+{
+    if (idx < *(int*)((char*)self + 0x340)) {
+        int t = (*(sWTMEntry**)((char*)self + 0x33C))[idx].type;
+        if (t == 3) {
+            strcpy(dst, (char*)(*(sWTMEntry**)((char*)self + 0x33C))[idx].obj + 0x10);
+            return 1;
+        }
+        if (t == 4) {
+            return func_002B6628_3arg(self, idx, dst);
+        }
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/icepick/worldtriggermanager", func_002B6628__FPv);
