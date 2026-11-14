@@ -334,7 +334,180 @@ extern "C" void func_001E9540(void* self, unsigned short* str, int a2, sVec2f* p
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/ovstatehud", func_001E95A0);
+#ifdef SKIP_ASM
+struct sColour_95A0 {
+    float r, g, b, a;
+};
+
+// 2-float vector (EA's t2Vector) with an index operator; read through a const reference it returns by value.
+struct t2Vector_95A0 {
+    float x, y;
+    float& operator[](int i) { return (&x)[i]; }
+    float operator[](int i) const { return (&x)[i]; }
+};
+
+struct sVtxPos_95A0 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+struct sHudVertex_95A0 {
+    float u, v, q, pad;     // 0x00
+    int g, b, a, r;         // 0x10
+    sVtxPos_95A0 pos;       // 0x20
+    sHudVertex_95A0() {}
+};
+
+struct sFont_95A0 {
+    char pad0[0x30];
+    float f30;              // 0x30
+    float f34;              // 0x34
+    float f38;              // 0x38
+    float f3C;              // 0x3C
+    sColour_95A0 color;     // 0x40
+    sColour_95A0 color2;    // 0x50
+};
+
+// An inline icon of the text: texture, size and UV rectangle.
+struct sHudIcon_95A0 {
+    int hash;               // 0x00
+    int pad4;
+    int tex;                // 0x08
+    float width;            // 0x0C
+    float height;           // 0x10
+    float u0, v0, u1, v1;   // 0x14..0x20
+};
+
+// One run of the laid-out text: even runs are text, odd runs are icons.
+struct sLine_95A0 {
+    float w;
+    void* str;
+};
+
+struct sBox_95A0 {
+    float total;            // 0x00
+    float height;           // 0x04
+    sFont_95A0* font;       // 0x08
+    float pad0C;            // 0x0C
+    float scaleX;           // 0x10
+    float scaleY;           // 0x14
+    int count;              // 0x18
+    sLine_95A0 lines[6];    // 0x1C
+};
+
+static inline int texOf_95A0(sHudIcon_95A0* e)
+{
+    return e->tex;
+}
+
+// The font's character scale: base size (0x30) times s.
+static inline void setScale_95A0(sFont_95A0* f, const t2Vector_95A0& s)
+{
+    f->f38 = f->f30 * s.x;
+    f->f3C = f->f34 * s.y;
+}
+
+// Draws the text laid out by func_001E92A8 at pos (moved by the alignment: 0 centre, > 0 right/bottom), scaled and
+// tinted; icons are drawn as sprite quads between the text runs.
+extern "C" void func_001E95A0(sBox_95A0* self, t2Vector_95A0& pos, const t2Vector_95A0& scale, sColour_95A0* col, int alignX, int alignY)
+{
+    if (self->count != 0) {
+        sFont_95A0* font = self->font;
+        sColour_95A0 saved = font->color2;
+        sColour_95A0 mod = saved;
+        t2Vector_95A0 sc;
+        mod.r *= col->r;
+        sc.x = self->scaleX * scale[0];
+        sc.y = self->scaleY * scale[1];
+        setScale_95A0(font, sc);
+        self->font->color = *col;
+        self->font->color2 = mod;
+        if (alignX == 0) {
+            pos[0] -= self->total * scale[0] * 0.5f;
+        } else if (alignX > 0) {
+            pos[0] -= self->total * scale[0];
+        }
+        if (alignY == 0) {
+            pos[1] -= self->height * scale[1] * 0.5f;
+        } else if (alignY > 0) {
+            pos[1] -= self->height * scale[1];
+        }
+        float lh = self->pad0C * scale[1];
+        float cy = pos[1] + self->height * scale[1] * 0.5f;
+        sHudVertex_95A0 v[4];
+        t2Vector_95A0 sz;
+        for (int i = 0; i < 4; i++) {
+            int r = (int)(col->r * 128.0f);
+            int g = (int)(col->g * 128.0f);
+            int b = (int)(col->b * 128.0f);
+            int a = (int)(col->a * 128.0f);
+            v[i].r = r;
+            v[i].g = g;
+            v[i].b = b;
+            v[i].a = a;
+            v[i].q = 1.0f;
+        }
+        sLine_95A0* l = self->lines;
+        for (int i = 0; i < self->count; i++, l++) {
+            if (!(i & 1)) {
+                unsigned short* s = (unsigned short*)l->str;
+                if (*s != 0) {
+                    func_00391E30(self->font, pos[0], pos[1] + lh, s);
+                    pos[0] += l->w * scale[0];
+                }
+            } else {
+                sHudIcon_95A0* e = (sHudIcon_95A0*)l->str;
+                float w = e->width * scale[0];
+                float h = e->height * scale[1];
+                sz.x = w;
+                sz.y = h;
+                float x0 = pos[0];
+                float x1 = x0 + w;
+                float y0 = cy - h * 0.5f;
+                float y1 = y0 + h;
+                v[0].u = e->u0;
+                v[0].v = e->v0;
+                v[1].u = e->u1;
+                v[1].v = e->v0;
+                v[2].u = e->u0;
+                v[2].v = e->v1;
+                v[3].u = e->u1;
+                v[3].v = e->v1;
+                sVtxPos_95A0 p;
+                p.x = x0;
+                p.y = y0;
+                p.z = 0.0f;
+                p.w = 1.0f;
+                v[0].pos = p;
+                p.x = x1;
+                p.y = y0;
+                p.z = 0.0f;
+                p.w = 1.0f;
+                v[1].pos = p;
+                p.x = x0;
+                p.y = y1;
+                p.z = 0.0f;
+                p.w = 1.0f;
+                v[2].pos = p;
+                p.x = x1;
+                p.y = y1;
+                p.z = 0.0f;
+                p.w = 1.0f;
+                v[3].pos = p;
+                *(short*)(*(char**)(D_004A289C + 0xE84) + 0x10) = texOf_95A0(e);
+                sVEntry<void(void*, int, sHudVertex_95A0*, int)>* vt = *(sVEntry<void(void*, int, sHudVertex_95A0*, int)>**)(D_004A289C + 0x10D8);
+                vt[71].fn(D_004A289C + vt[71].delta, 4, v, 0);
+                pos[0] += sz.x;
+            }
+        }
+        self->font->color2 = saved;
+        sz.x = 1.0f;
+        sz.y = 1.0f;
+        setScale_95A0(self->font, sz);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/ovstatehud", func_001E9A30);
