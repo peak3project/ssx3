@@ -1478,7 +1478,100 @@ int func_003ABFC0(void* self, void* item, void* list)
 }
 #endif
 
+//100%
 INCLUDE_ASM("world/worldview", func_003AC048);
+#ifdef SKIP_ASM
+// PORT: 64-bit `long` (8 bytes on EE, 4 on Windows); use int64_t/uint64_t off-PS2.
+extern char D_2270[];
+extern char D_22C8[];
+extern char D_00509400[];
+extern char D_00509410[];
+extern char D_00509420[];
+
+// PORT: func_003ABFC0 declares this symbol as returning void; bound by asm label.
+extern "C" int func_003AC048_impl(void* self, char* obj, char* ctx, int index) __asm__("func_003AC048");
+extern "C" int func_003AC048_impl(void* self, char* obj, char* ctx, int index)
+{
+    int done = 0;
+    int first = 1;
+    int split = 0;
+    if (*(unsigned int*)obj & 0x60000) split = 1;
+    char* p = (char*)(*(int*)(obj + 4) + *(int*)(ctx + 0x24));
+    long tag;
+    do {
+        tag = *(long*)p;
+        switch (((int)((tag << 4) >> 32)) & 7) {
+        case 3: {
+            if (*(unsigned int*)(p + 4) & 0x80000000) {
+                split = 1;
+                *(unsigned int*)(p + 4) &= 0x7FFFFFFF;
+            }
+            *(int*)(p + 4) = *(int*)(ctx + 0x24) + *(int*)(p + 4);
+            p += 0x10;
+            tag = *(long*)p;
+            int* ap = (int*)(p + 4);
+            *ap = *(int*)(ctx + 0x24) + *ap;
+            int qwc = ((int)tag) & 0xFFFF;
+            p += 0x10;
+            char* e = *(char**)ap;
+            e += (qwc - 1) * 0x10;
+            if (first) {
+                *(int*)(e + 8) = ((unsigned int)D_2270 >> 3) | 0x14000000;
+            } else {
+                *(int*)(e + 8) = ((unsigned int)D_22C8 >> 3) | 0x14000000;
+            }
+            if (split) {
+                char* next = p + 0x10;
+                if ((((int)((*(long*)next << 4) >> 32)) & 7) == 6) {
+                    *(long*)(p + 0x8) = 0;
+                    *(long*)p = ((unsigned long)(unsigned int)D_00509400 << 32) | 0x30000001;
+                    if (first) {
+                        *(long*)(p + 0x10) = ((unsigned long)(unsigned int)D_00509410 << 32) | 0x30000001;
+                        *(long*)(p + 0x18) = 0;
+                    } else {
+                        *(long*)(p + 0x10) = ((unsigned long)(unsigned int)D_00509420 << 32) | 0x30000001;
+                        *(long*)(p + 0x18) = 0;
+                    }
+                    *(long*)(p + 0x20) = 0x60000000;
+                    *(long*)(p + 0x28) = 0;
+                } else {
+                    if (*(unsigned int*)(p + 4) & 0x80000000) {
+                        split = 1;
+                        *(unsigned int*)(p + 4) &= 0x7FFFFFFF;
+                    }
+                    *(int*)(p + 4) = *(int*)(ctx + 0x24) + *(int*)(p + 4);
+                    p = next;
+                    tag = *(long*)p;
+                    ap = (int*)(p + 4);
+                    *ap = *(int*)(ctx + 0x24) + *ap;
+                    qwc = ((int)tag) & 0xFFFF;
+                    p += 0x10;
+                    e = *(char**)ap;
+                    e += (qwc - 1) * 0x10;
+                    *(int*)(e + 8) = ((unsigned int)D_22C8 >> 3) | 0x14000000;
+                    if (first) {
+                        *(long*)p = ((unsigned long)(unsigned int)D_00509410 << 32) | 0x30000001;
+                    } else {
+                        *(long*)p = ((unsigned long)(unsigned int)D_00509420 << 32) | 0x30000001;
+                    }
+                    *(long*)(p + 0x8) = 0;
+                    *(long*)(p + 0x10) = ((unsigned long)(unsigned int)D_00509420 << 32) | 0x30000001;
+                    *(long*)(p + 0x18) = 0;
+                }
+                p += 0x20;
+            }
+            first = 0;
+            break;
+        }
+        case 6:
+            p += 0x10;
+            done = 1;
+            break;
+        }
+    } while (done == 0);
+    return 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("world/worldview", func_003AC2A8);
