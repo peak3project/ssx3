@@ -1026,7 +1026,65 @@ extern "C" void func_00328F28(sCell_8F28* c, sBox_8F28* b)
 }
 #endif
 
+//100%
 INCLUDE_ASM("intersect/aifwddiff", func_003291E0);
+#ifdef SKIP_ASM
+struct sRoot_91E0;
+extern "C" void func_00328C20_91E0(sRoot_91E0* root, int idx, sItem_00328660* item, sCell_00328660* cell)
+    __asm__("func_00328C20");
+
+struct sRoot_91E0 {
+    sCell_00328660 cell;            // 0x00
+    sNode_8808* node;               // 0x10
+    void remove(int idx, sItem_00328660* item, const sCell_00328660* key)
+    {
+        func_003284B8_8808(node, idx, item, key, &cell);
+        if (node->empty()) {
+            operator_delete((int*)node);
+            node = 0;
+        }
+    }
+    void move(int idx, sItem_00328660* item, const sCell_00328660* oldkey, sCell_00328660* newkey)
+    {
+        if (!Contains_8C20(cell, *newkey)) {
+            remove(idx, item, oldkey);
+            func_00328C20_91E0(this, idx, item, newkey);
+        } else {
+            func_00328808(node, idx, item, oldkey, newkey, &cell);
+        }
+    }
+};
+
+static inline int Same_91E0(const sCell_00328660& a, const sCell_00328660& b)
+{
+    return a.level == b.level && a.x == b.x && a.y == b.y && a.z == b.z;
+}
+
+extern "C" void func_00328F28_91E0(sCell_00328660* c, sBox_8F28* b) __asm__("func_00328F28");
+
+extern "C" void func_003291E0(sRoot_91E0 roots[2][2][2], int idx, sItem_00328660* item, sBox_8F28* newbox,
+                              sBox_8F28* oldbox)
+{
+    sCell_00328660 oldkey;
+    sCell_00328660 newkey;
+    func_00328F28_91E0(&oldkey, oldbox);
+    func_00328F28_91E0(&newkey, newbox);
+    if (Same_91E0(newkey, oldkey))
+        return;
+    int nsx = newkey.x < 0;
+    int nsy = newkey.y < 0;
+    int nsz = newkey.z < 0;
+    int osx = oldkey.x < 0;
+    int osy = oldkey.y < 0;
+    int osz = oldkey.z < 0;
+    if (nsx != osx || nsy != osy || nsz != osz) {
+        roots[osx][osy][osz].remove(idx, item, &oldkey);
+        func_00328C20_91E0(&roots[nsx][nsy][nsz], idx, item, &newkey);
+    } else {
+        roots[nsx][nsy][nsz].move(idx, item, &oldkey, &newkey);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("intersect/aifwddiff", func_00329590);
