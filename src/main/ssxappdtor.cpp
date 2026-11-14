@@ -1885,7 +1885,184 @@ extern "C" int func_00244A40(void *self) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("main/ssxappdtor", func_00244B48);
+#ifdef SKIP_ASM
+extern "C" void func_0020CFD0(void);
+extern "C" int func_002CC098(void* p);
+extern "C" void func_0020AB50(int id);
+extern "C" void* func_0028B180(void);
+extern "C" void func_0029CED8(void* snd, int a, int b, float f);
+extern "C" void func_0030A868(void* mgr, int a, int b, int c);
+extern "C" void func_00398038(void* p);
+extern "C" void func_0029ED18(void* snd);
+extern "C" void func_002CC0C0(void* p);
+extern "C" int func_00231840(char* self, int a);
+extern "C" int func_0020CBE8(void);
+extern "C" void func_00326AE0(void* p);
+extern "C" void func_0020CA10(void);
+extern "C" void func_00289B70(void* snd);
+extern "C" void func_00294F48(void* snd);
+extern "C" int func_0020CBA0(void);
+extern "C" void cPlaybackMan_update(void* p);
+int GetHashValue32(char* str);
+extern void* D_004A28A0;
+extern void* D_004A3DD8;
+// Pending script pause request; 0xFFFFFFFF = none (the store is lui/ori, so the global is unsigned).
+extern unsigned int D_004A20CC_4B48 __asm__("D_004A20CC");
+extern int D_004428F8[];
+extern int D_004428FC[];
+extern int D_00442920[];
+extern char D_0047B798[];
+
+// A script message (cWScriptQueueEntry).
+struct sMsg_4B48 {
+    int a;
+    int type;
+    int c;
+};
+
+// The script manager's message queue (wscript/wscriptman: cWScriptQueue).
+struct sQueue_4B48 {
+    int head;
+    int tail;
+    sMsg_4B48 entries[16];
+};
+
+extern "C" sMsg_4B48* func_0030C870(sQueue_4B48* self);
+extern "C" sMsg_4B48* func_0030C820(sQueue_4B48* self);
+
+// The script manager (D_004A3DD8); hasMessage / popMessage are inline here
+// (out-of-line copies: func_0030D330, func_0030D348).
+struct sScript_4B48 {
+    char pad0[0x1C4];
+    sQueue_4B48 queue;              // 0x1C4
+    bool hasMessage() { return queue.head != queue.tail; }
+    sMsg_4B48* popMessage() { return func_0030C820(&queue); }
+};
+
+struct sVSlot_4B48 {
+    short delta;
+    short index;
+    void (*fn)(void*, ...);
+};
+
+struct sUIObj_4B48 {
+    char pad0[0x8];
+    sVSlot_4B48* vt;                // 0x8
+};
+
+struct sStateStack_4B48 {
+    void* top;
+};
+
+extern "C" int func_0039F9D8(sStateStack_4B48* p, int hash);
+
+struct sUIEngine_4B48 {
+    char pad0[0xC];
+    sUIObj_4B48* fC;                // 0xC
+    char pad10[0x18 - 0x10];
+    sStateStack_4B48 states;        // 0x18
+};
+
+struct sApp_4B48 {
+    char pad0[0x28];
+    int* state;                     // 0x28
+    char pad2C[0x30 - 0x2C];
+    sScript_4B48* script;           // 0x30
+    char* playback;                 // 0x34
+    char pad38[0x48 - 0x38];
+    sUIEngine_4B48* ui;             // 0x48
+    char pad4C[0xA4 - 0x4C];
+    void* fA4;                      // 0xA4
+    char padA8[0x228 - 0xA8];
+    unsigned char f228;             // 0x228
+};
+
+static inline bool racing_4B48(int s)
+{
+    return s != 0 && s < 10;
+}
+
+static inline bool pending_4B48()
+{
+    return D_004A20CC_4B48 != 0xFFFFFFFF;
+}
+
+static inline bool playing_4B48(char* pb)
+{
+    return *(int*)(pb + 0x70) == 1;
+}
+
+// Handles script messages and pause requests; returns true when the race should run this frame.
+extern "C" bool func_00244B48(sApp_4B48* self)
+{
+    func_0020CFD0();
+    if (func_002CC098(self->fA4) == 0) {
+        sScript_4B48* sm = self->script;
+        sQueue_4B48* q = &sm->queue;
+        if (sm->hasMessage()) {
+            sMsg_4B48* msg = func_0030C870(q);
+            if (msg->type == 8) {
+                func_0020AB50(0x1D);
+                D_005366E8[++D_004A2A54] = 3;
+                D_004A2A50 = D_004428FC[0];
+                func_0029CED8(func_0028B180(), 4, 0, 1.0f);
+                return false;
+            }
+            if (msg->type == 9) {
+                func_0030A868(self->script, msg->a, 5, msg->c);
+                if (func_0039F9D8(&self->ui->states, GetHashValue32(D_0047B798)) == 0) {
+                    func_0020AB50(0x1E);
+                    D_005366E8[++D_004A2A54] = 3;
+                    D_004A2A50 = D_004428FC[0];
+                    func_00398038(self->ui);
+                } else {
+                    ((sScript_4B48*)D_004A3DD8)->popMessage();
+                }
+                return false;
+            }
+        }
+    }
+    if (pending_4B48()) {
+        func_0020AB50(0x22);
+        D_005366E8[++D_004A2A54] = 0xC;
+        D_004A2A50 = D_00442920[0];
+        D_004A20CC_4B48 = 0xFFFFFFFF;
+        func_0029ED18(func_0028B180());
+        return false;
+    }
+    if (func_002CC098(self->fA4) != 0) {
+        func_00398038(self->ui);
+        func_002CC0C0(self->fA4);
+        return false;
+    }
+    if (func_00231840((char*)self, 0) != 0 && !racing_4B48(*self->state) && !playing_4B48(self->playback) && func_0020CBE8() != 0) {
+        func_00326AE0(D_004A28A0);
+        func_0020CA10();
+        D_005366E8[++D_004A2A54] = 2;
+        D_004A2A50 = D_004428F8[0];
+        sUIObj_4B48* o = self->ui->fC;
+        o->vt[44].fn((char*)o + o->vt[44].delta, self->f228);
+        func_00289B70(func_0028B180());
+        func_00294F48(func_0028B180());
+        return false;
+    }
+    int wasPaused = D_004A2A50 & 1;
+    func_00398038(self->ui);
+    if (func_0020CBA0() != 0) {
+        return false;
+    }
+    cPlaybackMan_update(self->playback);
+    if (func_002CC098(self->fA4) != 0) {
+        return false;
+    }
+    if (wasPaused && (D_004A2A50 & 1) == 0) {
+        return false;
+    }
+    return true;
+}
+#endif
 
 //100%
 INCLUDE_ASM("main/ssxappdtor", func_00244E60);
