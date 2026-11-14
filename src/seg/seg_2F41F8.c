@@ -3152,7 +3152,33 @@ int func_003F8FF0(int r, int *p, int *q) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F9130);
+#ifdef SKIP_ASM
+int func_003F9130(int r, int *p, int *q) {
+    if (p == 0) return 0x12;
+    if (q == 0) return 0x12;
+    if ((unsigned)(D_004A4BD8->op - 0xB) >= 3) return 0x12;
+    *p = 1;
+    switch ((unsigned)D_004A4BD8->st) {
+    case 0x18:
+        D_004A4BD8->st = 0x19;
+        D_004A4BDC->f1C(D_004A4BD8->body.port);
+        break;
+    case 0x19:
+        D_004A4BD8->st = 0x1A;
+        D_004A4BDC->f14(D_004A4BD8->body.slot);
+        break;
+    case 0x1A:
+        *p = 2;
+        return func_003F8710();
+    default:
+        *p = 2;
+        return 0x12;
+    }
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F9208);
