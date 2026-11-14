@@ -103,7 +103,34 @@ extern "C" void func_0014A180(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/belibrary", func_0014A188);
+#ifdef SKIP_ASM
+extern char D_004B07F8[];
+extern char D_004BA348[];
+extern char D_005308B8[];
+extern char D_004A6CA8_A188[] __asm__("D_004A6CA8");
+
+// Copies the save block (race, player and profile data) out of the global tables.
+extern "C" void func_0014A188(char* p)
+{
+    __builtin_memcpy(p, D_005305B0, 0x4C);
+    p += 0x4C;
+    __builtin_memcpy(p, D_00535B20, 0xA8);
+    p += 0xA8;
+    int charID = D_00535B20[0].mCharID;
+    __builtin_memcpy(p, D_004A6CA8_A188 + charID * 0xF88, 0xF88);
+    p += 0xF88;
+    charID = D_00535B20[1].mCharID;
+    if (charID >= 0) {
+        __builtin_memcpy(p, D_004B07F8 + charID * 0xF88, 0xF88);
+        p += 0xF88;
+    }
+    __builtin_memcpy(p, D_004BA348, 0x9B50);
+    p += 0x9B50;
+    __builtin_memcpy(p, D_005308B8, 0x20);
+}
+#endif
 
 INCLUDE_ASM("be/belibrary", func_0014A5E0);
 
