@@ -1516,7 +1516,55 @@ extern "C" char* func_0035DA70(char* self, char* a1, char* a2, char* a3)
 
 INCLUDE_ASM("object/railmodifier", func_0035DDE8);
 
+//100%
 INCLUDE_ASM("object/railmodifier", func_0035DF70);
+#ifdef SKIP_ASM
+int func_003A6CD8(void* self, void* a1);
+extern "C" void* func_003A6CE8(void* self, int a1);
+extern "C" void func_0032C648(void* self, void* m, float scale);
+
+class cRmObj_DF70 {
+public:
+    virtual void v01(void* buf, int size);
+    virtual void v02(void* buf, int size);
+    virtual int v03();
+};
+
+extern "C" char* func_0035DF70(char* self, cRmObj_DF70* obj)
+{
+    *(void***)self = D_004913F8;
+    func_0035CFE8(self + 0x30);
+    *(void***)self = D_0048F080;
+    func_0032C508(self + 0xE0);
+    func_0035DA38(self + 0x30, (func_0035DA38_cObj*)obj);
+    obj->v02(self + 0x4, 0x28);
+    *(int*)(self + 0xD0) = obj->v03();
+    func_00327CC8(self + 0xE0, func_003A6CE8((void*)func_003A6CD8(func_002D1BD8(), *(void**)(self + 0xD0)), 0));
+    char* t = *(char**)(self + 0x178);
+    t4Vector v;
+    v.x = *(float*)(t + 0x2C);
+    v.y = *(float*)(t + 0x30);
+    v.z = *(float*)(t + 0x34);
+    v.w = 0.0f;
+    *(t4Vector*)(self + 0x2B0) = v;
+    *(sRmMat33*)(self + 0x280) = *(sRmMat33*)(t + 0x5C);
+    ((sRmMat33*)(self + 0x280))->m[0][0] *= 0.5f;
+    ((sRmMat33*)(self + 0x280))->m[0][1] *= 0.5f;
+    ((sRmMat33*)(self + 0x280))->m[0][2] *= 0.5f;
+    ((sRmMat33*)(self + 0x280))->m[1][0] *= 0.5f;
+    ((sRmMat33*)(self + 0x280))->m[1][1] *= 0.5f;
+    ((sRmMat33*)(self + 0x280))->m[1][2] *= 0.5f;
+    ((sRmMat33*)(self + 0x280))->m[2][0] *= 0.5f;
+    ((sRmMat33*)(self + 0x280))->m[2][1] *= 0.5f;
+    ((sRmMat33*)(self + 0x280))->m[2][2] *= 0.5f;
+    sRmXform y = func_0035E770_DA70(self);
+    QuatPosToMtx_DA70(self + 0x240, y.quat, y.pos);
+    func_0032C648(self + 0xE0, self + 0x240, 1.0f);
+    func_0035E248(self);
+    func_0035D288((sRmBody*)(self + 0x30));
+    return self;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("object/railmodifier", func_0035E1E0);
