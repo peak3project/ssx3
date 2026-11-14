@@ -370,7 +370,66 @@ extern "C" void func_00319910(void)
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_21A1C0", func_00319930);
+#ifdef SKIP_ASM
+// Sony EE kernel ThreadParam / SemaParam.
+struct sThreadParam_9930 {
+    int status;
+    void (*entry)(int);
+    void* stack;
+    int stackSize;
+    void* gpReg;
+    int initPriority;
+    int currentPriority;
+    unsigned int attr;
+    unsigned int option;
+    int waitType;
+    int waitId;
+    int wakeupCount;
+};
+struct sSemaParam_9930 {
+    int count;
+    int maxCount;
+    int initCount;
+    int numWaitThreads;
+    unsigned int attr;
+    unsigned int option;
+};
+
+extern "C" int func_0042B6D0(void* client);
+extern "C" int func_00423DA0(sSemaParam_9930* p);
+extern "C" int func_00423BA0(sThreadParam_9930* p);
+extern "C" int func_00423BC0(int thread, int arg);
+extern "C" void func_00400D58(void (*fn)(void), int arg);
+extern "C" void func_003198A0(int sema);
+extern "C" void func_00319910(void);
+extern int _gp;
+extern char D_004A3EB0[];
+extern char D_00538B10[];
+extern int D_004A5B54;
+extern int D_004A5B70;
+
+extern "C" void func_00319930(void)
+{
+    sThreadParam_9930 tp;
+    sSemaParam_9930 sema;
+    if (func_0042B6D0(D_004A3EB0) >= 0) {
+        sema.initCount = 0;
+        sema.maxCount = 1;
+        sema.option = 0;
+        D_004A5B54 = func_00423DA0(&sema);
+        tp.stackSize = 0x2000;
+        tp.gpReg = &_gp;
+        tp.entry = func_003198A0;
+        tp.stack = D_00538B10;
+        tp.initPriority = 1;
+        D_004A5B70 = func_00423BA0(&tp);
+        func_00423BC0(D_004A5B70, D_004A5B54);
+        func_00400D58(func_00319910, D_004A5B54);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_21A1C0", func_003199D0);
