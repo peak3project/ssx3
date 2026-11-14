@@ -431,7 +431,265 @@ extern "C" void func_003470D0(sFlBridge_70D0* self, sFlState_70D0* p)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/flexbridgenode", func_00347268);
+#ifdef SKIP_ASM
+struct sV4_7268 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+// 4x4 matrix with an empty ctor and a VU0 copy (through vf1..vf4).
+struct sMat_7268 {
+    sV4_7268 row[4];
+    sMat_7268() {}
+    // PORT: PS2-only VU0 inline asm (4x4 matrix copy through VU0 registers).
+    sMat_7268(const sMat_7268& s)
+    {
+        __asm__ __volatile__(
+            "lqc2      $vf1, 0x0(%1)\n"
+            "lqc2      $vf2, 0x10(%1)\n"
+            "lqc2      $vf3, 0x20(%1)\n"
+            "lqc2      $vf4, 0x30(%1)\n"
+            "sqc2      $vf1, 0x0(%0)\n"
+            "sqc2      $vf2, 0x10(%0)\n"
+            "sqc2      $vf3, 0x20(%0)\n"
+            "sqc2      $vf4, 0x30(%0)\n"
+            :
+            : "r"(this), "r"(&s)
+            : "memory");
+    }
+};
+
+// PORT: PS2-only VU0 inline asm (vector * matrix, row-vector convention).
+static inline sV4_7268 vu0MtxMul_7268(const sMat_7268* m, const sV4_7268& v)
+{
+    sV4_7268 r;
+    __asm__(
+        "lqc2         $vf8, %1\n"
+        "lqc2         $vf4, 0x0(%2)\n"
+        "lqc2         $vf5, 0x10(%2)\n"
+        "lqc2         $vf6, 0x20(%2)\n"
+        "lqc2         $vf7, 0x30(%2)\n"
+        "vmulax.xyzw  ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw  $vf12, $vf7, $vf8w\n"
+        "sqc2         $vf12, %0\n"
+        : "=m"(r)
+        : "m"(v), "r"(m)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (d = v * s).
+static inline void vu0ScaleVector_7268(sV4_7268& d, const sV4_7268& v, float s)
+{
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(d), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+}
+
+// d = v * s
+static inline void ScaleTo_7268(sV4_7268& d, const sV4_7268& v, float s)
+{
+    vu0ScaleVector_7268(d, v, s);
+}
+
+// v * s
+static inline sV4_7268 Scale_7268(const sV4_7268& v, float s)
+{
+    sV4_7268 r;
+    ScaleTo_7268(r, v, s);
+    return r;
+}
+
+// A vector built from four floats.
+struct sVecK_7268 : public sV4_7268 {
+    sVecK_7268(const float& ax, const float& ay, const float& az, const float& aw)
+    {
+        x = ax;
+        y = ay;
+        z = az;
+        w = aw;
+    }
+};
+
+// Component-wise product of x, y and z; keeps a's w.
+static inline sVecK_7268 MulXYZ_7268(const sV4_7268& a, const sV4_7268& b)
+{
+    return sVecK_7268(a.x * b.x, a.y * b.y, a.z * b.z, a.w);
+}
+
+static inline sV4_7268 Row_7268(const sMat_7268& m, int i)
+{
+    return m.row[i];
+}
+
+// In-place inverse of a rigid transform: transpose the rotation, rotate the negated translation back.
+static inline void InvertOrtho_7268(sMat_7268& m)
+{
+    float f;
+    f = m.row[0].y;
+    m.row[0].y = m.row[1].x;
+    m.row[1].x = f;
+    f = m.row[0].z;
+    m.row[0].z = m.row[2].x;
+    m.row[2].x = f;
+    f = m.row[1].z;
+    m.row[1].z = m.row[2].y;
+    m.row[2].y = f;
+    sV4_7268 v = Scale_7268(Row_7268(m, 3), -1.0f);
+    v.w = 0.0f;
+    v = vu0MtxMul_7268(&m, v);
+    v.w = 1.0f;
+    m.row[3] = v;
+}
+
+struct sVt_7268 { short delta; short index; void* fn; };
+
+// Triangle hit record (0x80 bytes).
+struct sHit_7268 {
+    sV4_7268 pos;       // 0x00
+    sV4_7268 nrm;       // 0x10
+    sV4_7268 v20;       // 0x20
+    sV4_7268 v30;       // 0x30
+    float dist;         // 0x40
+    int type;           // 0x44
+    void* tri;          // 0x48
+    int id;             // 0x4C
+    void* inst;         // 0x50
+    void* obj;          // 0x54
+    int f58;            // 0x58
+    int bone;           // 0x5C
+    int f60;            // 0x60
+    int f64;            // 0x64
+    int f68;            // 0x68
+    float u;            // 0x6C
+    float v;            // 0x70
+    int pad74[3];
+};
+
+// Triangle mesh view handed to the triangle tester.
+struct sTriMesh_7268 {
+    unsigned short numTris;     // 0x0
+    unsigned short numVerts;    // 0x2
+    unsigned char* indices;     // 0x4
+    void* boxes;                // 0x8
+    sV4_7268* verts;            // 0xC
+    sV4_7268* normals;          // 0x10
+};
+
+struct sQuery_7268 {
+    char pad00[0x50];
+    sVt_7268* vt;               // 0x50
+};
+
+struct sPart_7268 {
+    char pad00[0xA];
+    short id;                   // 0xA
+};
+
+struct sInstDef_7268 {
+    int type;
+    int pad04[3];
+    sPart_7268 parts[1];        // 0x10
+};
+
+struct sBoneTbl_7268 {
+    int pad00;
+    int count;                  // 0x4
+};
+
+struct sInst_7268 {
+    char pad00[0x80];
+    sBoneTbl_7268* tbl;         // 0x80
+    float scale;                // 0x84
+    sInstDef_7268* def;         // 0x88
+};
+
+struct sBridge_7268 {
+    char pad00[0xC];
+    sVt_7268* vt;               // 0x0C
+    char pad10[0x8];
+    sInst_7268* inst;           // 0x18
+    char pad1C[0x34];
+    int count;                  // 0x50
+    char pad54[0x28];
+    sV4_7268* pts;              // 0x7C
+    sV4_7268* nrm;              // 0x80
+    unsigned char* idx;         // 0x84
+};
+
+typedef sMat_7268* (*GetMat_7268)(void*);
+typedef void (*SetXf_7268)(void*, float, sMat_7268*);
+typedef void (*Reset_7268)(void*);
+
+extern sV4_7268 D_004FF120_7268[] __asm__("D_004FF120");
+// PORT: callers pass the hit capacity as a fifth argument the function never reads.
+extern "C" int func_0032C0F8_7268(void* self, sTriMesh_7268* mesh, int flag, sHit_7268* out, int cap) __asm__("func_0032C0F8");
+
+static inline void reset_7268(sHit_7268* h)
+{
+    h->obj = 0;
+    h->inst = 0;
+    h->f58 = 0;
+    h->bone = -1;
+    h->f60 = -1;
+    h->f64 = -1;
+    h->type = 2;
+    h->id = -1;
+    h->v20 = *D_004FF120_7268;
+    h->v30 = *D_004FF120_7268;
+    h->f68 = 0;
+    h->u = 0;
+    h->v = 0;
+}
+
+static inline sPart_7268* GetPart_7268(sInstDef_7268* def, int i)
+{
+    return &def->parts[i];
+}
+
+extern "C" int func_00347268(sBridge_7268* self, sQuery_7268* q, sHit_7268* hits, int cap, int flags)
+{
+    if (!(flags & 2))
+        return 0;
+    sTriMesh_7268 mesh;
+    mesh.numTris = (self->count - 1) * 2;
+    mesh.numVerts = self->count * 2;
+    mesh.indices = self->idx;
+    mesh.verts = self->pts;
+    mesh.normals = self->nrm;
+    sMat_7268* m = ((GetMat_7268)self->vt[24].fn)((char*)self + self->vt[24].delta);
+    sMat_7268 inv = *m;
+    InvertOrtho_7268(inv);
+    ((SetXf_7268)q->vt[1].fn)((char*)q + q->vt[1].delta, 1.0f / self->inst->scale, &inv);
+    int n = func_0032C0F8_7268(q, &mesh, 1, hits, cap);
+    ((Reset_7268)q->vt[2].fn)((char*)q + q->vt[2].delta);
+    for (int i = 0; i < n; i++) {
+        sHit_7268* h = &hits[i];
+        reset_7268(h);
+        float s = self->inst->scale;
+        h->pos = vu0MtxMul_7268(m, MulXYZ_7268(h->pos, sVecK_7268(s, s, s, 1.0f)));
+        h->nrm = vu0MtxMul_7268(m, h->nrm);
+        h->type = 1;
+        h->inst = self->inst;
+        h->bone = self->inst->tbl->count - 1;
+        h->tri = 0;
+        h->v20 = *D_004FF120_7268;
+        h->v30 = *D_004FF120_7268;
+        h->id = GetPart_7268(self->inst->def, h->bone)->id;
+    }
+    return n;
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/flexbridgenode", func_003475A8);
