@@ -1782,7 +1782,250 @@ extern "C" int func_4888(sWsQuery_4888* q, sWsInst_4888* node, sWsHit_4888* buf,
 }
 #endif
 
+//100%
 INCLUDE_ASM("intersect/worldsphtree", func_00335128);
+#ifdef SKIP_ASM
+// 4x4 cubic-curve coefficient matrix: rows for t^3, t^2, t, 1.
+struct sWsCurveMat_5128 {
+    t4Vector row[4];
+};
+
+struct sWsCurveDef_5128 {
+    char pad00[0x1C];
+    int mask;           // 0x1C
+    char pad20[0x8];
+    int id;             // 0x28
+};
+
+// A curve-shaped collision object (cubic segment with a bounding box).
+struct sWsCurve_5128 {
+    char pad00[0x10];
+    sWsCurveMat_5128 coef;      // 0x10
+    char pad50[0x18];
+    sWsCurveDef_5128* def;      // 0x68
+    float bmin[3];              // 0x6C
+    float bmax[3];              // 0x78
+};
+
+// Curve hit record (same layout as sWsTriHit; the curve parameter goes in 0x68).
+struct sWsCurveHit_5128 {
+    t4Vector pos;   // 0x00
+    t4Vector nrm;   // 0x10
+    t4Vector v20;   // 0x20
+    t4Vector v30;   // 0x30
+    float dist;         // 0x40
+    int type;           // 0x44
+    int pad48;
+    int id;             // 0x4C
+    int f50;            // 0x50
+    void* obj;          // 0x54
+    void* def;          // 0x58
+    int f5C;            // 0x5C
+    int f60;            // 0x60
+    int f64;            // 0x64
+    union {
+        int f68;
+        float t;        // curve parameter of the hit
+    };                  // 0x68
+    float u;            // 0x6C
+    float v;            // 0x70
+    int pad74[3];
+};
+
+// Start / end parameters of the golden-section search for each coarse chord (local copies of .rodata tables).
+struct sWsTbl5_5128 {
+    float v[5];
+};
+extern const sWsTbl5_5128 D_0048E560;
+extern const sWsTbl5_5128 D_0048E578;
+
+static inline void reset_5128(sWsCurveHit_5128* h)
+{
+    h->type = 2;
+    h->obj = 0;
+    h->f50 = 0;
+    h->def = 0;
+    h->f5C = -1;
+    h->f60 = -1;
+    h->f64 = -1;
+    h->id = -1;
+    h->v20 = *D_004FF120;
+    h->v30 = *D_004FF120;
+    h->f68 = 0;
+    h->u = 0;
+    h->v = 0;
+}
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix * vector).
+static inline t4Vector vu0MulMat_5128(const sWsCurveMat_5128* m, const t4Vector& v)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf8, %2\n"
+        "lqc2      $vf4, 0x0(%1)\n"
+        "lqc2      $vf5, 0x10(%1)\n"
+        "lqc2      $vf6, 0x20(%1)\n"
+        "lqc2      $vf7, 0x30(%1)\n"
+        "vmulax.xyzw ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw $vf12, $vf7, $vf8w\n"
+        "sqc2      $vf12, %0\n"
+        : "=m"(r)
+        : "r"(m), "m"(v)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (normalize).
+static inline t4Vector vu0Normalize_5128(const t4Vector& v)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vrsqrt    Q, $vf0w, $vf4x\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf5, $vf3, Q\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(v)
+        : "memory");
+    return r;
+}
+
+// Power basis (t^3, t^2, t, w) of a cubic parameter, built up from t.
+struct sWsPow_5128 : t4Vector {
+    sWsPow_5128(const float& t, const float& aw)
+    {
+        w = aw;
+        z = t;
+        y = t * t;
+        x = t * y;
+    }
+};
+
+// Derivative of the power basis (3t^2, 2t, 1, 0), built in the same order.
+struct sWsDPow_5128 : t4Vector {
+    sWsDPow_5128(const float& t)
+    {
+        w = 0.0f;
+        z = 1.0f;
+        y = 2.0f * t;
+        x = t * (3.0f * t);
+    }
+};
+
+// v clamped to [lo, hi].
+static inline float Clamp_5128(float v, float lo, float hi)
+{
+    return v >= lo ? (v <? hi) : lo;
+}
+
+// Point of the curve at parameter t.
+static inline t4Vector CurvePoint_5128(const sWsCurveMat_5128* m, float t)
+{
+    sWsPow_5128 tv(t, 1.0f);
+    return vu0MulMat_5128(m, tv);
+}
+
+// Tangent of the curve at parameter t.
+static inline t4Vector CurveTangent_5128(const sWsCurveMat_5128* m, float t)
+{
+    sWsDPow_5128 tv(t);
+    return vu0MulMat_5128(m, tv);
+}
+
+// Nearest point of curve segment `self` to pos (coarse search over 4 chords, then golden-section search); records it
+// in hit if it is the first or nearest one so far.
+extern "C" void func_5128(sWsCurve_5128* self, sWsBoxV* box, t4Vector* pos, int* cnt, float* dist, sWsCurveHit_5128* hit) __asm__("func_00335128");
+extern "C" void func_5128(sWsCurve_5128* self, sWsBoxV* box, t4Vector* pos, int* cnt, float* dist, sWsCurveHit_5128* hit)
+{
+    if (box->max.x < self->bmin[0] || box->min.x > self->bmax[0] || box->max.y < self->bmin[1] ||
+        box->min.y > self->bmax[1] || box->max.z < self->bmin[2] || box->min.z > self->bmax[2])
+        return;
+    t4Vector pt;
+    t4Vector cur;
+    t4Vector v;
+    float lo = 0.0f;
+    float hi = 1.0f;
+    pt = CurvePoint_5128(&self->coef, lo);
+    float best = wsLengthT(sub_330540(*pos, pt));
+    int bi = 0;
+    for (int i = 1; i < 5; i++) {
+        cur = CurvePoint_5128(&self->coef, i * 0.25f);
+        v = sub_330540(cur, pt);
+        float u = vu0Dot(sub_330540(*pos, pt), v) / vu0Dot(v, v);
+        float c = Clamp_5128(u, 0.0f, 1.0f);
+        v = add_330540(pt, vu0Scale(v, c));
+        float d = wsLengthT(sub_330540(*pos, v));
+        if (d < best) {
+            best = d;
+            bi = i;
+        }
+        pt = cur;
+    }
+    sWsTbl5_5128 los = D_0048E560;
+    sWsTbl5_5128 his = D_0048E578;
+    lo = los.v[bi];
+    hi = his.v[bi];
+    float x1 = lo + (hi - lo) * 0.381966f;
+    float x2 = lo + (hi - lo) * 0.618034f;
+    pt = CurvePoint_5128(&self->coef, lo);
+    float flo = wsLengthT(sub_330540(pt, *pos));
+    pt = CurvePoint_5128(&self->coef, x1);
+    float f1 = wsLengthT(sub_330540(pt, *pos));
+    pt = CurvePoint_5128(&self->coef, x2);
+    float f2 = wsLengthT(sub_330540(pt, *pos));
+    pt = CurvePoint_5128(&self->coef, hi);
+    float fhi = wsLengthT(sub_330540(pt, *pos));
+    float t = x2;
+    float d = f2;
+    for (int i = 0; i < 24; i++) {
+        if (absf(hi - lo) <= 0.0005f)
+            break;
+        if (f2 < f1) {
+            lo = x1;
+            x1 = x2;
+            x2 = x1 * 0.618034f + hi * 0.381966f;
+            pt = CurvePoint_5128(&self->coef, x2);
+            float f = wsLengthT(sub_330540(pt, *pos));
+            f1 = f2;
+            f2 = f;
+            t = x2;
+            d = f2;
+        } else {
+            hi = x2;
+            x2 = x1;
+            x1 = x2 * 0.618034f + lo * 0.381966f;
+            pt = CurvePoint_5128(&self->coef, x1);
+            float f = wsLengthT(sub_330540(pt, *pos));
+            f2 = f1;
+            f1 = f;
+            t = x1;
+            d = f1;
+        }
+    }
+    if (*cnt != 0 && !(d < *dist))
+        return;
+    *cnt = 1;
+    *dist = d;
+    reset_5128(hit);
+    hit->pos = pt;
+    hit->nrm = vu0Normalize_5128(CurveTangent_5128(&self->coef, t));
+    hit->id = self->def->id;
+    hit->f50 = 0;
+    hit->f5C = -1;
+    hit->def = self->def;
+    hit->t = t;
+    hit->f64 = -1;
+    hit->obj = 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("intersect/worldsphtree", func_00335960);
