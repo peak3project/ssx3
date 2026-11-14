@@ -1898,7 +1898,114 @@ void func_00254400(void* self, float f0, float f1)
 }
 #endif
 
+//100%
 INCLUDE_ASM("mem/memstd", func_00254410);
+#ifdef SKIP_ASM
+extern void* D_00480270[];
+extern char D_004A2EA0[];
+extern char D_00480258[];
+extern char D_004A2EA8[];
+extern float D_004A2EB0[];
+extern "C" void func_0037D090_4410(void*, int, int, int, int, int) __asm__("func_0037D090__FPv");
+
+struct sDevEnt_4410 {
+    short delta;
+    short index;
+    void* fn;
+};
+struct sDev_4410 {
+    char pad[0x10D8];
+    sDevEnt_4410* vt;
+};
+extern sDev_4410* D_004A5B80_4410 __asm__("D_004A5B80");
+
+typedef int (*tDevMake_4410)(void*, void*, void*, int, int, int, int, int, int, int, int, int);
+typedef unsigned int (*tDevGet_4410)(void*);
+
+struct sTex_4410 {
+    int id;
+    int w;
+    int h;
+    static void* operator new(unsigned int size)
+    {
+        return ((tMemAlloc5_00254368)D_00509430.alloc)(D_004A2EA0, size, 0, 0, D_00509430.field_0x8);
+    }
+    sTex_4410(char* pix, int width, int height)
+    {
+        w = width;
+        h = height;
+        sDev_4410* d = D_004A5B80_4410;
+        sDevEnt_4410* e = &d->vt[47];
+        id = ((tDevMake_4410)e->fn)((char*)d + e->delta, pix, D_004A2EA8, w, h, 0, 0, 0, 0, 0, 0, -1);
+        func_0037D090_4410(d, id, 0, 0, 0, 0);
+    }
+};
+
+struct sTexCache_4410 {
+    void* owner;
+    void** vt;
+    sDev_4410* dev;
+    int fC;
+    char* src;
+    sTex_4410** texs;
+    int count;
+    int rows;
+    int ncols;
+    int heights[6];
+    int f3C;
+};
+
+extern "C" void* func_00254410(void* self, void* a0, int a1, int a2, int a3)
+{
+    sTexCache_4410* s = (sTexCache_4410*)self;
+    s->owner = a0;
+    s->vt = D_00480270;
+    s->dev = (sDev_4410*)a2;
+    char* src = *(char**)(a1 + 4);
+    s->src = src;
+    char* data;
+    if (*(unsigned int*)(src + 0xC) & 0x1000)
+        data = src + *(int*)(src + 0x10);
+    else
+        data = src + 0x10;
+    int w = *(short*)(s->src + 4);
+    int h = *(short*)(s->src + 6);
+    s->ncols = 0;
+    s->rows = w / 16;
+    int left = h;
+    for (;;) {
+        int b = 1 << func_00254350(left);
+        if (left == b) {
+            s->heights[s->ncols] = left;
+            s->ncols++;
+            break;
+        }
+        s->heights[s->ncols] = b;
+        left -= s->heights[s->ncols++];
+    }
+    s->count = s->rows * s->ncols;
+    float fh = h;
+    float fw = w;
+    int idx = 0;
+    s->texs = (sTex_4410**)((tMemAlloc5_00254368)D_00509430.alloc)(D_00480258, s->count * 12, 0, 0, D_00509430.field_0x8);
+    for (int row = 0; row < s->rows; row++) {
+        int x = 0;
+        for (int col = 0; col < s->ncols; col++) {
+            s->texs[idx++] = new sTex_4410(data + ((x << 6) + h * (row << 6)), 16, s->heights[col]);
+            x += s->heights[col];
+        }
+    }
+    s->fC = 0;
+    sDevEnt_4410* e1 = &s->dev->vt[10];
+    float fW = (float)((tDevGet_4410)e1->fn)((char*)s->dev + e1->delta);
+    sDevEnt_4410* e2 = &s->dev->vt[11];
+    float fH = (float)((tDevGet_4410)e2->fn)((char*)s->dev + e2->delta);
+    func_002543F0(s, (fW - fw) * 0.5f, (fH - fh) * 0.5f, D_004A2EB0[0]);
+    func_00254400(s, 1.0f, 1.0f);
+    s->f3C = a3;
+    return s;
+}
+#endif
 
 //100%
 INCLUDE_ASM("mem/memstd", func_002547B8);
