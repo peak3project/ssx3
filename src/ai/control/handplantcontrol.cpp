@@ -73,7 +73,309 @@ extern "C" void cHandplantMotion_gainFocus(char* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_00138BA0);
+#ifdef SKIP_ASM
+extern "C" float func_0031C128(float x);
+extern "C" float func_0031BF60(float x);
+extern "C" void func_0031BE50(float* s, float* c, float angle);
+extern t4Vector D_004FF140;
+
+struct sQ_8BA0 {
+    float x, y, z, w;
+    sQ_8BA0() {}
+    sQ_8BA0(const float& ax, const float& ay, const float& az, const float& aw) { w = aw; x = ax; y = ay; z = az; }
+} __attribute__((aligned(16)));
+
+struct sV_8BA0 : sQ_8BA0 {
+    sV_8BA0(float ax, float ay, float az, float aw) { x = ax; y = ay; z = az; w = aw; }
+};
+
+struct sHP_8BA0 {
+    sQ_8BA0 start;   // 0x00
+    sQ_8BA0 vel;     // 0x10
+    sQ_8BA0 v20;     // 0x20
+    sQ_8BA0 target;  // 0x30
+    sQ_8BA0 v40;     // 0x40
+    sQ_8BA0 lpos;    // 0x50
+    sQ_8BA0 lvel;    // 0x60
+    sQ_8BA0 axis;    // 0x70
+    float spin;      // 0x80
+    float dur;       // 0x84
+    float time;      // 0x88
+    float f8C;       // 0x8C
+    int f90;         // 0x90
+    int f94;         // 0x94
+    char pad98[0x8];
+    char* rider;     // 0xA0
+};
+
+struct sHitObj_8BA0 {
+    char pad0[0x1C];
+    int flags;       // 0x1C
+};
+
+struct sHit_8BA0 {
+    sQ_8BA0 pos;     // 0x00
+    sQ_8BA0 normal;  // 0x10
+    char pad20[0x38];
+    sHitObj_8BA0* obj; // 0x58
+};
+
+// PORT: PS2-only VU0 inline asm (vector subtract).
+static inline sQ_8BA0 Sub_8BA0(const sQ_8BA0& a, const sQ_8BA0& b)
+{
+    sQ_8BA0 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (normalize via rsqrt).
+static inline sQ_8BA0 Normalize_8BA0(const sQ_8BA0& v)
+{
+    sQ_8BA0 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vrsqrt    Q, $vf0w, $vf4x\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf5, $vf3, Q\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(v)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4-component dot product).
+static inline float Dot_8BA0(const sQ_8BA0& a, const sQ_8BA0& b)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "lqc2      $vf5, %3\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf5\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "qmfc2.ni  %1, $vf4\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4-component vector length).
+static inline float Len_8BA0(const sQ_8BA0& v)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %1, $vi22\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(v));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (cross product, w = 0).
+static inline sQ_8BA0 Cross_8BA0(const sQ_8BA0& a, const sQ_8BA0& b)
+{
+    sQ_8BA0 r;
+    __asm__(
+        "lqc2      $vf4, %1\n"
+        "lqc2      $vf5, %2\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vsub.w    $vf6, $vf6, $vf6\n"
+        "sqc2      $vf6, %0\n"
+        : "=m"(r)
+        : "o"(a), "o"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (in-place vector divided by scalar).
+static inline void DivEq_8BA0(sQ_8BA0& v, float s)
+{
+    int t;
+    __asm__(
+        "mfc1      %1, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vdiv      Q, $vf0w, $vf3x\n"
+        "lqc2      $vf4, %0\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf5, $vf4, Q\n"
+        "sqc2      $vf5, %0\n"
+        : "+m"(v), "=&r"(t)
+        : "f"(s)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (vector divided by scalar).
+static inline sQ_8BA0 Div_8BA0(const sQ_8BA0& v, float s)
+{
+    sQ_8BA0 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vdiv      Q, $vf0w, $vf3x\n"
+        "lqc2      $vf4, %2\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf4, $vf4, Q\n"
+        "sqc2      $vf4, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (in-place vector times scalar).
+static inline void ScaleEq_8BA0(sQ_8BA0& v, float s)
+{
+    int t;
+    __asm__(
+        "mfc1      %1, %2\n"
+        "lqc2      $vf4, %0\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "+m"(v), "=&r"(t)
+        : "f"(s)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 macro-mode asm (quaternion product a * b).
+static inline sQ_8BA0 QuatMul_8BA0(const sQ_8BA0& a, const sQ_8BA0& b)
+{
+    sQ_8BA0 r;
+    __asm__(
+        "lqc2       $vf4, %1\n"
+        "lqc2       $vf5, %2\n"
+        "vmul.xyzw  $vf7, $vf4, $vf5\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vmulaw.xyz ACC, $vf4, $vf5w\n"
+        "vmaddaw.xyz ACC, $vf5, $vf4w\n"
+        "vsubax.w   ACC, $vf7, $vf7x\n"
+        "vmsubay.w  ACC, $vf0, $vf7y\n"
+        "vmsubz.w   $vf8, $vf0, $vf7z\n"
+        "vmaddw.xyz $vf8, $vf6, $vf0w\n"
+        "sqc2       $vf8, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+static inline sQ_8BA0 AxisAngle_8BA0(const sQ_8BA0& axis, float angle)
+{
+    float s, c;
+    func_0031BE50(&s, &c, angle * 0.5f);
+    return sQ_8BA0(s * axis.x, s * axis.y, s * axis.z, c);
+}
+
+static inline sQ_8BA0 Conj_8BA0(const sQ_8BA0& q)
+{
+    sQ_8BA0 r(q.x, q.y, q.z, q.w);
+    r.x = -r.x;
+    r.y = -r.y;
+    r.z = -r.z;
+    return r;
+}
+
+static inline sQ_8BA0 up_8BA0(char* r) { return *(sQ_8BA0*)(r + 0x1C0); }
+
+// Starts a handplant on a hit: stores the start/target, and works out the spin axis and angle that turn the rider
+// from its current orientation to one facing the wall.
+// PORT: `<?` / `>?` are the g++ minimum / maximum operators (EE min.s / max.s).
+extern "C" void func_00138BA0(sHP_8BA0* self, sHit_8BA0* hit, float dur)
+{
+    char* rider = self->rider;
+    self->start = *(sQ_8BA0*)(rider + 0x110);
+    self->vel = (const sQ_8BA0&)D_004FF120;
+    self->v20 = hit->normal;
+    self->target = hit->pos;
+    self->v40 = Normalize_8BA0(Sub_8BA0(self->target, *(sQ_8BA0*)(*(char**)(*(char**)(rider + 0x780) + 0x2C) + (*(int*)(rider + 0x8A8) << 5))));
+    self->dur = dur;
+    self->time = 0.0f;
+    self->f8C = Dot_8BA0(*(sQ_8BA0*)(self->rider + 0x1E0), self->v20);
+    int f = 0;
+    if (hit->obj)
+        f = hit->obj->flags & 1;
+    self->f90 = f;
+    sQ_8BA0 q = *(sQ_8BA0*)(self->rider + 0x120);
+    sQ_8BA0 q2;
+    sQ_8BA0 axis;
+    axis = Cross_8BA0(up_8BA0(self->rider), (const sQ_8BA0&)D_004FF160);
+    float len = Len_8BA0(axis);
+    if (0.001f < len) {
+        DivEq_8BA0(axis, len);
+        q2 = AxisAngle_8BA0(axis, func_0031C128(len <? 1.0f));
+        q = QuatMul_8BA0(q2, q);
+    }
+    sQ_8BA0 fwd;
+    fwd.x = 1.0f - 2.0f * (q.y * q.y + q.z * q.z);
+    fwd.y = 2.0f * (q.x * q.y + q.w * q.z);
+    fwd.z = 2.0f * (q.x * q.z - q.w * q.y);
+    fwd.w = 0.0f;
+    sQ_8BA0 h = self->v20;
+    h.z = 0.0f;
+    sQ_8BA0 n = Normalize_8BA0(h);
+    self->f94 = Dot_8BA0(n, fwd) < 0.0f;
+    if (self->f94)
+        ScaleEq_8BA0(n, -1.0f);
+    if (*(int*)(self->rider + 0x320))
+        self->f94 ^= 1;
+    axis = Cross_8BA0(fwd, n);
+    len = Len_8BA0(axis);
+    if (0.001f < len) {
+        DivEq_8BA0(axis, len);
+        q2 = AxisAngle_8BA0(axis, func_0031C128(len <? 1.0f));
+        q = QuatMul_8BA0(q2, q);
+    }
+    q2 = QuatMul_8BA0(q, Conj_8BA0(*(sQ_8BA0*)(self->rider + 0x120)));
+    float ang;
+    if (0.0f < q2.w) {
+        ang = (1.5707963705062866f - func_0031C128(q2.w <? 1.0f)) * 2.0f;
+        self->spin = ang;
+        if (ang >= 9.999999747378752e-06f)
+            self->axis = Div_8BA0(sV_8BA0(q2.x, q2.y, q2.z, 0.0f), func_0031BF60(ang * 0.5f));
+        else
+            self->axis = (const sQ_8BA0&)D_004FF140;
+    } else {
+        ang = (1.5707963705062866f - func_0031C128(-(q2.w >? -1.0f))) * 2.0f;
+        self->spin = ang;
+        if (ang >= 9.999999747378752e-06f)
+            self->axis = Div_8BA0(sV_8BA0(q2.x, q2.y, q2.z, 0.0f), func_0031BF60(ang * -0.5f));
+        else
+            self->axis = (const sQ_8BA0&)D_004FF140;
+    }
+    self->spin = self->spin / self->dur;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_00139178);
