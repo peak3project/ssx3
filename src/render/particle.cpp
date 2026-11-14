@@ -9870,7 +9870,441 @@ extern "C" void func_00389C38(t4Vector* self, void* p)
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/particle", func_00389CB8);
+#ifdef SKIP_ASM
+struct sPtM4_9CB8 {
+    t4Vector r[4];
+    sPtM4_9CB8() {}
+    // PORT: PS2-only VU0 inline asm (4x4 matrix copy through VU0 registers).
+    sPtM4_9CB8(const sPtM4_9CB8& o)
+    {
+        __asm__(
+            "lqc2       $vf1, 0x0(%1)\n"
+            "lqc2       $vf2, 0x10(%1)\n"
+            "lqc2       $vf3, 0x20(%1)\n"
+            "lqc2       $vf4, 0x30(%1)\n"
+            "sqc2       $vf1, 0x0(%0)\n"
+            "sqc2       $vf2, 0x10(%0)\n"
+            "sqc2       $vf3, 0x20(%0)\n"
+            "sqc2       $vf4, 0x30(%0)\n"
+            :
+            : "r"(this), "r"(&o)
+            : "memory");
+    }
+};
+
+struct sPtM3_9CB8 {
+    float m[9];
+};
+
+struct sPtVE_9CB8 {
+    short delta;
+    short index;
+    void* (*fn)(void*);
+};
+
+struct sPtCtx_9CB8 {
+    char pad_0x0[0x10D8];
+    sPtVE_9CB8* vtable; // 0x10D8
+};
+
+extern sPtCtx_9CB8* D_004A5B80_9CB8 __asm__("D_004A5B80");
+extern float D_004A43C0[];
+extern int D_004A59A4;
+extern float D_00500C60[16];
+extern float D_004FF130[];
+extern t4Vector D_004FF140_v __asm__("D_004FF140");
+extern float D_004FF150[];
+
+extern "C" void func_0031BE50(float* s, float* c, float angle);
+extern "C" float func_0031C228(float);
+extern "C" float func_0031C128(float);
+extern "C" void func_00389840(t4Vector* dst, sPtM3_9CB8 m, int a, int b);
+
+// PORT: PS2-only VU0 inline asm (vector scale by -1, as render/font Neg_5750; the scratch GPR is a compiler-chosen
+// output operand).
+static inline t4Vector Neg_9CB8(const t4Vector& v)
+{
+    t4Vector r;
+    int t;
+    __asm__(
+        "mfc1       %1, %3\n"
+        "lqc2       $vf4, %2\n"
+        "qmtc2.ni   %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2       $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(-1.0f)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only MMI inline asm (4x4 transpose in place, as sceVu0TransposeMatrix).
+static inline void Transpose_9CB8(sPtM4_9CB8* m)
+{
+    int a, b, c, d, e, f, g, h;
+    __asm__ __volatile__(
+        "lq      %0, 0x0(%8)\n"
+        "lq      %1, 0x10(%8)\n"
+        "lq      %2, 0x20(%8)\n"
+        "lq      %3, 0x30(%8)\n"
+        "pextlw  %4, %1, %0\n"
+        "pextuw  %5, %1, %0\n"
+        "pextlw  %6, %3, %2\n"
+        "pextuw  %7, %3, %2\n"
+        "pcpyld  %0, %6, %4\n"
+        "pcpyud  %1, %4, %6\n"
+        "pcpyld  %2, %7, %5\n"
+        "pcpyud  %3, %5, %7\n"
+        "sq      %0, 0x0(%8)\n"
+        "sq      %1, 0x10(%8)\n"
+        "sq      %2, 0x20(%8)\n"
+        "sq      %3, 0x30(%8)\n"
+        : "=&r"(a), "=&r"(b), "=&r"(c), "=&r"(d), "=&r"(e), "=&r"(f), "=&r"(g), "=&r"(h)
+        : "r"(m)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (vector * matrix, row-vector convention).
+static inline t4Vector MulMV_9CB8(const sPtM4_9CB8* m, const t4Vector& v)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2         $vf8, %1\n"
+        "lqc2         $vf4, 0x0(%2)\n"
+        "lqc2         $vf5, 0x10(%2)\n"
+        "lqc2         $vf6, 0x20(%2)\n"
+        "lqc2         $vf7, 0x30(%2)\n"
+        "vmulax.xyzw  ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw  $vf12, $vf7, $vf8w\n"
+        "sqc2         $vf12, %0\n"
+        : "=m"(r)
+        : "m"(v), "r"(m)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (a - b).
+static inline t4Vector Sub_9CB8(const t4Vector& a, const t4Vector& b)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (normalize via rsqrt).
+static inline t4Vector Normalize_9CB8(const t4Vector& v)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2       $vf3, %1\n"
+        "vaddw.x    $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw  $vf4, $vf3, $vf3\n"
+        "vadday.x   ACC, $vf4, $vf4y\n"
+        "vmaddaz.x  ACC, $vf6, $vf4z\n"
+        "vmaddw.x   $vf4, $vf6, $vf4w\n"
+        "vrsqrt     Q, $vf0w, $vf4x\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf5, $vf3, Q\n"
+        "sqc2       $vf5, %0\n"
+        : "=m"(r)
+        : "m"(v)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4-component vector length).
+static inline float Length_9CB8(const t4Vector& v)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %1, $vi22\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(v));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (dot product).
+static inline float Dot_9CB8(const t4Vector& a, const t4Vector& b)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "lqc2      $vf5, %3\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf5\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "qmfc2.ni  %1, $vf4\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (row 3 of the matrix = matrix * v).
+static inline void Translate_9CB8(sPtM4_9CB8* top, const t4Vector& v)
+{
+    __asm__ __volatile__(
+        "lqc2         $vf4, 0x0(%0)\n"
+        "lqc2         $vf5, 0x10(%0)\n"
+        "lqc2         $vf6, 0x20(%0)\n"
+        "lqc2         $vf7, 0x30(%0)\n"
+        "lqc2         $vf8, %1\n"
+        "vmulax.xyzw  ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw  $vf12, $vf7, $vf8w\n"
+        "sqc2         $vf12, 0x30(%0)\n"
+        :
+        : "r"(top), "m"(v)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix multiply: top = top * r).
+static inline void MulTop_9CB8(sPtM4_9CB8* top, const sPtM4_9CB8* r)
+{
+    __asm__ __volatile__(
+        "lqc2      $vf4, 0x0(%0)\n"
+        "lqc2      $vf5, 0x10(%0)\n"
+        "lqc2      $vf6, 0x20(%0)\n"
+        "lqc2      $vf7, 0x30(%0)\n"
+        "lqc2      $vf8, 0x0(%1)\n"
+        "lqc2      $vf9, 0x10(%1)\n"
+        "lqc2      $vf10, 0x20(%1)\n"
+        "lqc2      $vf11, 0x30(%1)\n"
+        "vmulax.xyzw  ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw  $vf12, $vf7, $vf8w\n"
+        "vmulax.xyzw  ACC, $vf4, $vf9x\n"
+        "vmadday.xyzw ACC, $vf5, $vf9y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf9z\n"
+        "vmaddw.xyzw  $vf13, $vf7, $vf9w\n"
+        "vmulax.xyzw  ACC, $vf4, $vf10x\n"
+        "vmadday.xyzw ACC, $vf5, $vf10y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf10z\n"
+        "vmaddw.xyzw  $vf14, $vf7, $vf10w\n"
+        "vmulax.xyzw  ACC, $vf4, $vf11x\n"
+        "vmadday.xyzw ACC, $vf5, $vf11y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf11z\n"
+        "vmaddw.xyzw  $vf15, $vf7, $vf11w\n"
+        "sqc2      $vf12, 0x0(%0)\n"
+        "sqc2      $vf13, 0x10(%0)\n"
+        "sqc2      $vf14, 0x20(%0)\n"
+        "sqc2      $vf15, 0x30(%0)\n"
+        :
+        : "r"(top), "r"(r)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix product, returned by value).
+static inline sPtM4_9CB8 MulMat_9CB8(const sPtM4_9CB8* a, const sPtM4_9CB8* b)
+{
+    sPtM4_9CB8 r;
+    __asm__(
+        "lqc2      $vf4, 0x0(%1)\n"
+        "lqc2      $vf5, 0x10(%1)\n"
+        "lqc2      $vf6, 0x20(%1)\n"
+        "lqc2      $vf7, 0x30(%1)\n"
+        "lqc2      $vf8, 0x0(%2)\n"
+        "lqc2      $vf9, 0x10(%2)\n"
+        "lqc2      $vf10, 0x20(%2)\n"
+        "lqc2      $vf11, 0x30(%2)\n"
+        "vmulax.xyzw  ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw  $vf12, $vf7, $vf8w\n"
+        "vmulax.xyzw  ACC, $vf4, $vf9x\n"
+        "vmadday.xyzw ACC, $vf5, $vf9y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf9z\n"
+        "vmaddw.xyzw  $vf13, $vf7, $vf9w\n"
+        "vmulax.xyzw  ACC, $vf4, $vf10x\n"
+        "vmadday.xyzw ACC, $vf5, $vf10y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf10z\n"
+        "vmaddw.xyzw  $vf14, $vf7, $vf10w\n"
+        "vmulax.xyzw  ACC, $vf4, $vf11x\n"
+        "vmadday.xyzw ACC, $vf5, $vf11y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf11z\n"
+        "vmaddw.xyzw  $vf15, $vf7, $vf11w\n"
+        "sqc2      $vf12, 0x0(%0)\n"
+        "sqc2      $vf13, 0x10(%0)\n"
+        "sqc2      $vf14, 0x20(%0)\n"
+        "sqc2      $vf15, 0x30(%0)\n"
+        :
+        : "r"(&r), "r"(a), "r"(b)
+        : "memory");
+    return r;
+}
+
+// Sets a matrix from its sixteen elements, given row by row.
+static inline void SetMatrix_9CB8(sPtM4_9CB8& m, float m00, float m01, float m02, float m03, float m10, float m11,
+                                  float m12, float m13, float m20, float m21, float m22, float m23, float m30,
+                                  float m31, float m32, float m33)
+{
+    m.r[0].x = m00;
+    m.r[1].x = m10;
+    m.r[2].x = m20;
+    m.r[3].x = m30;
+    m.r[0].y = m01;
+    m.r[1].y = m11;
+    m.r[2].y = m21;
+    m.r[3].y = m31;
+    m.r[0].z = m02;
+    m.r[1].z = m12;
+    m.r[2].z = m22;
+    m.r[3].z = m32;
+    m.r[0].w = m03;
+    m.r[1].w = m13;
+    m.r[2].w = m23;
+    m.r[3].w = m33;
+}
+
+// Row-3 w store: the literal has to come through a const float& so the inlined store folds to a frame offset.
+static inline void SetW_9CB8(t4Vector& v, const float& w) { v.w = w; }
+
+// Rotate the matrix m by `angle` about `axis`, keeping its translation row.
+static inline void Rotate_9CB8(sPtM4_9CB8& m, const float* axis, float angle)
+{
+    sPtM4_9CB8 old = m;
+    t4Vector keep = old.r[3];
+    old.r[3] = *(const t4Vector*)D_004FF130;
+    float s;
+    float c;
+    func_0031BE50(&s, &c, angle);
+    float cc = c;
+    float ss = s;
+    float t = 1.0f - cc;
+    float x = axis[0];
+    float y = axis[1];
+    float z = axis[2];
+    float tx = t * x;
+    float ty = t * y;
+    float tz = t * z;
+    float sx = ss * x;
+    float sy = ss * y;
+    float sz = ss * z;
+    m.r[3].x = 0.0f;
+    m.r[3].y = 0.0f;
+    m.r[3].z = 0.0f;
+    m.r[0].w = 0.0f;
+    SetW_9CB8(m.r[3], 1.0f);
+    m.r[1].w = 0.0f;
+    m.r[3] = keep;
+    m.r[2].w = 0.0f;
+    m.r[0].x = tx * x + cc;
+    m.r[1].x = tx * y + sz;
+    m.r[2].x = tx * z - sy;
+    m.r[0].y = ty * x - sz;
+    m.r[1].y = ty * y + cc;
+    m.r[2].y = ty * z + sx;
+    m.r[0].z = tz * x + sy;
+    m.r[1].z = tz * y - sx;
+    m.r[2].z = tz * z + cc;
+    MulTop_9CB8(&m, &old);
+}
+
+static inline sPtM3_9CB8 Mat3_9CB8(const sPtM4_9CB8* n)
+{
+    sPtM3_9CB8 r;
+    r.m[0] = n->r[0].x;
+    r.m[1] = n->r[0].y;
+    r.m[2] = n->r[0].z;
+    r.m[3] = n->r[1].x;
+    r.m[4] = n->r[1].y;
+    r.m[5] = n->r[1].z;
+    r.m[6] = n->r[2].x;
+    r.m[7] = n->r[2].y;
+    r.m[8] = n->r[2].z;
+    return r;
+}
+
+extern "C" void func_00389CB8(t4Vector* self, void* pv, float s)
+{
+    t4Vector* p = (t4Vector*)pv;
+    t4Vector sh[10];
+    sh[0].w = 0.49541598558425903f;
+    sh[2].w = D_004A43C0[0];
+    sh[3].w = -1.4862500429153442f;
+    sh[7].w = 0.20466558635234833f;
+    sh[1].w = 0.0f;
+    sh[4].w = 0.0f;
+    sh[5].w = 0.0f;
+    sh[6].w = 0.0f;
+    sh[8].w = 0.0f;
+    sh[9].w = 0.0f;
+    sPtCtx_9CB8* g = D_004A5B80_9CB8;
+    sPtVE_9CB8* vt = g->vtable;
+    sPtM4_9CB8 A = *(sPtM4_9CB8*)vt[35].fn((char*)g + vt[35].delta);
+    t4Vector e = Neg_9CB8(t4Vector(A.r[3]));
+    Transpose_9CB8(&A);
+    e = MulMV_9CB8(&A, e);
+    e.w = 1.0f;
+    t4Vector n = Normalize_9CB8(Sub_9CB8(*p, e));
+    float nz = n.z;
+    n.z = 0.0f;
+    float len = Length_9CB8(n);
+    float pitch = -func_0031C228(nz / len);
+    float yaw;
+    if (0.0f < len) {
+        float dd = Dot_9CB8(n, n) * Dot_9CB8(D_004FF140_v, D_004FF140_v);
+        float t;
+        __asm__("sqrt.s %0, %1" : "=f"(t) : "f"(dd));
+        if (t < 0.001f) {
+            yaw = 0.0f;
+        } else {
+            float x = Dot_9CB8(n, D_004FF140_v) / t;
+            float y;
+            if (-1.0f <= x) {
+                y = x <? 1.0f;
+            } else {
+                y = -1.0f;
+            }
+            yaw = 1.5707963705062866f - func_0031C128(y);
+        }
+        if (n.y < 0.0f) {
+            yaw = 6.2831854820251465f - yaw;
+        }
+    } else {
+        yaw = 0.0f;
+    }
+    sPtM4_9CB8 M = *(sPtM4_9CB8*)(void*)D_004FF1A0;
+    Translate_9CB8(&M, e);
+    Rotate_9CB8(M, D_004FF150, -pitch);
+    Rotate_9CB8(M, &D_004FF160.x, -yaw);
+    Transpose_9CB8(&M);
+    if (D_004A59A4 == 0) {
+        SetMatrix_9CB8(*(sPtM4_9CB8*)D_00500C60, 0.0f, 0.0f, 1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+                       0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+        D_004A59A4 = 1;
+    }
+    sPtM4_9CB8 N = MulMat_9CB8((sPtM4_9CB8*)D_00500C60, &M);
+    func_00389840(sh, Mat3_9CB8(&N), 3, 3);
+    func_00389620((sPtVec4u*)self, (sPtVec4u*)sh, s * 0.7500065565109253f);
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/particle", func_0038A530);
