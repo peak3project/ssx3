@@ -1514,7 +1514,44 @@ extern "C" char* func_0035DA70(char* self, char* a1, char* a2, char* a3)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/railmodifier", func_0035DDE8);
+#ifdef SKIP_ASM
+struct sVec4c_DDE8 : public t4Vector {
+    sVec4c_DDE8(float ax, float ay, float az, float aw)
+    {
+        x = ax;
+        y = ay;
+        z = az;
+        w = aw;
+    }
+};
+
+extern "C" void func_0035CFF0_DDE8(sRmRigid_D4A0* b, const t4Vector& angVel) __asm__("func_0035CFF0");
+
+static inline void setVelocity_DDE8(char* self, const t4Vector& v, float invMass)
+{
+    *(t4Vector*)(self + 0x50) = DivD4A0(v, invMass);
+    *(t4Vector*)(self + 0xB0) = v;
+}
+
+extern "C" void func_0035DDE8_impl(char* self, char* p2) __asm__("func_0035DDE8");
+
+extern "C" void func_0035DDE8_impl(char* self, char* p2)
+{
+    float h = 5000.0f / *(float*)(self + 8) + 100.0f;
+    *(int*)(self + 0x28) = 0;
+    if (600.0f < h) {
+        h = 600.0f;
+    }
+    // Int-arithmetic body address (amendment 2026-11-02b): with a typed sRmRigid_D4A0* the invMass load is
+    // scheduled above the stack copy of the velocity (97.83).
+    int body = (int)self + 0x30;
+    setVelocity_DDE8(self, AddD4A0(DivD4A0(vu0Scale(*(t4Vector*)(p2 + 0x10), *(float*)(p2 + 0x30)), 2.0f), sVec4c_DDE8(0.0f, 0.0f, h, 0.0f)), *(float*)(body + 0x40));
+    func_0035CFF0_DDE8((sRmRigid_D4A0*)body, vu0Scale(*(t4Vector*)(p2 + 0x20), 10.0f));
+    *(float*)(self + 4) = DotD4A0(*(t4Vector*)(self + 0xB0), *(t4Vector*)(self + 0x50)) + DotD4A0(*(t4Vector*)(self + 0xC0), *(t4Vector*)(self + 0x60));
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/railmodifier", func_0035DF70);
