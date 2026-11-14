@@ -176,7 +176,110 @@ extern "C" void func_00369CB0(void* self, void* obj, int a2, int a3, int a4)
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/graphicsman", func_00369CF8);
+#ifdef SKIP_ASM
+// Position (3 floats).
+struct sV3_9CF8 {
+    float x, y, z;
+    sV3_9CF8() {}
+    sV3_9CF8(float ax, float ay, float az) : x(ax), y(ay), z(az) {}
+};
+
+static inline sV3_9CF8 operator+(const sV3_9CF8& a, const sV3_9CF8& b)
+{
+    return sV3_9CF8(a.x + b.x, a.y + b.y, a.z + b.z);
+}
+
+// PORT: PS2-only vector layout (16-byte aligned, copied with lq/sq).
+struct sV4_9CF8 {
+    float x, y, z, w;
+    sV4_9CF8() {}
+} __attribute__((aligned(16)));
+
+// Vertex colour as floats (alpha first).
+struct sCol_9CF8 {
+    float a, r, g, b;
+};
+
+// Texture coordinate.
+struct sUV_9CF8 {
+    float u, v;
+    float GetU() const { return u; }
+    float GetV() const { return v; }
+};
+
+// A vertex as passed to the triangle-submit virtual (slot 71).
+struct sVtx_9CF8 {
+    float s;                // 0x0
+    float t;                // 0x4
+    float q;                // 0x8
+    int pad_0xC;
+    int c[4];               // 0x10
+    sV4_9CF8 pos;           // 0x20
+    sVtx_9CF8() {}
+};
+
+struct sGVE_9CF8 {
+    short delta;
+    short index;
+    void (*fn)(void*, int, sVtx_9CF8*, int);
+};
+
+// Submits an indexed triangle list: each corner gets position + offset (w = 1), optional texture
+// coordinates (else 0, 0, 1) and its colour halved to the GS 0..128 range.
+extern "C" void func_00369CF8(char* self, int ntri, int unused, unsigned char* idx, sV3_9CF8* pos, sUV_9CF8* uv, sCol_9CF8* col, sV3_9CF8* ofs)
+{
+    sVtx_9CF8 vtx[3];
+    vtx[0].q = vtx[1].q = vtx[2].q = 1.0f;
+    if (uv != 0) {
+        for (int t = 0; t < ntri; t++) {
+            for (int j = 0; j < 3; j++) {
+                int k = idx[j];
+                sV4_9CF8 v;
+                sV3_9CF8 p = pos[k] + *ofs;
+                v.x = p.x;
+                v.y = p.y;
+                v.z = p.z;
+                v.w = 1.0f;
+                vtx[j].pos = v;
+                vtx[j].s = uv[k].GetU();
+                vtx[j].c[3] = (int)(col[k].a * 0.5f);
+                vtx[j].c[0] = (int)(col[k].r * 0.5f);
+                vtx[j].c[1] = (int)(col[k].g * 0.5f);
+                vtx[j].c[2] = (int)(col[k].b * 0.5f);
+                vtx[j].t = uv[k].GetV();
+            }
+            idx += 3;
+            sGVE_9CF8* vt = *(sGVE_9CF8**)(self + 0x10D8);
+            vt[71].fn(self + vt[71].delta, 3, vtx, 0);
+        }
+    } else {
+        for (int t = 0; t < ntri; t++) {
+            for (int j = 0; j < 3; j++) {
+                int k = idx[j];
+                sV4_9CF8 v;
+                sV3_9CF8 p = pos[k] + *ofs;
+                v.x = p.x;
+                v.y = p.y;
+                v.z = p.z;
+                v.w = 1.0f;
+                vtx[j].pos = v;
+                vtx[j].c[3] = (int)(col[k].a * 0.5f);
+                vtx[j].c[0] = (int)(col[k].r * 0.5f);
+                vtx[j].c[1] = (int)(col[k].g * 0.5f);
+                vtx[j].c[2] = (int)(col[k].b * 0.5f);
+                vtx[j].q = 1.0f;
+                vtx[j].s = 0.0f;
+                vtx[j].t = 0.0f;
+            }
+            idx += 3;
+            sGVE_9CF8* vt = *(sGVE_9CF8**)(self + 0x10D8);
+            vt[71].fn(self + vt[71].delta, 3, vtx, 0);
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/graphicsman", func_00369FF0__FPv);
