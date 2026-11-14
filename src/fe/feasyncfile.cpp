@@ -7772,7 +7772,62 @@ extern "C" void func_001B1808(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001B1A08);
+#ifdef SKIP_ASM
+struct sVec4_001B1A08 {
+    float x, y, z, w;
+    sVec4_001B1A08(float a, float b, float c, float d) { x = a; y = b; z = c; w = d; }
+};
+
+class cFEVObj_001B1A08 {
+public:
+    int f0;
+    int f4;
+    virtual void v01();
+    virtual void v02();
+    virtual void v03();
+    virtual void v04();
+    virtual void v05();
+    virtual void v06();
+    virtual void v07();
+    virtual void v08();
+    virtual void setVisible(int on);
+    virtual void v10();
+    virtual void setColour(const sVec4_001B1A08& c);
+};
+
+struct sFrameBits_001B1A08 {
+    int pad[5];
+    unsigned int low : 8;
+    unsigned int frame : 5;
+};
+
+extern char D_004639D0[];
+extern char D_004639E0[];
+
+extern "C" void func_001B1A08(void* self, int on, int a2)
+{
+    if (*(void**)((char*)self + 0x40) != 0) {
+        sFrameBits_001B1A08* t;
+        if (a2 != 0) {
+            t = (sFrameBits_001B1A08*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_004639D0));
+            cFEVObj_001B1A08* o = (cFEVObj_001B1A08*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_00463830));
+            o->setColour(sVec4_001B1A08(1.0f, 0.0f, 0.0f, 0.0f));
+        } else {
+            t = (sFrameBits_001B1A08*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_004639E0));
+        }
+        if (t != 0) {
+            int f = t->frame;
+            if (on != 0) {
+                t->frame = f + 2;
+            } else {
+                t->frame = f - 2;
+            }
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001B1B10);
