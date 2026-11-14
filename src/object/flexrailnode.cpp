@@ -380,7 +380,116 @@ extern "C" void func_00349220(void* self, sFrNode9220* node)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/flexrailnode", func_003492A8);
+#ifdef SKIP_ASM
+struct sFrV4_92A8 {
+    float x, y, z, w;
+    const float& operator[](int i) const { return (&x)[i]; }
+} __attribute__((aligned(16)));
+
+struct sFrM4_92A8 {
+    sFrV4_92A8 r[4];
+};
+
+struct sFrElem_92A8 {
+    char pad_0x00[0x20];
+    sFrV4_92A8 pos; // 0x20
+    char pad_0x30[0x20];
+};
+
+struct sFrNode_92A8 {
+    char pad_0x00[0x20];
+    int count;              // 0x20
+    char pad_0x24[0x2C];
+    sFrM4_92A8* mats;       // 0x50
+    char pad_0x54[0x1C];
+    sFrElem_92A8* elems;    // 0x70
+};
+
+extern float D_004FFAC0[16];
+
+// PORT: PS2-only VU0 inline asm (vector * 4x4 basis matrix, row-vector convention).
+static inline void vu0BasisMul_92A8(sFrV4_92A8& dst, const sFrV4_92A8& g, const float* b)
+{
+    __asm__(
+        "lqc2         $vf8, %1\n"
+        "lqc2         $vf4, 0x0(%2)\n"
+        "lqc2         $vf5, 0x10(%2)\n"
+        "lqc2         $vf6, 0x20(%2)\n"
+        "lqc2         $vf7, 0x30(%2)\n"
+        "vmulax.xyzw  ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw  $vf12, $vf7, $vf8w\n"
+        "sqc2         $vf12, %0\n"
+        : "=m"(dst)
+        : "m"(g), "r"(b)
+        : "memory");
+}
+
+// PORT: PS2-only MMI inline asm (4x4 transpose in place, as sceVu0TransposeMatrix).
+static inline void mmiTranspose_92A8(sFrM4_92A8* m)
+{
+    long t0, t1, t2, t3, t4, t5, t6, t7;
+    __asm__ __volatile__(
+        "lq      %0, 0x0(%8)\n"
+        "lq      %1, 0x10(%8)\n"
+        "lq      %2, 0x20(%8)\n"
+        "lq      %3, 0x30(%8)\n"
+        "pextlw  %4, %1, %0\n"
+        "pextuw  %5, %1, %0\n"
+        "pextlw  %6, %3, %2\n"
+        "pextuw  %7, %3, %2\n"
+        "pcpyld  %0, %6, %4\n"
+        "pcpyud  %1, %4, %6\n"
+        "pcpyld  %2, %7, %5\n"
+        "pcpyud  %3, %5, %7\n"
+        "sq      %0, 0x0(%8)\n"
+        "sq      %1, 0x10(%8)\n"
+        "sq      %2, 0x20(%8)\n"
+        "sq      %3, 0x30(%8)\n"
+        : "=&r"(t0), "=&r"(t1), "=&r"(t2), "=&r"(t3), "=&r"(t4), "=&r"(t5), "=&r"(t6), "=&r"(t7)
+        : "r"(m)
+        : "memory");
+}
+
+static inline void set4_92A8(sFrV4_92A8& r, float x, float y, float z, float w)
+{
+    r.x = x; r.y = y; r.z = z; r.w = w;
+}
+
+// Spline basis matrix for control points a, b, c, d.
+static inline void updateMat_92A8(sFrM4_92A8& out, const sFrV4_92A8& a, const sFrV4_92A8& b, const sFrV4_92A8& c, const sFrV4_92A8& d)
+{
+    sFrM4_92A8 L;
+    sFrV4_92A8 v;
+    set4_92A8(L.r[1], a[0], b[0], c[0], d[0]);
+    vu0BasisMul_92A8(L.r[2], L.r[1], D_004FFAC0);
+    L.r[0] = L.r[2];
+    set4_92A8(L.r[2], a[1], b[1], c[1], d[1]);
+    vu0BasisMul_92A8(L.r[3], L.r[2], D_004FFAC0);
+    L.r[1] = L.r[3];
+    set4_92A8(L.r[3], a[2], b[2], c[2], d[2]);
+    vu0BasisMul_92A8(v, L.r[3], D_004FFAC0);
+    L.r[2] = v;
+    out.r[0] = L.r[0]; out.r[1] = L.r[1]; out.r[2] = L.r[2];
+    L.r[3].x = 0.0f; L.r[3].y = 0.0f; L.r[3].z = 0.0f; L.r[3].w = 1.0f;
+    out.r[3] = L.r[3];
+    mmiTranspose_92A8(&out);
+}
+
+extern "C" void func_003492A8(void* selfv)
+{
+    sFrNode_92A8* self = (sFrNode_92A8*)selfv;
+    int i = 1;
+    updateMat_92A8(self->mats[0], self->elems[0].pos, self->elems[0].pos, self->elems[1].pos, self->elems[2].pos);
+    for (; i < self->count - 2; i++) {
+        updateMat_92A8(self->mats[i], self->elems[i - 1].pos, self->elems[i].pos, self->elems[i + 1].pos, self->elems[i + 2].pos);
+    }
+    updateMat_92A8(self->mats[i], self->elems[i - 1].pos, self->elems[i].pos, self->elems[i + 1].pos, self->elems[i + 1].pos);
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/flexrailnode", func_00349798);
