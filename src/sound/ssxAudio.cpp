@@ -3051,7 +3051,129 @@ int func_00289DE0(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/ssxAudio", func_00289DF0);
+#ifdef SKIP_ASM
+extern "C" int func_003DFAF0(int h);
+extern "C" int ASYNCFILE_release(int h, int a, int b);
+extern "C" void func_0028A298(void* self);
+
+struct sRing_9DF0 {
+    int size;
+    int* data;
+    int head;
+    int tail;
+};
+
+struct sVEntry_9DF0 {
+    short delta;
+    short index;
+    void (*fn)(void*, int, int, int, char*, int, int);
+};
+
+struct sAsync_9DF0 {
+    int handle;             // 0x0
+    int busy;               // 0x4
+    int slot;               // 0x8
+    char names[6][0x40];    // 0xC
+    char pad18C[0x18C - 0xC - 6 * 0x40];
+    sRing_9DF0 q18C;        // 0x18C
+    sRing_9DF0 q19C;        // 0x19C
+    sRing_9DF0 q1AC;        // 0x1AC
+    sRing_9DF0 q1BC;        // 0x1BC
+    char pad1CC[0x8];
+    sVEntry_9DF0* vtbl;     // 0x1D4
+};
+
+static inline int Pop18C_9DF0(sAsync_9DF0* s)
+{
+    sRing_9DF0* q = &s->q18C;
+    int v = -1;
+    if (s->q18C.head != s->q18C.tail) {
+        int d = q->data[q->tail];
+        if (++s->q18C.tail >= s->q18C.size) {
+            s->q18C.tail = 0;
+        }
+        v = d;
+    }
+    return v;
+}
+
+static inline int Pop19C_9DF0(sAsync_9DF0* s)
+{
+    sRing_9DF0* q = &s->q19C;
+    if (s->q19C.head == s->q19C.tail) {
+        return -1;
+    }
+    int v = q->data[q->tail];
+    if (++s->q19C.tail >= s->q19C.size) {
+        s->q19C.tail = 0;
+    }
+    return v;
+}
+
+static inline int Pop1AC_9DF0(sAsync_9DF0* s)
+{
+    sRing_9DF0* q = &s->q1AC;
+    if (s->q1AC.head == s->q1AC.tail) {
+        return -1;
+    }
+    int v = q->data[q->tail];
+    if (++s->q1AC.tail >= s->q1AC.size) {
+        s->q1AC.tail = 0;
+    }
+    return v;
+}
+
+static inline int Pop1BC_9DF0(sAsync_9DF0* s)
+{
+    sRing_9DF0* q = &s->q1BC;
+    if (s->q1BC.head == s->q1BC.tail) {
+        return -1;
+    }
+    int v = q->data[q->tail];
+    if (++s->q1BC.tail >= s->q1BC.size) {
+        s->q1BC.tail = 0;
+    }
+    return v;
+}
+
+extern "C" void func_00289DF0(void* self, int flush)
+{
+    sAsync_9DF0* s = (sAsync_9DF0*)self;
+    int id = Pop18C_9DF0(s);
+    int slot = Pop19C_9DF0(s);
+    int kind = Pop1AC_9DF0(s);
+    Pop1BC_9DF0(s);
+    if (s->busy != 0) {
+        // Cases 1 and 0/2 do the same thing; the binary keeps two separate copies of the arm.
+        switch (kind) {
+        case 0:
+        case 2: {
+            int r = func_003DFAF0(s->handle);
+            ASYNCFILE_release(s->handle, 0, 0);
+            s->vtbl[5].fn((char*)s + s->vtbl[5].delta, id, -1, r != 1 ? 2 : 1, s->names[slot], 0, 0);
+            s->busy = 0;
+            break;
+        }
+        case 1: {
+            int r = func_003DFAF0(s->handle);
+            ASYNCFILE_release(s->handle, 0, 0);
+            s->vtbl[5].fn((char*)s + s->vtbl[5].delta, id, -1, r != 1 ? 2 : 1, s->names[slot], 0, 0);
+            s->busy = 0;
+            break;
+        }
+        }
+    }
+    if (flush != 0) {
+        s->q18C.tail = s->q18C.head;
+        s->q19C.tail = s->q19C.head;
+        s->q1AC.tail = s->q1AC.head;
+        s->q1BC.tail = s->q1BC.head;
+    }
+    func_0028A298(self);
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/ssxAudio", func_0028A058);
