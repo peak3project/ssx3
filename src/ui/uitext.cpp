@@ -997,7 +997,19 @@ extern "C" void cUITextScroll_addUnicodeString(void* self, unsigned short* str)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ui/uitext", func_003A1C80);
+#ifdef SKIP_ASM
+extern "C" void func_003A19F8(void* self, char* str);
+extern "C" void func_003A1C80(void* self, char* str)
+{
+    func_003A18C0_1(self);
+    *(int*)((char*)self + 0xC0) = 0;
+    ((cUIText_3A0C70*)self)->v05(1);
+    ((cUIText_3A0C70*)self)->v24(0);
+    func_003A19F8(self, str);
+}
+#endif
 
 //100%
 INCLUDE_ASM("ui/uitext", func_003A1CF0);
