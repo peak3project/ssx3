@@ -2610,7 +2610,63 @@ extern int func_003FCF98(int, int);
 int func_003F8230(int a) { func_003FCF98(0x22, a); return 0; }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F8258);
+#ifdef SKIP_ASM
+/* sceMcIconSys (libmc): the memory-card icon.sys record (0x3C4 bytes). */
+typedef int iconIVECTOR[4];
+typedef float iconFVECTOR[4];
+typedef struct {
+    char Head[4];
+    unsigned short Reserv1;
+    unsigned short OffsLF;
+    unsigned Reserv2;
+    unsigned TransRate;
+    iconIVECTOR BgColor[4];
+    iconFVECTOR LightDir[3];
+    iconFVECTOR LightColor[3];
+    iconFVECTOR Ambient;
+    unsigned short TitleName[34];
+    char FnameView[64];
+    char FnameCopy[64];
+    char FnameDel[64];
+    char Reserve3[512];
+} sceMcIconSys;
+typedef struct { int f0; int f4; sceMcIconSys icon; int f3CC; } sMcIconReq;
+extern void f8258_A380(char *, unsigned short *) __asm__("func_003FA380");
+extern int func_003FCDC8(sMcIconReq *);
+extern char *strcpy(char *, const char *);
+extern void *memset(void *, int, unsigned int) __asm__("func_00416210");
+int f8258_impl(int a) __asm__("func_003F8258");
+int f8258_impl(int a) {
+    int err = 0;
+    sMcIconReq req;
+    iconIVECTOR bgcolor[4] = { { 0, 0, 0x80, 0 }, { 0, 0, 0x80, 0 } };
+    iconFVECTOR lightdir[3] = { { 0.5f, 0.5f, 0.5f, 0.0f }, { 0.0f, -0.4f, -0.1f, 0.0f }, { -0.5f, -0.5f, 0.5f, 0.0f } };
+    iconFVECTOR lightcol[3] = { { 0.5f, 0.5f, 0.5f, 0.0f }, { 0.5f, 0.5f, 0.5f, 0.0f }, { 0.5f, 0.5f, 0.5f, 0.0f } };
+    iconFVECTOR ambient = { 0.5f, 0.5f, 0.5f, 0.0f };
+    if (a == 0) err = 7;
+    if (err == 0) {
+        memset(&req.icon, 0, sizeof req.icon);
+        strcpy(req.icon.Head, "PS2D");
+        f8258_A380("EA Login", req.icon.TitleName);
+        req.icon.OffsLF = 0x10;
+        req.icon.TransRate = 0x60;
+        __builtin_memcpy(req.icon.BgColor, bgcolor, sizeof bgcolor);
+        __builtin_memcpy(req.icon.LightDir, lightdir, sizeof lightdir);
+        __builtin_memcpy(req.icon.LightColor, lightcol, sizeof lightcol);
+        __builtin_memcpy(req.icon.Ambient, ambient, sizeof ambient);
+        strcpy(req.icon.FnameView, "view.ico");
+        strcpy(req.icon.FnameCopy, "view.ico");
+        strcpy(req.icon.FnameDel, "view.ico");
+        req.f0 = a;
+        req.f4 = 0x296E;
+        req.f3CC = 0x22;
+        err = func_003F8178(func_003FCDC8(&req));
+    }
+    return err;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F8550);
