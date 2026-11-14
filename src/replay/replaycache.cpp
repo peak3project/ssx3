@@ -4297,7 +4297,139 @@ extern "C" void* func_00274D90_impl(char* self, int n)
 }
 #endif
 
+//100%
 INCLUDE_ASM("replay/replaycache", func_00274DE0);
+#ifdef SKIP_ASM
+// Advances playback by one step: plays tracks up to the new time, handles looping and stop/finish events.
+// Like func_002751A0, it collects the tracks' "changed" results; this build never reads them.
+extern "C" void func_00273AA8_4DE0(void* p) __asm__("func_00273AA8");
+extern "C" int func_00273D20_4DE0(void* p) __asm__("func_00273D20");
+extern "C" int func_00273F68_4DE0(void* p) __asm__("func_00273F68");
+extern "C" int func_002751A0_4DE0(void* self, float a, float b, float c) __asm__("func_002751A0");
+extern "C" int func_00274C70_4DE0(void* self) __asm__("func_00274C70");
+extern "C" void func_00274918_4DE0(void* p) __asm__("func_00274918");
+extern "C" void* func_00274D70_p(void) __asm__("func_00274D70");
+
+class cRcListener4DE0 {
+public:
+    virtual void v01(void* src);
+    virtual void v02(void* src, float a, float b);
+    virtual void v03(void* src);
+    virtual void v04(void* src);
+    virtual int v05(void* src);
+};
+
+struct sRcPlayHdr_4DE0 {
+    char pad[1];
+    unsigned char count;
+};
+
+extern "C" void func_00274DE0_impl(char* self) __asm__("func_00274DE0");
+extern "C" void func_00274DE0_impl(char* self)
+{
+    if (*(int*)(self + 0x20) == 0 || *(int*)(self + 0x2C) > 0) {
+        return;
+    }
+    cRcListener4DE0* l = (cRcListener4DE0*)func_00274D70_p();
+    if (*(int*)(self + 0x20) == 1) {
+        *(int*)(self + 0x20) = 2;
+        if (l != 0) {
+            l->v01(self);
+        }
+    }
+    if (*(int*)(self + 0x2C) > 0 || *(int*)(self + 0x20) == 0) {
+        return;
+    }
+    int changed = 0;
+    float t = (float)func_00274C70_4DE0(self);
+    int hit = 0;
+    float rem = 0.0f;
+    if (*(int*)(self + 0x20) == 4 && t <= *(float*)(self + 0x28)) {
+        func_00274918_4DE0(self);
+        return;
+    }
+    if ((unsigned)(*(int*)(self + 0x20) - 3) < 2) {
+        float a = *(float*)(self + 0x24);
+        float b = *(float*)(self + 0x28);
+        float c = a;
+        float lim = b + a;
+        if (*(int*)(self + 0x20) == 4) {
+            lim = t;
+        }
+        if (t <= lim) {
+            a = lim - b;
+            hit = 1;
+            lim = t;
+            rem = c - a;
+        }
+        *(int*)(self + 0x3C) = 1;
+        changed = func_002751A0_4DE0(self, lim, b, a);
+        *(int*)(self + 0x3C) = 0;
+    } else {
+        if (t == 0.0f) {
+            hit = 1;
+        }
+        *(int*)(self + 0x3C) = 1;
+        for (int i = 0; i < (*(sRcPlayHdr_4DE0**)(self + 0x10))->count; i++) {
+            func_00273AA8_4DE0(*(char**)(self + 0x18) + i * 0x3C);
+        }
+        for (int i = 0; i < (*(sRcPlayHdr_4DE0**)(self + 0x10))->count; i++) {
+            int r = 0;
+            if (func_00273D20_4DE0(*(char**)(self + 0x18) + i * 0x3C) != 0 || changed != 0) {
+                r = 1;
+            }
+            changed = r;
+        }
+        *(int*)(self + 0x3C) = 0;
+        *(int*)(self + 0x20) = 3;
+        if (l != 0) {
+            l->v02(self, 0.0f, 0.0f);
+        }
+    }
+    if (*(int*)(self + 0x40) != 0 || *(int*)(self + 0x20) == 4) {
+        func_00274918_4DE0(self);
+        return;
+    }
+    if (hit != 0 && *(int*)(self + 0x1C) != 0) {
+        int changed2 = 0;
+        for (int i = 0; i < (*(sRcPlayHdr_4DE0**)(self + 0x10))->count; i++) {
+            int r = 0;
+            if (func_00273F68_4DE0(*(char**)(self + 0x18) + i * 0x3C) != 0 || changed2 != 0) {
+                r = 1;
+            }
+            changed2 = r;
+        }
+        *(int*)(self + 0x28) = 0;
+        while (t < rem) {
+            rem -= t;
+        }
+        if (rem != 0.0f) {
+            *(int*)(self + 0x3C) = 1;
+            changed2 = func_002751A0_4DE0(self, *(float*)(self + 0x28) + rem, *(float*)(self + 0x28), rem);
+            *(int*)(self + 0x3C) = 0;
+        }
+        if (*(int*)(self + 0x40) != 0) {
+            func_00274918_4DE0(self);
+        }
+    } else {
+        if (t <= *(float*)(self + 0x28) + *(float*)(self + 0x24)) {
+            int v = *(int*)(self + 0x1C);
+            if (v != 0) {
+                if (l != 0) {
+                    v = l->v05(self);
+                }
+                if (*(int*)(self + 0x20) == 0 || v != 0) {
+                    return;
+                }
+            }
+            *(int*)(self + 0x20) = 4;
+            if (l != 0) {
+                l->v03(self);
+            }
+        }
+    }
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("replay/replaycache", func_002751A0);
