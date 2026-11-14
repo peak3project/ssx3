@@ -2289,7 +2289,149 @@ extern "C" void func_002F4A08(sSun_4A08* self, sV4_4A08* vp, int flag)
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_1F1548", func_002F4DB8);
+#ifdef SKIP_ASM
+struct sV4_4DB8 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+// PORT: PS2-only VU0 inline asm (vector times scalar).
+static inline void Scale_4DB8(sV4_4DB8& out, const sV4_4DB8& v, const float& s)
+{
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(out), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (vector add).
+static inline void Add_4DB8(sV4_4DB8& out, const sV4_4DB8& a, const sV4_4DB8& b)
+{
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(out)
+        : "m"(a), "m"(b)
+        : "memory");
+}
+
+static inline float clamp_4DB8(float v, float lo, float hi)
+{
+    return (v >= lo) ? (v <? hi) : lo; // PORT: g++ <? operator
+}
+
+struct sRect_4DB8 {
+    float x, y, w, h;
+};
+
+struct sSun_4DB8 {
+    sRect_4DB8 r;
+    sRect_4DB8 clip;
+    char pad20[4];
+    float z24;
+    char pad28[4];
+    short vis2C;
+    short vis2E;
+    char pad30[0x1C0];
+    sV4_4DB8 sp;
+    char pad200[4];
+    int f204;
+};
+
+struct sCam_4DB8 {
+    float x, y, w, h;
+    float m[4][4];
+    char pad50[8];
+    float f58;
+    char pad5C[4];
+};
+
+struct sVE_4DB8 {
+    short delta;
+    short idx;
+    void* fn;
+};
+
+extern "C" int func_002EE220(int);
+extern "C" float func_002EE0B8(int);
+extern "C" float func_002EE070(int);
+extern "C" void func_0031BE50(float angle, float* s, float* c);
+extern char* D_004A5B80;
+
+extern "C" void func_002F4DB8(sSun_4DB8* self, sCam_4DB8* cam, long flag)
+{
+    char* app = D_004A5B80;
+    sV4_4DB8 t, u;
+    if (func_002EE220(6) == -1) {
+        self->vis2C = 0;
+        self->vis2E = 0;
+        return;
+    }
+    {
+        sV4_4DB8 v, r;
+        float sc[4];
+        float zoff = cam->f58 - 500.0f;
+        int idx = flag == 0 ? 6 : 7;
+        float a = func_002EE0B8(idx) * 0.01745329424738884f;
+        float b = func_002EE070(idx) * 0.01745329424738884f;
+        if (a == 0.0f && b == 0.0f) {
+            func_0031BE50(1.8675024509429932f, &sc[0], &sc[1]);
+            func_0031BE50(0.27925270795822144f, &sc[2], &sc[3]);
+        } else {
+            func_0031BE50(a, &sc[0], &sc[1]);
+            func_0031BE50(b, &sc[2], &sc[3]);
+        }
+        v = *(sV4_4DB8*)&cam->m[3];
+        Scale_4DB8(r, v, -1.0f);
+        t = r;
+        u = t;
+        u.x = t.x * cam->m[0][0] + t.y * cam->m[0][1] + t.z * cam->m[0][2] + t.w * cam->m[0][3];
+        u.y = t.x * cam->m[1][0] + t.y * cam->m[1][1] + t.z * cam->m[1][2] + t.w * cam->m[1][3];
+        u.z = t.x * cam->m[2][0] + t.y * cam->m[2][1] + t.z * cam->m[2][2] + t.w * cam->m[2][3];
+        u.w = t.x * cam->m[3][0] + t.y * cam->m[3][1] + t.z * cam->m[3][2] + t.w * cam->m[3][3];
+        t = u;
+        t.w = 1.0f;
+        u.x = sc[1] * sc[3];
+        u.y = sc[0] * sc[3];
+        u.z = sc[2];
+        u.w = 0.0f;
+        Scale_4DB8(u, u, zoff);
+        Add_4DB8(u, u, t);
+    }
+    {
+        sVE_4DB8* vt = *(sVE_4DB8**)(app + 0x10D8);
+        if (((int (*)(char*, sV4_4DB8*))vt[0x2D8 / 8].fn)(app + vt[0x2D8 / 8].delta, &u)) {
+            self->vis2C = 0;
+            self->vis2E = 0;
+            self->f204 = 0;
+            return;
+        }
+    }
+    self->vis2C = 1;
+    self->vis2E = 1;
+    {
+        sVE_4DB8* vt = *(sVE_4DB8**)(app + 0x10D8);
+        self->sp = ((sV4_4DB8 (*)(char*, sV4_4DB8*))vt[0x2E0 / 8].fn)(app + vt[0x2E0 / 8].delta, &u);
+    }
+    self->r.w = 16.0f;
+    self->r.h = 16.0f;
+    self->r.x = self->sp.x - 8.0f;
+    self->r.y = self->sp.y - 8.0f;
+    self->clip = self->r;
+    self->clip.x = clamp_4DB8(self->clip.x, 0.0f, (cam->x + cam->w) - 16.0f);
+    self->clip.y = clamp_4DB8(self->clip.y, 0.0f, (cam->x + cam->h) - 16.0f);
+    self->z24 = self->sp.z;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_1F1548", func_002F5148);
