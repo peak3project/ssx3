@@ -823,7 +823,144 @@ extern "C" void func_0034C898(sFlagSetList* self, void* arg)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/flagset", func_0034C8E8);
+#ifdef SKIP_ASM
+struct sFlagSet_C8E8 {
+    char pad0[0xC];
+    void** vtable;              // 0xC
+    char pad10[0x8];
+    t4Matrix* xform;            // 0x18 (matrix at +0x10)
+    unsigned int block[4];      // 0x1C
+    int field_0x2c;             // 0x2C
+    int field_0x30;             // 0x30
+    int field_0x34;             // 0x34
+    int field_0x38;             // 0x38
+    int field_0x3c;             // 0x3C
+    int field_0x40;             // 0x40
+    char pad44[0xC0];
+    void* f104;                 // 0x104
+    void* f108;                 // 0x108
+};
+
+struct sFlagBlock_C8E8 {
+    unsigned int w[4];
+};
+
+struct sFsWind_C8E8 {
+    char pad0[0x10];
+    t4Vector dir;               // 0x10
+    t4Vector axis;              // 0x20
+    float strength;             // 0x30
+};
+
+struct sFsXform_C8E8 {
+    char pad0[0x10];
+    t4Matrix m;                 // 0x10
+};
+
+extern "C" void* func_0034FB00(void* self, int a1, int type, void* obj);
+extern "C" void func_0034D1E8(void* self);
+extern "C" void func_0034D6F0(void* self, float dt);
+extern "C" void func_0034CC80(char* self, char* obj, int flag);
+extern t4Vector D_004FF140;
+
+// PORT: PS2-only VU0 inline asm (matrix times vector, constant vector through a register).
+static inline t4Vector MatVec_C8E8(const t4Matrix* m, const t4Vector& v)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf8, %2\n"
+        "lqc2      $vf4, 0x0(%1)\n"
+        "lqc2      $vf5, 0x10(%1)\n"
+        "lqc2      $vf6, 0x20(%1)\n"
+        "lqc2      $vf7, 0x30(%1)\n"
+        "vmulax.xyzw ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw $vf12, $vf7, $vf8w\n"
+        "sqc2      $vf12, %0\n"
+        : "=m"(r)
+        : "r"(m), "o"(v)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (normalize via rsqrt).
+static inline t4Vector Norm_C8E8(const t4Vector& v)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vrsqrt    Q, $vf0w, $vf4x\n"
+        "vwaitq\n"
+        "vmulq.xyzw $vf5, $vf3, Q\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(v)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4-component dot product).
+static inline float fsDot_C8E8(const t4Vector& a, const t4Vector& b)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "lqc2      $vf5, %3\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf5\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "qmfc2.ni  %1, $vf4\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+extern "C" sFlagSet_C8E8* func_0034C8E8(sFlagSet_C8E8* self, int a1, void* obj, sFlagBlock_C8E8* desc, sFsWind_C8E8* wind)
+{
+    func_0034FB00(self, a1, 9, obj);
+    self->block[0] = 0xFFFFFFFF;
+    self->vtable = D_0048FA00;
+    new ((char*)self + 0x40) sFlagVec4c[16];
+    *(sFlagBlock_C8E8*)self->block = *desc;
+    self->field_0x30 = 0;
+    self->field_0x2c = 0;
+    self->field_0x34 = 0;
+    self->block[0] = 0xFFFFFFFF;
+    func_0034D1E8(self);
+    self->field_0x38 = 0;
+    self->field_0x3c = 0;
+    float force;
+    if (self->field_0x40 != 0) {
+        t4Vector n = Norm_C8E8(MatVec_C8E8(&((sFsXform_C8E8*)self->xform)->m, D_004FF140));
+        float strength = fsAbs(wind->strength);
+        force = fsDot_C8E8(n, wind->dir);
+        force = strength * (force * 0.001f);
+    } else {
+        force = fsDot_C8E8(wind->axis, wind->dir);
+        force = force * 0.001f * fsAbs(wind->strength);
+    }
+    func_0034D6F0(self, force);
+    if (self->f104 != 0) {
+        func_0034CC80((char*)self, (char*)self->f104, 1);
+    }
+    if (self->f108 != 0) {
+        func_0034CC80((char*)self, (char*)self->f108, 0);
+    }
+    return self;
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/flagset", func_0034CAB8);
