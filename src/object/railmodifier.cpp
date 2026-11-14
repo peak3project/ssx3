@@ -1128,7 +1128,9 @@ extern "C" void func_0035D908(sRmBody* b, const t4Vector* r, const t4Vector* imp
 
 struct sRmRigid_D4A0 {
     t4Vector pos;        // 0x00
-    char pad_0x10[0x30];
+    t4Vector f10;        // 0x10
+    t4Vector linMom;     // 0x20 (linear momentum)
+    t4Vector angMom;     // 0x30 (angular momentum)
     float invMass;      // 0x40
     char pad_0x44[0xC];
     sRmMat33 invI;      // 0x50
@@ -1767,7 +1769,98 @@ extern "C" void func_0035ED90(sRmBody* self, const t4Vector* b)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/railmodifier", func_0035EDC8);
+#ifdef SKIP_ASM
+extern "C" void* func_002D1BE0();
+extern "C" float func_00336850(void* world, void* tree, sRmHit_C698* hit, void* a3);
+extern "C" float func_0032C5A8(void* sph);
+
+// World sphere-tree query object (ctor/dtor are the retail cWorldSphTree functions).
+class cWorldSphTree {
+public:
+    cWorldSphTree(void* sph, int a2) __asm__("cWorldSphTree_cWorldSphTree");
+    ~cWorldSphTree();
+    char data[0x6C];
+};
+__asm__("_$_13cWorldSphTree = func_003304E8");
+
+// A rail-riding rigid body: tuning floats, the rigid body state at 0x30, its collision sphere at 0xE0.
+struct sRmRider_EDC8 {
+    char pad_0x00[0x14];
+    float restitution;      // 0x14
+    float friction;         // 0x18
+    float minSpeed;         // 0x1C
+    float f20;              // 0x20
+    int pad_0x24;
+    float time;             // 0x28
+    int pad_0x2C;
+    sRmRigid_D4A0 body;     // 0x30
+    char pad_0xD0[0x10];
+    char sph[0x1E0];        // 0xE0
+    char f2C0[4];           // 0x2C0
+};
+
+// Angular velocity from angular momentum: invI * angMom (w kept).
+static inline t4Vector AngVel_EDC8(sRmRider_EDC8* s)
+{
+    t4Vector r;
+    float x = s->body.angMom.x;
+    float y = s->body.angMom.y;
+    float z = s->body.angMom.z;
+    r.x = s->body.invI.m[0][0] * x + s->body.invI.m[1][0] * y + s->body.invI.m[2][0] * z;
+    r.y = s->body.invI.m[0][1] * x + s->body.invI.m[1][1] * y + s->body.invI.m[2][1] * z;
+    r.z = s->body.invI.m[0][2] * x + s->body.invI.m[1][2] * y + s->body.invI.m[2][2] * z;
+    r.w = s->body.angMom.w;
+    return r;
+}
+
+// Sets the angular momentum and updates the angular velocity from it.
+static inline void SetAngMom_EDC8(sRmRider_EDC8* s, const t4Vector& L)
+{
+    s->body.angMom = L;
+    s->body.angVel = AngVel_EDC8(s);
+}
+
+// Linear momentum for a velocity: v / invMass.
+static inline t4Vector MomFromVel_EDC8(const sRmRigid_D4A0* b, const t4Vector& v)
+{
+    return DivD4A0(v, b->invMass);
+}
+
+// Sets the linear velocity and updates the linear momentum from it.
+static inline void SetVel_EDC8(sRmRider_EDC8* s, const t4Vector& v)
+{
+    s->body.linMom = MomFromVel_EDC8(&s->body, v);
+    s->body.vel = v;
+}
+
+extern "C" void func_0035EDC8(sRmRider_EDC8* self)
+{
+    sRmHit_C698 hit;
+    cWorldSphTree tree(self->sph, 1);
+    float depth = func_00336850(func_002D1BE0(), &tree, &hit, self->f2C0);
+    depth -= func_0032C5A8(self->sph);
+    if (depth > 0.0f) {
+        t4Vector push = vu0Scale(hit.nrm, depth + 2.0f);
+        func_0035ED90((sRmBody*)self, &push);
+        SetAngMom_EDC8(self, vu0Scale(self->body.angMom, 0.975f));
+        SetVel_EDC8(self, vu0Scale(self->body.vel, 0.975f));
+        if (DotD4A0(AddD4A0(self->body.vel, CrossD4A0(self->body.angVel, SubD4A0(hit.pos, self->body.pos))), hit.nrm) < 0.0f) {
+            float e = self->restitution;
+            float mu = self->friction;
+            if (LengthD4A0(self->body.vel) < self->minSpeed) {
+                e = 0.0f;
+            }
+            func_0035D4A0(&self->body, &hit.pos, &hit.nrm, e, mu);
+            self->time += 0.016666667f;
+            if (self->f20 > 5.0f) {
+                self->f20 = 10.0f;
+            }
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/railmodifier", func_0035F0B8);
