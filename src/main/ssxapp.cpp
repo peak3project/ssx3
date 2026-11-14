@@ -2042,7 +2042,135 @@ extern "C" void func_00229B90(void* self, int a1)
 }
 #endif
 
+//100%
 INCLUDE_ASM("main/ssxapp", func_00229BA8);
+#ifdef SKIP_ASM
+struct sV2_229BA8 {
+    float x, y;
+    sV2_229BA8() : x(0.0f), y(0.0f) {}
+    sV2_229BA8(const float& ax, const float& ay) : x(ax), y(ay) {}
+};
+
+struct sV4_229BA8 {
+    float x, y, z, w;
+    sV4_229BA8() {}
+    sV4_229BA8(const float& ax, const float& ay, const float& az, const float& aw) : x(ax), y(ay), z(az), w(aw) {}
+};
+
+struct sDrawState_229BA8 {
+    int f0;
+    int f4;
+    int f8;
+    int fC;
+    short f10;
+    short f12;
+};
+
+extern sDrawState_229BA8 D_00501420_229BA8 __asm__("D_00501420");
+
+class cGfx_229BA8 {
+public:
+    char pad_0x0[0xE84];
+    sDrawState_229BA8* top;         // 0xE84
+    char pad_0xE88[0xF50 - 0xE88];
+    int tbl[(0x10D8 - 0xF50) / 4];  // 0xF50
+    // vptr at 0x10D8; slot N at vtable offset N*8
+    virtual void v01(); virtual void v02(); virtual void v03(); virtual void v04();
+    virtual void v05(); virtual void v06(); virtual void v07(); virtual void v08();
+    virtual void v09(); virtual void v10(); virtual void v11(); virtual void v12();
+    virtual void v13(); virtual void v14(); virtual void v15(); virtual void v16();
+    virtual void v17(); virtual void v18(); virtual void v19(); virtual void v20();
+    virtual void v21(); virtual void v22(); virtual void v23(); virtual void v24();
+    virtual void v25(); virtual void v26(); virtual void v27(); virtual void v28();
+    virtual void v29(); virtual void v30(); virtual void v31(); virtual void v32();
+    virtual void v33(); virtual void v34(); virtual void v35(); virtual void v36();
+    virtual void v37(); virtual void v38(); virtual void v39(); virtual void v40();
+    virtual void v41(); virtual void v42(); virtual void v43(); virtual void v44();
+    virtual void v45(); virtual void v46(); virtual void v47(); virtual void v48();
+    virtual void v49(); virtual void v50(); virtual void v51(); virtual void v52();
+    virtual void v53(); virtual void v54(); virtual void v55(); virtual void v56();
+    virtual void v57(); virtual void v58(); virtual void v59(); virtual void v60();
+    virtual void v61(); virtual void v62(); virtual void v63(); virtual void v64();
+    virtual void v65(); virtual void v66(); virtual void v67(); virtual void v68();
+    virtual void v69(); virtual void v70(); virtual void v71(); virtual void v72();
+    virtual void v73(); virtual void v74(); virtual void v75(); virtual void v76();
+    virtual void v77();
+    virtual void v78(const sV4_229BA8* pos, const sV2_229BA8* size, const sV2_229BA8* uv0,
+                     const sV2_229BA8* uv1, const sV4_229BA8* col);
+};
+
+static inline int GetTexId_229BA8(cGfx_229BA8* g, int i)
+{
+    return g->tbl[i + 0x33];
+}
+
+static inline void set0_229BA8(cGfx_229BA8* g, int mask, int shift, int v)
+{
+    g->top->f0 = (g->top->f0 & ~mask) | ((v << shift) & mask);
+}
+
+static inline void set1_229BA8(cGfx_229BA8* g, int mask, int shift, int v)
+{
+    g->top->f4 = (g->top->f4 & ~mask) | ((v << shift) & mask);
+}
+
+// Full-mask field set (value == mask), as main/game's draw-state code writes it.
+static inline void SetBits_229BA8(int* p, int mask, int bits) { *p = (*p & ~mask) | bits; }
+
+static inline void set2_229BA8(cGfx_229BA8* g, int mask, int shift, int v)
+{
+    g->top->f8 = (g->top->f8 & ~mask) | ((v << shift) & mask);
+}
+
+extern cGfx_229BA8* D_004A5B80_229BA8 __asm__("D_004A5B80");
+
+struct sMarker_229BA8 {
+    sV4_229BA8 pos;     // 0x0
+    int count;          // 0x10
+    char pad[0xC];
+};
+
+struct sMarkers_229BA8 {
+    char pad[0x2220];
+    sMarker_229BA8 markers[40];   // 0x2220
+};
+
+extern "C" void func_00229BA8(void* p)
+{
+    sMarkers_229BA8* self = (sMarkers_229BA8*)p;
+    cGfx_229BA8* g = D_004A5B80_229BA8;
+    int pushed = 0;
+    sV2_229BA8 uv0;
+    sV2_229BA8 uv1(1.0f, 1.0f);
+    sV4_229BA8 col(1.0f, 1.0f, 1.0f, 1.0f);
+    sV2_229BA8 size(100.0f, 100.0f);
+    sMarker_229BA8* m = self->markers;
+    for (int i = 0; i < 40; i++) {
+        if (m[i].count > 0) {
+            if (!pushed) {
+                pushed = 1;
+                g->top[1] = g->top[0];
+                g->top++;
+                *g->top = D_00501420_229BA8;
+                g->top->f10 = GetTexId_229BA8(g, 14);
+                set0_229BA8(g, 0xC, 2, 3);
+                SetBits_229BA8(&g->top->f4, 0x400000, 0x400000);
+                set1_229BA8(g, 0x1800000, 23, 0);
+                set1_229BA8(g, 0x300000, 20, 0);
+                set1_229BA8(g, 0xFF000, 12, 0x14);
+                set1_229BA8(g, 0x3, 0, 1);
+                set2_229BA8(g, 0x1FFFFC00, 10, 0);
+                set2_229BA8(g, 0x3E0, 5, 4);
+                set1_229BA8(g, 0x7C, 2, 7);
+            }
+            g->v78(&self->markers[i].pos, &size, &uv0, &uv1, &col);
+        }
+    }
+    if (pushed) {
+        g->top--;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("main/ssxapp", func_00229E20);
