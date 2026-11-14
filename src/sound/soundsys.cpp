@@ -5844,7 +5844,83 @@ extern "C" int func_002A1E20(void* self, unsigned int x)
 }
 #endif
 
+//100%
 INCLUDE_ASM("sound/soundsys", func_002A1E68);
+#ifdef SKIP_ASM
+extern int D_00536730[];
+
+extern "C" int func_002A1E68(void* self, void* rider)
+{
+    int r;
+    cBE_getInterface__Fv(cBE_getBE(), 0);
+    if (D_00535C11[0] == 2) {
+        int t;
+        if (func_002A4078(self) != 0) {
+            t = *(int*)((char*)rider + 0xEC);
+            if (t == 0) {
+                r = 1;
+            } else if (t == 1) {
+                r = 2;
+            } else if (t == 2) {
+                r = 4;
+            } else if (t == 3) {
+                r = 8;
+            } else if (t == 4) {
+                r = 0x10;
+            } else {
+                r = 0x200;
+            }
+        } else {
+            t = *(int*)((char*)rider + 0xEC);
+            if (t == 0) {
+                r = 1;
+            } else {
+                r = 2;
+            }
+        }
+        return r;
+    } else {
+        // shareWithMode9 stays a variable: the target keeps li 1 + movn instead of folding the select.
+        int shareWithMode9 = 1;
+        switch (D_00536730[0]) {
+        case 0:
+            r = 1;
+            break;
+        case 1:
+            r = 2;
+            break;
+        case 2:
+            r = 4;
+            break;
+        case 3:
+            r = 8;
+            break;
+        case 4:
+            r = 0x10;
+            break;
+        case 5:
+            r = shareWithMode9 ? 0x200 : 0x20;
+            break;
+        case 6:
+            r = 0x40;
+            break;
+        case 7:
+            r = 0x80;
+            break;
+        case 8:
+            r = 0x100;
+            break;
+        case 9:
+            r = 0x200;
+            break;
+        default:
+            r = 0;
+            break;
+        }
+    }
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("sound/soundsys", func_002A1FA0);
