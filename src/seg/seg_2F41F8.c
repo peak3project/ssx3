@@ -3641,7 +3641,38 @@ void func_003FA380(char *src, unsigned short *dst) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FA4F0);
+#ifdef SKIP_ASM
+void func_003FA4F0(unsigned short *s, char *out) {
+    T_A380 t = D_004973B0;
+    unsigned char n = 0;
+    unsigned short c;
+    unsigned short x;
+    while ((c = *s++) != 0) {
+        x = (c >> 8) | (((c & 0xFF) << 8) & 0xFF00);
+        if ((x & 0x8100) == 0x8100) {
+            char j;
+            x &= 0xFF;
+            for (j = 0; j < 0x21; j++) {
+                if (t.b[j] == x) {
+                    x = j;
+                    if (x >= 0x1D) out[n++] = x + 0x7B;
+                    else if (x >= 0x17) out[n++] = x + 0x5B;
+                    else if (x >= 0x10) out[n++] = x + 0x3A;
+                    else out[n++] = x + 0x20;
+                    break;
+                }
+            }
+        } else if ((x & 0x8200) == 0x8200) {
+            if (x >= 0x8281 && x <= 0x829A) out[n++] = x - 0x20;
+            else if (x >= 0x8260 && x <= 0x8279) out[n++] = x - 0x1F;
+            else if (x >= 0x824F && x <= 0x8258) out[n++] = x - 0x1F;
+        } else break;
+    }
+    out[n] = 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FA6A8);
