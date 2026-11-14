@@ -11,31 +11,35 @@ extern unsigned int strlen(const char *);
 
 /* D_0051F0C0: the SIF request queue (layout from every user in this unit). Requests a[] are sent, results b[] come
    back with the same key; c[] holds the completion callback (fn 0 = none, 1 = store f14 and wake th). */
-struct sSifReq { int f0; int f4; int pad8[5]; int key; };
+struct sSifReq { int f0; int f4; int dst; int size; int p10; int p14; int id; int key; };
 struct sSifRes { int pad0[2]; int f8; int fC; int f10; int f14; int pad18; int key; };
 struct sSifCb { int (*fn)(int, int, int, int, int, int, int, int, int *); int *out; int arg; int th; };
 struct sSifEnt { int idx; int k1; int k2; int v; };
 struct sSifQueue {
-    char buf[0x4D88];                   /* byte 0: done flag (func_003F4F40) */
+    char buf[0x4D84];                   /* byte 0: done flag (func_003F4F40) */
+    int keymod;                         /* 0x4D84 */
     struct sSifEnt *beg;                /* 0x4D88 */
     struct sSifEnt *end;
     int pad4D90;
     struct sSifReq *a;                  /* 0x4D94 */
-    int pad4D98[2];
+    int pad4D98;
+    struct sSifReq *iopA;               /* 0x4D9C: IOP address of a[] */
     struct sSifRes *b;                  /* 0x4DA0 */
     int pad4DA4[2];
-    int base2;                          /* 0x4DAC */
+    int base2;                          /* 0x4DAC: EE data ring */
     int pad4DB0;
-    int base1;                          /* 0x4DB4 */
-    int pad4DB8[3];
+    int base1;                          /* 0x4DB4: IOP data ring */
+    int *ids;                           /* 0x4DB8: DMA ids by slot */
+    int pad4DBC[2];
     struct sSifCb *c;                   /* 0x4DC4 */
-    int pad4DC8[2];
+    int pad4DC8;
+    int key;                            /* 0x4DCC */
     int head;                           /* 0x4DD0 */
     int tail;
     int cnt;
-    int pad4DDC;
+    int wpos;                           /* 0x4DDC: ring write position */
     int pos;                            /* 0x4DE0 */
-    int pad4DE4;
+    int lim;                            /* 0x4DE4: ring size */
     int h4DE8;
     int h4DEC;
     int h4DF0;
@@ -795,7 +799,162 @@ void func_003F44F8(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F4528);
+#ifdef SKIP_ASM
+struct sSifDma { int src; int dst; int size; int attr; };
+extern volatile int D_004A5B00;
+extern volatile int D_004A5B08;
+extern unsigned char D_00451300[];
+extern int func_00423DE0(int);
+extern int func_00423DC0(int);
+extern int func_00423C90(void);
+extern int func_00423CC0(void);
+extern int func_00424160(struct sSifDma *, int);
+extern int func_00424698(int, int);
+extern int func_00423B20(int, void *, void *);
+extern void func_004261B0(int, void *, int, int, int, int);
+extern void func_0041605C(char *, char *, int);
+extern int func_003F4A78(void);
+extern int func_003F4DE8(void);
+/* Same as func_003F4E80: write back the data cache over [a, a + n). */
+static inline int flushRange_4528(int a, int n)
+{
+    return func_00424698(a, a + n);
+}
+/* Starts the DMA of the request at the queue head (data block and header, or the header alone) and keeps its id. */
+static inline void sendReq_4528(struct sSifQueue *g, struct sSifDma *t)
+{
+    int *pid = (int *)(g->head * 4 + (int)g->ids);
+    int id;
+    if (t[0].size != 0) {
+        id = func_00424160(&t[0], 2);
+    } else {
+        id = func_00424160(&t[1], 1);
+    }
+    *pid = id;
+}
+/* A gather list for flags & 2: entries of (n, p), ended by n <= 0. */
+struct sSifVec { int n; char *p; };
+int func_003F4528_impl(int *h, int flags, int p2, int p3, char *data, int len, int dst, unsigned size, int (*fn)(int, int, int, int, int, int, int, int, int *), int *out) __asm__("func_003F4528");
+int func_003F4528_impl(int *h, int flags, int p2, int p3, char *data, int len, int dst, unsigned size, int (*fn)(int, int, int, int, int, int, int, int, int *), int *out) {
+    struct sSifQueue *g = &D_0051F0C0;
+    struct sSifVec *list;
+    int off;
+    int avail;
+    int sync;
+    int flush;
+    int alen;
+    int key;
+    struct sSifDma t[2];
+    if (h == 0 || h[3] == 0) {
+        return -1;
+    }
+    size &= 0xFFFFFFF0;
+    if ((dst & 0xF) != 0) {
+        return -1;
+    }
+    if (len < 0) {
+        len = strlen(data) + 1;
+    }
+    list = (flags & 2) ? (struct sSifVec *)data : 0;
+    if (list != 0) {
+        int i;
+        len = 0;
+        for (i = 0; list[i].n > 0; i++) {
+            len += list[i].n;
+        }
+    }
+    D_004A5B00 = 2;
+    func_00423DE0(g->sema);
+    D_004A5B00 = 0;
+    if ((g->head + 1) % g->cnt == g->tail) {
+        while ((g->head + 1) % g->cnt == g->tail) {
+            func_00423DC0(g->sema);
+            func_003F4A78();
+            func_00423DE0(g->sema);
+        }
+    }
+    if (g->wpos < g->pos) {
+        off = g->wpos;
+        avail = g->pos - off - 0x40;
+    } else if (g->lim - g->wpos - 0x40 >= len) {
+        off = g->wpos;
+        avail = g->lim - g->wpos;
+    } else {
+        off = 0;
+        avail = g->pos - 0x40;
+    }
+    if (avail < len) {
+        func_00423DC0(g->sema);
+        return -1;
+    }
+    sync = flags & 1;
+    flush = flags & 4;
+    alen = len + 0x3F;
+    g->c[g->head].fn = fn;
+    g->c[g->head].out = out;
+    g->c[g->head].arg = flags;
+    g->c[g->head].th = func_00423C90();
+    if (len > 0) {
+        if (list != 0) {
+            char *d = (char *)(g->base2 + off);
+            int i;
+            for (i = 0; list[i].n > 0; i++) {
+                func_0041605C(d, list[i].p, list[i].n);
+                d += list[i].n;
+            }
+        } else {
+            func_0041605C((char *)(g->base2 + off), data, len);
+        }
+    }
+    g->a[g->head].f0 = g->base1 + off;
+    g->a[g->head].f4 = len;
+    g->a[g->head].dst = dst;
+    g->a[g->head].size = size;
+    g->a[g->head].p10 = p2;
+    g->a[g->head].p14 = p3;
+    g->a[g->head].id = h[3];
+    g->a[g->head].key = g->key;
+    if (flush) {
+        flushRange_4528(dst, size + 0x80);
+    }
+    t[0].src = g->base2 + off;
+    t[0].dst = g->base1 + off;
+    t[0].size = alen & ~0x3F;
+    t[0].attr = 0;
+    t[1].src = (int)&g->a[g->head];
+    t[1].dst = (int)&g->iopA[g->head];
+    t[1].size = 0x20;
+    t[1].attr = 0;
+    sendReq_4528(g, t);
+    while (g->ids[g->head] == 0) {
+        int t0 = func_003F4DE8();
+        while (t0 == func_003F4DE8()) {
+        }
+        sendReq_4528(g, t);
+    }
+    if (sync) {
+        func_004261B0(1, D_00451300, D_00451300[0], 0, 0, 0);
+    }
+    key = g->key;
+    if (len > 0) {
+        g->wpos = off + (alen & ~0x3F);
+    }
+    g->key = (g->key + 1) % g->keymod;
+    g->head = (g->head + 1) % g->cnt;
+    func_00423DC0(g->sema);
+    if (g->h4DEC < 0 && fn == (void *)1) {
+        g->h4DEC = func_00423B20(8, (void *)func_003F4448, g);
+    }
+    if (fn == (void *)1) {
+        D_004A5B08 = 2;
+        func_00423CC0();
+        D_004A5B08 = 0;
+    }
+    return key;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003F4A78);
