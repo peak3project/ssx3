@@ -6902,7 +6902,104 @@ extern "C" void func_00364360(void* self, ulong** pp)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/railmodifier", func_003645B8);
+#ifdef SKIP_ASM
+// 4-float vector (16-byte aligned) with element access by index.
+struct sDmVec45B8 {
+    float x, y, z, w;
+    const float& operator[](int i) const { return (&x)[i]; }
+} __attribute__((aligned(16)));
+
+// 4x4 matrix whose copies go through VU0 registers (vf1..vf4).
+struct sDmMat45B8 {
+    sDmVec45B8 row[4];
+    // PORT: PS2-only VU0 inline asm (4x4 matrix copy through VU0 registers).
+    sDmMat45B8& operator=(const sDmMat45B8& s)
+    {
+        __asm__ __volatile__(
+            "lqc2      $vf1, 0x0(%1)\n"
+            "lqc2      $vf2, 0x10(%1)\n"
+            "lqc2      $vf3, 0x20(%1)\n"
+            "lqc2      $vf4, 0x30(%1)\n"
+            "sqc2      $vf1, 0x0(%0)\n"
+            "sqc2      $vf2, 0x10(%0)\n"
+            "sqc2      $vf3, 0x20(%0)\n"
+            "sqc2      $vf4, 0x30(%0)\n"
+            :
+            : "r"(this), "r"(&s)
+            : "memory");
+        return *this;
+    }
+};
+
+// One view state: projection, view matrix and two parameter vectors (0xA0 bytes).
+struct sDmView45B8 {
+    sDmMat45B8 proj;    // 0x00
+    sDmMat45B8 view;    // 0x40
+    sDmVec45B8 a;       // 0x80
+    sDmVec45B8 b;       // 0x90
+};
+
+// A deferred-render camera (0x180 bytes): world matrix and two view states.
+struct sDmCamera45B8 {
+    sDmMat45B8 world;       // 0x000
+    sDmView45B8 views[2];   // 0x040, 0x0E0
+};
+
+// The deferred-render manager's view-state table (mIndexView at 0x69CC0, states from 0x69CD0).
+struct sDeferMan45B8 {
+    char pad_0x0[0x69CC0];
+    int indexView;              // 0x69CC0
+    int pad_0x69CC4;
+    int numViewState;           // 0x69CC8
+    int pad_0x69CCC;
+    sDmCamera45B8 viewStates[1];    // 0x69CD0
+};
+
+static inline bool eqVec45B8(const sDmVec45B8& a, const sDmVec45B8& b)
+{
+    return a[0] == b[0] && a[1] == b[1] && a[2] == b[2] && a[3] == b[3];
+}
+
+static inline bool eqMat45B8(const sDmMat45B8& a, const sDmMat45B8& b)
+{
+    return a.row[0][0] == b.row[0][0] && a.row[0][1] == b.row[0][1] && a.row[0][2] == b.row[0][2] &&
+           a.row[0][3] == b.row[0][3] && a.row[1][0] == b.row[1][0] && a.row[1][1] == b.row[1][1] &&
+           a.row[1][2] == b.row[1][2] && a.row[1][3] == b.row[1][3] && a.row[2][0] == b.row[2][0] &&
+           a.row[2][1] == b.row[2][1] && a.row[2][2] == b.row[2][2] && a.row[2][3] == b.row[2][3] &&
+           a.row[3][0] == b.row[3][0] && a.row[3][1] == b.row[3][1] && a.row[3][2] == b.row[3][2] &&
+           a.row[3][3] == b.row[3][3];
+}
+
+// Finds the camera's view state in the table (comparing the second view), adding it if missing; sets indexView.
+extern "C" void func_003645B8(sDeferMan45B8* self, const sDmCamera45B8* cam)
+{
+    self->indexView = -1;
+    for (int i = 0; i < self->numViewState; i++) {
+        if (eqMat45B8(self->viewStates[i].views[1].proj, cam->views[1].proj) &&
+            eqMat45B8(self->viewStates[i].views[1].view, cam->views[1].view) &&
+            eqVec45B8(self->viewStates[i].views[1].a, cam->views[1].a) &&
+            eqVec45B8(self->viewStates[i].views[1].b, cam->views[1].b)) {
+            self->indexView = i;
+            break;
+        }
+    }
+    if (self->indexView < 0) {
+        self->viewStates[self->numViewState].world = cam->world;
+        self->viewStates[self->numViewState].views[0].proj = cam->views[0].proj;
+        self->viewStates[self->numViewState].views[0].view = cam->views[0].view;
+        self->viewStates[self->numViewState].views[0].a = cam->views[0].a;
+        self->viewStates[self->numViewState].views[0].b = cam->views[0].b;
+        self->viewStates[self->numViewState].views[1].proj = cam->views[1].proj;
+        self->viewStates[self->numViewState].views[1].view = cam->views[1].view;
+        self->viewStates[self->numViewState].views[1].a = cam->views[1].a;
+        self->viewStates[self->numViewState].views[1].b = cam->views[1].b;
+        self->indexView = self->numViewState;
+        self->numViewState++;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/railmodifier", func_00364B88);
