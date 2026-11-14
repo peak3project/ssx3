@@ -5832,7 +5832,82 @@ extern "C" int func_0017A2C8(int* self, int start, void* key)
 }
 #endif
 
+//100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_0017A378);
+#ifdef SKIP_ASM
+extern "C" char* FILE_loadsizez(const char* name, int* size, int align);
+extern "C" void func_002523A8(void* p);
+extern "C" void func_00318350(void* self, const char* s, int len);
+extern "C" void cBXString__cBXString(void* self, int flags);
+extern "C" int func_0017A830(sCamMgr* self, char* name, char* tag);
+extern "C" char* strcpy(char* d, const char* s);
+
+static inline bool isWhite_17A378(char c)
+{
+    return c == ' ' || c == '\t' || c == '\n' || c == '\r';
+}
+
+static inline bool isIdent_17A378(char c)
+{
+    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_' || c == '.' ||
+           c == '-' || c == '/';
+}
+
+// Reads a list of camera file names (quoted or bare, path and extension stripped) and registers each new one.
+extern "C" void func_0017A378(sCamMgr* self, const char* path)
+{
+    int size;
+    char* buf = FILE_loadsizez(path, &size, 0x100);
+    if (buf == 0)
+        return;
+    char* p = buf;
+    for (;;) {
+        while (p < buf + size && isWhite_17A378(*p))
+            p++;
+        if (!(p < buf + size))
+            break;
+        if (*p == '"' || *p == '\'')
+            p++;
+        if (!(p < buf + size))
+            break;
+        char* start = p;
+        char* dot = 0;
+        for (;;) {
+            while (p < buf + size && isIdent_17A378(*p)) {
+                if (dot == 0 && *p == '.')
+                    dot = p;
+                p++;
+            }
+            if ((p < buf + size && *p == '\\') || *p == ':') {
+                start = p + 1;
+                p = start;
+                dot = 0;
+                continue;
+            }
+            break;
+        }
+        if (dot == 0)
+            dot = p;
+        if (p < buf + size) {
+            if (*p == '"' || *p == '\'')
+                p++;
+        }
+        if (dot == start)
+            continue;
+        sStr str;
+        func_00318350(&str, start, dot - start);
+        if (func_0017A830(self, str.s, str.s)) {
+            strcpy(self->entries[self->count].name, str.s);
+            strcpy(self->entries[self->count].tag, str.s);
+            self->entries[self->count].idx = 0x16;
+            self->entries[self->count].active = 0;
+            self->count++;
+        }
+        cBXString__cBXString(&str, 2);
+    }
+    func_002523A8(buf);
+}
+#endif
 
 //100%
 INCLUDE_ASM("camera/trigger/cameratriggerfactory", func_0017A638);
