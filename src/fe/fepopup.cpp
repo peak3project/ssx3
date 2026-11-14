@@ -4671,7 +4671,33 @@ extern "C" void func_001CE520(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/fepopup", func_001CE560);
+#ifdef SKIP_ASM
+struct sKeyPopup_E560 {
+    char pad00[0x68];
+    int caps;                   // 0x68
+    bool shift;                 // 0x6C
+    char pad70[0x148 - 0x70];
+    int lower[0x54];            // 0x148
+    int upper[0x54];            // 0x298
+};
+
+int func_001CE560_E560(sKeyPopup_E560* self, int idx, int* out) __asm__("func_001CE560");
+int func_001CE560_E560(sKeyPopup_E560* self, int idx, int* out)
+{
+    int capsOn = self->caps != 0;
+    bool c;
+    if (self->shift) c = capsOn ^ 1; else c = capsOn;
+    if ((unsigned int)(idx - 0xF) < 0xC) c = !self->shift;
+    if (c) {
+        if (out) *out = self->upper[idx];
+        return self->lower[idx];
+    }
+    if (out) *out = self->lower[idx];
+    return self->upper[idx];
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/fepopup", func_001CE5E0);
