@@ -579,4 +579,141 @@ extern "C" void func_002DC190(sOut_C190* out, sObj_C190** objs, int n, int clip)
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_1DCD10", func_002DC7B0);
+#ifdef SKIP_ASM
+struct sDma_C7B0 {
+    int f0[4];
+    int size : 28;                  // 0x10
+    int f10hi : 4;
+};
+struct sRS_C7B0 {
+    int f0;
+    int f4;
+    int f8;
+    int fC;
+    short tex;
+    short pad;
+};
+struct sEnt_C7B0 {
+    sRS_C7B0 rs;                    // 0x00
+    unsigned int buf;               // 0x14
+    unsigned int next;              // 0x18
+    short key;                      // 0x1C
+    short flag;                     // 0x1E
+    char pad_0x20[0x60];
+};
+struct sRing_C7B0 {
+    int count;                      // 0x0
+    char pad_0x4[0x7C];
+    sEnt_C7B0 ents[1];              // 0x80
+};
+struct sGfx_C7B0 {
+    char pad_0x0[0xE84];
+    sRS_C7B0* top;                  // 0xE84
+    char pad_0xE88[0x18F0 - 0xE88];
+    sRing_C7B0* ring;               // 0x18F0
+    char pad_0x18F4[0x5A00 - 0x18F4];
+    unsigned int buf;               // 0x5A00
+};
+extern sGfx_C7B0* D_C7B0 __asm__("D_004A5B80");
+extern sDma_C7B0* D_004A4474;
+extern "C" char* func_0038F460(void* self, unsigned int addr, int size, int flags);
+extern "C" unsigned int func_0038F668(void* self, char* end, int arg);
+
+static inline void SetUV_C7B0(float uv[2], const float& u, const float& v)
+{
+    uv[0] = u;
+    uv[1] = v;
+}
+
+union uFI_C7B0 {
+    float f;
+    int i;
+};
+
+// GS ST register: s and t scaled by q, packed as raw float bits.
+static inline long PackST_C7B0(const float uv[2], float q)
+{
+    uFI_C7B0 s, t;
+    s.f = uv[0] * q;
+    t.f = uv[1] * q;
+    return (long)s.i | ((long)t.i << 32);
+}
+
+static inline int NumFit_C7B0(int qw, int dw)
+{
+    return (qw * 2) / dw;
+}
+
+// PORT: 64-bit GIF/DMA packet words; float bits reinterpreted through a union.
+extern "C" void func_002DC7B0(sOut_C190* out)
+{
+    sGfx_C7B0* gfx = D_C7B0;
+    int left = out->count;
+    int max = NumFit_C7B0(D_004A4474->size - 4, 5) - 1;
+    int start = 0;
+    while (left > 0) {
+        int n = max;
+        if (left < n)
+            n = left;
+        unsigned int buf = gfx->buf;
+        long* p = (long*)func_0038F460(D_004A4474, buf, -1, 0);
+        float st0[2];
+        float st1[2];
+        SetUV_C7B0(st0, 0.0f, 0.0f);
+        SetUV_C7B0(st1, 1.0f, 1.0f);
+        int pad;
+        int qwc;
+        if ((n & 1) == 0) {
+            pad = 0;
+            qwc = ((n * 5) >> 1) + 3;
+        } else {
+            pad = 1;
+            qwc = ((n * 5) >> 1) + 4;
+        }
+        p[0] = (qwc + 1) | 0x10000000;
+        p[1] = 0;
+        p[2] = 0;
+        p[3] = (long)(qwc | 0x50000000) << 32;
+        p[4] = 0x1400000000008001L;
+        p[5] = 0;
+        p[6] = 0x56;
+        p[7] = 0;
+        p[8] = (n | 0x8000) | 0x5400000000000000L;
+        p[9] = 0x52512;
+        p += 10;
+        for (int j = start; j < start + n; j++) {
+            sSprite_C190* e = &out->e[D_00537AC0_C190[j].idx];
+            float q = e->a.w;
+            uFI_C7B0 qb;
+            qb.f = q;
+            p[0] = PackST_C7B0(st0, q);
+            p[1] = (long)(int)e->col[1] | ((long)(int)e->col[2] << 8) | ((long)(int)e->col[3] << 16) |
+                   ((long)(int)e->col[0] << 24) | ((long)qb.i << 32);
+            p[2] = (long)(int)e->a.x | ((long)(int)e->a.y << 16) | ((long)(int)(e->a.z * q) << 32);
+            p[3] = PackST_C7B0(st1, q);
+            p[4] = (long)(int)e->b.x | ((long)(int)e->b.y << 16) | ((long)(int)(e->b.z * q) << 32);
+            p += 5;
+        }
+        if (pad)
+            *p++ = 0;
+        unsigned int next = func_0038F668(D_004A4474, (char*)p, 4);
+        sRing_C7B0* ring = gfx->ring;
+        sRS_C7B0* rs = gfx->top;
+        if (ring->count < 0xA28) {
+            rs->f8 = (rs->f8 & ~0x1F) | (*(int*)((char*)ring + 0x69CC4) & 0x1F);
+            int key = *(int*)((char*)ring + 0x69CC0);
+            sEnt_C7B0* e = (sEnt_C7B0*)((ring->count++ << 7) + ((unsigned int)ring->ents | 0x30000000));
+            e->rs = *rs;
+            e->buf = buf;
+            e->next = next;
+            e->key = key;
+            e->flag = 0;
+        }
+        gfx->buf = next + 0x10;
+        left -= n;
+        start += n;
+    }
+}
+#endif
