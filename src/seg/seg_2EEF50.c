@@ -685,7 +685,34 @@ void func_003EEFB8(int* p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EEFC8);
+#ifdef SKIP_ASM
+int func_003EEFC8(int* p, int* out) {
+    int* n;
+    if (p[0] == 0) {
+        return 0;
+    }
+    if (p[3] == 0) {
+        while (p[2] < p[4]) {
+            if (((int*)p[5])[p[2]]) {
+                break;
+            }
+            p[2]++;
+        }
+        if (p[2] >= p[4]) {
+            return 0;
+        }
+        p[3] = ((int*)p[5])[p[2]++];
+    }
+    n = (int*)p[3];
+    p[3] = n[0];
+    if (out) {
+        *out = n[2];
+    }
+    return n[1];
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2EEF50", func_003EF088);
