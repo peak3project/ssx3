@@ -1147,7 +1147,31 @@ int func_003B4708(int arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B4740);
+#ifdef SKIP_ASM
+extern int f_49D0_4740(int, unsigned char *, int) __asm__("func_003B49D0");
+int f_4740(unsigned char *p, int arg1) __asm__("func_003B4740");
+
+int f_4740(unsigned char *p, int arg1) {
+    int r = 0;
+    if (p[1] == 0xFB) {
+        switch (p[0] & 0xFE) {
+        case 0x10:
+        case 0x90:
+            r = f_49D0_4740(arg1, p, 0);
+            break;
+        /* the other block types of the 0xFB header (cf. func_003B4818): nothing to do */
+        case 0x18: case 0x1A: case 0x1C: case 0x1E:
+        case 0x30: case 0x32: case 0x34: case 0x46:
+        case 0x98: case 0x9A: case 0x9C: case 0x9E:
+        case 0xB0: case 0xB2: case 0xB4: case 0xC6:
+            break;
+        }
+    }
+    return r;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ealib/seg_2B4578", func_003B47F8);
