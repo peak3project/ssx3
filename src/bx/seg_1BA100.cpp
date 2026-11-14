@@ -1700,7 +1700,120 @@ extern "C" void* func_002BB6B8(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("bx/seg_1BA100", func_002BB6E0);
+#ifdef SKIP_ASM
+extern int D_004A44B4;
+extern int D_004A3860;
+extern int D_004A44B8;
+
+#define MIN_B6E0(a, b) ((a) < (b) ? (a) : (b))
+#define MAX_B6E0(a, b) ((a) > (b) ? (a) : (b))
+// Debug-menu level (D_004A44B8: cVisualEffectsTestMenu item 0x10, 0..100) read through an accessor: the target
+// keeps MAX(level, 0) as a branchy conditional; the bare global in the macro folds to a MAX_EXPR (slt/movz).
+static inline int GetLevel_B6E0() { return D_004A44B8; }
+
+struct sGsState_B6E0 {
+    unsigned int w0;
+    unsigned int w4;
+    unsigned int w8;
+    unsigned int wC;
+    unsigned int w10;
+};
+extern sGsState_B6E0 D_00501420_B6E0 __asm__("D_00501420");
+
+struct sQtGfx_B6E0 {
+    char pad_0x0[0xE84];
+    sGsState_B6E0* stateTop;    // 0xE84
+};
+extern sQtGfx_B6E0* D_004A5B80_B6E0 __asm__("D_004A5B80");
+
+// PORT: PS2-only vector layout (16-byte aligned quads).
+struct sQtV4_B6E0 {
+    float x, y, z, w;
+    sQtV4_B6E0() {}
+    sQtV4_B6E0(float ax, float ay, float az, const float& aw) : x(ax), y(ay), z(az), w(aw) {}
+} __attribute__((aligned(16)));
+
+struct sQtStripVtx_B6E0 {
+    float s;
+    float t;
+    float q;
+    int padC;
+    int col[4];
+    sQtV4_B6E0 pos;
+    sQtStripVtx_B6E0() {}
+};
+
+struct sQtSrc_B6E0 {
+    float scale;        // 0x0
+    float x;            // 0x4
+    float y;            // 0x8
+    char pad_0xC[8];
+    unsigned short nodeIdx;     // 0x14
+    char pad_0x16[10];
+    char* nodes;        // 0x20
+};
+
+struct sQtList_B6E0 {
+    int f0;
+    int count;
+    int* items[1];
+};
+
+// 12-byte entry of the owner's table (indexed by D_004A3860).
+struct sQtEntry_B6E0 {
+    int f0;
+    int f4;
+    sQtList_B6E0* list;     // 0x8
+};
+
+struct sQtOwner_B6E0 {
+    int f0;
+    sQtEntry_B6E0* entries; // 0x4
+};
+
+extern "C" void func_002BB928_6E0(void* ctx, sQtSrc_B6E0* tree, void* node, sQtStripVtx_B6E0* v, sQtV4_B6E0* lo, sQtV4_B6E0* hi) __asm__("func_002BB928");
+
+// PORT: the unit declares func_002BB6E0 as returning void* for its caller; the body returns nothing, bound by asm label.
+extern "C" void func_002BB6E0_impl(sQtOwner_B6E0* self, void* unused) __asm__("func_002BB6E0");
+extern "C" void func_002BB6E0_impl(sQtOwner_B6E0* self, void* unused)
+{
+    if (D_004A44B4 == 0)
+        return;
+    sQtEntry_B6E0* e = &self->entries[D_004A3860];
+    if (e == 0)
+        return;
+    int** items = e->list->items;
+    if (items == 0)
+        return;
+    int* obj = items[MIN_B6E0(MAX_B6E0(GetLevel_B6E0(), 0), e->list->count - 1)];
+    if (obj == 0)
+        return;
+    sQtSrc_B6E0* src = *(sQtSrc_B6E0**)obj;
+    if (src == 0)
+        return;
+    sQtGfx_B6E0* g = D_004A5B80_B6E0;
+    g->stateTop[1] = g->stateTop[0];
+    g->stateTop++;
+    *g->stateTop = D_00501420_B6E0;
+    sQtStripVtx_B6E0 verts[5];
+    for (int k = 0; k < 5; k++) {
+        verts[k].col[3] = 0xFF;
+        verts[k].col[0] = 0;
+        verts[k].col[1] = 0xFF;
+        verts[k].col[2] = 0;
+        verts[k].q = 1.0f;
+        verts[k].padC = 0;
+        verts[k].s = 0.0f;
+        verts[k].t = 0.0f;
+    }
+    sQtV4_B6E0 lo((float)(int)src->x, (float)(int)src->y, 0.0f, 1.0f);
+    sQtV4_B6E0 hi((float)(int)(32768.0f / src->scale + src->x), (float)(int)(32768.0f / src->scale + src->y), 0.0f, 1.0f);
+    func_002BB928_6E0(self, src, src->nodes + src->nodeIdx * 8, verts, &lo, &hi);
+    g->stateTop--;
+}
+#endif
 
 //100%
 INCLUDE_ASM("bx/seg_1BA100", func_002BB928);
