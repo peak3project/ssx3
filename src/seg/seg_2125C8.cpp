@@ -51,7 +51,53 @@ extern "C" void func_003115E0_impl(RangeTable_15E0* t)
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2125C8", func_00311710);
+#ifdef SKIP_ASM
+struct sAnimProbVar_1710 {
+    int value;
+    unsigned int prob;
+    unsigned int FilterMask;
+};
+
+struct sAnimRange_1710 {
+    short start;
+    short count;
+};
+
+struct sAnimRangeTable_1710 {
+    sAnimRange_1710 r[0x1B6];
+};
+
+extern sAnimProbVar_1710 D_00449960[];
+unsigned int AIrand();
+
+extern "C" int func_00311710(sAnimRangeTable_1710* tbl, int anid, unsigned int filterMask)
+{
+    int vStart = tbl->r[anid].start;
+    int vNum = tbl->r[anid].count;
+    if (vNum == 1) {
+        return D_00449960[vStart].value;
+    }
+    int vEnd = vStart + vNum;
+    unsigned int totProb = 0;
+    for (int i = vStart; i < vEnd; i++) {
+        if ((D_00449960[i].FilterMask & filterMask) == filterMask) {
+            totProb += D_00449960[i].prob;
+        }
+    }
+    int r = AIrand() % totProb;
+    for (int i = vStart; i < vEnd; i++) {
+        if ((D_00449960[i].FilterMask & filterMask) == filterMask) {
+            r -= D_00449960[i].prob;
+            if (r <= 0) {
+                return D_00449960[i].value;
+            }
+        }
+    }
+    return D_00449960[vEnd - 1].value;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2125C8", func_00311860);
