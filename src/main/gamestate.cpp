@@ -1098,7 +1098,131 @@ extern "C" void func_00236250(void* self, int mode)
 }
 #endif
 
+//100%
 INCLUDE_ASM("main/gamestate", func_00236418);
+#ifdef SKIP_ASM
+void func_00278DE8(void* self, int val);
+extern "C" int func_00279148(void* self, int i, int a);
+extern "C" void func_0022CEA8(void* p, int a, int b);
+extern int D_004A2594;
+extern int D_004428F8[];
+
+// The world object at game+0x78 (main/game: func_0022CEA8's self).
+struct sWorld_6418 {
+    char pad0[0x1C8];
+    int f1C8;                   // 0x1C8
+};
+
+// The mission interface (cBE_getInterface kind 10, cBEMissionInterface).
+struct sMissionIface_6418 {
+    char pad0[0x10];
+    int f10;                    // 0x10
+};
+
+static inline bool isOne_6418(int m)
+{
+    return m == 1;
+}
+
+// Plays the given sound and pushes front-end state 2.
+static inline void pushMenu_6418(void* self, int sound)
+{
+    func_0020AB50(sound);
+    D_005366E8[++D_004A2A54] = 2;
+    D_004A2A50 = D_004428F8[0];
+    *(int*)((char*)self + 0x8) = 0;
+}
+
+extern "C" void func_00236418(void* self)
+{
+    int next;
+    switch (*(int*)((char*)self + 0x10)) {
+    case 0: {
+        int r = func_00279220(D_004A28A4, 1);
+        if (r != 4 && r != 5 && r != 0) {
+            return;
+        }
+        if (*(int*)((char*)self + 0x14) == 0) {
+            pushMenu_6418(self, 0x1F);
+        } else if (*(int*)((char*)self + 0x14) == 2) {
+            int ok = 0;
+            int* p = func_00144BC0(cBE_getInterface_Fv(cBE_getBE(), 0));
+            bool big = *p > 0x10;
+            if (big && D_00535C10[0] == 4) {
+                ok = 1;
+            }
+            if (ok) {
+                D_004A2594 = 3;
+            } else {
+                D_004A2594 = 4;
+            }
+            pushMenu_6418(self, 0x21);
+        }
+        next = 1;
+        break;
+    }
+    case 1: {
+        if (*(int*)((char*)self + 0x8) == 0) {
+            return;
+        }
+        func_00278DE8(D_004A28A4, 0x1E);
+        if (!isOne_6418(*(int*)((char*)self + 0x14))) {
+            D_004A2A50 = D_004428F0[D_005366E8[--D_004A2A54]];
+        }
+        if (*(int*)((char*)self + 0x14) == 0) {
+            next = 2;
+            break;
+        }
+        int t = *func_00144BC0(cBE_getInterface_Fv(cBE_getBE(), 0));
+        int id = *(int*)((char*)self + 0x18);
+        bool tIn = (unsigned)(t - 0xE) < 3;
+        bool idIn = (unsigned)(id - 0xE) < 3;
+        if (id == t && !idIn) {
+            *(int*)((char*)self + 0x10) = 3;
+            ((sMissionIface_6418*)cBE_getInterface_Fv(cBE_getBE(), 10))->f10 = 1;
+            func_00231250(D_004A28A8->game, 0xF, 0, 0);
+            return;
+        }
+        if (idIn && D_00535C11[0] == 0) {
+            *(int*)((char*)self + 0x8) = 0;
+        }
+        func_0027A860(D_004A28A4, !idIn && !tIn, 1);
+        next = 2;
+        break;
+    }
+    case 2:
+        if (*(int*)((char*)self + 0x14) != 0) {
+            int r = func_00279148(D_004A28A4, 1, 0);
+            if (r == 0xE || r == 0x14) {
+                if (*(int*)((char*)self + 0x8) == 0) {
+                    if (*(int*)((char*)self + 0x1C) != 0) {
+                        return;
+                    }
+                    *(int*)((char*)self + 0x1C) = 1;
+                    *(int*)((char*)self + 0x8) = 1;
+                    return;
+                }
+                *(int*)((char*)self + 0x1C) = 0;
+                ((sWorld_6418*)D_004A28A8->game->f78)->f1C8 = 1;
+                func_0022CEA8(D_004A28A8->game->f78, *(int*)((char*)self + 0x18), 7);
+                next = 3;
+                break;
+            }
+            if (r == 0xD || r == 0x13) {
+                func_001F36C0(D_004A28A8->game->f94, 0);
+            }
+            return;
+        } else {
+            func_00233AA0(self);
+            next = 3;
+        }
+        break;
+    default:
+        return;
+    }
+    *(int*)((char*)self + 0x10) = next;
+}
+#endif
 
 //100%
 INCLUDE_ASM("main/gamestate", func_00236728);
