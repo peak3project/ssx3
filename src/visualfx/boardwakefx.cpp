@@ -2016,7 +2016,126 @@ extern "C" void func_002E2868(sWake_2868* self, int idx)
 }
 #endif
 
+//100%
 INCLUDE_ASM("visualfx/boardwakefx", func_002E2B00);
+#ifdef SKIP_ASM
+struct sV3_2B00 {
+    float x, y, z;
+};
+
+struct sV3c_2B00 {
+    float x, y, z;
+    sV3c_2B00(const float& a, const float& b, const float& c) { x = a; y = b; z = c; }
+};
+
+struct sV4c_2B00 {
+    float x, y, z, w;
+    sV4c_2B00(const sV3c_2B00& v, const float& d) { x = v.x; y = v.y; z = v.z; w = d; }
+} __attribute__((aligned(16)));
+
+struct sPart_2B00 {
+    char pad0[0xC];
+    int flags;                  // 0xC
+    char pad10[0xC];
+    sV3_2B00 pos;               // 0x1C
+};
+
+struct sWake_2B00 {
+    float x0, y0;               // 0x0
+    float w, h;                 // 0x8
+    float x1, y1;               // 0x10
+    float f18, f1C;             // 0x18
+    sPart_2B00* part;           // 0x20
+    float f24, f28;             // 0x24
+    unsigned short on;          // 0x2C
+    unsigned short vis;         // 0x2E
+};
+
+// PORT: PS2-only VU0 inline asm (vector subtract).
+static inline t4Vector Sub_2B00(const t4Vector& a, const sV4c_2B00& b)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+static inline int clampI_2B00(int v, int lo, int hi)
+{
+    return v < lo ? lo : (v > hi ? hi : v);
+}
+
+extern "C" void func_002E2B00(sWake_2B00* self, float* rect)
+{
+    char* obj = D_004A5B80;
+    t4Vector pos;
+    pos.x = self->part->pos.x;
+    pos.y = self->part->pos.y;
+    pos.z = self->part->pos.z;
+    pos.w = 1.0f;
+    sVEntry<int(void*, t4Vector*)>* e = &(*(sVEntry<int(void*, t4Vector*)>**)(obj + 0x10D8))[91];
+    if (e->fn(obj + e->delta, &pos)) {
+        self->on = 0;
+        self->vis = 0;
+    } else {
+        self->on = 1;
+        t4Vector scr;
+        sVEntry<void(t4Vector*, void*, t4Vector*)>* e2 = &(*(sVEntry<void(t4Vector*, void*, t4Vector*)>**)(obj + 0x10D8))[92];
+        e2->fn(&scr, obj + e2->delta, &pos);
+        float depth = scr.z * 5.960465188081798e-08f;
+        if (depth <= 0.005f) {
+            return;
+        }
+        {
+            int w = (int)(depth * 800.0f);
+            int h = (int)(depth * 400.0f);
+            self->vis = 1;
+            int cw = clampI_2B00(w, 1, 16);
+            h = clampI_2B00(h, 1, 8);
+            self->x0 = scr.x - (float)(cw >> 1);
+            self->y0 = scr.y - (float)(h >> 1);
+            self->w = (float)cw;
+            self->h = (float)h;
+            self->x1 = scr.x - 8.0f;
+            self->y1 = scr.y - 4.0f;
+            self->f18 = 16.0f;
+            self->f1C = 8.0f;
+            self->x1 = wakeClamp(self->x1, 0.0f, (rect[0] + rect[2]) - self->f18);
+            self->y1 = wakeClamp(self->y1, 0.0f, (rect[1] + rect[3]) - self->f1C);
+            float s = 0.0f;
+            switch ((unsigned int)(self->part->flags & 0x70)) {
+            case 0x10:
+                s = 100.0f;
+                break;
+            case 0x20:
+                s = 80.0f;
+                break;
+            case 0x40:
+                s = 200.0f;
+                break;
+            }
+            sV3_2B00 d;
+            d.x = rect[6];
+            d.y = rect[10];
+            d.z = rect[14];
+            t4Vector lp = Sub_2B00(pos, sV4c_2B00(sV3c_2B00(d.x * s, d.y * s, d.z * s), 0.0f));
+            t4Vector sc;
+            sVEntry<void(t4Vector*, void*, t4Vector*)>* e3 = &(*(sVEntry<void(t4Vector*, void*, t4Vector*)>**)(obj + 0x10D8))[92];
+            e3->fn(&sc, obj + e3->delta, &lp);
+            self->f24 = sc.z;
+            // screen x mapped to -1..1, then to an angle
+            float t = scr.x - rect[0];
+            t = (t + t) / rect[2] - 1.0f;
+            self->f28 = t * 1.5707964f;
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("visualfx/boardwakefx", func_002E2E18);
