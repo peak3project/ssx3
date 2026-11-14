@@ -569,7 +569,125 @@ extern "C" void func_00309F18(sWSMan9F18* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("wscript/wscriptman", func_0030A060);
+#ifdef SKIP_ASM
+struct func_00309DD0_sValue;
+void func_00226600(void* self, int a1, int a2);
+extern "C" void* func_002224A8(void* self);
+extern "C" void func_002224B8(void* self, void* args, void* table, void* ret);
+extern "C" void func_00225B90(func_00309DD0_sValue* self, int flags);
+extern "C" void* func_00224DA0(void* mem, int a1);
+extern "C" void func_00224DF0(void* obj, int flags);
+// the unit declares func_003A6B78 with an int second parameter; it takes the record pointer
+extern "C" int func_003A6B78_A060(void* world, char* rec, int flag) __asm__("func_003A6B78");
+extern "C" int func_003A6D18(void*, int*);
+extern "C" void func_00309C88(void* self, int* handle);
+extern "C" void func_003097E0(void* self, int v);
+extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
+extern char D_004898D8[];
+extern char* D_004A28A8;
+
+struct sVEntryA060 {
+    short delta;
+    short index;
+    void* fn;
+};
+// cLunoValue: { word0, word1, type }
+struct sValueA060 {
+    int word0;
+    int word1;
+    int type;
+};
+// luno::cLunoVM (luno/lunovm): one register-file pointer, trivial dtor; func_002224A8 is its ctor
+struct sLunoVMA060 {
+    void* m_Regs;
+    ~sLunoVMA060() {}
+};
+
+static inline bool isValidIdA060(const int& id)
+{
+    return id != -1;
+}
+
+struct sWSManA060 {
+    int f0;                     // 0x000
+    char pad4[0x288];
+    void* world;                // 0x28C
+    char* f290;                 // 0x290
+    void* f294;                 // 0x294
+    void* f298;                 // 0x298
+    char pad29C[0x8];
+    char* f2A4;                 // 0x2A4
+    char* f2A8;                 // 0x2A8
+};
+
+extern "C" void func_0030A060(sWSManA060* self, void* a1, void* a2, void* obj)
+{
+    sValueA060 arg;
+    sValueA060 ret;
+    int id;
+    sLunoVMA060 call;
+    int saved = self->f0;
+    sVEntryA060* vt = *(sVEntryA060**)obj;
+    self->f0 = ((int (*)(void*))vt[7].fn)((char*)obj + vt[7].delta);
+    self->f290 = *(char**)((char*)a2 + 0x50);
+    self->f294 = a1;
+    self->f298 = a2;
+    sVEntryA060* vt2 = *(sVEntryA060**)obj;
+    if (((int (*)(void*))vt2[8].fn)((char*)obj + vt2[8].delta) != 0) {
+        if (*(int*)(*(char**)(D_004A28A8 + 0x84) + 0x214) != 4) {
+            char* o = obj != 0 ? (char*)obj - 0x6C0 : 0;
+            if (*(int*)(o + 0x480) != 0) {
+                self->f0 = saved;
+                self->f294 = 0;
+                self->f298 = 0;
+                self->f290 = 0;
+                return;
+            }
+        }
+        func_003097E0(self, *(int*)(self->f290 + 0x78));
+    }
+    id = func_003A6B78_A060(self->world, self->f290, 2);
+    if (isValidIdA060(id)) {
+        if (self->f2A4 == 0 && self->f2A8 == 0) {
+            func_00309C88(self, &id);
+        } else {
+            char* o;
+            void* table;
+            func_00226600(&arg, func_003A6D18(self->world, &id), 0);
+            ret.type = 0;
+            ret.word0 = 0;
+            func_002224A8(&call);
+            if (self->f2A8 != 0) {
+                o = *(char**)(self->f2A8 + 0x3C);
+            } else {
+                o = self->f2A4;
+            }
+            table = *(void**)(o + 0x1C);
+            if (table != 0) {
+                func_002224B8(&call, &arg, table, &ret);
+            } else {
+                table = func_00224DA0(cMemMan_alloc(4, D_004898D8, 0x20000000, 0), 8);
+                func_002224B8(&call, &arg, table, &ret);
+                if (table != 0) {
+                    func_00224DF0(table, 3);
+                }
+            }
+            func_00225B90((func_00309DD0_sValue*)&ret, 2);
+        }
+    }
+    char* p = *(char**)(self->f290 + 0xC);
+    if (p != 0) {
+        sVEntryA060* v2 = *(sVEntryA060**)(p + 0xC);
+        ((void (*)(void*, float))v2[0x29].fn)(p + v2[0x29].delta, 0.5f);
+    }
+    self->f0 = saved;
+    self->f294 = 0;
+    self->f298 = 0;
+    self->f290 = 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("wscript/wscriptman", func_0030A270);
