@@ -9201,7 +9201,145 @@ extern "C" void func_003883B8(cPS2GraphicsMan* self, void* a1, int n, void* a3, 
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/particle", func_003885E0);
+#ifdef SKIP_ASM
+struct sPtGfx_85E0 {
+    char pad_0x0[0x5A00];
+    unsigned int bufAddr;           // 0x5A00
+};
+
+extern int D_004A43B0;
+
+static inline unsigned long gsPrim_85E0(int prim)
+{
+    return ((unsigned long)prim << 47) | ((unsigned long)0x8000 << 31);
+}
+
+// PORT: uncached (0x30000000) GIF/DMA packet pointers; 64-bit GS words are `ulong`.
+void func_003885E0_impl(sPtGfx_85E0* self, sVtx_7EC0** tbl, int start, int total, int n, int ia, int ib, float fa, float fb) __asm__("func_003885E0");
+void func_003885E0_impl(sPtGfx_85E0* self, sVtx_7EC0** tbl, int start, int total, int n, int ia, int ib, float fa, float fb)
+{
+    char* gif = D_004A43B0 ? D_3A00 : D_3A08;
+    unsigned int addr = (unsigned int)gif >> 3;
+    int first = 1;
+    // GIF tag register list (ST, RGBAQ, XYZF2). Kept as a variable like func_00387EC0's b: the binary stores it
+    // after p[1]/p[2] (its register does not die at the store, which a literal's would).
+    long gifRegs = 0x412;
+    D_004A43B0 = 0;
+    unsigned long* p = (unsigned long*)(self->bufAddr | 0x30000000);
+    while (n != 0) {
+        int c = n < 0x25 ? n : 0x24;
+        int lim = total - start;
+        int m = c < lim ? c : lim;
+        int lead = 1;
+        int r = c - m;
+        if (r < 0) {
+            r = 0;
+        }
+        if (first) {
+            lead = start;
+            m--;
+            start++;
+        }
+        // VIF UNPACK code, as in func_00387EC0: set once per batch (lui inside the loop, not hoisted or folded).
+        unsigned int unpackCmd = 0x6C000000;
+        p[0] = 0x10000003;
+        p[3] = (unsigned long)0xD805 << 47;
+        p[4] = (unsigned long)((c * 2) | 0x8000) | gsPrim_85E0(0x5C) | ((unsigned long)0xC000 << 46);
+        p[6] = (long)(c * 3) | ((long)c << 32);
+        p[7] = *(unsigned int*)&fb | ((unsigned long)*(unsigned int*)&fa << 32);
+        p[1] = 0;
+        p[2] = (unsigned long)0x1000101 << 32;
+        p[5] = gifRegs;
+        p += 8;
+        unsigned int t = 2;
+        if (lead >= 0) {
+            p[0] = 0x10000004;
+            p[1] = 0;
+            p[2] = (unsigned long)0x1000101 << 32;
+            unsigned int lo = t | 0x38000;
+            p[3] = (unsigned long)(lo | unpackCmd) << 32;
+            t += 3;
+            p += 4;
+            *(sVtx_7EC0*)p = tbl[ia][lead];
+            p += 6;
+        }
+        if (m != 0) {
+            p[0] = 0x10000001;
+            p[1] = 0;
+            p[2] = (unsigned long)0x1000101 << 32;
+            int m3 = m * 3;
+            unsigned int hm = (m3 << 16) | 0x8000;
+            p[3] = (unsigned long)((t | hm) | unpackCmd) << 32;
+            p[4] = (unsigned long)(m3 | 0x30000000) | ((unsigned long)(unsigned int)((int)tbl[ia] + start * 0x30) << 32);
+            p[5] = 0;
+            t += m3;
+            p += 6;
+        }
+        if (r != 0) {
+            p[0] = 0x10000001;
+            p[1] = 0;
+            p[2] = (unsigned long)0x1000101 << 32;
+            int r3 = r * 3;
+            unsigned int hr = (r3 << 16) | 0x8000;
+            p[3] = (unsigned long)((t | hr) | unpackCmd) << 32;
+            p[4] = (unsigned long)(r3 | 0x30000000) | ((unsigned long)(unsigned int)tbl[ia] << 32);
+            p[5] = 0;
+            t += r3;
+            p += 6;
+        }
+        if (lead >= 0) {
+            p[0] = 0x10000004;
+            p[1] = 0;
+            p[2] = (unsigned long)0x1000101 << 32;
+            unsigned int lo2 = t | 0x38000;
+            p[3] = (unsigned long)(lo2 | unpackCmd) << 32;
+            t += 3;
+            p += 4;
+            *(sVtx_7EC0*)p = tbl[ib][lead];
+            p += 6;
+        }
+        if (m != 0) {
+            p[0] = 0x10000001;
+            p[1] = 0;
+            p[2] = (unsigned long)0x1000101 << 32;
+            int m3 = m * 3;
+            unsigned int hm = (m3 << 16) | 0x8000;
+            p[3] = (unsigned long)((t | hm) | unpackCmd) << 32;
+            p[4] = (unsigned long)(m3 | 0x30000000) | ((unsigned long)(unsigned int)((int)tbl[ib] + start * 0x30) << 32);
+            p[5] = 0;
+            t += m3;
+            p += 6;
+        }
+        if (r != 0) {
+            p[0] = 0x10000001;
+            p[1] = 0;
+            p[2] = (unsigned long)0x1000101 << 32;
+            int r3 = r * 3;
+            unsigned int hr = (r3 << 16) | 0x8000;
+            p[3] = (unsigned long)((t | hr) | unpackCmd) << 32;
+            p[4] = (unsigned long)(r3 | 0x30000000) | ((unsigned long)(unsigned int)tbl[ib] << 32);
+            p[5] = 0;
+            t += r3;
+            p += 6;
+        }
+        p[0] = 0x10000001;
+        p[1] = 0;
+        p[2] = 0;
+        p[3] = (unsigned long)(addr | 0x14000000) << 32;
+        p += 4;
+        fa += fb * (float)c;
+        n -= c;
+        if (n > 0) {
+            n += 1;
+            first = 0;
+            start = (start + c - 1) % total;
+        }
+    }
+    self->bufAddr = (unsigned int)p & 0x0FFFFFFF;
+}
+#endif
 
 INCLUDE_ASM("render/particle", func_003889F0);
 
