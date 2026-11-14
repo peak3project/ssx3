@@ -842,7 +842,134 @@ extern "C" void func_00151C48(sEconItems_00151C48* self, int id, int on)
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/beintecon", func_00151C90);
+#ifdef SKIP_ASM
+// PORT: func_0014BDB8 is declared (void*) but never reads its argument; called here with none
+void* func_0014BDB8_1C90() __asm__("func_0014BDB8__FPv");
+extern "C" int func_0014D448(void* db, int kind, int id);
+extern "C" void* func_0014D558(void* db, int kind, int id);
+extern "C" int func_0014D4C8(void* db, int kind, int id);
+extern "C" int func_00151EF0(void* self, int id, int on);
+
+struct sEconItem_151C90
+{
+    short id;
+    unsigned short flags;
+};
+
+struct sEconItems_151C90
+{
+    char pad[0x288];
+    short* lookup;                  // 0x288
+    int count;                      // 0x28C
+    sEconItem_151C90 items[0x20D];  // 0x290
+    char pad2[0xBC0 - 0x290 - 0x20D * 4];
+    signed char kind;               // 0xBC0
+};
+
+struct sEconRel_151C90
+{
+    char pad0[0x4];
+    short other;        // 0x4
+    short pad6;
+    char pad8[0x2C];
+    int flags;          // 0x34
+};
+
+struct sEconDef_151C90
+{
+    char pad0[0x6];
+    short rel;          // 0x6
+    char pad8[0x2C];
+    int flags;          // 0x34
+};
+
+struct sEconDefs_151C90
+{
+    char pad0[0x4];
+    sEconDef_151C90* defs;  // 0x4
+};
+
+static inline sEconItem_151C90* getItem_151C90(sEconItems_151C90* self, int id)
+{
+    int idx = self->lookup[id];
+    if (idx >= 0)
+        return &self->items[idx];
+    return 0;
+}
+
+static inline int isOwned_151C90(sEconItem_151C90* p)
+{
+    return p->flags & 0x10;
+}
+
+static inline int hasFlag_151C90(sEconDef_151C90* d, int mask)
+{
+    return d->flags & mask;
+}
+
+static inline sEconDef_151C90* getDef_151C90(sEconDefs_151C90* db, int i)
+{
+    if (i < 0)
+        return 0;
+    return &db->defs[i];
+}
+
+// Sets item id owned/unowned; turning on cascades turn-offs to conflicting items (def flag 1), turning off
+// cascades to dependent items (owned before or def flag 8). Then applies the item's links; 0 on failure.
+extern "C" int func_00151C90(void* selfp, int id, int on)
+{
+    sEconItems_151C90* self = (sEconItems_151C90*)selfp;
+    sEconDefs_151C90* db = (sEconDefs_151C90*)func_0014BDB8_1C90();
+    sEconDef_151C90* def = getDef_151C90(db, func_0014D448(db, self->kind, id));
+    sEconItem_151C90* item = getItem_151C90(self, id);
+    int bit1 = hasFlag_151C90(def, 1) != 0;
+    int bit8 = hasFlag_151C90(def, 8) != 0;
+    int wasOn = isOwned_151C90(item) != 0;
+    if (on)
+        item->flags |= 0x10;
+    else
+        item->flags &= ~0x10;
+    if (on && wasOn)
+        return 1;
+    if (on && bit1)
+    {
+        int rid = def->rel;
+        sEconRel_151C90* rel = (sEconRel_151C90*)func_0014D558(db, self->kind, rid);
+        int n = func_0014D4C8(db, self->kind, rid);
+        for (int i = 0; i < n; i++, rel++)
+        {
+            int sid = rel->other;
+            if (sid != id)
+            {
+                int j = self->lookup[sid];
+                if (j >= 0 && (isOwned_151C90(&self->items[j]) || (rel->flags & 8)))
+                {
+                    if (func_00151C90(self, sid, 0) == 0)
+                        return 0;
+                }
+            }
+        }
+    }
+    else if (!on && (wasOn || bit8))
+    {
+        sEconRel_151C90* rel = (sEconRel_151C90*)func_0014D558(db, self->kind, id);
+        int n = func_0014D4C8(db, self->kind, id);
+        for (int i = 0; i < n; i++, rel++)
+        {
+            if (func_00151C90(self, rel->other, 0) == 0)
+                return 0;
+        }
+    }
+    if ((on && !wasOn) || (!on && wasOn))
+    {
+        if (func_00151EF0(self, id, on) == 0)
+            return 0;
+    }
+    return 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("be/beintecon", func_00151EF0);
