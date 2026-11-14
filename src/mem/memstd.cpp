@@ -891,7 +891,213 @@ void* func_00252980_6(void* tag, int size, int align, int d, int flags, int unus
 }
 #endif
 
+//100%
 INCLUDE_ASM("mem/memstd", func_00252A10);
+#ifdef SKIP_ASM
+struct sMemNode_2A10 {
+    unsigned short tag;
+    unsigned short flags;
+    int size;
+    sMemNode_2A10* pnext;       // 0x8
+    sMemNode_2A10* pprev;       // 0xC
+    sMemNode_2A10* fnext;       // 0x10
+    sMemNode_2A10* fprev;       // 0x14
+};
+
+struct sMemHdr_2A10 {
+    unsigned short tag;
+    unsigned short flags;
+    int size;
+    sMemNode_2A10* pnext;       // 0x8
+    sMemNode_2A10* pprev;       // 0xC
+};
+
+struct sMemClass_2A10 {
+    char pad0[0x10];
+    sMemNode_2A10 head;         // 0x10
+    int align;                  // 0x28
+    int bigAlign;               // 0x2C
+    int hdr;                    // 0x30
+    int flags;                  // 0x34
+    int locked;                 // 0x38
+    int sema[5];                // 0x3C
+};
+
+extern int D_004A2E78_2A10 __asm__("D_004A2E78");
+extern int (*D_004A2E7C_2A10)(int, int, int) __asm__("D_004A2E7C");
+
+// First free block of at least size bytes (same body as func_00253100).
+static inline sMemNode_2A10* FirstFit_2A10(sMemClass_2A10* cls, int size, int back)
+{
+    sMemNode_2A10* n = &cls->head;
+    if (back == 0) {
+        do {
+            n = n->fnext;
+        } while (n->size < size);
+    } else {
+        do {
+            n = n->fprev;
+        } while (n->size < size);
+    }
+    return n->tag != 0x4253 ? n : 0;
+}
+
+// Largest free block holding min bytes (same body as func_00253170).
+static inline sMemNode_2A10* BestFit_2A10(sMemClass_2A10* cls, int min, int back)
+{
+    int v = min - 1;
+    if (v < 0) {
+        v = 0;
+    }
+    sMemNode_2A10* best = 0;
+    sMemNode_2A10* n = &cls->head;
+    if (back == 0) {
+        n = cls->head.fnext;
+        for (;;) {
+            if (v < n->size - 0x10) {
+                if (n->tag == 0x4253) {
+                    break;
+                }
+                best = n;
+                v = best->size - 0x10;
+            }
+            n = n->fnext;
+        }
+    } else {
+        n = cls->head.fprev;
+        for (;;) {
+            if (v < n->size - 0x10) {
+                if (n->tag == 0x4253) {
+                    break;
+                }
+                best = n;
+                v = best->size - 0x10;
+            }
+            n = n->fprev;
+        }
+    }
+    return best;
+}
+
+// Inserts a block into the address-sorted free list (same body as func_002532B0).
+static inline void InsertFree_2A10(sMemClass_2A10* cls, sMemNode_2A10* blk)
+{
+    sMemNode_2A10* q = &cls->head;
+    sMemNode_2A10* p = q;
+    int sz = (char*)blk->pnext - (char*)blk;
+    if ((char*)cls->head.fnext + ((char*)cls->head.fprev - (char*)cls->head.fnext) / 2 < (char*)blk) {
+        do
+            p = p->fprev;
+        while (blk < p);
+        q = p->fnext;
+    } else {
+        do
+            q = q->fnext;
+        while (q < blk);
+        p = q->fprev;
+    }
+    blk->size = sz;
+    blk->fnext = q;
+    blk->fprev = p;
+    p->fnext = blk;
+    q->fprev = blk;
+    blk->tag = 0x4246;
+    blk->flags |= 0x4000;
+}
+
+// Takes a block off the free list (same body as func_00253368).
+static inline void RemoveFree_2A10(sMemNode_2A10* blk)
+{
+    sMemNode_2A10* prev = blk->fprev;
+    sMemNode_2A10* next = blk->fnext;
+    prev->fnext = next;
+    next->fprev = prev;
+    blk->tag = 0x424F;
+    blk->flags &= 0xBFFF;
+}
+
+// Allocates size bytes from the class picked by flags, aligned so that (p + offset) is aligned;
+// retries while the out-of-memory callback asks for it.
+extern "C" char* func_00252A10_impl(void* name, int size, int align, int offset, int flags, int unused) __asm__("func_00252A10");
+extern "C" char* func_00252A10_impl(void* name, int size, int align, int offset, int flags, int unused)
+{
+    sMemHdr_2A10 save;
+    char* p = 0;
+    int retry;
+    if (flags == 0)
+        flags = D_004A2E78_2A10;
+    sMemClass_2A10* cls = (sMemClass_2A10*)D_004D2438[flags & 0x3F];
+    if (size < 0)
+        return 0;
+    int top = flags & 0x200;
+    int back = flags & 0x100;
+    do {
+        retry = 0;
+        if (cls->locked != 0)
+            MUTEX_lock(cls->sema);
+        int amask = cls->align - 1;
+        int mask;
+        if (align == 0) {
+            mask = amask;
+            if (flags & 0x400)
+                mask = cls->bigAlign - 1;
+        } else {
+            mask = align - 1;
+        }
+        int n = size + func_00252960(0, flags);
+        if (n < 8)
+            n = 8;
+        int pad = mask + 0x10;
+        int need = n + pad;
+        sMemNode_2A10* blk;
+        if (top)
+            blk = BestFit_2A10(cls, need, back);
+        else
+            blk = FirstFit_2A10(cls, need, back);
+        if (blk != 0) {
+            sMemNode_2A10* rest = 0;
+            int bsize = blk->size;
+            RemoveFree_2A10(blk);
+            save.pnext = blk->pnext;
+            save.pprev = blk->pprev;
+            if (back) {
+                p = (char*)(((int)blk + bsize - n + offset) & ~mask) - offset;
+                rest = blk;
+            } else {
+                p = (char*)(((int)((char*)blk + (mask + 0x10)) + offset) & ~mask) - offset;
+            }
+            blk = (sMemNode_2A10*)(p - 0x10);
+            ((sMemHdr_2A10*)((int)p - 0x10))->pnext = save.pnext;
+            ((sMemHdr_2A10*)((int)p - 0x10))->pprev = save.pprev;
+            if (amask + 0x30 < bsize - need) {
+                if (back) {
+                    rest->pnext->pprev = blk;
+                    ((sMemHdr_2A10*)((int)p - 0x10))->pnext = rest->pnext;
+                    ((sMemHdr_2A10*)((int)p - 0x10))->pprev = rest;
+                    MEM_initblock(rest, 0, 0, 0, 0, rest->pprev, blk);
+                    InsertFree_2A10(cls, rest);
+                } else {
+                    rest = (sMemNode_2A10*)(((int)p + n + amask) & ~amask);
+                    blk->pnext->pprev = rest;
+                    blk->pprev->pnext = blk;
+                    MEM_initblock(rest, 0, 0, 0, 0, blk, ((sMemHdr_2A10*)((int)p - 0x10))->pnext);
+                    InsertFree_2A10(cls, rest);
+                    blk->pnext = rest;
+                }
+            } else {
+                blk->pnext->pprev = blk;
+                blk->pprev->pnext = blk;
+            }
+            MEM_initblock((sMemNode_2A10*)(p - 0x10), 0, size, cls->hdr, flags, blk->pprev, blk->pnext);
+        } else if (D_004A2E7C_2A10 != 0) {
+            retry = D_004A2E7C_2A10(0, size, flags);
+        }
+        if (cls->locked != 0)
+            MUTEX_unlock(cls->sema);
+    } while (retry == 1);
+    return p;
+}
+#endif
 
 extern "C" void* func_00252980(void*);
 
