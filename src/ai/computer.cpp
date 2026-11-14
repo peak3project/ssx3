@@ -2017,7 +2017,72 @@ extern "C" void func_0010F878(sAiRiderList* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ai/computer", func_0010F998);
+#ifdef SKIP_ASM
+float func_00113128(void* self);
+extern "C" int func_0012A180(sAiRiderList* self);
+extern "C" void func_003E6328(int n, int* keys, int* order);
+extern "C" void* func_0028B180();
+extern "C" void func_00299E28(void* a, cRider* r, cRider* next, cRider* prev, int oldRank, int newRank);
+
+extern "C" void func_0010F998(void* self_)
+{
+    sAiRiderList* self = (sAiRiderList*)self_;
+    int order[8];
+    int keys[8];
+    if (self->mMode == 0) return;
+    if (func_0012A180(self) == 0) return;
+    for (int i = 0; i < self->mCount; i++)
+    {
+        order[i] = i;
+        cRider* r = (cRider*)self->mRiders[i];
+        switch (self->mMode)
+        {
+        case 1:
+            if (r->mIsActor)
+            {
+                keys[i] = 0xFFFF;
+            }
+            else
+            {
+                // Two arms: retail (and the July 2003 prototype) still compute this flag
+                // (li 1; bc1t; li 0) although nothing reads it - the branch on it vanished when
+                // jump2 cross-jumped the identical arms after reload.
+                bool late = r->mFinishTime >= 10.0f;
+                if (late)
+                    keys[i] = -(int)(func_00113128(r) + (float)(r->unk_0EC * 20));
+                else
+                    keys[i] = -(int)(func_00113128(r) + (float)(r->unk_0EC * 20));
+            }
+            break;
+        case 2:
+            if (r->mIsActor)
+                keys[i] = -0xFFFF;
+            else
+                keys[i] = *(int*)((char*)r->mMetrix + 0x198);
+            break;
+        }
+    }
+    int count = self->mCount;
+    func_003E6328(count, keys, order);
+    for (int i = 0; i < self->mCount; i++)
+    {
+        if (((cRider*)self->mRiders[order[i]])->unk_0EC != i)
+        {
+            cRider* next = 0;
+            cRider* prev = 0;
+            if (i > 0)
+                prev = (cRider*)self->mRiders[order[i - 1]];
+            if (i < self->mCount - 1)
+                next = (cRider*)self->mRiders[order[i + 1]];
+            func_00299E28(func_0028B180(), (cRider*)self->mRiders[order[i]], next, prev,
+                          ((cRider*)self->mRiders[order[i]])->unk_0EC, i);
+        }
+        ((cRider*)self->mRiders[order[i]])->unk_0EC = i;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ai/computer", func_0010FBF0);
