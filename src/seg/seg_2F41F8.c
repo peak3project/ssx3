@@ -94,7 +94,7 @@ struct sMcState {
     struct sMcEnt *f9C;
     int fA0;
     int fA4;
-    char fA8;
+    unsigned char fA8;
 };
 extern struct sMcState *D_004A5B20;
 
@@ -4871,4 +4871,122 @@ int func_003FC990_impl(struct sMcParams *dst) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2F41F8", func_003FCA40);
+#ifdef SKIP_ASM
+extern int func_003FC0D8(void);
+extern int func_003FA040(int *, int *);
+extern int func_003FB810(int);
+extern int fB828(int) __asm__("func_003FB828");
+extern int func_003FB898(int, int);
+extern int func_003FB910(int, int);
+extern void ca40_B9A0(int) __asm__("func_003FB9A0");
+extern int fBCD8(int, int) __asm__("func_003FBCD8");
+extern void ca40_BBE0(int *) __asm__("func_003FBBE0");
+extern int func_003FBED0(void);
+extern int func_003FBF80(void);
+extern int func_003FBFE0(void);
+extern int ca40_95E8(struct sMcState *) __asm__("func_003F95E8");
+extern int func_003FBDB8(void);
+extern int func_003FBDF0(void);
+extern int func_003FBE40(void);
+extern int ca40_memcmp(int *, int *, int) __asm__("func_00415FC8");
+int func_003FCA40(int *st, int *key) {
+    int r;
+    if (func_003FC0D8() == 0) return 2;
+    if (st == 0) return 4;
+    if (key == 0) return 4;
+    r = func_003FA040(st, key);
+    if (*st == 0 && D_004A5B20->f74 != 0) return 8;
+    if (*st != 2) return func_003FB810(r);
+    if (r != 0 && D_004A5B20->f74 != 4 && D_004A5B20->f74 != 5) return func_003FB810(r);
+    if (D_004A5B20->f74 == 1 && r == 0) D_004A5B20->fA8 = 1;
+    if (D_004A5B20->f74 != 1 && D_004A5B20->f74 != 4) D_004A5B20->fA8 = 0;
+    if (D_004A5B20->f74 == 6) {
+        if (D_004A5B20->f78 == 5) {
+            *st = 1;
+            return func_003FBED0();
+        }
+        if (D_004A5B20->f78 == 6) {
+            ca40_B9A0(func_003FB910(D_004A5B20->f7C, 0));
+            if (func_003FB898(D_004A5B20->f84, 2) != *key) return 0x6E;
+            *key = D_004A5B20->f84;
+            {
+                int e = fBCD8(D_004A5B20->f7C, D_004A5B20->f84);
+                if (e != 0) return fB828(e);
+            }
+            if (r == 0) ca40_BBE0(&D_004A5B20->params.w[24]);
+        }
+    }
+    if (D_004A5B20->f74 == 8) {
+        if (D_004A5B20->f78 == 5) {
+            *st = 1;
+            return func_003FBF80();
+        }
+        if (D_004A5B20->f78 == 10) {
+            int ret;
+            int h = func_003FB910(D_004A5B20->f7C, 0);
+            if (func_003FB898(D_004A5B20->f84, 1) != *key) {
+                ret = 0x6E;
+            } else {
+                *key = D_004A5B20->f84;
+                ret = func_003FBFE0();
+            }
+            ca40_B9A0(h);
+            return ret;
+        }
+    }
+    if ((unsigned)(D_004A5B20->f74 - 4) < 2) {
+        int sub = D_004A5B20->f78;
+        if (sub == 4) {
+            if (r != 0) {
+                D_004A5B20->fA8 = 0;
+                return func_003FB810(r);
+            }
+            ca40_95E8(D_004A5B20);
+            *st = 1;
+            return func_003FBDB8();
+        }
+        if (sub == 9) {
+            if (r != 0) {
+                D_004A5B20->fA8 = 0;
+                return func_003FB810(r);
+            }
+            if (D_004A5B20->fA8 != 0) {
+                D_004A5B20->fA8 = 0;
+                *st = 2;
+                return 0;
+            }
+            D_004A5B20->fA8 = 0;
+            *st = 1;
+            return func_003FBDF0();
+        }
+        if (sub == 7) {
+            int v;
+            if (r != 0) {
+                if (r != 10) {
+                    D_004A5B20->fA8 = 0;
+                    return func_003FB810(r);
+                }
+            } else if (D_004A5B20->f94 != D_004A5B20->f90) goto pending;
+            *st = 2;
+            ca40_B9A0(D_004A5B20->f80);
+            ca40_BBE0(&v);
+            if (D_004A5B20->f74 == 5) return ca40_memcmp(&v, &D_004A5B20->params.w[24], 4) ? 9 : 0;
+            D_004A5B20->params.w[24] = v;
+            return 0;
+        pending:
+            *st = 1;
+            return func_003FBE40();
+        }
+        if (r == 0) {
+            *st = 1;
+            return func_003FBDF0();
+        }
+    } else if (*st == 2) {
+        D_004A5B20->f74 = 0;
+        D_004A5B20->f78 = 0;
+    }
+    return func_003FB810(r);
+}
+#endif
