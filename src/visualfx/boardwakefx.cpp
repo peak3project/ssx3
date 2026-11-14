@@ -2152,7 +2152,7 @@ struct sWakeMgr2E18 {
 };
 
 void* func_002E2860(void* self);
-void* func_002E3110(void* self);
+void func_002E3110(void* self);
 extern "C" void* func_002F4380(void* self);
 
 // PORT: hand-written g++ 2.95 member-array construction loops (vptr at 0x649C).
@@ -2292,18 +2292,92 @@ extern "C" void func_002E30D0(void* self, int i)
 }
 #endif
 
-extern "C" void* func_002E3130(void* self);
+extern "C" void func_002E3130(void* self);
 
 //100%
 INCLUDE_ASM("visualfx/boardwakefx", func_002E3110__FPv);
 #ifdef SKIP_ASM
-void* func_002E3110(void* self)
+void func_002E3110(void* self)
 {
-    return func_002E3130(self);
+    func_002E3130(self);
 }
 #endif
 
+//100%
 INCLUDE_ASM("visualfx/boardwakefx", func_002E3130);
+#ifdef SKIP_ASM
+struct sLight3130 {
+    char pad0[0x40];
+    float vis[2];               // 0x40, per view
+};
+
+struct sHalo3130 {
+    char pad0[0x20];
+    sLight3130* light;          // 0x20
+    char pad24[0xA];
+    unsigned short active;      // 0x2E
+};
+
+struct sSun3130 {
+    char pad0[0x2E];
+    unsigned short active;      // 0x2E
+    char pad30[0x204 - 0x30];
+    float vis;                  // 0x204
+    char pad208[0x210 - 0x208];
+} __attribute__((aligned(16)));
+
+typedef sVEntry<int(void*, void*, float*)> sVE3130;
+
+struct sLens3130 {
+    char pad0[0x60];
+    int haloCount[1][2];        // 0x60
+    sHalo3130 halos[1][2][256]; // 0x68
+    char pad6068[8];
+    sSun3130 suns[1][2];        // 0x6070
+    int viewCount;              // 0x6490
+    int f6494;                  // 0x6494
+    int pad6498;
+    sVE3130* vt;                // 0x649C
+};
+
+extern "C" void func_002E3130(void* selfp)
+{
+    sLens3130* self = (sLens3130*)selfp;
+    if (self->f6494 == 0) {
+        // Double-buffered state with a leading bank dimension of one: the current bank is a
+        // variable (zeroed register multiplied at run time), the other one is !bank.
+        int bufferId = 0;
+        if (D_004A3B18 != 0) {
+            for (int v = 0; v < self->viewCount; v++) {
+                int prev = !bufferId;
+                if (self->suns[bufferId][v].active != 0) {
+                    float t = 0;
+                    sVE3130* e = &self->vt[4];
+                    if (e->fn((char*)self + e->delta, &self->suns[bufferId][v], &t)) {
+                        self->suns[bufferId][v].vis = t;
+                    } else {
+                        self->suns[bufferId][v].vis = self->suns[prev][v].vis;
+                    }
+                }
+            }
+        }
+        for (int v = 0; v < self->viewCount; v++) {
+            int prev = !bufferId;
+            for (int i = 0; i < self->haloCount[bufferId][v]; i++) {
+                if (self->halos[bufferId][v][i].active != 0) {
+                    float t = 0;
+                    sVE3130* e = &self->vt[4];
+                    if (e->fn((char*)self + e->delta, &self->halos[bufferId][v][i], &t)) {
+                        self->halos[bufferId][v][i].light->vis[v] = t;
+                    } else {
+                        self->halos[bufferId][v][i].light->vis[v] = self->halos[prev][v][i].light->vis[v];
+                    }
+                }
+            }
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("visualfx/boardwakefx", func_002E3338);
