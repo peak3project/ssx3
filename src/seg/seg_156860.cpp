@@ -2537,7 +2537,127 @@ extern "C" void func_00258C50(void *arg0, int arg1) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_156860", func_00258CB0);
+#ifdef SKIP_ASM
+int GetHashValue32(char *s);
+extern "C" void *func_0039F9D8(void *list, int hash);
+extern "C" void func_002C2508(void *dst, void *src);
+extern void *D_004A28A8;
+extern void *D_004A28A4;
+extern char D_004A2EF0[];
+extern char D_004805D8[];
+extern char D_004805F8[];
+
+struct sVE_8CB0 {
+    short delta;
+    short index;
+    void *(*fn)(void *, int);
+};
+
+struct sVE2_8CB0 {
+    short delta;
+    short index;
+    int (*fn)(void *, int, void *);
+};
+
+static inline void uiEvent_8CB0(char *o, int ev, void *arg)
+{
+    sVE2_8CB0 *vt = *(sVE2_8CB0 **)(o + 8);
+    vt[24].fn(o + vt[24].delta, ev, arg);
+}
+
+static inline int gameState_8CB0(int st)
+{
+    return *(int *)((char *)D_004A28A4 + 0x550) == st;
+}
+
+// Updates the controller's UI prompt object from the connection state.
+extern "C" void func_00258CB0(char *self)
+{
+    unsigned short buf[0x80];
+    if (*(int *)(self + 0x84) != 0) {
+        *(int *)(self + 0x60) = 0;
+    }
+    char *ui = *(char **)(*(char **)((char *)D_004A28A8 + 0x84) + 0x48);
+    if (ui == 0) {
+        return;
+    }
+    char *obj = (char *)func_0039F9D8(ui + 0x18, GetHashValue32(D_004A2EF0));
+    if (obj == 0) {
+        return;
+    }
+    if (*(int *)(self + 0x78) != 0) {
+        char *o = *(char **)((char *)D_004A28A8 + 0x8C);
+        sVE_8CB0 *vt = *(sVE_8CB0 **)(o + 4);
+        o += vt[4].delta;
+        func_002C2508(buf, vt[4].fn(o, GetHashValue32(D_004805D8)));
+    } else {
+        char *o = *(char **)((char *)D_004A28A8 + 0x8C);
+        sVE_8CB0 *vt = *(sVE_8CB0 **)(o + 4);
+        o += vt[4].delta;
+        func_002C2508(buf, vt[4].fn(o, GetHashValue32(D_004805F8)));
+    }
+    switch (*(int *)(self + 0x98)) {
+    case 0:
+        if (*(int *)(self + 0x74) != 0)
+            return;
+        if (*(int *)(self + 0x78) != 0) {
+            if ((unsigned)(**(int **)(*(char **)((char *)D_004A28A8 + 0x84) + 0xC) - 4) >= 2 && gameState_8CB0(2))
+                return;
+            uiEvent_8CB0(obj, 0xE, buf);
+            *(int *)(self + 0x98) = 1;
+            return;
+        }
+        if (*(int *)(self + 0x84) == 0)
+            return;
+        uiEvent_8CB0(obj, 0xE, buf);
+        *(int *)(self + 0x98) = 2;
+        return;
+    case 2:
+        if (*(int *)(self + 0x74) != 0) {
+            uiEvent_8CB0(obj, 0xF, 0);
+            *(int *)(self + 0x98) = 0;
+            return;
+        }
+        if (*(int *)(self + 0x78) != 0) {
+            uiEvent_8CB0(obj, 0xE, buf);
+            *(int *)(self + 0x98) = 1;
+            return;
+        }
+        if (*(int *)(self + 0x84) == 0) {
+            uiEvent_8CB0(obj, 0xF, 0);
+            *(int *)(self + 0x98) = 0;
+            return;
+        }
+        if (*(int *)(self + 0x3FC) <= 0)
+            return;
+        uiEvent_8CB0(obj, 0xF, 0);
+        *(int *)(self + 0x98) = 0;
+        return;
+    case 1:
+        if (*(int *)(*(char **)((char *)D_004A28A8 + 0x84) + 0x214) == 2 && gameState_8CB0(2)) {
+            uiEvent_8CB0(obj, 0xF, 0);
+            *(int *)(self + 0x98) = 0;
+            return;
+        }
+        if (*(int *)(self + 0x78) == 0) {
+            uiEvent_8CB0(obj, 0xF, 0);
+            *(int *)(self + 0x98) = 0;
+            return;
+        }
+        if (*(int *)(self + 0x74) == 0)
+            return;
+        uiEvent_8CB0(obj, 0xF, 0);
+        *(int *)(self + 0x98) = 0;
+        return;
+    default:
+        uiEvent_8CB0(obj, 0xF, 0);
+        *(int *)(self + 0x98) = 0;
+        return;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_156860", func_00258F20);
