@@ -521,7 +521,86 @@ extern "C" void func_0026CDF8(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("replay/playbackman", func_0026CE50);
+#ifdef SKIP_ASM
+extern "C" void func_00321298(void* target, int n, float* vals);
+
+struct sPbBuf_CE50 {
+    int pad0;
+    int size;               // 0x4
+    int pos;                // 0x8
+    int end;                // 0xC
+    unsigned char data[1];  // 0x10
+};
+
+struct sPbChan_CE50 {
+    float value;            // 0x0
+    char pad[0x18];
+};
+
+struct sPbSrc_CE50 {
+    int count;              // 0x0
+    sPbChan_CE50 chan[1];   // 0x4
+};
+
+struct sPbMan_CE50 {
+    char pad0[4];
+    sPbBuf_CE50* buf;       // 0x4
+    char pad8[0x64 - 8];
+    sPbSrc_CE50* src;       // 0x64
+    void* target;           // 0x68
+    char pad6C[4];
+    int mode;               // 0x70
+};
+static inline int playFrame_CE50(sPbMan_CE50* self)
+{
+    float vals[24];
+    sPbBuf_CE50* b = self->buf;
+    if (b->pos < b->end) {
+        unsigned char* p = &b->data[b->pos];
+        int n = *p++;
+        int i;
+        for (i = 0; i < n; i++)
+            vals[i] = *p++ * (1.0f / 255.0f);
+        self->buf->pos += n + 1;
+        func_00321298(self->target, n, vals);
+        return 0;
+    }
+    return 1;
+}
+
+static inline int recordFrame_CE50(sPbMan_CE50* self)
+{
+    float vals[24];
+    sPbBuf_CE50* b = self->buf;
+    if (b->pos < b->size - 0x18) {
+        unsigned char* p = &b->data[b->pos];
+        int n = self->src->count;
+        *p++ = n;
+        int i;
+        for (i = 0; i < n; i++) {
+            float f = i < self->src->count ? self->src->chan[i].value : 0.0f;
+            *p = (int)(f * 255.0f);
+            vals[i] = *p++ * (1.0f / 255.0f);
+        }
+        self->buf->pos += n + 1;
+        self->buf->end += n + 1;
+        func_00321298(self->target, n, vals);
+        return 0;
+    }
+    return 1;
+}
+
+extern "C" int func_0026CE50(sPbMan_CE50* self)
+{
+    if (self->mode == 1)
+        return playFrame_CE50(self);
+    if (self->mode == 3)
+        return recordFrame_CE50(self);
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("replay/playbackman", func_0026CFE8);
