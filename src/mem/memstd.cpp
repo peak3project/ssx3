@@ -1196,7 +1196,59 @@ extern "C" void func_00253460(void* self, int v)
 }
 #endif
 
+//100%
 INCLUDE_ASM("mem/memstd", func_002534A8);
+#ifdef SKIP_ASM
+struct sMemInfo_34A8 {
+    int size;           // 0x0
+    char* name;         // 0x4
+    int f8;
+    int fC;
+    int f10;
+    int f14;
+    int f18;
+    int f1C;
+    float f20;
+};
+
+struct sMemObj_34A8 {
+    char pad0[0x10];
+    float f10;
+    sMemInfo_34A8 info;     // 0x14
+    int handle;             // 0x38
+};
+
+extern "C" int func_003ADDC0(void* h, int a, int b, int c, int d);
+extern "C" int func_003ADE08(void* h, int a, int b, char* name, int c, int d, int e);
+extern char D_004A2E98[];
+struct sAllocFns_34A8 {
+    void* (*alloc)(void*, int, int, int, int);
+    void* free;
+    int field_0x8;
+};
+extern sAllocFns_34A8 D_00509430_34A8 __asm__("D_00509430");
+
+// The unit declares func_002534A8 as int(void*, void*); bound by asm label.
+extern "C" int func_002534A8_impl(sMemObj_34A8* self, sMemInfo_34A8* info) __asm__("func_002534A8");
+extern "C" int func_002534A8_impl(sMemObj_34A8* self, sMemInfo_34A8* info)
+{
+    bool a = true;
+    bool b = true;
+    func_002535F8(self);
+    self->info = *info;
+    a = a && self->info.f10 != 0;
+    if (self->info.f8 != 0) b = false;
+    self->f10 = self->info.f20;
+    if (self->info.name != 0 && *self->info.name != 0) {
+        void* h = D_00509430_34A8.alloc(D_004A2E98, 0x78, 0, 0, D_00509430_34A8.field_0x8);
+        self->handle = func_003ADE08(h, self->info.size, 0x60000, self->info.name, 0x20000, a, b);
+    } else {
+        void* h = D_00509430_34A8.alloc(D_004A2E98, 0x78, 0, 0, D_00509430_34A8.field_0x8);
+        self->handle = func_003ADDC0(h, self->info.size, 0x80000, a, b);
+    }
+    return 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("mem/memstd", func_002535F8);
