@@ -147,6 +147,26 @@ if os.environ.get("SSX3_NO_PS2EEAS") or not os.path.isfile(PS2EEAS):
     if UNIT_PS2EEAS and not os.environ.get("SSX3_NO_PS2EEAS"):
         print(f"warning: {PS2EEAS} missing; {', '.join(sorted(UNIT_PS2EEAS))} use GNU as")
     UNIT_PS2EEAS = set()
+# Fork-only: the VU microcode in .vutext (0x42E590-0x43CE00; asm/data/vutext.s includes the retail bytes) can be built
+# from its dvp-as sources in src/data/vutext/ with GNU ee-dvp-as 2.9-ee-991111b, which ships with the compiler
+# (tools/cc/eegcc-2.95.3-V1.36/bin/ee-dvp-as.exe). Set DVP_AS to that executable to build the unit from source:
+# each file is assembled, its .vutext extracted, and src/data/vutext/vutext.s includes the result in place of the
+# retail bytes (obj/current and the linked build). Unset (or missing), the unit builds exactly as before.
+DVP_AS = os.environ.get("DVP_AS")
+if DVP_AS and not os.path.isfile(DVP_AS):
+    print(f"warning: DVP_AS={DVP_AS} missing; data/vutext uses the retail bytes")
+    DVP_AS = None
+# In address order: six VU1 programs (DMA_CALL from railmodifier), then the VU0 program and data chains (lightman).
+VUTEXT_SOURCES = [
+    "vu1_0042E590",
+    "vu1_00430A80",
+    "vu1_00434990",
+    "vu1_00435BD0",
+    "vu1_00439A40",
+    "vu1_0043B3F0",
+    "vu0_0043BD00",
+    "vu0_0043CCA0",
+]
 # The game was built without C++ exception support: its constructors and destructors have no EH cleanup
 # landing pads, which g++ 2.95 emits by default (e.g. cAngerFX_cAngerFX only matches with -fno-exceptions).
 COMMON_CXXFLAGS = "-fno-exceptions"
@@ -165,9 +185,11 @@ CATEGORY_MAP = {
 }
 
 WINE = "wine"
+WIN_EXE_RUNNER = ""  # how the Windows-only tools (ee-dvp-as) are run on this host
 if sys.platform == "linux" or sys.platform == "linux2":
     COMPILE_C_RULE = f"{WINE} {COMPILE_C_RULE}"
     COMPILE_CXX_RULE = f"{WINE} {COMPILE_CXX_RULE}"
+    WIN_EXE_RUNNER = f"{WINE} "
 elif sys.platform == "darwin":
     # macOS: run the Windows compiler with wibo (decompals/wibo, the
     # `wibo-macos` release asset; runs under Rosetta 2 on Apple Silicon)
@@ -176,6 +198,7 @@ elif sys.platform == "darwin":
     WIBO = os.environ.get("WIBO") or (str(_wibo_local) if _wibo_local.exists() else "wibo")
     COMPILE_C_RULE = f"{WIBO} {COMPILE_C_RULE}"
     COMPILE_CXX_RULE = f"{WIBO} {COMPILE_CXX_RULE}"
+    WIN_EXE_RUNNER = f"{WIBO} "
 
 def clean():
     files_to_clean = [
@@ -424,7 +447,7 @@ def build_stuff(linker_entries: List[LinkerEntry], skip_checksum=False, objects_
                             "progress_categories": categories,
                         }
                     }
-                    if has_src:
+                    if has_src or (DVP_AS and name == "data/vutext"):
                         base_path = str(object_path).replace("target", "current")
                         unit["base_path"] = base_path
                     objdiff_units.append(unit)
@@ -539,6 +562,19 @@ def build_stuff(linker_entries: List[LinkerEntry], skip_checksum=False, objects_
                     variables={"src": src})
         return f"-DSKIP_ASM -DASM_OFFSETS -Wa,-Iobj/offsets/{stem}", [inc]
 
+    def vutext_from_source():
+        """(fork) Assemble each VU source with ee-dvp-as, keep its .vutext bytes and join them in address order."""
+        ninja.rule("dvp_as", description="dvp-as $in", command=f"{WIN_EXE_RUNNER}{DVP_AS} -o $out $in")
+        ninja.rule("vutext_bin", description="vutext $out", command=f"{cross}objcopy -O binary -j .vutext $in $out")
+        ninja.rule("cat", description="cat $out", command="cat $in > $out")
+        bins = []
+        for name in VUTEXT_SOURCES:
+            ninja.build(f"obj/vutext/{name}.o", "dvp_as", f"src/data/vutext/{name}.dsm")
+            ninja.build(f"obj/vutext/{name}.bin", "vutext_bin", f"obj/vutext/{name}.o")
+            bins.append(f"obj/vutext/{name}.bin")
+        ninja.build("obj/vutext/vutext.bin", "cat", bins)
+        return "obj/vutext/vutext.bin"
+
     # Add recipes for everything
     for entry in linker_entries:
         seg = entry.segment
@@ -604,6 +640,15 @@ def build_stuff(linker_entries: List[LinkerEntry], skip_checksum=False, objects_
                 build(entry.object_path, entry.src_paths, "as", out_dir="obj/current", extra_flags="-DSKIP_ASM")
             else:
                 build(entry.object_path, entry.src_paths, "as")
+        elif isinstance(seg, splat.segtypes.common.textbin.CommonSegTextbin) and DVP_AS and seg.name == "vutext":
+            # (fork) the VU microcode from its dvp-as sources (see DVP_AS above)
+            vu_bin = vutext_from_source()
+            src = ["src/data/vutext/vutext.s"]
+            if dual_objects:
+                build(entry.object_path, entry.src_paths, "as", out_dir="obj/target", collect_objdiff=True, orig_entry=entry)
+                build(entry.object_path, src, "as", out_dir="obj/current", implicit=[vu_bin])
+            else:
+                build(entry.object_path, src, "as", implicit=[vu_bin])
         elif isinstance(seg, splat.segtypes.common.textbin.CommonSegTextbin):
             if dual_objects:
                 build(entry.object_path, entry.src_paths, "as", out_dir="obj/target", collect_objdiff=True, orig_entry=entry)
