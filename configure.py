@@ -149,12 +149,14 @@ if os.environ.get("SSX3_NO_PS2EEAS") or not os.path.isfile(PS2EEAS):
     UNIT_PS2EEAS = set()
 # Fork-only: the VU microcode in .vutext (0x42E590-0x43CE00; asm/data/vutext.s includes the retail bytes) can be built
 # from its dvp-as sources in src/data/vutext/ with GNU ee-dvp-as 2.9-ee-991111b, which ships with the compiler
-# (tools/cc/eegcc-2.95.3-V1.36/bin/ee-dvp-as.exe). Set DVP_AS to that executable to build the unit from source:
+# (tools/cc/eegcc-2.95.3-V1.36/bin/ee-dvp-as.exe, the default; DVP_AS overrides it). The unit is built from source:
 # each file is assembled, its .vutext extracted, and src/data/vutext/vutext.s includes the result in place of the
-# retail bytes (obj/current and the linked build). Unset (or missing), the unit builds exactly as before.
-DVP_AS = os.environ.get("DVP_AS")
-if DVP_AS and not os.path.isfile(DVP_AS):
-    print(f"warning: DVP_AS={DVP_AS} missing; data/vutext uses the retail bytes")
+# retail bytes (obj/current and the linked build). Set SSX3_NO_DVP_AS=1 to keep the retail bytes; if the
+# assembler is missing, the unit builds exactly as before.
+DVP_AS = os.environ.get("DVP_AS", f"{STOCK_CC_DIR}/bin/ee-dvp-as.exe")
+if os.environ.get("SSX3_NO_DVP_AS") or not os.path.isfile(DVP_AS):
+    if not os.environ.get("SSX3_NO_DVP_AS") and os.environ.get("DVP_AS"):
+        print(f"warning: DVP_AS={DVP_AS} missing; data/vutext uses the retail bytes")
     DVP_AS = None
 # In address order: six VU1 programs (DMA_CALL from railmodifier), then the VU0 program and data chains (lightman).
 VUTEXT_SOURCES = [
