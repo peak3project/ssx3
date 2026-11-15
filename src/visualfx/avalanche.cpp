@@ -553,7 +553,513 @@ extern "C" void func_002D64D8(void* self, sVec4_64D8* v)
 }
 #endif
 
+//100%
 INCLUDE_ASM("visualfx/avalanche", tAvalancheNode_calculate);
+#ifdef SKIP_ASM
+typedef sVec4_64D8 sV4;
+
+struct sF4_66A0 { float x, y, z, w; };
+
+struct sAvEnt_66A0 { float t; char* obj; };
+struct sAvDepth_66A0 { unsigned short a; unsigned short depth; };
+struct sAv_66A0 {
+    int f0;
+    int f4;
+    int f8;
+    unsigned short count;       // 0xC
+    unsigned short count2;      // 0xE
+    sAvEnt_66A0 tab[32];        // 0x10
+    sAvDepth_66A0 ents[64];     // 0x110
+};
+
+struct sAvFrame_66A0 {
+    signed char vel[3];         // 0x0
+    unsigned char col[3];       // 0x3
+    signed char dir[3];         // 0x6
+    unsigned char rot;          // 0x9
+};
+
+struct sAvNode_66A0 {
+    char pad0[0xE0];
+    sV4 pos;                    // 0xE0
+    unsigned short type;        // 0xF0
+    char padF2;
+    char fF3;                   // 0xF3
+    int padF4;
+    char* src;                  // 0xF8
+    sAvFrame_66A0* frames;      // 0xFC
+    float length;               // 0x100
+    float f104;                 // 0x104
+    float fade;                 // 0x108
+    float f10C;                 // 0x10C
+    float radius;               // 0x110
+};
+
+struct sSweep_66A0 { char b[0xA0]; } __attribute__((aligned(16)));
+
+struct sHit_66A0 {
+    sV4 pt;                     // 0x00
+    sV4 nrm;                    // 0x10
+    char pad20[0x2C];
+    int idx;                    // 0x4C
+    char* obj;                  // 0x50
+    char* tri;                  // 0x54
+    int pad58[5];
+    float f6C;                  // 0x6C
+    float f70;                  // 0x70
+    int pad74[3];
+};
+
+extern char* D_004A28A8;
+extern float D_004A3A50;
+extern float D_004A3A68;
+extern float D_004A3A6C;
+extern float D_004A3A70;
+extern float D_004A3A74;
+extern float D_004A3A78;
+extern float D_004A3A80;
+extern float D_004A3A84;
+extern float D_004A3A88;
+extern float D_004A3A8C;
+extern float D_004A3A90;
+extern float D_004A3AA4;
+extern int D_004A3AC8;
+extern int D_004A3ACC;
+extern char D_00487538[];
+struct sWorldCam_66A0 {
+    char pad0[0x20];
+    struct {
+        int f0;
+        int type;
+    } slots[(0x3F0 - 0x20) / 8];    // 0x20
+    struct {
+        int kind;
+        char pad[0x14];
+    } paths[1];                     // 0x3F0
+};
+extern sWorldCam_66A0** D_004A47B8_66A0 __asm__("D_004A47B8");
+// Read-only constant vectors (zero / unit side axis): const lets the scheduler keep the out.x store ahead of
+// their lq loads, as in the retail prologue.
+extern const sV4 D_004FF120_66A0 __asm__("D_004FF120");
+extern const sV4 D_004FF140_66A0 __asm__("D_004FF140");
+extern unsigned int BXrand_66A0() __asm__("BXrand__Fv");
+extern "C" void func_0032FB48(void* self, void* p, float r, int flag);
+extern "C" float func_003378C0(void* ctx, void* q, sHit_66A0* out, int a3);
+extern "C" float func_00336850(void* ctx, void* q, sHit_66A0* out, int a3);
+extern "C" int func_00350698(void* obj);
+extern "C" void func_002EDB20(void* tri, void* o1, void* o2, float a, float b);
+extern "C" void func_002D5598(sAvFrame_66A0* p, float r, float g, float b);
+extern "C" void func_002D55C0(sAvFrame_66A0* p, float r, float g, float b);
+extern "C" void func_002D5658(sAvFrame_66A0* p, float r, float g, float b, float a);
+extern void func_002D9738_66A0(void* av, int a, void* node) __asm__("func_002D9738");
+extern "C" void func_00418EF8(void* base, int n, int size, void* cmp);
+extern "C" void func_00416210(void* dst, int c, int n);
+extern "C" void func_002D5718(void);
+extern "C" void func_002D5750(void);
+void* operator_new_tag(unsigned int size, const char* tag, int flags, int d) __asm__("operator_new__FUi");
+
+// PORT: PS2-only inline asm helpers (FPU abs/sqrt, VU0 vector math).
+static inline float randf_66A0()
+{
+    union { int i; float f; } u;
+    u.i = (BXrand_66A0() & 0x7FFFFF) | 0x3F800000;
+    return u.f - 1.0f;
+}
+
+static inline float absf_66A0(float x)
+{
+    float r;
+    __asm__("abs.s %0, %1" : "=f"(r) : "f"(x));
+    return r;
+}
+
+static inline float sqrtf_66A0(float x)
+{
+    float r;
+    __asm__("sqrt.s %0,%1" : "=f"(r) : "f"(x));
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector times scalar).
+static inline sV4 vScale_66A0(const sV4& v, float s)
+{
+    sV4 r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector add).
+static inline sV4 vAdd_66A0(const sV4& a, const sV4& b)
+{
+    sV4 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector add in place).
+static inline void vAddEq_66A0(sV4& a, const sV4& b)
+{
+    __asm__(
+        "lqc2      $vf3, %0\n"
+        "lqc2      $vf4, %1\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "+m"(a)
+        : "m"(b)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (vector subtract in place).
+static inline void vSubEq_66A0(sV4& a, const sV4& b)
+{
+    __asm__(
+        "lqc2      $vf3, %0\n"
+        "lqc2      $vf4, %1\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "+m"(a)
+        : "m"(b));
+}
+
+// PORT: PS2-only VU0 inline asm (vector times scalar in place).
+static inline void vScaleEq_66A0(sV4& v, float s)
+{
+    int t;
+    __asm__(
+        "mfc1      %1, %2\n"
+        "lqc2      $vf4, %0\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        "1:\n"
+        : "+m"(v), "=&r"(t)
+        : "f"(s));
+}
+
+// PORT: PS2-only VU0 inline asm (3D cross product).
+static inline sV4 vCross_66A0(const sV4& a, const sV4& b)
+{
+    sV4 r;
+    __asm__(
+        "lqc2      $vf4, %1\n"
+        "lqc2      $vf5, %2\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vsub.w    $vf6, $vf6, $vf6\n"
+        "sqc2      $vf6, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4-component dot product).
+static inline float vDot_66A0(const sV4& a, const sV4& b)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "lqc2      $vf5, %3\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf5\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "qmfc2.ni  %1, $vf4\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(a), "m"(b));
+    return r;
+}
+
+static inline float randScale_66A0(float scale)
+{
+    return scale * randf_66A0();
+}
+
+static inline float randRange_66A0(float lo, float hi)
+{
+    return lo + (hi - lo) * randf_66A0();
+}
+
+static inline int isBad_66A0(float f)
+{
+    unsigned int b = *(unsigned int*)&f;
+    int r = 0;
+    if (b == 0x7F800000 || b == 0x7FC00000 || b == 0xFF800000 || b == 0xFFC00000)
+        r = 1;
+    return r;
+}
+
+static inline int bad4_66A0(const sV4& v)
+{
+    return isBad_66A0(v.x) || isBad_66A0(v.y) || isBad_66A0(v.z) || isBad_66A0(v.w);
+}
+
+static inline int isState_66A0(int v, int st)
+{
+    return v == st;
+}
+
+static inline int isSurf_66A0(char* tri)
+{
+    int ok;
+    sWorldCam_66A0* cam = *D_004A47B8_66A0;
+    int path = *(short*)(tri + 0x156);
+    if (path < 0) {
+        ok = 0;
+    } else if (isState_66A0(cam->slots[*(unsigned char*)(tri + 0x155)].type, 6)) {
+        ok = isState_66A0(cam->paths[path].kind, 3);
+    } else {
+        ok = 0;
+    }
+    return ok;
+}
+
+extern "C" void tAvalancheNode_calculate(void* nodeArg, void* avArg)
+{
+    sAvNode_66A0* node = (sAvNode_66A0*)nodeArg;
+    sAv_66A0* av = (sAv_66A0*)avArg;
+    char* ctx = *(char**)(*(char**)(D_004A28A8 + 0x84) + 0x20);
+    {
+        sV4 start = *(sV4*)(node->src + 0x40);
+        node->pos = start;
+        node->pos.w = 1.0f;
+    }
+    node->frames = (sAvFrame_66A0*)operator_new_tag((int)node->length * 10, D_00487538, 0, 0);
+    node->fF3 = 1;
+    func_00416210(node->frames, 0, 4);
+
+    sV4 out(0.0f, 0.0f, 0.0f, 1.0f);
+    sV4 side = D_004FF140_66A0;
+    sV4 vel = D_004FF120_66A0;
+    sV4 pos = node->pos;
+    sF4_66A0 anchor;
+    sV4 rnd;
+    sV4 slide;
+    sV4 pos0;
+    sF4_66A0 colA;
+    sF4_66A0 colB;
+    sHit_66A0 hit;
+    int last = -1;
+    float twist = 0.0f;
+    float A = D_004A3A80;
+    float rx = randRange_66A0(-A * 0.05f, A * 0.05f);
+    float ry = randRange_66A0(-A * 0.05f, A * 0.05f);
+    rnd.x = rx;
+    rnd.y = ry;
+    rnd.z = A;
+    rnd.w = twist;
+    float sd;
+
+    int i;
+    for (i = 0; (float)i < node->length;) {
+        slide.x = 0.0f;
+        slide.y = 0.0f;
+        slide.z = 0.0f;
+        slide.w = 0.4f;
+        float radius;
+        if ((float)i <= node->length - node->fade) {
+            radius = node->radius;
+        } else {
+            radius = node->radius * (node->length - (float)i) / node->fade;
+            if (0.0f < radius) {
+                radius = sqrtf_66A0(radius);
+            }
+        }
+        radius = radius <? 280.0f;
+        radius = radius >? 60.0f;
+        pos0 = pos;
+        sd = -1.0f;
+        for (int j = 0; j < D_004A3AC8; j++) {
+            vSubEq_66A0(vel, rnd);
+            pos = vAdd_66A0(pos, vel);
+            func_002D64D8(node, &vel);
+            out = side;
+            out.w = twist;
+            sSweep_66A0 sweep1;
+            func_0032FB48(&sweep1, &pos, radius, 0);
+            if ((int)func_003378C0(ctx, &sweep1, &hit, 1) > 0 && hit.obj != 0) {
+                if (av->count < 32) {
+                    if (func_00350698(hit.obj)) {
+                        int k;
+                        for (k = 0; k < av->count && av->tab[k].obj != hit.obj; k++) {
+                        }
+                        if (k == av->count) {
+                            av->tab[k].t = (float)i * 0.033333335f;
+                            av->tab[av->count].obj = hit.obj;
+                            av->count++;
+                        }
+                    }
+                }
+                if (D_004A3ACC != 0) {
+                    float d = vDot_66A0(hit.nrm, vel);
+                    sV4 t2 = vScale_66A0(vScale_66A0(hit.nrm, d), -1.0f);
+                    sV4 t3 = vAdd_66A0(vel, t2);
+                    sV4 t5 = vScale_66A0(vNorm_64D8(t3), vLen_64D8(t2) * D_004A3A90);
+                    if (bad4_66A0(t5)) {
+                        t5 = D_004FF120_66A0;
+                    }
+                    vAddEq_66A0(t3, t5);
+                    vel = vScale_66A0(t3, D_004A3A8C);
+                    pos = vAdd_66A0(hit.pt, vScale_66A0(hit.nrm, radius));
+                    func_002D64D8(node, &vel);
+                    side = vNorm_64D8(vCross_66A0(vel, hit.nrm));
+                    side.w = 0.0f;
+                    if (bad4_66A0(side)) {
+                        twist = 0.0f;
+                        side = D_004FF140_66A0;
+                    } else {
+                        twist = D_004A3A68 * vLen_64D8(vel) / (radius * 6.2831855f);
+                    }
+                    twist = twist <? 2.0943952f;
+                }
+            }
+            sSweep_66A0 sweep2;
+            func_0032FB48(&sweep2, &pos, radius, 0);
+            sd = func_00336850(ctx, &sweep2, &hit, 0);
+            if (sd >= 0.0f && hit.idx != -1) {
+                if (D_004A3A50 < absf_66A0(vDot_66A0(hit.nrm, vel))) {
+                    func_002D9738_66A0(av, i, node);
+                }
+                if (node->type == 0 && randf_66A0() < D_004A3A6C) {
+                    float d = vDot_66A0(hit.nrm, vel);
+                    sV4 t2 = vScale_66A0(vScale_66A0(hit.nrm, d), -1.0f);
+                    slide = vAdd_66A0(vel, t2);
+                    vAddEq_66A0(slide, vScale_66A0(vNorm_64D8(slide), vLen_64D8(t2) * D_004A3A90));
+                    vel = vAdd_66A0(vScale_66A0(t2, D_004A3A88), vScale_66A0(slide, D_004A3A8C));
+                    sV4 axis = vNorm_64D8(vCross_66A0(hit.nrm, slide));
+                    if (bad4_66A0(axis)) {
+                        axis = D_004FF120_66A0;
+                    }
+                    float rr = randRange_66A0(-D_004A3A70, D_004A3A70);
+                    vAddEq_66A0(vel, vScale_66A0(axis, rr));
+                    vAddEq_66A0(vel, vScale_66A0(vNorm_64D8(hit.nrm), randScale_66A0(D_004A3A74)));
+                    vScaleEq_66A0(vel, D_004A3A78);
+                } else {
+                    float d = vDot_66A0(hit.nrm, vel);
+                    sV4 t2 = vScale_66A0(vScale_66A0(hit.nrm, d), -1.0f);
+                    slide = vAdd_66A0(vel, t2);
+                    sV4 b = vScale_66A0(vNorm_64D8(slide), vLen_64D8(t2) * D_004A3A90);
+                    if (bad4_66A0(b)) {
+                        b = D_004FF120_66A0;
+                    }
+                    vAddEq_66A0(slide, b);
+                    vel = vScale_66A0(slide, D_004A3A8C);
+                }
+                pos = vAdd_66A0(hit.pt, vScale_66A0(hit.nrm, radius));
+                vScaleEq_66A0(vel, 1.0f - D_004A3A84);
+                func_002D64D8(node, &vel);
+                side = vNorm_64D8(vCross_66A0(vel, hit.nrm));
+                side.w = 0.0f;
+                if (bad4_66A0(side)) {
+                    twist = 0.0f;
+                    side = D_004FF140_66A0;
+                } else {
+                    twist = D_004A3A68 * vLen_64D8(vel) / (radius * 6.2831855f);
+                }
+                twist = twist <? 2.0943952f;
+            }
+            vScaleEq_66A0(vel, 1.0f - D_004A3A84);
+            func_002D64D8(node, &vel);
+        }
+        if (0.0f <= sd && hit.tri != 0) {
+            if (isSurf_66A0(hit.tri)) {
+                func_002EDB20(hit.tri, &colA, &colB, hit.f6C, hit.f70);
+                sF4_66A0 ones;
+                sF4_66A0 col;
+                sF4_66A0 blend;
+                sF4_66A0 diff;
+                ones.x = 1.0f;
+                ones.y = 1.0f;
+                ones.z = 1.0f;
+                ones.w = 1.0f;
+                diff.x = ones.x - colA.x;
+                diff.y = ones.y - colA.y;
+                diff.z = ones.z - colA.z;
+                diff.w = ones.w - colA.w;
+                blend.x = diff.x * D_004A3AA4;
+                blend.y = diff.y * D_004A3AA4;
+                blend.z = diff.z * D_004A3AA4;
+                blend.w = diff.w * D_004A3AA4;
+                col.x = ones.x - blend.x;
+                col.y = ones.y - blend.y;
+                col.z = ones.z - blend.z;
+                col.w = ones.w - blend.w;
+                colA = col;
+                if (last == -1) {
+                    anchor = colA;
+                    last = 0;
+                }
+                col = anchor;
+                for (int jj = 0; jj < i - last; jj++) {
+                    float t = (float)jj / ((float)i - (float)last);
+                    sF4_66A0 delta;
+                    delta.x = colA.x - anchor.x;
+                    delta.y = colA.y - anchor.y;
+                    delta.z = colA.z - anchor.z;
+                    delta.w = colA.w - anchor.w;
+                    diff.x = delta.x * t;
+                    diff.y = delta.y * t;
+                    diff.z = delta.z * t;
+                    diff.w = delta.w * t;
+                    blend.x = diff.x + anchor.x;
+                    blend.y = diff.y + anchor.y;
+                    blend.z = diff.z + anchor.z;
+                    blend.w = diff.w + anchor.w;
+                    sAvFrame_66A0* rec = &node->frames[last + jj];
+                    col = blend;
+                    func_002D55C0(rec, col.y, col.z, col.w);
+                }
+                last = i;
+                func_002D55C0(&node->frames[i], colA.y, colA.z, colA.w);
+                anchor = colA;
+            }
+        }
+        func_002D5658(&node->frames[i], out.x, out.y, out.z, out.w * 0.47746482f);
+        sV4 mv;
+        mv.x = (pos.x - pos0.x) * 0.5f;
+        mv.y = (pos.y - pos0.y) * 0.5f;
+        mv.z = (pos.z - pos0.z) * 0.5f;
+        mv.w = 0.0f;
+        if (120.0f < vLen_64D8(mv)) {
+            mv = vScale_66A0(vNorm_64D8(mv), 120.0f);
+        }
+        func_002D5598(&node->frames[i], mv.x, mv.y, mv.z);
+        pos = vAdd_66A0(pos0, sV4((float)node->frames[i].vel[0] * 2.0f, (float)node->frames[i].vel[1] * 2.0f, (float)node->frames[i].vel[2] * 2.0f, 0.0f));
+        i++;
+    }
+
+    int k;
+    for (k = av->count; k < 32; k++) {
+        av->tab[k].t = 999999.0f;
+        av->tab[k].obj = 0;
+    }
+    for (k = av->count2; k < 64; k++) {
+        av->ents[k].a = 0xFFFF;
+        av->ents[k].depth = 0;
+    }
+    func_00418EF8(av->tab, av->count, 8, (void*)func_002D5718);
+    func_00418EF8(av->ents, av->count2, 4, (void*)func_002D5750);
+}
+#endif
 
 //100%
 INCLUDE_ASM("visualfx/avalanche", tActiveAvalancheNode_calculateScale);
