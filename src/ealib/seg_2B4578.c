@@ -8385,7 +8385,63 @@ void func_003C0C18(int arg0, int *arg1, int *arg2) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C0C90);
+#ifdef SKIP_ASM
+extern char *D_0044DD3C;
+
+int func_003C0C90(void) {
+    D_0050A8E8.setup.f0C = 0;
+    D_0050A8E8.setup.f02 = 0xBB80;
+    D_0050A8E8.setup.f04 = 1;
+    D_0050A8E8.setup.f06 = 0x20;
+    D_0050A8E8.setup.f07 = 0x10;
+    D_0050A8E8.setup.f00 = 0x5DC0;
+    D_0050A8E8.setup.f05 = 5;
+    D_0050A8E8.setup.f08 = 0x30;
+    D_0050A8E8.setup.f13 = 6;
+    D_0050A8E8.setup.cfg.f29 = 1;
+    D_0050A8E8.setup.f14[0] = 0x28;
+    D_0050A8E8.setup.f14[1] = 0x24;
+    D_0050A8E8.setup.f14[2] = 0x120;
+    D_0050A8E8.setup.f1A[0] = 0x48;
+    D_0050A8E8.setup.f1A[1] = 0x44;
+    D_0050A8E8.setup.f1A[2] = 0x140;
+    D_0050A8E8.setup.cfg.f1E = 0;
+    D_0050A8E8.setup.cfg.f0E = 8;
+    D_0050A8E8.setup.cfg.f0F = 8;
+    D_0050A8E8.setup.cfg.f0A = 0xBB80;
+    D_0050A8E8.setup.cfg.f22 = 0;
+    D_0050A8E8.setup.cfg.f20 = 0x19;
+    D_0050A8E8.setup.cfg.f2C = 3;
+    D_0050A8E8.setup.cfg.f26 = 8;
+    D_0050A8E8.setup.cfg.f0C = 0xBB80;
+    D_0050A8E8.setup.cfg.f1F = 1;
+    D_0050A8E8.setup.cfg.f2E[0] = 0x28;
+    D_0050A8E8.setup.cfg.f2E[1] = 0x24;
+    D_0050A8E8.setup.cfg.f2E[2] = 0x120;
+    D_0050A8E8.setup.cfg.f10 = 0x30;
+    D_0050A8E8.setup.cfg.f27 = 2;
+    D_0050A8E8.setup.cfg.f4C = D_0044DD3C;
+    D_0050A8E8.setup.cfg.f21 = 0x19;
+    D_0050A8E8.setup.cfg.f58[0][0] = 0;
+    D_0050A8E8.setup.cfg.f58[1][0] = 0x4000;
+    D_0050A8E8.setup.cfg.f58[1][1] = 0xC000;
+    D_0050A8E8.setup.cfg.f58[2][0] = 0x2AAA;
+    D_0050A8E8.setup.cfg.f58[2][1] = 0x8000;
+    D_0050A8E8.setup.cfg.f58[2][2] = 0xD555;
+    D_0050A8E8.setup.cfg.f58[3][0] = 0x2000;
+    D_0050A8E8.setup.cfg.f58[3][1] = 0x6000;
+    D_0050A8E8.setup.cfg.f58[3][2] = 0xA000;
+    D_0050A8E8.setup.cfg.f58[3][3] = 0xE000;
+    D_0050A8E8.setup.cfg.f58[4][0] = 0;
+    D_0050A8E8.setup.cfg.f58[4][1] = 0x2000;
+    D_0050A8E8.setup.cfg.f58[4][2] = 0x6000;
+    D_0050A8E8.setup.cfg.f58[4][3] = 0xA000;
+    D_0050A8E8.setup.cfg.f58[4][4] = 0xE000;
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C0E28);
