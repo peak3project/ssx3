@@ -1367,7 +1367,129 @@ extern "C" void func_0021EA00(void* self, sColour* col, float* pos, float w, flo
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021ED48);
+#ifdef SKIP_ASM
+struct V2_ED48 { float x, y; };
+struct Lut_ED48 { int a[9]; };
+struct Str_ED48 { char c[2]; };
+extern Lut_ED48 D_0046ED40;
+extern Str_ED48 D_004A22E8[];
+extern unsigned char* D_004A21C8;
+extern "C" void func_001E91F8(void*, void*);
+extern "C" void func_001E9220(void*, void*, int);
+void func_001E91A8_ED48(void*, void*) __asm__("func_001E91A8__FPvT0");
+extern "C" void func_001F10F8(void*, void*, void*, void*, void*, int, int, int);
+extern "C" void func_001F1190(void*, int, void*, void*, void*, void*);
+extern "C" void func_00391CB0(void*, float, float, char*);
+
+static inline void setLayer_ED48(char* e, int layer)
+{
+    int* w = (int*)(D_004A289C->e84 + 8);
+    *w = (*w & ~0x3E0) | (((e[0x22] + layer) << 5) & 0x3E0);
+}
+
+static inline void drawBar_ED48(char* self, sColour* c, float* pos, float* size)
+{
+    int id = *(int*)(self + 0x474);
+    *(short*)(D_004A289C->e84 + 0x10) = id;
+    if (size[0] > 72.0f) {
+        // capWidth stays a variable: the target keeps 36.0 in $f21 (mtc1 $1,$f21) and copies it to $f12 (mov.s)
+        // for the first and last quads; a literal 36.0f is substituted straight into $f12 by the inliner.
+        float capWidth = 36.0f;
+        float mid = (*(float*)(self + 0x484) + *(float*)(self + 0x488)) * 0.5f;
+        func_0021EA00(self, c, pos, capWidth, size[1], *(float*)(self + 0x484), *(float*)(self + 0x480), mid, *(float*)(self + 0x48C));
+        pos[0] += capWidth;
+        func_0021EA00(self, c, pos, size[0] - 72.0f, size[1], mid, *(float*)(self + 0x480), mid, *(float*)(self + 0x48C));
+        pos[0] += size[0] - 72.0f;
+        func_0021EA00(self, c, pos, capWidth, size[1], mid, *(float*)(self + 0x480), *(float*)(self + 0x488), *(float*)(self + 0x48C));
+    } else {
+        func_0021EA00(self, c, pos, size[0], size[1], *(float*)(self + 0x484), *(float*)(self + 0x480), *(float*)(self + 0x488), *(float*)(self + 0x48C));
+    }
+}
+
+static inline void drawPulse_ED48(char* self, sColour* c, V2_ED48 pos, V2_ED48 size,
+                                  float t, float sx, float sy, float amin, float amax)
+{
+    float dw, dh;
+    float range = amax - amin;
+    c->r = c->r * (amin + (t > 1.0f ? range * (2.0f - t) : range * t));
+    dw = size.x * (sx - 1.0f);
+    dh = size.y * (sy - 1.0f);
+    pos.x -= dw * 0.5f;
+    pos.y -= dh * 0.5f;
+    size.x += dw;
+    size.y += dh;
+    drawBar_ED48(self, c, &pos.x, &size.x);
+}
+
+extern "C" void func_0021ED48(char* self, int elems, char* rider, int x, int idx, float* scale, float* scaleMul, int mode, int layer)
+{
+    V2_ED48 one;
+    Lut_ED48 lut;
+    Str_ED48 str;
+    V2_ED48 a;
+    V2_ED48 size;
+    V2_ED48 p;
+    sColour col;
+    one.x = 1.0f;
+    one.y = 1.0f;
+    lut = D_0046ED40;
+    str = D_004A22E8[0];
+    int sel;
+    if (x == 0) {
+        sel = (signed char)(idx * 2 + 0x1E);
+    } else {
+        sel = (signed char)lut.a[idx];
+    }
+    sColour* c = &col;
+    col.r = 0.4000000059604645f;
+    col.g = 1.0f;
+    col.b = 1.0f;
+    col.a = 1.0f;
+    if (mode == 2) {
+        func_001E91A8_ED48((char*)(sel * 0x24 + elems), c);
+    }
+    char* e = (char*)(sel * 0x24 + elems);
+    str.c[0] = D_004A21C8[idx];
+    func_001E91F8(e, &a);
+    func_001E9220(e, &size, 0);
+    func_001F10F8(self, &p, &a, &size, scale, e[0x20], e[0x21], x);
+    scale[0] = scale[0] * 0.0555555559694767f * size.x;
+    scale[1] = scale[1] * 0.0555555559694767f * size.y;
+    setLayer_ED48(e, layer);
+    *(sColour*)(*(char**)(self + 0x42C) + 0x40) = col;
+    {
+        char* f = *(char**)(self + 0x42C);
+        *(float*)(f + 0x38) = *(float*)(f + 0x30) * scale[0];
+        *(float*)(f + 0x3C) = *(float*)(f + 0x34) * scale[1];
+    }
+    func_00391CB0(*(char**)(self + 0x42C), p.x, p.y, str.c);
+    {
+        char* f = *(char**)(self + 0x42C);
+        *(float*)(f + 0x38) = *(float*)(f + 0x30) * one.x;
+        *(float*)(f + 0x3C) = *(float*)(f + 0x34) * one.y;
+    }
+    if (mode != 0) {
+        char* e2 = (char*)(elems + (sel + 1) * 0x24);
+        func_001E91F8(e2, &a);
+        func_001E9220(e2, &size, 0);
+        size.x *= scaleMul[0];
+        size.y *= scaleMul[1];
+        func_001F10F8(self, &p, &a, &size, &one, e[0x20], e[0x21], x);
+        func_001E91A8_ED48(e2, c);
+        *(sColour*)(*(char**)(self + 0x42C) + 0x40) = col;
+        setLayer_ED48(e2, layer);
+        func_001F1190(self, *(int*)(self + 0x494), &p, &size, &one, c);
+        if (mode == 2 && *(float*)(rider + 0x64) >= 0.0f) {
+            setLayer_ED48(e2, layer - 1);
+            sColour q = *(sColour*)(rider + 0x54);
+            drawPulse_ED48(self, &q, p, size, *(float*)(rider + 0x64),
+                           3.4f, 3.4f, 0.2603548765182495f, 0.49998536705970764f);
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/all_in_one_fe", func_0021F338);
