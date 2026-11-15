@@ -14623,7 +14623,41 @@ extern "C" int func_001BDC18(void* self, void* obj, int msg, int a3)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001BDCA0);
+#ifdef SKIP_ASM
+struct sListBox1BDCA0 {
+    char pad[0x318];
+    unsigned char count;    // 0x318
+};
+
+struct sFELists1BDCA0 {
+    char pad[0x708];
+    sListBox1BDCA0* boxes[4];   // 0x708
+    void* ids[4];               // 0x718
+};
+
+// Key filter for the four list boxes (fe key-filter idiom: default result in r,
+// re-set in the handled arm, early return otherwise). Every path returns 0x101.
+extern "C" int func_001BDCA0(sFELists1BDCA0* self, void* obj, int msg)
+{
+    int r = 0x101;
+    if (msg == 1)
+        return 0x101;
+    if (msg == 0) {
+        for (int i = 0; i < 4; i++) {
+            if (obj == self->ids[i]) {
+                if (self->boxes[i]->count != 0)
+                    r = 0x101;
+                else
+                    return 0x101;
+                return r;
+            }
+        }
+    }
+    return r;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("fe/feasyncfile", func_001BDCF8);
