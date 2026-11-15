@@ -4597,7 +4597,46 @@ void func_003BA740(int a, int i) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003BA7B0);
+#ifdef SKIP_ASM
+struct E_A7B0 { char pad[0x2B]; signed char b2B; char pad2C[0x3A - 0x2C]; short s3A; char pad3C[0x42 - 0x3C]; short s42; char pad44[4]; float f48; char pad4C[0x67 - 0x4C]; unsigned char b67; char pad68[0x70 - 0x68]; signed char *p70; char pad74[4]; signed char *p78; char pad7C[0x8C - 0x7C]; };
+struct G_A7B0 { char pad[0x175]; signed char c175; char pad2[0x1F0 - 0x176]; struct E_A7B0 *tab; };
+extern struct G_A7B0 D_0050A8E8_A7B0[] __asm__("D_0050A8E8");
+
+// PORT: PS2-only FPU conversion asm (fixed $f4 scratch, EA audio-engine helper). Truncating float->int.
+// Evidence: retail uses $f4 as the cvt.w.s temp while $f1..$f3 are free (compiled casts get $f1).
+static inline int ftoi_f4(float f) {
+    int i;
+    __asm__ volatile("cvt.w.s $f4, %1\n\tmfc1 %0, $f4" : "=r"(i) : "f"(f) : "$f4");
+    return i;
+}
+
+// PORT: PS2-only FPU conversion asm (fixed $f4 scratch, EA audio-engine helper). Round-to-nearest float->int.
+// Evidence: $f4 temp while lower FP regs are free; acts as a scheduling barrier (func_003C8D00) and its
+// add.s is never copied into a bc1fl delay slot (func_003BC0B0), so the add is part of the asm.
+static inline int roundf_f4(float v) {
+    float h = 0.5f;
+    int i;
+    if (v < 0.0f) {
+        h = -0.5f;
+    }
+    __asm__ volatile("add.s %1, %1, %2\n\tcvt.w.s $f4, %1\n\tmfc1 %0, $f4" : "=r"(i), "+f"(h) : "f"(v) : "$f4");
+    return i;
+}
+
+void func_003BA7B0(int arg0) {
+    struct E_A7B0 *e = &D_0050A8E8_A7B0[0].tab[arg0];
+    e->f48 = (float)(e->b2B * e->s3A * e->s42) / 2048383.0f;
+    if (e->p78) {
+        e->f48 = e->f48 * (float)e->p78[e->b67] / 127.0f;
+    }
+    if (e->p70) {
+        e->f48 = (float)e->p70[ftoi_f4(e->f48 * 127.0f)];
+    }
+    e->f48 = e->f48 * (float)D_0050A8E8_A7B0[0].c175 / 127.0f;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003BA888);
