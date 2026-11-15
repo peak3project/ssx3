@@ -5697,7 +5697,254 @@ extern "C" unsigned char func_001E5AA0(void* self, int idx)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E5B80);
+#ifdef SKIP_ASM
+// The "%d" format D_004A2138 is a 3-byte string in .sdata (a literal in the original build). The compiler keeps the
+// symbol unflagged (the first use is a lui/addiu pair), but the later uses are reload-rematerialised `la`, which the
+// assembler only resolves gp-relative when it knows the symbol is small - as it did for the local literal.
+__asm__(".extern D_004A2138, 3");
+extern "C" void cUIState_showObjSafe(void* self, char* name);
+extern "C" void cUIState_hideObjSafe(void* self, char* name);
+extern "C" const char* func_00144BF0(void* iface);
+extern "C" unsigned short* func_002C2540(void* dst, const char* s);
+extern "C" void func_002C27C0(void* dst, const char* fmt, ...);
+extern "C" char* func_0014EEC8(void* iface, int id, int a2);
+extern "C" int func_00238590(void* data, int k, int flag);
+extern int D_00536708[];
+extern int D_005366D0[];
+extern char* D_00441D10[];
+extern char D_0046E360[];
+extern char D_0046E378[];
+extern char D_0046E388[];
+extern char D_0046E398[];
+extern char D_0046E3A8[];
+extern char D_0046E3C0[];
+extern char D_004A2140[];
+extern char D_004A2148[];
+extern char D_004A2150[];
+extern char D_004A2158[];
+extern char D_0046E3D0[];
+extern char D_0046E3E8[];
+extern char D_0046E400[];
+extern char D_0046E418[];
+extern char D_0046E428[];
+extern char D_0046E438[];
+extern char D_0046E448[];
+extern char D_0046E458[];
+extern char D_0046E468[];
+extern char D_0046E4A0[];
+extern char D_0046E4B0[];
+extern char D_0046E4C0[];
+extern char D_0046E4D0[];
+extern char D_004A2160[];
+extern char D_004A2168[];
+
+struct sIdx5_5B80 {
+    int v[5];
+};
+extern sIdx5_5B80 D_0046E488;
+
+// Localised string by name (the same lookup as func_001E6718's Loc1E6718).
+static inline unsigned short* Loc_5B80(char* key)
+{
+    char* obj = *(char**)((char*)D_004A28A8 + 0x8C);
+    sVEntry<unsigned short*(void*, int)>* vt = *(sVEntry<unsigned short*(void*, int)>**)(obj + 4);
+    return vt[4].fn(obj + vt[4].delta, GetHashValue32(key));
+}
+
+// The race setup (cGameModeMan in main/gamemode).
+struct sRaceSetup_5B80 {
+    int mode;                   // 0x00
+    char pad_0x4[0xC];
+    int numAI;                  // 0x10
+    int f14;
+    int rider[10];              // 0x18
+    int outfit[10];             // 0x40
+    char pad_0x68[0x8];
+    int f70;                    // 0x70
+};
+
+extern "C" void func_001E5B80(void* self)
+{
+    void* engine = *(void**)((char*)self + 0x10);
+    void* screen = cUIEngine_addScreenByHashName(engine, self, GetHashValue32(D_0046E360), 0);
+    *(void**)((char*)self + 0x40) = screen;
+    if (screen != 0) {
+        cUIScreen_playFrame(screen, 0, 0);
+    }
+    engine = *(void**)((char*)self + 0x10);
+    screen = cUIEngine_addScreenByHashName(engine, self, GetHashValue32(D_0046E378), 0);
+    if (screen != 0) {
+        cUIScreen_playFrame(screen, 0, 0);
+    }
+    func_0020A380(self);
+    void* iface0 = cBE_getInterface_Fv(cBE_getBE(), 0);
+    void* iface1 = cBE_getInterface_Fv(cBE_getBE(), 1);
+    void* iface2 = cBE_getInterface_Fv(cBE_getBE(), 2);
+    int mode = D_00535BC8[0x48];
+    sRaceSetup_5B80* data = *(sRaceSetup_5B80**)((char*)D_004A28A8 + 0xC0);
+    int state = data->mode;
+    cUIText* t = (cUIText*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_0046E388));
+    unsigned short name[56];
+    unsigned short text[104];
+    func_002C2540(name, func_00144BF0(iface0));
+    unsigned short* arg = 0;
+    switch (mode) {
+    case 1:
+        arg = Loc_5B80(D_0046E398);
+        break;
+    case 2:
+        arg = Loc_5B80(D_0046E3A8);
+        break;
+    case 3:
+        arg = Loc_5B80(D_0046E3C0);
+        break;
+    }
+    func_002C27C0(text, D_004A2140, name, arg);
+    func_003A0E90(t, text);
+    t = (cUIText*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_004A2148));
+    switch (state) {
+    case 1:
+        cUIText_setUnicodeStringByID(t, GetHashValue32(D_0046E3D0));
+        cUIState_hideObjSafe(self, D_004A2150);
+        break;
+    case 2:
+        cUIText_setUnicodeStringByID(t, GetHashValue32(D_0046E3E8));
+        break;
+    }
+    t = (cUIText*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(D_004A2158));
+    if (D_00535BC8[0x49] != 0) {
+        cUIText_setUnicodeStringByID(t, GetHashValue32(D_0046E400));
+    }
+    int isWin = 0;
+    if (state == 1) {
+        if (data->f70 == 3) {
+            isWin = 1;
+        } else {
+            isWin = 0;
+        }
+    }
+    int a = func_00146E98(iface1, 0);
+    int b = func_00146E98(iface1, 1);
+    int anyFlag = 0;
+    int sel;
+    {
+    char nameBuf[32];
+    char numBuf[16];
+    char numBuf2[32];
+    for (int n = 1; n < data->numAI + 2; n++) {
+        int k = D_00536708[n - 1];
+        sprintf(nameBuf, D_0046E418, n);
+        int flag2 = 0;
+        t = (cUIText*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(nameBuf));
+        if (n - 1 == D_00536730[a]) {
+            if (D_005366D0[a] != 0) {
+                flag2 = 1;
+            } else {
+                flag2 = 0;
+            }
+        } else if (D_00535BC8[0x49] == 2 && n - 1 == D_00536730[b]) {
+            if (D_005366D0[b] != 0) {
+                flag2 = 1;
+            } else {
+                flag2 = 0;
+            }
+        }
+        cUIText_setAsciiString(t, func_0014EEC8(iface2, data->rider[k], data->outfit[k]));
+        sprintf(nameBuf, D_0046E428, n);
+        t = (cUIText*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(nameBuf));
+        if (flag2 && state == 1) {
+            cUIText_setAsciiString(t, D_004A2160);
+            anyFlag = 1;
+        } else {
+            sprintf(numBuf, D_004A2138, func_00238590(data, k, 0));
+            cUIText_setAsciiString(t, numBuf);
+        }
+        sprintf(nameBuf, D_0046E438, n);
+        t = (cUIText*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(nameBuf));
+        sprintf(nameBuf, D_0046E448, n);
+        cUIThing* o2 = (cUIThing*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(nameBuf));
+        if (state == 2 || isWin) {
+            if (flag2) {
+                cUIText_setAsciiString(t, D_004A2160);
+                anyFlag = 1;
+                o2->setVisible(0);
+            } else {
+                sprintf(numBuf, D_004A2138, func_00238590(data, k, 1));
+                cUIText_setAsciiString(t, numBuf);
+                int total = func_00238590(data, k, 0);
+                total += func_00238590(data, k, 1);
+                sprintf(numBuf2, D_004A2138, total);
+                cUIText_setAsciiString((cUIText*)o2, numBuf2);
+                if (n - 1 == D_00536730[a]) {
+                    if (isWin) {
+                        cUIText_setAsciiString(t, D_004A2168);
+                    }
+                }
+            }
+        } else {
+            cUIText_setAsciiString(t, D_004A2168);
+            o2->setVisible(0);
+        }
+    }
+    sel = -1;
+    for (int n = 1; n < 7; n++) {
+        sprintf(nameBuf, D_0046E458, n);
+        int m = D_00536730[func_00146E98(iface1, 0)];
+        int pos;
+        if (m > 5) {
+            pos = 5;
+        } else {
+            pos = m;
+        }
+        if (state == 1 && pos + 1 == n && anyFlag == 0) {
+            sel = n;
+            cUIState_showObjSafe(self, nameBuf);
+        } else {
+            cUIState_hideObjSafe(self, nameBuf);
+        }
+    }
+    if (isWin) {
+        sprintf(nameBuf, D_0046E458, sel);
+        cUIText_setUnicodeStringByID((cUIText*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(nameBuf)), GetHashValue32(D_0046E468));
+    }
+    }
+    sIdx5_5B80 ids = D_0046E488;
+    cUIState_hideObjSafe(self, D_0046E4A0);
+    cUIState_hideObjSafe(self, D_0046E4B0);
+    if (anyFlag != 0) {
+        ids.v[0] = 2;
+    } else if (state == 2) {
+        if (D_00536730[func_00146E98(iface1, 0)] < 3) {
+            cUIState_showObjSafe(self, D_0046E4A0);
+        } else {
+            cUIState_showObjSafe(self, D_0046E4B0);
+            ids.v[0] = state;
+        }
+    }
+    {
+        int i;
+        for (i = 0; i < 5; i++) {
+            char buf[16];
+            sprintf(buf, D_0046E4C0, i);
+            cUIThing* o = (cUIThing*)cUIScreen_getObjectByHashName(*(void**)((char*)self + 0x40), GetHashValue32(buf));
+            if (o != 0) {
+                if (i < 5) {
+                    cUIText_setUnicodeStringByID((cUIText*)o, GetHashValue32(D_00441D10[ids.v[i]]));
+                    if (i == 0 && ids.v[0] == 1 && data->f70 == 3) {
+                        cUIText_setUnicodeStringByID((cUIText*)o, GetHashValue32(D_0046E4D0));
+                    }
+                    *(int*)((char*)o + 0x18) = ids.v[i];
+                } else {
+                    o->setVisible(0);
+                    o->setStatic(1);
+                }
+            }
+        }
+    }
+}
+#endif
 
 extern "C" void func_0020E900(void* self);
 
