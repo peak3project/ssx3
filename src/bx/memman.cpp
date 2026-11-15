@@ -22,7 +22,33 @@ void* operator_new2(int size)
 }
 #endif
 
+//100%
 INCLUDE_ASM("bx/memman", cMemMan_alloc);
+#ifdef SKIP_ASM
+extern void* D_00538B00[16];
+extern "C" void MUTEX_lock(void* mutex);
+extern "C" void MUTEX_unlock(void* mutex);
+extern "C" void* func_00319A90(unsigned int size, unsigned int align, int flags, int top);
+
+// Allocates from the block heap under the global lock. Alignment: flag 0x400 -> 128, else 8 (small) or 16;
+// a nonzero log2 field in flags bits 24-27 overrides it with 4 << n. The selection is written branch-free
+// with sign masks (-1/0), as the original allocator does.
+extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d)
+{
+    int n = (flags >> 24) & 0xF;
+    int mask = (int)((flags & 0x400) << 21) >> 31;
+    unsigned int align = mask & 0x80;
+    align |= (mask + 1) << (((size - 16) >> 31) + 4);
+    mask = (n - 1) >> 31;
+    unsigned int log = 4 << n;
+    if (!mask)
+        align = log;
+    MUTEX_lock(D_00538B00);
+    void* r = func_00319A90(size, align, flags, d);
+    MUTEX_unlock(D_00538B00);
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("bx/memman", operator_new__FUi);
