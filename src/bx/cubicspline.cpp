@@ -2224,18 +2224,20 @@ void* func_003203B8(void* self)
 }
 #endif
 
-//92.5%
+//100%
 INCLUDE_ASM("bx/cubicspline", func_00320408__FPv);
 #ifdef SKIP_ASM
-void* func_00320408(void* self)
+// TMemContainer<TMemBlock<256>,512>::alloc(unsigned int) (prototype name). PORT: this unit declares func_00319E48
+// with one parameter; the real callee takes (size, align) and calls alloc(align), and the fallback passes align back.
+extern "C" void* func_00319E48_2(unsigned int size, unsigned int align) __asm__("func_00319E48");
+void* func_00320408_2(void* self, unsigned int align) __asm__("func_00320408__FPv");
+
+void* func_00320408_2(void* self, unsigned int align)
 {
-    void* node = *(void**)((char*)self + 0x20000);
-    if (node != 0) {
-        void* next = *(void**)node;
-        *(void**)((char*)self + 0x20000) = next;
-        return node;
+    if (*(void**)((char*)self + 0x20000) != 0) {
+        return popFreeNode((void**)((char*)self + 0x20000));
     }
-    return func_00319E48(0x104);
+    return func_00319E48_2(0x104, align);
 }
 #endif
 
