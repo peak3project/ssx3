@@ -737,7 +737,316 @@ extern "C" void func_0015EDC8(void* self, int value)
 }
 #endif
 
+//100%
 INCLUDE_ASM("camera/camera", func_0015EE00);
+#ifdef SKIP_ASM
+struct sSeg_EE00 {
+    char data[0xB0];
+} __attribute__((aligned(16)));
+
+struct sHit_EE00 {
+    t4Vector pos;
+    t4Vector normal;
+    char pad[0x60];
+} __attribute__((aligned(16)));
+
+struct sCam_EE00 {
+    char pad000[0xA8];
+    void* ctrl;
+    char pad0AC[0xE0 - 0xAC];
+    t4Vector target;
+    char pad0F0[0x10];
+    t4Vector pos;
+    char pad110[0x460 - 0x110];
+    float dist;
+    char pad464[0x470 - 0x464];
+    t4Vector normal;
+    char hitInfo[0x10];
+    t4Vector safePos;
+    int blocked;
+    int snap;
+};
+
+// World capsule query (intersect/riderspheretree builds the capsule, worldsphtree runs it). The capsule ctor takes the
+// radius before the flags: this caller loads $f12 before $7, and every other matched caller (and the ctor itself)
+// matches with the same order.
+extern "C" void* func_0032E100_EE00(sSeg_EE00* seg, const t4Vector& a, const t4Vector& b, float r, int n) __asm__("func_0032E100");
+extern "C" float func_00336850_EE00(void* world, sSeg_EE00* seg, sHit_EE00* out, void* a3) __asm__("func_00336850");
+extern "C" int func_0015D020(void* self);
+
+// PORT: PS2-only VU0 inline asm (vector subtract).
+static inline t4Vector Sub_EE00(const t4Vector& a, const t4Vector& b)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector add).
+static inline t4Vector Add_EE00(const t4Vector& a, const t4Vector& b)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (dst += b).
+static inline void AddEq_EE00(t4Vector& dst, const t4Vector& b)
+{
+    __asm__(
+        "lqc2      $vf3, %0\n"
+        "lqc2      $vf4, %1\n"
+        "vadd.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "+m"(dst)
+        : "m"(b)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (vector times scalar).
+static inline t4Vector Scale_EE00(const t4Vector& v, float s)
+{
+    t4Vector r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector at pointer times scalar).
+static inline t4Vector ScaleP_EE00(const t4Vector& v, float s)
+{
+    t4Vector r;
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r), "=&r"(t)
+        : "o"(v), "f"(s)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (in-place vector times scalar).
+static inline void ScaleEq_EE00(t4Vector& v, float s)
+{
+    int t;
+    __asm__(
+        "mfc1      %1, %2\n"
+        "lqc2      $vf4, %0\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "+m"(v), "=&r"(t)
+        : "f"(s)
+        : "memory");
+}
+
+// PORT: PS2-only VU0 inline asm (cross product, w = 0).
+static inline t4Vector Cross_EE00(const t4Vector& a, const t4Vector& b)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf4, %1\n"
+        "lqc2      $vf5, %2\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vsub.w    $vf6, $vf6, $vf6\n"
+        "sqc2      $vf6, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4-component vector length).
+static inline float Length_EE00(const t4Vector& v)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %1, $vi22\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(v)
+        );
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (4-component dot product).
+static inline float Dot_EE00(const t4Vector& a, const t4Vector& b)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "lqc2      $vf5, %3\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf5\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "qmfc2.ni  %1, $vf4\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2 sqrt.s asm helper; use sqrtf on PC.
+static inline float Sqrt_EE00(float x)
+{
+    float r;
+    __asm__("sqrt.s %0,%1" : "=f"(r) : "f"(x));
+    return r;
+}
+
+// PORT: abs.s via inline asm (as an SDK math-header fabsf would).
+static inline float Abs_EE00(float x)
+{
+    float r;
+    __asm__("abs.s %0, %1" : "=f"(r) : "f"(x));
+    return r;
+}
+
+// PORT: g++ max operator (>?), removed in GCC 4.3.
+static inline float Max_EE00(float a, float b)
+{
+    return a >? b;
+}
+
+extern "C" void func_0015EE00(sCam_EE00* self)
+{
+    void* world = *(void**)((char*)D_004A28A8->game + 0x20);
+    sHit_EE00 hit;
+
+    t4Vector a = Add_EE00(self->pos, Scale_EE00(D_004FF160, self->dist));
+    t4Vector d = Sub_EE00(self->target, a);
+    float len = Length_EE00(d);
+    t4Vector h = d;
+    h.z = 0.0f;
+    float hl = Length_EE00(h);
+    float dist = Length_EE00(Sub_EE00(self->target, self->pos));
+    float k = 1.0f / Max_EE00(hl / Sqrt_EE00(hl * hl + len * len), 0.05f);
+    float span = k * 300.0f;
+    float lift = k * 50.0f;
+    t4Vector b = Add_EE00(self->pos, Scale_EE00(D_004FF160, self->dist));
+    t4Vector u = Scale_EE00(D_004FF160, span);
+    t4Vector lo = Sub_EE00(b, u);
+    t4Vector hi = Add_EE00(b, u);
+    t4Vector side = Cross_EE00(d, D_004FF160);
+    float sign = 1.0f;
+    if (0.0f < Dot_EE00(self->normal, side)) {
+        sign = -1.0f;
+    }
+    ScaleEq_EE00(side, sign * 50.0f / Length_EE00(side));
+    sSeg_EE00 seg;
+    func_0032E100_EE00(&seg, Add_EE00(hi, side), Add_EE00(lo, side), 0.5f, 2);
+    float t = func_00336850_EE00(world, &seg, &hit, self->hitInfo);
+    if (0.0f < t) {
+        float f;
+        float up = hit.normal.z;
+        if (0.5f < t) {
+            float v = span * ((t + t) - 1.0f);
+            if (0.0f < up) {
+                f = 0.0f;
+                if (v < lift) {
+                    f = lift - v;
+                }
+                self->dist = self->dist + f;
+            } else {
+                f = v + lift;
+                if (150.0f < f) {
+                    f = 0.0f;
+                }
+                self->dist = self->dist - f;
+            }
+        } else {
+            float v = span * (1.0f - (t + t));
+            if (0.0f < up) {
+                f = v + lift;
+                if (150.0f < f) {
+                    f = 0.0f;
+                }
+                self->dist = self->dist + f;
+            } else {
+                f = 0.0f;
+                if (v < lift) {
+                    f = lift - v;
+                }
+                self->dist = self->dist - f;
+            }
+        }
+        self->normal = hit.normal;
+    }
+    AddEq_EE00(self->pos, Scale_EE00(D_004FF160, self->dist));
+    t4Vector e = Sub_EE00(self->target, self->pos);
+    ScaleEq_EE00(e, dist / Length_EE00(e));
+    self->pos = Sub_EE00(self->target, e);
+    self->dist = self->dist * 0.97f;
+    if (func_0015D020(self->ctrl)) {
+        t4Vector from = Add_EE00(self->target, Scale_EE00(D_004FF160, 100.0f));
+        t4Vector to = self->pos;
+        sSeg_EE00 seg2;
+        sHit_EE00 hit2;
+        func_0032E100_EE00(&seg2, from, to, 0.5f, 2);
+        if (0.0f < func_00336850_EE00(*(void**)((char*)D_004A28A8->game + 0x20), &seg2, &hit2, 0)) {
+            if (self->snap != 0) {
+                self->pos = Add_EE00(Add_EE00(self->target, Scale_EE00(D_004FF160, 180.0f)), ScaleP_EE00(D_004FF140, 180.0f));
+            } else {
+                self->pos = self->safePos;
+            }
+            if (self->blocked == 0) {
+                AddEq_EE00(self->pos, Scale_EE00(hit2.normal, 50.0f));
+            }
+            self->blocked = 1;
+            t4Vector e2 = Sub_EE00(self->target, self->pos);
+            if (Length_EE00(e2) < 2.0f || (Abs_EE00(e2.x) < 1.0f && Abs_EE00(e2.y) < 1.0f)) {
+                self->pos = Add_EE00(Add_EE00(self->target, Scale_EE00(D_004FF160, 150.0f)), ScaleP_EE00(D_004FF140, 100.0f));
+            }
+        } else {
+            self->blocked = 0;
+        }
+        self->safePos = self->pos;
+    } else {
+        self->blocked = 0;
+    }
+    self->snap = 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("camera/camera", func_0015F568);
