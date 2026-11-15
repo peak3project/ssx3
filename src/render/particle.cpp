@@ -8420,7 +8420,68 @@ extern "C" void func_003850A8(sPartGsCtx* ctx, sPartGsVtx* v, sPartGsPos* pos)
 }
 #endif
 
+//100%
 INCLUDE_ASM("render/particle", func_00385138);
+#ifdef SKIP_ASM
+struct sPartGrid_5138 {
+    int f0;
+    void* vt;                       // 0x4
+    char pad_0x8[0x190 - 0x8];
+    unsigned short width;           // 0x190
+    unsigned short height;          // 0x192
+    float range;                    // 0x194
+    float scale;                    // 0x198
+    char* buf;                      // 0x19C
+    int sel;                        // 0x1A0
+    int done;                       // 0x1A4
+    int pad_0x1A8;
+    int idx[2];                     // 0x1AC
+    int rows[2];                    // 0x1B4
+    int numRows;                    // 0x1BC
+    int stripLen;                   // 0x1C0
+    int f1C4;                       // 0x1C4
+    int ok;                         // 0x1C8
+};
+
+extern "C" int func_00385EB0(sPartGrid_5138* self, int rows, int len);
+extern "C" void func_00386128(sPartGrid_5138* self, int rows, int len, int row, int idx);
+extern void* D_00493208[];
+extern char D_00492E18[];
+
+sPartGrid_5138* func_00385138_impl(sPartGrid_5138* self, int w, int h, int a3, unsigned int flags) __asm__("func_00385138");
+sPartGrid_5138* func_00385138_impl(sPartGrid_5138* self, int w, int h, int a3, unsigned int flags)
+{
+    self->vt = D_00493208;
+    self->f1C4 = a3;
+    self->range = 20000.0f;
+    self->scale = 1.63835f;
+    self->width = w;
+    self->height = h;
+    self->numRows = h - 1;
+    self->stripLen = w * 2;
+    int sz = func_00385EB0(self, self->numRows, self->stripLen);
+    char* buf = new (D_00492E18, flags, 0) char[sz * 2 + self->numRows * 32];
+    self->buf = buf;
+    if (buf == 0) {
+        self->ok = 0;
+    } else {
+        self->ok = 1;
+        int p = (int)buf;
+        self->idx[0] = p;
+        p += sz;
+        self->idx[1] = p;
+        p += sz;
+        self->rows[0] = p;
+        p += self->numRows * 16;
+        self->rows[1] = p;
+        func_00386128(self, self->numRows, self->stripLen, self->rows[0], self->idx[0]);
+        func_00386128(self, self->numRows, self->stripLen, self->rows[1], self->idx[1]);
+        self->done = 0;
+        self->sel = -1;
+    }
+    return self;
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/particle", func_00385260);
