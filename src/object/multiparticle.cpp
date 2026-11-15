@@ -732,7 +732,89 @@ extern "C" void func_00358C30(void* self, void* stream)
 }
 #endif
 
+//100%
 INCLUDE_ASM("object/multiparticle", func_00358C80);
+#ifdef SKIP_ASM
+extern "C" void* func_00341AA0(void* self, int a, int type, int b, int c);
+extern char D_0048EC28[];
+extern char D_0048EA20[];
+
+struct sAppMan_8C80 {
+    char pad0[0x10];
+    int fps;                // 0x10
+};
+extern sAppMan_8C80* D_004A5B64;    // TheAppMan (prototype assert)
+
+struct sObj_8C80 {
+    char pad0[0x14];
+    float fade;             // 0x14
+};
+
+struct sOwner_8C80 {
+    char pad0[0x80];
+    sObj_8C80* obj;         // 0x80
+};
+
+struct sParams_8C80 {
+    char pad0[0x10];
+    float life;             // 0x10
+    char pad14[0x14];
+    float life2;            // 0x28
+    float fade;             // 0x2C
+    float speed;            // 0x30
+    int dir;                // 0x34
+};
+
+// Element type with an empty constructor; the array new leaves only its loop counters.
+struct sParticle_8C80 {
+    char data[0x40];
+    sParticle_8C80() {}
+};
+
+// The two timers at 0x8/0xC are one-float aggregates: written through references, their stores are struct
+// members (in_struct), so the TheAppMan load in the speed calculation is not ordered behind the fade store.
+struct sTime_8C80 {
+    float secs;
+};
+
+struct sMP_8C80 {
+    float speed;            // 0x0
+    int f4;                 // 0x4
+    sTime_8C80 life;        // 0x8
+    sTime_8C80 fade;        // 0xC
+    char pad10[4];
+    unsigned char f14;      // 0x14
+    unsigned char f15;      // 0x15
+    unsigned char f16;      // 0x16
+    unsigned char f17;      // 0x17
+    char base[0x3C];        // 0x18
+    void* vt;               // 0x54
+    char pad58[0x1C];
+    int count;              // 0x74
+    char pad78[0xC];
+    sParticle_8C80* parts;  // 0x84
+};
+
+extern "C" sMP_8C80* func_00358C80(sMP_8C80* self, int a1, sOwner_8C80* owner, sParams_8C80* params)
+{
+    func_00341AA0(self->base, a1, 3, (int)owner, (int)params);
+    self->vt = D_0048EC28;
+    sObj_8C80* ob = owner->obj;
+    sTime_8C80& life = self->life;
+    life.secs = (params->life2 < 0.0f ? params->life : params->life2) * (1.0f / 30.0f);
+    sTime_8C80& fade = self->fade;
+    fade.secs = params->fade < 0.0f ? ob->fade : params->fade * (1.0f / 30.0f);
+    self->speed = params->speed * (1.0f / 30.0f) / (float)D_004A5B64->fps;
+    self->f16 = params->dir != 0;
+    self->f17 = params->dir < 0;
+    sParticle_8C80** parts = &self->parts;
+    *parts = new (D_0048EA20, 0x20000000, 0) sParticle_8C80[self->count];
+    self->f14 = 0;
+    self->f15 = 0;
+    self->f4 = 0;
+    return self;
+}
+#endif
 
 //100%
 INCLUDE_ASM("object/multiparticle", func_00358DB0);
