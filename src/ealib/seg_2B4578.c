@@ -15193,7 +15193,90 @@ void func_003CD6F0(char *arg0, unsigned char *arg1, char *arg2, int arg3) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003CD878);
+#ifdef SKIP_ASM
+struct S_D878 {
+    BS_D1F8 bs;
+    int wC;
+    int w10;
+    float tab[64];
+    float z1[12];
+    float z2[12];
+    float z3[0x144];
+    float buf[0x1B0];
+};
+extern float D_0044E8E8[];
+extern void func_003CD2B0(struct S_D878 *, int, float *, int);
+extern void func_003CD518(void *);
+extern void func_003CD690(char *, int, int);
+
+void func_003CD878(struct S_D878 *s) {
+    float e[118];
+    float delta[12];
+    int i, k;
+    int d, lag, off, flag, pos;
+    int lo;
+    float gain, amp;
+
+    d = func_003CD1F8(&s->bs, 6);
+    lo = d < s->w10;
+    delta[0] = (D_0044E8E8[d] - s->z1[0]) * 0.25f;
+    for (i = 1; i < 4; i++) {
+        delta[i] = (D_0044E8E8[func_003CD1F8(&s->bs, 6)] - s->z1[i]) * 0.25f;
+    }
+    for (i = 4; i < 12; i++) {
+        delta[i] = (D_0044E8E8[func_003CD1F8(&s->bs, 5) + 16] - s->z1[i]) * 0.25f;
+    }
+    for (k = 0; k < 4; k++) {
+        lag = (k + 2) * 108 - func_003CD1F8(&s->bs, 8);
+        gain = (float)(unsigned)func_003CD1F8(&s->bs, 4) * 0.06666667f;
+        amp = s->tab[func_003CD1F8(&s->bs, 6)];
+        if (s->wC == 0) {
+            func_003CD2B0(s, lo, &e[5], 1);
+        } else {
+            off = func_003CD1F8(&s->bs, 1);
+            flag = func_003CD1F8(&s->bs, 1);
+            func_003CD2B0(s, lo, &e[5 + off], 2);
+            if (flag != 0) {
+                for (i = 0; i < 108; i += 2) {
+                    e[i + 6 - off] = 0.0f;
+                }
+            } else {
+                for (i = 0; i < 5; i++) {
+                    e[i] = 0.0f;
+                }
+                for (i = 113; i < 118; i++) {
+                    e[i] = 0.0f;
+                }
+                func_003CD518(&e[6] - off);
+                amp *= 0.5f;
+            }
+        }
+        pos = k * 108;
+        for (i = 0; i < 108; i++) {
+            s->buf[pos + i] = gain * s->z3[lag + i] + amp * e[5 + i];
+        }
+    }
+    __builtin_memcpy(s->z3, &s->buf[108], sizeof(s->z3));
+    for (i = 0; i < 12; i++) {
+        s->z1[i] += delta[i];
+    }
+    func_003CD690((char *)s, 0, 1);
+    for (i = 0; i < 12; i++) {
+        s->z1[i] += delta[i];
+    }
+    func_003CD690((char *)s, 12, 1);
+    for (i = 0; i < 12; i++) {
+        s->z1[i] += delta[i];
+    }
+    func_003CD690((char *)s, 24, 1);
+    for (i = 0; i < 12; i++) {
+        s->z1[i] += delta[i];
+    }
+    func_003CD690((char *)s, 36, 0x21);
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003CDDB8);
