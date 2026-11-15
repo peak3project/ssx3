@@ -12028,7 +12028,46 @@ void func_003C8C30(int arg0, int arg1) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C8D00);
+#ifdef SKIP_ASM
+extern struct sB40Node *func_003B5C60_8D00(int) __asm__("func_003B5C60");
+extern void func_003B5E98_8D00(void *) __asm__("func_003B5E98");
+extern int func_003CA870_8D00(void *) __asm__("func_003CA870");
+extern void func_003C8F48_8D00(struct sB40Node **, struct sB40Node *) __asm__("func_003C8F48");
+extern void func_003C8FB0_8D00(struct sB40Node **, struct sB40Node *) __asm__("func_003C8FB0");
+extern void func_003CA8A0_8D00(void *, int *) __asm__("func_003CA8A0");
+
+void func_003C8D00(int arg0, float arg1) {
+    int sp[3];
+    struct sB40Ent *e;
+    struct sB40Node *buf;
+
+    e = &D_00515D1C[arg0];
+    if (arg1 < 1.0f) {
+        if (e->f58 == 0) {
+            struct sB40Node *t2 = func_003B5C60_8D00(0x28);
+            e->f58 = (int)t2;
+            t2->f04 = 0;
+            ((struct sB40Node *)e->f58)->f18 = 0x28;
+            ((struct sB40Node *)e->f58)->f1A = 0;
+            func_003CA870_8D00((struct sB40Node *)e->f58);
+            func_003C8F48_8D00(&e->f40, (struct sB40Node *)e->f58);
+        }
+        sp[1] = D_0050A8E8.setup.cfg.f0A << 8;
+        sp[0] = roundf_f4(arg1 * (float)D_0050A8E8.setup.cfg.f0A) << 7;
+        sp[2] = 0x100;
+        func_003CA8A0_8D00((struct sB40Node *)e->f58, sp);
+        return;
+    }
+    buf = (struct sB40Node *)e->f58;
+    if (buf != 0) {
+        func_003C8FB0_8D00(&e->f40, buf);
+        func_003B5E98_8D00((struct sB40Node *)e->f58);
+        e->f58 = 0;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C8E28);
