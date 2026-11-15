@@ -2,7 +2,7 @@
 
 Auto-generated from [objdiff](tools/objdiff) by diffing every unit's `obj/target` against `obj/current`. Regenerate with a dual build (`./configure.py -c -o && ninja`) followed by `python3 scripts/matching_report.py`; see [CONTRIBUTING.md](CONTRIBUTING.md).
 
-Snapshot of commit `d9475ff1`, generated 2026-11-15.
+Snapshot of commit `9be400d3`, generated 2026-11-15.
 
 **Status definitions:**
 - **Matching** — byte-for-byte identical to the retail binary (100%), or a near-miss that objdiff's own report scores as matched despite a lower raw percentage (the only remaining byte difference is a relocation immediate baked in at link time by the original SN toolchain, not a real code difference — see the gp-relative note in [README.md](README.md)). Taken per function from objdiff's report; nothing is promoted to make counts agree.
@@ -11,9 +11,9 @@ Snapshot of commit `d9475ff1`, generated 2026-11-15.
 
 | | Count | % of total |
 |---|---|---|
-| Matching | 14,882 | 98.45% |
+| Matching | 14,885 | 98.47% |
 | Partial | 3 | 0.02% |
-| Not started | 231 | 1.53% |
+| Not started | 228 | 1.51% |
 | **Total** | **15,116** | |
 
 (Total here may differ slightly from the function count in README.md's progress table — that one comes from objdiff's own aggregate report, this one from summing every unit's individual symbol list, and the two count a handful of duplicated/weak symbols differently.)
@@ -49,7 +49,7 @@ Only files with at least one Matching or Partial function are listed here; files
 | `ai/ai` | 174 | 0 | 0 | 174 |
 | `fe/all_in_one_fe` | 152 | 0 | 2 | 154 |
 | `wscript/wscriptman` | 152 | 0 | 0 | 152 |
-| `worldpainter/quadtree` | 147 | 0 | 4 | 151 |
+| `worldpainter/quadtree` | 148 | 0 | 3 | 151 |
 | `camera/trigger/cameratriggerfactory` | 144 | 0 | 0 | 144 |
 | `seg/seg_316FB8` | 137 | 0 | 0 | 137 |
 | `seg/seg_3249A0` | 136 | 0 | 0 | 136 |
@@ -63,8 +63,8 @@ Only files with at least one Matching or Partial function are listed here; files
 | `ai/rider` | 112 | 0 | 3 | 115 |
 | `seg/seg_1D3510` | 112 | 0 | 1 | 113 |
 | `ealib/seg_2D7498` | 108 | 0 | 4 | 112 |
+| `seg/seg_1218` | 105 | 0 | 5 | 110 |
 | `be/beintplayer` | 104 | 0 | 0 | 104 |
-| `seg/seg_1218` | 104 | 0 | 6 | 110 |
 | `seg/seg_156860` | 101 | 0 | 0 | 101 |
 | `bx/bxstringctor` | 99 | 0 | 0 | 99 |
 | `mem/memstd` | 95 | 0 | 1 | 96 |
@@ -117,8 +117,8 @@ Only files with at least one Matching or Partial function are listed here; files
 | `bx/memblockman` | 40 | 0 | 0 | 40 |
 | `fe/feridermanager` | 40 | 0 | 1 | 41 |
 | `dirtysock/tags` | 39 | 0 | 1 | 40 |
+| `main/gameload` | 39 | 0 | 0 | 39 |
 | `replay/frameptr` | 39 | 0 | 0 | 39 |
-| `main/gameload` | 38 | 0 | 1 | 39 |
 | `ui/uitext` | 38 | 0 | 0 | 38 |
 | `object/modifierblock` | 37 | 0 | 0 | 37 |
 | `fe/festatetrophyroom` | 36 | 0 | 0 | 36 |
@@ -8298,10 +8298,11 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 
 ### `main/gameload`
 
-38 matching, 0 partial, 1 not started (39 total)
+39 matching, 0 partial, 0 not started (39 total)
 
 | Function | Status | Match % | Size |
 |---|---|---|---|
+| `cGame_load` | Matching | 100.00% | 2788 |
 | `cGame_loadTrack` | Matching | 100.00% | 1000 |
 | `func_0022FA98` | Matching | 100.00% | 1464 |
 | `func_00230050` | Matching | 100.00% | 160 |
@@ -8317,6 +8318,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_00230640` | Matching | 100.00% | 88 |
 | `func_00230698(void*, int)` | Matching | 100.00% | 16 |
 | `func_002306A8(void*, int)` | Matching | 100.00% | 16 |
+| `func_002306B8` | Matching | 100.00% | 2004 |
 | `func_00230E90` | Matching | 100.00% | 8 |
 | `func_00230E98` | Matching | 100.00% | 168 |
 | `func_00230F40` | Matching | 100.00% | 780 |
@@ -8332,14 +8334,13 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_00231B50` | Matching | 100.00% | 284 |
 | `func_00231C70` | Matching | 100.00% | 60 |
 | `func_00231CB0(void*)` | Matching | 100.00% | 28 |
+| `func_00231CD0` | Matching | 100.00% | 32 |
+| `func_00231CF0` | Matching | 100.00% | 40 |
+| `func_00231D18` | Matching | 100.00% | 68 |
 | `func_00231D60` | Matching | 100.00% | 540 |
+| `func_00231F80` | Matching | 100.00% | 60 |
+| `func_00231FC0` | Matching | 100.00% | 868 |
 | `func_00232328(void*)` | Matching | 100.00% | 28 |
-| `func_002306B8` | Matching | 99.99% | 2004 |
-| `func_00231FC0` | Matching | 99.93% | 868 |
-| `func_00231F80` | Matching | 99.67% | 60 |
-| `func_00231CF0` | Matching | 99.50% | 40 |
-| `func_00231D18` | Matching | 99.41% | 68 |
-| `func_00231CD0` | Matching | 99.38% | 32 |
 
 ### `main/gamemode`
 
@@ -11743,7 +11744,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 
 ### `seg/seg_1218`
 
-104 matching, 0 partial, 6 not started (110 total)
+105 matching, 0 partial, 5 not started (110 total)
 
 | Function | Status | Match % | Size |
 |---|---|---|---|
@@ -11828,6 +11829,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_0010AD78` | Matching | 99.94% | 352 |
 | `func_00107E70` | Matching | 99.94% | 1304 |
 | `func_00107888` | Matching | 99.93% | 1512 |
+| `func_00105D98` | Matching | 99.93% | 1952 |
 | `func_0010AED8` | Matching | 99.92% | 528 |
 | `func_00108A48` | Matching | 99.92% | 476 |
 | `func_00103BE0` | Matching | 99.91% | 232 |
@@ -16395,7 +16397,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 
 ### `worldpainter/quadtree`
 
-147 matching, 0 partial, 4 not started (151 total)
+148 matching, 0 partial, 3 not started (151 total)
 
 | Function | Status | Match % | Size |
 |---|---|---|---|
@@ -16444,6 +16446,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_002C2DB0` | Matching | 100.00% | 144 |
 | `func_002C2E40` | Matching | 100.00% | 52 |
 | `func_002C2E78` | Matching | 100.00% | 160 |
+| `func_002C2F18` | Matching | 100.00% | 4232 |
 | `func_002C3FA0(void*)` | Matching | 100.00% | 8 |
 | `func_002C3FA8` | Matching | 100.00% | 52 |
 | `func_002C3FE0` | Matching | 100.00% | 108 |
