@@ -2679,7 +2679,40 @@ extern "C" void func_002D9C00(int id, sAvMatrix* out)
 }
 #endif
 
+//100%
 INCLUDE_ASM("visualfx/avalanche", func_002D9CB0);
+#ifdef SKIP_ASM
+struct sAvSlot_9CB0 {
+    int* group;         // 0x0
+    char pad_0x4[0x14];
+    float time;         // 0x18
+    int isActive() const { return group != 0; }
+};
+extern sAvSlot_9CB0 D_slots_9CB0[] __asm__("D_00538938");
+
+struct sAvVEntry_9CB0 {
+    short delta;
+    short index;
+    void (*fn)(void*, void*, int);
+};
+
+extern "C" void func_002D9CB0(int* self)
+{
+    struct {
+        int ids[16];
+        float times[16];
+    } buf;
+    int i;
+    for (i = 0; i < 16; i++) {
+        buf.ids[i] = D_slots_9CB0[i].isActive() ? *D_slots_9CB0[i].group : -1;
+        buf.times[i] = D_slots_9CB0[i].isActive() ? D_slots_9CB0[i].time : 0.0f;
+    }
+    {
+        sAvVEntry_9CB0* e = &(*(sAvVEntry_9CB0**)self)[1];
+        e->fn((char*)self + e->delta, buf.ids, 0x80);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("visualfx/avalanche", cAvalanche_readFromReplayFrame);
