@@ -825,7 +825,116 @@ out:
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2D7498", func_003D7418);
+#ifdef SKIP_ASM
+static __inline__ int find_7418(unsigned char *k, struct sBank **pres) {
+    int found = 0;
+    int i = 0;
+    do {
+        unsigned char *q = D_0044FFB8[i].p;
+        if (q != 0 && q[9] == k[2] && q[8] == k[3]) {
+            *pres = &D_0044FFB8[i];
+            found = 1;
+            break;
+        }
+        i++;
+    } while (i < 8);
+    return found;
+}
+
+static __inline__ int bucket_7418(unsigned char *k, int *out) {
+    struct sBank *res;
+    int r = 0;
+    if (find_7418(k, &res)) {
+        r = 1;
+        *out = res->x;
+    }
+    return r;
+}
+
+extern int D_004A4848;
+int func_003DB5C0(int, int);
+void func_003D7C38(unsigned int);
+int func_003DB9A0(void);
+int func_003D72A0(unsigned int arg0, int arg1, int arg2);
+
+int func_003D7418(unsigned char *msg) {
+    struct sKey4 key;
+    int idx;
+    int ret = 0;
+    int slot;
+    int prev = -1;
+    int last = -1;
+    int f;
+    unsigned int t;
+    int i;
+    struct sEvtHdr *q;
+    unsigned int ta;
+    unsigned int tb;
+    struct sEvtHdr *hp;
+    int ok;
+
+    if (D_004A4848 == 0) {
+        D_004A4848 = 1;
+        key = *(struct sKey4 *)msg;
+        q = (struct sEvtHdr *)func_003D7110(key.b);
+        if (q != 0) {
+            if (bucket_7418(key.b, &idx)) {
+                f = (q->bA >> 5) & 1;
+                if (f) {
+                    ta = D_0044FFF8.a[idx];
+                    tb = D_0044FFF8.b[idx];
+                    ok = 1;
+                    if (ta >= 0x10) ok = 0;
+                    if (tb >= 0x10) ok = 0;
+                    if (!ok) goto out;
+                    last = tb;
+                    prev = ta;
+                    hp = D_0044FFF8.r[last].p;
+                }
+                if (!f && q->b9 < func_003DB5C0(100, -1)) goto out;
+                slot = func_003D72A0(f ? hp->h4 : q->h4, idx, f);
+                if (slot < 0) {
+                    if (f) func_003D7C38(last);
+                    goto out;
+                }
+                t = func_003DB9A0();
+                if (t == D_004A4840) {
+                    D_004A4844++;
+                } else {
+                    D_004A4844 = 0;
+                }
+                D_004A4840 = t;
+                D_0044FFF8.r[slot].p = q;
+                D_0044FFF8.r[slot].d = idx;
+                D_0044FFF8.r[slot].h = D_004A4844;
+                D_0044FFF8.r[slot].f0 = t;
+                D_0044FFF8.r[slot].next = -1;
+                D_0044FFF8.r[slot].s8 = f;
+                if (f) {
+                    D_0044FFF8.r[prev].next = slot;
+                }
+                for (i = 0; i < 20; i++) {
+                    D_0044FFF8.r[slot].arr[i] = ((int *)msg)[i];
+                }
+                if (!f) {
+                    D_0044FFF8.z[idx]++;
+                }
+                D_0044FFF8.r[slot].c = 1;
+                D_0044FFF8.a[idx] = slot;
+                if (!f) {
+                    D_0044FFF8.b[idx] = slot;
+                }
+                ret = 1;
+            }
+        }
+    }
+out:
+    D_004A4848 = 0;
+    return ret;
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("ealib/seg_2D7498", func_003D76F0);
