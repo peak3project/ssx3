@@ -335,7 +335,160 @@ extern "C" void func_00311E88(char* self, int i, float v)
 }
 #endif
 
+//100%
 INCLUDE_ASM("animation/rideranimbase", func_00311F00);
+#ifdef SKIP_ASM
+struct cAnimSequence;
+void cAnimSequence_fadeWeight(cAnimSequence* self, float weight, float target);
+extern "C" void func_003145F8(void* seq, void* node);
+extern "C" void func_00313A70(void* self, int key, float weight);
+extern "C" void func_00313CF0(void* self, int idx, float v);
+extern char** D_004A3DF8;
+extern "C" void func_00313AD8(void* self, int key);
+extern "C" void func_00313BA8(void* self, int key);
+extern "C" void func_00313A20(void* self, float v);
+extern "C" void func_00313C50(void* self, int i, int anim);
+extern "C" void func_00313D28(void* self, int a1, float val);
+extern "C" void* func_00314518(void* self, int arg, int anim, float val);
+extern "C" void* func_00314588(void* self, int arg, int anim, float val);
+
+struct sQ4_311F00 {
+    float x, y, z, w;
+    const float& operator[](int i) const { return (&x)[i]; }
+} __attribute__((aligned(16)));
+
+// Node transform at 0x60: position, then rotation quaternion (same layout as sRabXform_00311B48).
+struct sPose_311F00 {
+    sQ4_311F00 pos;
+    sQ4_311F00 rot;
+};
+
+static inline bool operator==(const sQ4_311F00& p, const sQ4_311F00& q)
+{
+    return p[0] == q[0] && p[1] == q[1] && p[2] == q[2] && p[3] == q[3];
+}
+
+static inline bool operator==(const sPose_311F00& p, const sPose_311F00& q)
+{
+    return p.rot == q.rot && p.pos == q.pos;
+}
+
+struct sCh_311F00 {
+    int anim;
+    float t;
+    float w;
+    float len;
+    float speed;
+    int active;
+    int f18;
+};
+
+struct sNode_311F00 {
+    int f00;
+    sCh_311F00 ch[3];
+    int pad58[2];
+    sPose_311F00 pose;  // 0x60
+    int f80;
+    int f84;
+    long f88;
+    float f90;
+    float f94;
+    float f98;
+    int pad9C[2];
+    float fA4;
+};
+
+struct sRab_311F00 {
+    int mAnims[6];
+    int m18;
+    float m1C;
+    long m20;
+    int pad28[2];
+    sPose_311F00 m30;
+};
+
+struct sAnimKey_311F00 {
+    unsigned short value;
+    unsigned short pad;
+};
+
+struct sBlend_311F00 {
+    int f0;
+    int type;
+    int f8;
+    int fC;
+    int f10;
+    float f14;
+    float f18;
+};
+
+extern "C" int func_00311F00_x(sRab_311F00* self, cAnimSequencer* seq, int anim, unsigned int h, int keep, int a5, float blend) __asm__("func_00311F00");
+extern "C" int func_00311F00_x(sRab_311F00* self, cAnimSequencer* seq, int anim, unsigned int h, int keep, int a5, float blend)
+{
+    if (blend == 0.0f)
+        func_00314668(seq);
+    sNode_311F00* node;
+    if (((sBlend_311F00*)cAIAnimEventMap_getBlendInTime(anim))->type == 2) {
+        node = (sNode_311F00*)func_00314588(seq, anim, h, 0.0f);
+    } else {
+        node = (sNode_311F00*)func_00314518(seq, anim, h, 0.0f);
+        if (((sBlend_311F00*)cAIAnimEventMap_getBlendInTime(anim))->type == 0 || ((sBlend_311F00*)cAIAnimEventMap_getBlendInTime(anim))->f8 != 0)
+            func_00313AD8(node, 0x3F);
+    }
+    node->f80 = self->m18;
+    node->pose = self->m30;
+    node->f88 = self->m20;
+    node->f90 = self->m1C;
+    node->f98 = 1.0f;
+    node->f94 = 1.0f;
+    node->fA4 = ((sBlend_311F00*)cAIAnimEventMap_getBlendInTime(anim))->f18;
+    node->f84 = a5;
+    int cnt = *(unsigned short*)((h >> 8) * 0x14 + *(int*)(*(char**)((char*)D_004A3DF8 + ((h & 0xFF) << 2)) + 8) + 0x12);
+    for (int i = 0; i < cnt; i++) {
+        char* clip = *(char**)((char*)D_004A3DF8 + ((h & 0xFF) << 2));
+        char* q = (char*)((h >> 8) * 0x14 + *(int*)(clip + 0x8));
+        sAnimKey_311F00* keys = *(sAnimKey_311F00**)(clip + 0x10);
+        func_00313A70(node, i, keys[*(unsigned short*)(q + 0x10) + i].value * 0.03333333507180214f);
+    }
+    if (seq->mCount == 1) {
+        float f = ((sBlend_311F00*)cAIAnimEventMap_getBlendInTime(anim))->f14;
+        if (f != 0.0f) {
+            node->f98 = 0.0f;
+            node->f94 = 0.0f;
+            cAnimSequence_fadeWeight((cAnimSequence*)node, 1.0f, f);
+        }
+    } else if (blend != 0.0f) {
+        sNode_311F00* cand = 0;
+        for (int k = 1; k < seq->mCount; k++) {
+            sNode_311F00* s = (sNode_311F00*)cAnimSequencer_getSequence(seq, k);
+            func_00313BA8(s, 0x3F);
+            func_00313A20(s, blend);
+            int type = ((sBlend_311F00*)cAIAnimEventMap_getBlendInTime(anim))->type;
+            bool ok = s->ch[0].anim == node->ch[0].anim || (type != 0 && type != 2 && type != 1);
+            if (ok && s->f00 == node->f00 && s->f88 == node->f88 && s->f80 == node->f80 && s->pose == node->pose)
+                cand = s;
+        }
+        if (cand != 0 && keep == 0) {
+            for (int k = 0; k < 3; k++) {
+                if (cand->ch[k].active != 0) {
+                    func_00313C50(node, k, cand->ch[k].anim);
+                    func_00313CF0(node, k, cand->ch[k].t);
+                    func_00313D28(node, k, cand->ch[k].speed);
+                }
+            }
+            node->f94 = node->f98 = cand->f94;
+            if (cand->f94 < 1.0f)
+                cAnimSequence_fadeWeight((cAnimSequence*)node, 1.0f, blend * (1.0f - cand->f94));
+            func_003145F8(seq, cand);
+        } else {
+            node->f98 = 0.0f;
+            node->f94 = 0.0f;
+            cAnimSequence_fadeWeight((cAnimSequence*)node, 1.0f, blend);
+        }
+    }
+    return anim;
+}
+#endif
 
 //100%
 INCLUDE_ASM("animation/rideranimbase", func_003123C0);
