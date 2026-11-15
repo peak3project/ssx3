@@ -21,7 +21,93 @@ extern char D_004A18A8[];
 extern "C" void cFEStateRequestLine_updateButtonsText(void* self, int a1);
 extern "C" void cFEStateRequestLine_updateHelpText(void* self, int a1);
 
+//100%
 INCLUDE_ASM("fe/festateaudiooptions", cFEStateAudioOptions_onWidgetCreate);
+#ifdef SKIP_ASM
+extern char D_004A1830[];
+extern char D_004A1838[];
+extern char D_004A1840[];
+extern char D_004A1848[];
+extern char D_00460420[];
+extern char D_00460430[];
+extern char D_00460440[];
+extern char D_00460450[];
+extern char D_00460460[];
+struct sOption_AOWC {
+    char pad_0x0[0x18];
+    int idx;                        // 0x18
+    char pad_0x1C[0x1C];
+    int id;                         // 0x38
+    char pad_0x3C[0x3C];
+    int state;                      // 0x78
+    int color;                      // 0x7C
+};
+struct sAudioOptions_AOWC {
+    char pad_0x0[0x4C];
+    sOption_AOWC* options[4];       // 0x4C
+    int selColor;                   // 0x5C
+    int normColor;                  // 0x60
+    sOption_AOWC* toggles[3];       // 0x64
+    int f70;                        // 0x70
+    int f74;                        // 0x74
+    int sel;                        // 0x78
+};
+static inline void setOption_AOWC(sOption_AOWC* o, int state, int color)
+{
+    o->state = state;
+    o->color = color;
+}
+extern "C" void cFEStateAudioOptions_onWidgetCreate(sAudioOptions_AOWC* self, sOption_AOWC* w)
+{
+    int id = w->id;
+    if (id == GetHashValue32(D_004A1830)) {
+        self->options[0] = w;
+        if (self->sel == 0)
+            setOption_AOWC(w, -1, self->selColor);
+        else
+            setOption_AOWC(w, -1, self->normColor);
+    } else if (id == GetHashValue32(D_004A1838)) {
+        self->options[2] = w;
+        if (self->sel == 2)
+            setOption_AOWC(w, -1, self->selColor);
+        else
+            setOption_AOWC(w, -1, self->normColor);
+    } else if (id == GetHashValue32(D_004A1840)) {
+        self->options[1] = w;
+        if (self->sel == 1)
+            setOption_AOWC(w, -1, self->selColor);
+        else
+            setOption_AOWC(w, -1, self->normColor);
+    } else if (id == GetHashValue32(D_004A1840)) {
+        // The retail code tests D_004A1840 a second time and keeps this second, unreachable copy of
+        // the arm above (hash call, compare and body are all in the binary).
+        self->options[1] = w;
+        if (self->sel == 1)
+            setOption_AOWC(w, -1, self->selColor);
+        else
+            setOption_AOWC(w, -1, self->normColor);
+    } else if (id == GetHashValue32(D_004A1848)) {
+        self->options[3] = w;
+        if (self->sel == 3)
+            setOption_AOWC(w, -1, self->selColor);
+        else
+            setOption_AOWC(w, -1, self->normColor);
+    } else if (id == GetHashValue32(D_00460420)) {
+        w->idx = 0;
+    } else if (id == GetHashValue32(D_00460430)) {
+        w->idx = 2;
+    } else if (id == GetHashValue32(D_00460440)) {
+        self->toggles[1] = w;
+        w->idx = 1;
+    } else if (id == GetHashValue32(D_00460450)) {
+        self->toggles[0] = w;
+        w->idx = 4;
+    } else if (id == GetHashValue32(D_00460460)) {
+        self->toggles[2] = w;
+        w->idx = 3;
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/festateaudiooptions", cFEStateAudioOptions_onWidgetEvent);
