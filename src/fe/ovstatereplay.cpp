@@ -53,7 +53,23 @@ extern "C" void cOVState_REPLAY_onWidgetCreate(void* self, cUIThing* w)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/ovstatereplay", func_0020DF10);
+#ifdef SKIP_ASM
+// Same shape as the key filters in feasyncfile/fepopup: default result, inner arm re-sets it or returns early.
+extern "C" int func_0020DF10(void* self, int a1, int key)
+{
+    int r = 0;
+    if (*(int*)((char*)self + 0x9C) != 0) {
+        if (key >= 2 && key <= 5) {
+            return 0x101;
+        } else {
+            r = 0;
+        }
+    }
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/ovstatereplay", func_0020DF38);
