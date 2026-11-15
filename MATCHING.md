@@ -2,7 +2,7 @@
 
 Auto-generated from [objdiff](tools/objdiff) by diffing every unit's `obj/target` against `obj/current`. Regenerate with a dual build (`./configure.py -c -o && ninja`) followed by `python3 scripts/matching_report.py`; see [CONTRIBUTING.md](CONTRIBUTING.md).
 
-Snapshot of commit `9be400d3`, generated 2026-11-15.
+Snapshot of commit `17a042cc`, generated 2026-11-15.
 
 **Status definitions:**
 - **Matching** — byte-for-byte identical to the retail binary (100%), or a near-miss that objdiff's own report scores as matched despite a lower raw percentage (the only remaining byte difference is a relocation immediate baked in at link time by the original SN toolchain, not a real code difference — see the gp-relative note in [README.md](README.md)). Taken per function from objdiff's report; nothing is promoted to make counts agree.
@@ -11,9 +11,9 @@ Snapshot of commit `9be400d3`, generated 2026-11-15.
 
 | | Count | % of total |
 |---|---|---|
-| Matching | 14,885 | 98.47% |
+| Matching | 14,887 | 98.49% |
 | Partial | 3 | 0.02% |
-| Not started | 228 | 1.51% |
+| Not started | 226 | 1.50% |
 | **Total** | **15,116** | |
 
 (Total here may differ slightly from the function count in README.md's progress table — that one comes from objdiff's own aggregate report, this one from summing every unit's individual symbol list, and the two count a handful of duplicated/weak symbols differently.)
@@ -27,7 +27,7 @@ Only files with at least one Matching or Partial function are listed here; files
 | `ealib/seg_2B4578` | 581 | 0 | 24 | 605 |
 | `fe/feasyncfile` | 531 | 0 | 5 | 536 |
 | `render/font` | 432 | 0 | 1 | 433 |
-| `fe/fepopupmisc` | 377 | 1 | 3 | 381 |
+| `fe/fepopupmisc` | 378 | 1 | 2 | 381 |
 | `object/railmodifier` | 366 | 0 | 3 | 369 |
 | `seg/seg_2FE810` | 345 | 0 | 21 | 366 |
 | `ealib/seg_2DCAE8` | 324 | 0 | 5 | 329 |
@@ -126,11 +126,11 @@ Only files with at least one Matching or Partial function are listed here; files
 | `ui/uiengine` | 36 | 0 | 0 | 36 |
 | `animation/rideranimbase` | 35 | 0 | 0 | 35 |
 | `object/flagset` | 35 | 0 | 1 | 36 |
+| `visualfx/avalanche` | 35 | 0 | 0 | 35 |
 | `fe/ovstatehud` | 34 | 0 | 2 | 36 |
 | `main/loadscreens_prestart` | 34 | 0 | 0 | 34 |
 | `object/flexrailnode` | 34 | 0 | 0 | 34 |
 | `object/splinemodifier` | 34 | 0 | 1 | 35 |
-| `visualfx/avalanche` | 34 | 0 | 1 | 35 |
 | `object/multiparticle` | 33 | 0 | 0 | 33 |
 | `seg/seg_313F58` | 33 | 0 | 0 | 33 |
 | `main/game` | 32 | 0 | 0 | 32 |
@@ -5888,7 +5888,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 
 ### `fe/fepopupmisc`
 
-377 matching, 1 partial, 3 not started (381 total)
+378 matching, 1 partial, 2 not started (381 total)
 
 | Function | Status | Match % | Size |
 |---|---|---|---|
@@ -6212,6 +6212,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_001E4168` | Matching | 100.00% | 148 |
 | `func_001E4200` | Matching | 100.00% | 596 |
 | `func_001E4458` | Matching | 100.00% | 288 |
+| `func_001E4578` | Matching | 100.00% | 148 |
 | `func_001E4610` | Matching | 100.00% | 72 |
 | `func_001E4658` | Matching | 100.00% | 252 |
 | `func_001E4758` | Matching | 100.00% | 232 |
@@ -15752,7 +15753,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 
 ### `visualfx/avalanche`
 
-34 matching, 0 partial, 1 not started (35 total)
+35 matching, 0 partial, 0 not started (35 total)
 
 | Function | Status | Match % | Size |
 |---|---|---|---|
@@ -15785,6 +15786,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_002D9A80` | Matching | 100.00% | 192 |
 | `func_002D9B40` | Matching | 100.00% | 192 |
 | `func_002D9C00` | Matching | 100.00% | 172 |
+| `func_002D9CB0` | Matching | 100.00% | 180 |
 | `cAvalanche_readFromReplayFrame` | Matching | 100.00% | 588 |
 | `func_002D9FB8` | Matching | 100.00% | 112 |
 | `cAvalanche_resolveDataPointers` | Matching | 100.00% | 404 |
