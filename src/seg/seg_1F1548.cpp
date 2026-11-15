@@ -1880,7 +1880,148 @@ extern "C" void func_002F39C8(void *arg0) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_1F1548", func_002F39E0);
+#ifdef SKIP_ASM
+struct sV4_39E0 {
+    float x, y, z, w;
+} __attribute__((aligned(16)));
+
+// PORT: PS2-only VU0 inline asm (vector subtract).
+static inline sV4_39E0 Sub_39E0(const sV4_39E0& a, const sV4_39E0& b)
+{
+    sV4_39E0 r;
+    __asm__(
+        "lqc2      $vf3, %1\n"
+        "lqc2      $vf4, %2\n"
+        "vsub.xyzw $vf5, $vf3, $vf4\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (vector length via vsqrt).
+static inline float Length_39E0(const sV4_39E0& v)
+{
+    float r;
+    int t;
+    __asm__(
+        "lqc2      $vf3, %2\n"
+        "vaddw.x   $vf6, $vf0, $vf0w\n"
+        "vmul.xyzw $vf4, $vf3, $vf3\n"
+        "vadday.x  ACC, $vf4, $vf4y\n"
+        "vmaddaz.x ACC, $vf6, $vf4z\n"
+        "vmaddw.x  $vf4, $vf6, $vf4w\n"
+        "vsqrt     Q, $vf4x\n"
+        "vwaitq\n"
+        "cfc2.ni   %1, $vi22\n"
+        "mtc1      %1, %0\n"
+        : "=f"(r), "=&r"(t)
+        : "m"(v));
+    return r;
+}
+
+struct sV2_39E0 {
+    float x, y;
+    sV2_39E0() {}
+    sV2_39E0(float ax, float ay) : x(ax), y(ay) {}
+    const float& operator[](int i) const { return (&x)[i]; }
+};
+
+static inline sV2_39E0 operator*(const sV2_39E0& a, float s)
+{
+    return sV2_39E0(a.x * s, a.y * s);
+}
+
+struct sVE_39E0 {
+    short delta;
+    short index;
+    void (*fn)(void*);
+};
+struct sDrop_39E0 { int alive; char d[0x38]; };
+struct sCrystal_39E0 { int hits; int alive; sV2_39E0 pos; sV2_39E0 size; char d[0x34]; };
+struct sList_39E0 { int pad0; char* items[3]; unsigned count; };
+struct sSplashManager_39E0 {
+    char pad0[0xC];
+    sVE_39E0* vt;
+    unsigned idx;
+    int numDrops;
+    int numCrystals;
+    sDrop_39E0 dropList[30];
+    sCrystal_39E0 crystalList[30];
+    int hasPrev;
+    sV4_39E0 prev;
+    float speed;
+};
+
+extern int D_004A424C;
+extern int D_004A4258;
+extern float D_004A4260;
+extern int D_004A426C;
+struct sMin_39E0 { float v; };
+extern sMin_39E0 D_004A4294_39E0 __asm__("D_004A4294");
+extern "C" void func_002F2810(void* item, float dt);
+extern "C" void func_002F3030(void* item, float dt);
+extern "C" void func_002F3810(char* self);
+extern "C" void func_002F37A8_39E0(void*, sV2_39E0*, sV2_39E0*) __asm__("func_002F37A8");
+
+// cSplashManager vtable slot 1 (prototype asserts: mDropList[i].active(), mCrystalList[j].active())
+extern "C" void func_002F39E0(sSplashManager_39E0* self)
+{
+    if (D_004A424C == 0)
+        return;
+    sList_39E0* list = *(sList_39E0**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x84);
+    if (self->idx >= list->count)
+        return;
+    sV4_39E0 pos = *(sV4_39E0*)(list->items[self->idx] + 0x20);
+    if (self->hasPrev != 0) {
+        self->speed = Length_39E0(Sub_39E0(pos, self->prev)) * 59.999996185302734f * 0.035999998450279236f;
+    } else {
+        self->speed = 0.0f;
+        self->hasPrev = 1;
+    }
+    if (self->speed > 1000.0f) {
+        sVE_39E0* vt = self->vt;
+        vt[14].fn((char*)self + vt[14].delta);
+        self->speed = 0.0f;
+    }
+    self->prev = pos;
+    func_002F3810((char*)self);
+    for (int i = 0; i < self->numDrops;) {
+        sDrop_39E0* p = &self->dropList[i];
+        func_002F2810(p, self->speed);
+        if (p->alive != 0) {
+            i++;
+        } else {
+            self->dropList[i] = self->dropList[self->numDrops - 1];
+            self->numDrops--;
+        }
+    }
+    int pick = -1;
+    union { unsigned u; float f; } r;
+    r.u = (BXrand() & 0x7FFFFF) | 0x3F800000;
+    if ((r.f - 1.0f) * (float)self->numCrystals / (float)D_004A4258 < D_004A4260 && self->numCrystals > 0)
+        pick = BXrand() % (unsigned)self->numCrystals;
+    for (int j = 0; j < self->numCrystals;) {
+        sCrystal_39E0* p = &self->crystalList[j];
+        func_002F3030(p, self->speed);
+        if (p->alive != 0) {
+            if (pick == j && self->crystalList[j].hits < D_004A426C) {
+                self->crystalList[j].hits++;
+                sV2_39E0 size = p->size * 0.6000000238418579f;
+                if (D_004A4294_39E0.v < size[0] && D_004A4294_39E0.v < size[1])
+                    func_002F37A8_39E0(self, &p->pos, &size);
+            }
+            j++;
+        } else {
+            self->crystalList[j] = self->crystalList[self->numCrystals - 1];
+            self->numCrystals--;
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_1F1548", func_002F3E28);
