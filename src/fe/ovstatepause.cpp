@@ -1048,6 +1048,10 @@ extern "C" void func_001FBCE0(void* self)
 //100%
 INCLUDE_ASM("fe/ovstatepause", func_001FBD20);
 #ifdef SKIP_ASM
+// The "%d" format D_004A2138 is a 3-byte string in .sdata (a literal in the original build). The first uses are
+// lui/addiu pairs, but the later ones are reload-rematerialised , which the assembler only resolves gp-relative
+// when it knows the symbol is small - as it did for the local literal.
+__asm__(".extern D_004A2138, 3");
 extern "C" void func_0020D1D8(void* self);
 extern "C" char* func_00144BF0(void* iface);
 extern "C" unsigned short* func_002C2540(unsigned short* dst, char* src);
@@ -1060,8 +1064,6 @@ signed char cBENewPlayerInterface_getRiderCharID(void* self, int riderIndex);
 extern "C" signed char func_00147410(void* self, int index);
 extern "C" void* func_00155130(void* iface, int idx);
 extern int D_00536708[];
-// The "%d" format D_004A2138, reached gp-relative here: a sized declaration of the same string.
-extern char D_004A2138_n[3] __asm__("D_004A2138");
 extern unsigned short D_004A2140[];
 extern char D_0046FC90[];
 extern char D_0046E388[];
@@ -1259,13 +1261,13 @@ extern "C" void func_001FBD20(void* self)
             if (D_00535BC8[0x49] == 0 && mode == 2) {
                 char name2[0x20];
                 char total[0x10];
-                sprintf(num, D_004A2138_n, func_00238590(stats, id, 1));
+                sprintf(num, D_004A2138, func_00238590(stats, id, 1));
                 cUIText_setAsciiString((cUIText*)t, num);
                 sprintf(name2, D_0046E448, i);
                 t = getObj_1FBD20(self, name2);
                 int a = func_00238590(stats, id, 0);
                 int b = func_00238590(stats, id, 1);
-                sprintf(total, D_004A2138_n, a + b);
+                sprintf(total, D_004A2138, a + b);
                 cUIText_setAsciiString((cUIText*)t, total);
             } else {
                 cUIText_setAsciiString((cUIText*)t, D_004A2168);
