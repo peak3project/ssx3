@@ -217,6 +217,7 @@ extern struct sA8E8Chan *D_0050AAD8;    /* D_0050A8E8.f1F0 */
 
 /* PATHI players: D_00517610[4] (0x928 each), D_0044F420 points at the one selected by func_003D5450. Layout
    from every use in this unit; field names are their offsets. */
+struct sPathVoiceRec { int f00; int f04; int f08; int f0C; };
 struct sPathVoice {                 /* 0x110, sPath.f58[] */
     char pad00;
     unsigned char f01;
@@ -241,7 +242,10 @@ struct sPathVoice {                 /* 0x110, sPath.f58[] */
     char pad1F;
     int lo : 4;
     int ch : 5;
-    unsigned int hi : 23;
+    unsigned int f20_9 : 5;
+    unsigned int cnt : 5;           /* number of sub-voices */
+    unsigned int idx : 5;           /* next fFC[] record */
+    unsigned int f20_24 : 8;
     int f24;
     char pad28[0x2C - 0x28];
     short f2C;
@@ -253,12 +257,16 @@ struct sPathVoice {                 /* 0x110, sPath.f58[] */
     short f36;
     char pad38[0x40 - 0x38];
     unsigned int f40;
-    char pad44[0x48 - 0x44];
+    unsigned int f44;
     unsigned int f48;
     unsigned int f4C;
     char pad50[0x54 - 0x50];
     int f54;
-    char pad58[0x110 - 0x58];
+    int f58;
+    char f5C[0xFC - 0x5C];
+    struct sPathVoiceRec *fFC;
+    char pad100[0x10C - 0x100];
+    unsigned int f10C;
 };
 struct sPathEvent {                 /* sPath.f0DC[] */
     unsigned int f00;
@@ -18207,7 +18215,221 @@ int func_003D4050(int idx) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D41A8);
+#ifdef SKIP_ASM
+struct S_41A8 {
+    int a0;
+    int a4;
+    int a8;
+    int ac;
+    unsigned int a10;
+    int a14;
+    int a18;
+    int a1c;
+};
+struct E_41A8 { short h0; unsigned short h2; unsigned int w4; unsigned int w8; int wC; };
+struct T_41A8 { int a; int b; };
+typedef struct E_41A8b { short v; short w; } E_41A8b;
+typedef struct B_41A8 { E_41A8b ent[0x40]; } B_41A8;
+extern int func_002AEAA8(int, unsigned int);
+extern int func_002AF428(int);
+extern int func_002AE7A8(int, int, void *, int, unsigned int, signed char, int, int);
+extern int f_3658_41A8(struct E_41A8 *, struct sPathVoice *, struct S_41A8 *) __asm__("func_003D3658");
+extern int f_32B8_41A8(struct sPathVoice *, struct S_41A8 *) __asm__("func_003D32B8");
+extern unsigned int D_0044F79C;
+
+/* number of sub-voices (fFC[] records) */
+static inline unsigned int cnt_41A8(struct sPathVoice *v) {
+    return v->cnt;
+}
+
+static inline int busy_41A8(struct sPathVoice *v) {
+    int n;
+    int sum = 0;
+    unsigned int i;
+
+    for (i = 0; i < cnt_41A8(v); i++) {
+        n = func_002AEAA8(v->f54, i);
+        if (n >= 0) {
+            sum += n;
+        }
+    }
+    return sum;
+}
+
+static inline int get_41A8(char *arr, int i) {
+    return *(int *)(arr + i * 8);
+}
+
+static inline int prev_41A8(int arg0) {
+    int var_7;
+    struct sPath *a;
+    B_41A8 *b;
+    short t;
+
+    var_7 = 0;
+    if (arg0 < 0 || arg0 >= *(unsigned short *)((char *)D_0044F420->f34 + 0x12)) return 0;
+    a = D_0044F420;
+    b = (B_41A8 *)a->f34;
+    t = b->ent[a->f38[arg0]].v;
+    if (t > 0) {
+        var_7 = get_41A8(a->f50, t - 1);
+    }
+    return var_7;
+}
+
+static inline int pos_41A8(struct sPathVoice *v, int *len) {
+    struct S_41A8 s;
+
+    if (f_32B8_41A8(v, &s) < 0) {
+        s.a4 = 0;
+        s.a10 = 0xFFFFFFFF;
+    }
+    *len = s.a4;
+    return s.a10;
+}
+
+int func_003D41A8(struct sPathVoice *v) {
+    struct S_41A8 cue;
+    struct sPathVoice *other;
+    struct E_41A8 *node;
+    struct sPathVoiceRec *rec;
+    int adj;
+    int mode;
+    int reloaded;
+    int ch;
+    int called;
+    int busy;
+    int vol;
+    int prev;
+    int t;
+    int len;
+    unsigned int m;
+    unsigned int w;
+
+    other = 0;
+    adj = 0;
+    mode = 0;
+    reloaded = 0;
+    called = 0;
+    if (D_0044F420->f00 >= 0) {
+        other = D_0044F420->f58[D_0044F420->f00];
+    }
+    if (v->f36 >= 0) {
+        busy = busy_41A8(v);
+        node = (struct E_41A8 *)(D_0044F420->f34 + D_0044F420->f38[v->f36]);
+        if (v->f2F == 0) {
+            if (busy <= 0) {
+                mode = -1;
+                if (v->f4C == 0) {
+                    v->f4C = D_0044F438;
+                }
+            }
+            v->ch = -1;
+        } else if (v->ch <= 0) {
+            reloaded = 1;
+            adj = v->ch = f_3658_41A8(node, other, &cue);
+            if (v->ch <= 0) {
+                v->ch = 1;
+            }
+        }
+        ch = v->ch;
+        vol = v->f04 * 0.01 * v->f34;
+        if (vol < 0) {
+            vol = func_002AF428(v->f54);
+        }
+        v->f30 = D_0044F420->f34 + D_0044F420->f38[node->w8 >> 20];
+        v->f40 = v->f44 = ((struct T_41A8 *)D_0044F420->f50)[node->h0 - 1].b;
+        prev = prev_41A8(v->f36);
+        if (v->f2F) {
+            if (other != 0 && other != v
+                && ((m = v->f30[2] & 0x300) == 0x100 || m == 0x200 || m == 0x300)) {
+                w = node->w4;
+                if (w & 0xF00000) {
+                    v->f44 /= (w >> 20) & 0xF;
+                    w = node->w4;
+                }
+                if (w & 0xF000000) {
+                    v->f40 /= ((w >> 24) & 0xF) * ((w >> 20) & 0xF);
+                }
+                if (!reloaded) {
+                    if (v->f10C != 0) {
+                        if (v->f10C >= D_0044F438 + 5) {
+                            return -9999;
+                        }
+                        v->f10C = 0;
+                        t = pos_41A8(other, &len);
+                        if (t <= len / 2) {
+                            t += len;
+                        }
+                        v->f48 = t + D_0044F438;
+                    } else {
+                        t = pos_41A8(other, &len);
+                        if (t <= (int)v->f40 / 2) {
+                            t += len;
+                        }
+                        v->f48 = D_0044F438 + t;
+                    }
+                } else {
+                    m = v->f30[2] & 0x300;
+                    if (m == 0x100 || m == 0x300) {
+                        t = cue.a10;
+                        v->f48 = 0;
+                        v->f10C = t + D_0044F438;
+                        v->f10C -= v->f10C % 10;
+                        return -9999;
+                    }
+                    if (m == 0x200) {
+                        if (adj < 0) {
+                            adj = -adj;
+                            t = cue.a10 + adj * cue.a4;
+                        } else {
+                            t = cue.a10;
+                        }
+                        v->f48 = D_0044F438 + t;
+                    }
+                }
+                if (D_0044F438 - D_0044F79C >= v->f40 >> 1) {
+                    called = 1;
+                    v->f58 = func_002AE7A8(v->f54, mode, v->f5C, prev, v->f40, vol, v->ch, 0);
+                    D_0044F79C = D_0044F438;
+                }
+            } else {
+                v->f48 = 0;
+                v->f58 = func_002AE7A8(v->f54, mode, v->f5C, prev, v->f40, vol, v->ch, 0);
+            }
+            v->f4C = 0;
+            if (called) {
+                t = v->ch++;
+                if (t >= (int)(((node->w4 >> 24) & 0xF) * ((node->w4 >> 20) & 0xF)) || !(node->wC & 2)) {
+                    v->ch = 0;
+                }
+            }
+        } else {
+            v->f58 = func_002AE7A8(v->f54, mode, v->f5C, prev, v->f40, vol, v->ch, 0);
+        }
+        if (v->f58 >= 0) {
+            node = (struct E_41A8 *)(D_0044F420->f34 + D_0044F420->f38[v->f36]);
+            rec = &v->fFC[v->idx];
+            rec->f0C = v->f58;
+            rec->f00 = v->f36;
+            rec->f04 = ((struct T_41A8 *)D_0044F420->f50)[node->h0 - 1].b;
+            rec->f08 = ch;
+            v->idx++;
+            if (v->idx >= cnt_41A8(v)) {
+                v->idx = 0;
+            }
+        }
+    } else {
+        v->f30 = 0;
+        v->f36 = v->f58 = -1;
+        v->ch = 0;
+        return 0;
+    }
+    return v->f58;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003D4898);
