@@ -1524,7 +1524,7 @@ extern "C" void func_00138640(void* vself)
 //100%
 INCLUDE_ASM("ai/motion/wipeoutmotion", func_00138960);
 #ifdef SKIP_ASM
-extern "C" void* func_0032E100(void* seg, const sVec4WG& a, const sVec4WG& b, int n, float r);
+extern "C" void* func_0032E100(void* seg, const sVec4WG& a, const sVec4WG& b, float r, int n);
 extern "C" float func_003342D0(void* world, void* seg, void* hit, int flags);
 
 // PORT: PS2-only VU0 inline asm (vector times scalar).
@@ -1579,7 +1579,7 @@ extern "C" float func_00138960(void* self, char* hit, sVec4WG* dir)
     char* rider = *(char**)((char*)self + 0x40);
     char seg[0xB0];
     sVec4WG* pt = (sVec4WG*)(rider + 0x110);
-    func_0032E100(seg, vu0Sub_138960(*pt, vu0Scale_138960(*dir, 200.0f)), vu0Add_138960(*pt, vu0Scale_138960(*dir, 200.0f)), 2, 0.574999988079071f);
+    func_0032E100(seg, vu0Sub_138960(*pt, vu0Scale_138960(*dir, 200.0f)), vu0Add_138960(*pt, vu0Scale_138960(*dir, 200.0f)), 0.574999988079071f, 2);
     char* r2 = *(char**)((char*)self + 0x40);
     float d = func_003342D0(*(void**)(r2 + 0x860), seg, hit, *(int*)(r2 + 0x864));
     if (d >= 0.0f)

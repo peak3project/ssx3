@@ -4403,7 +4403,7 @@ extern char D_004D33A0[];
 char* func_0027C958(void* self);
 
 
-extern "C" void* func_0032E100(sRay* ray, const t4Vector& a, const t4Vector& b, int n, float t);
+extern "C" void* func_0032E100(sRay* ray, const t4Vector& a, const t4Vector& b, float t, int n);
 extern "C" float func_00336850(void* self, sRay* ray, sHit* out, int a3);
 
 // PORT: PS2-only VU0 inline asm (vector * scalar).
@@ -4544,7 +4544,7 @@ extern "C" t4Vector func_00123F38(cRider* self)
     t4Vector hi = Add_3F38(pos, Scale_3F38(D_004FF160, 200.0f));
     sHit hit;
     sRay ray;
-    func_0032E100(&ray, lo, hi, 2, 0.9791666865348816f);
+    func_0032E100(&ray, lo, hi, 0.9791666865348816f, 2);
     if (func_00336850(*(void**)(*(char**)((char*)D_004A28A8 + 0x84) + 0x20), &ray, &hit, 0) >= 0.0f)
         pos = hit.pos;
     AddTo_3F38(pos, Scale_3F38(D_004FF160, lift));
@@ -4580,7 +4580,7 @@ INCLUDE_ASM("ai/rider", func_001242B0);
 
 
 
-extern "C" void* func_0032E100(sRay* ray, const t4Vector& a, const t4Vector& b, int n, float t);
+extern "C" void* func_0032E100(sRay* ray, const t4Vector& a, const t4Vector& b, float t, int n);
 extern "C" float func_003342D0(void* coll, sRay* ray, sHit* hit, int flags);
 void func_00111AA0_42B0(void* self, void* a, void* b, int c, float x) __asm__("func_00111AA0__FPv");
 
@@ -4741,7 +4741,7 @@ extern "C" void func_001242B0_impl(cRider* self, void* p)
     t4Vector hi = Add_42B0(b, Scale_42B0(self->mGroundNormal, 200.0f));
     sHit hit;
     sRay ray;
-    func_0032E100(&ray, lo, hi, 2, 0.5f);
+    func_0032E100(&ray, lo, hi, 0.5f, 2);
     float t = func_003342D0(self->unk_860, &ray, &hit, 0);
     *(t4Vector*)((char*)self + 0x380) = self->mGroundNormal;
     if (t > 0.0f && hit.obj != 0) {

@@ -2693,7 +2693,7 @@ struct sRiderCapsule_E100 {
 };
 
 extern "C" sRiderCapsule_E100* func_0032E100(sRiderCapsule_E100* self, sSphereVec4* p0, sSphereVec4* p1,
-                                             int state, float r)
+                                             float r, int state)
 {
     self->state = state;
     self->vtbl = D_0048E6A8;

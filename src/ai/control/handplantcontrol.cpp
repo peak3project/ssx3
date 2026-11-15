@@ -1368,7 +1368,7 @@ extern "C" void func_00139C88(char* self)
 //100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_0013A7B0);
 #ifdef SKIP_ASM
-extern "C" void* func_0032E100(void* seg, const t4Vector& a, const t4Vector& b, int n, float r);
+extern "C" void* func_0032E100(void* seg, const t4Vector& a, const t4Vector& b, float r, int n);
 extern "C" float func_003342D0(void* world, void* seg, void* hit, int flags);
 
 // PORT: PS2-only VU0 inline asm (vector times scalar).
@@ -1421,7 +1421,7 @@ extern "C" float func_0013A7B0(void* self, char* hit)
     t4Vector* pt = (t4Vector*)(*(char**)(*(char**)(rider + 0x780) + 0x2C) + (*(int*)(rider + 0x8A0) << 5));
     t4Vector dir = *(t4Vector*)(rider + 0x180);
     char seg[0xB0];
-    func_0032E100(seg, vu0Sub_13A7B0(*pt, vu0Scale_13A7B0(dir, 200.0f)), vu0Add_13A7B0(*pt, vu0Scale_13A7B0(dir, 200.0f)), 2, 0.574999988079071f);
+    func_0032E100(seg, vu0Sub_13A7B0(*pt, vu0Scale_13A7B0(dir, 200.0f)), vu0Add_13A7B0(*pt, vu0Scale_13A7B0(dir, 200.0f)), 0.574999988079071f, 2);
     char* r2 = *(char**)((char*)self + 0x4);
     float d = func_003342D0(*(void**)(r2 + 0x860), seg, hit, *(int*)(r2 + 0x864));
     if (d >= 0.0f)
@@ -3036,7 +3036,7 @@ extern "C" float func_0013D028(void* self, float* v, float a, float b, float c)
 //100%
 INCLUDE_ASM("ai/control/handplantcontrol", func_0013D1B8);
 #ifdef SKIP_ASM
-extern "C" void* func_0032E100(void* seg, const t4Vector& a, const t4Vector& b, int n, float r);
+extern "C" void* func_0032E100(void* seg, const t4Vector& a, const t4Vector& b, float r, int n);
 
 struct sHit_13D1B8 {
     t4Vector pos;            // 0x00
@@ -3248,7 +3248,7 @@ extern "C" int func_0013D1B8(void* self, sHit_13D1B8* out, float* dist)
     t4Vector a = vu0Add_13D1B8(pos, vu0Scale_13D1B8(RV(0x370), -100.0f));
     t4Vector b = vu0Add_13D1B8(pos, vu0Scale_13D1B8(RV(0x370), 200.0f));
     char seg[0xB0];
-    func_0032E100(seg, a, b, 2, 0.5f);
+    func_0032E100(seg, a, b, 0.5f, 2);
     sHit_13D1B8 hits[64];
     int n = func_00333EF8(*(void**)(RIDER + 0x860), seg, hits, 0x40, *(int*)(RIDER + 0x864));
     if (n == 0) {

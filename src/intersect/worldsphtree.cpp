@@ -2278,7 +2278,7 @@ struct sCell_369D8 {
     void* node;             // 0x10
 };
 
-extern "C" void* func_0032E100(void* seg, const t4Vector& a, const t4Vector& b, int n, float r);
+extern "C" void* func_0032E100(void* seg, const t4Vector& a, const t4Vector& b, float r, int n);
 struct sCtx_369D8 {
     float* pos;             // 0x0
     char flags[8];          // 0x4
@@ -2334,7 +2334,7 @@ extern "C" int func_003369D8(sCell_369D8* self, float* pos, t4Vector* outP, t4Ve
         b.y = pos[1];
         b.z = hi;
         b.w = 1.0f;
-        func_0032E100(seg, a, b, 2, t);
+        func_0032E100(seg, a, b, t, 2);
     }
     sHit_003369D8 hits[64];
     sQuery_369D8 q;
