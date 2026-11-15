@@ -2062,7 +2062,131 @@ extern "C" void cScreenPopup_createConfirmationPopup(void* self, int idx)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/fepopup", func_001C9CD0);
+#ifdef SKIP_ASM
+// UI object: 5-bit layer field in bits 8-12 of the word at 0x14 (accessors as the out-of-line copies
+// func_003A4B60 / func_003A4B70 in ui/uivector).
+struct sUIObj_9CD0 {
+    char pad00[0x14];
+    int flags;
+    int getLayer() { return ((unsigned int)flags >> 8) & 0x1F; }
+    void setLayer(int l) { flags = (int)((flags & ~0x1F00) | ((l & 0x1F) << 8)); }
+};
+
+struct sPopup_9CD0 {
+    char pad00[0x40];
+    void* screen;
+    char pad44[4];
+    sUIObj_9CD0* f48;
+    sUIObj_9CD0* f4C;
+    sUIObj_9CD0* f50;
+    sUIObj_9CD0* f54;
+    sUIObj_9CD0* f58;
+    sUIObj_9CD0* f5C;
+    sUIObj_9CD0* f60;
+    sUIObj_9CD0* f64;
+    sUIObj_9CD0* f68;
+    sUIObj_9CD0* f6C;
+    sUIObj_9CD0* f70;
+    sUIObj_9CD0* f74;
+    sUIObj_9CD0* f78;
+    sUIObj_9CD0* f7C;
+    sUIObj_9CD0* f80;
+    sUIObj_9CD0* f84;
+    sUIObj_9CD0* f88;
+    sUIObj_9CD0* f8C;
+    sUIObj_9CD0* f90[5];
+};
+
+extern "C" void func_001C9CD0(void* p, int d)
+{
+    sPopup_9CD0* self = (sPopup_9CD0*)p;
+    sUIObj_9CD0* o;
+    int layer;
+    if (self->f48) {
+        layer = self->f48->getLayer();
+        self->f48->setLayer(layer + d);
+    }
+    if (self->f4C) {
+        layer = self->f4C->getLayer();
+        self->f4C->setLayer(layer + d);
+    }
+    if (self->f50) {
+        layer = self->f50->getLayer();
+        self->f50->setLayer(layer + d);
+    }
+    if (self->f54) {
+        layer = self->f54->getLayer();
+        self->f54->setLayer(layer + d);
+    }
+    if (self->f58) {
+        layer = self->f58->getLayer();
+        self->f58->setLayer(layer + d);
+    }
+    if (self->f5C) {
+        layer = self->f5C->getLayer();
+        self->f5C->setLayer(layer + d);
+    }
+    if (self->f60) {
+        layer = self->f60->getLayer();
+        self->f60->setLayer(layer + d);
+    }
+    if (self->f64) {
+        layer = self->f64->getLayer();
+        self->f64->setLayer(layer + d);
+    }
+    if (self->f68) {
+        layer = self->f68->getLayer();
+        self->f68->setLayer(layer + d);
+    }
+    if (self->f74) {
+        layer = self->f74->getLayer();
+        self->f74->setLayer(layer + d);
+    }
+    if (self->f7C) {
+        layer = self->f7C->getLayer();
+        self->f7C->setLayer(layer + d);
+    }
+    if (self->f78) {
+        layer = self->f78->getLayer();
+        self->f78->setLayer(layer + d);
+    }
+    if (self->f80) {
+        layer = self->f80->getLayer();
+        self->f80->setLayer(layer + d);
+    }
+    if (self->f84) {
+        layer = self->f84->getLayer();
+        self->f84->setLayer(layer + d);
+    }
+    if (self->f8C) {
+        layer = self->f8C->getLayer();
+        self->f8C->setLayer(layer + d);
+    }
+    o = (sUIObj_9CD0*)cUIScreen_getObjectByHashName(self->screen, GetHashValue32(D_004A1C50));
+    if (o) {
+        layer = o->getLayer();
+        o->setLayer(layer + d);
+    }
+    o = (sUIObj_9CD0*)cUIScreen_getObjectByHashName(self->screen, GetHashValue32(D_004A1C58));
+    if (o) {
+        layer = o->getLayer();
+        o->setLayer(layer + d);
+    }
+    o = (sUIObj_9CD0*)cUIScreen_getObjectByHashName(self->screen, GetHashValue32(D_004A15E0));
+    if (o) {
+        layer = o->getLayer();
+        o->setLayer(layer + d);
+    }
+    for (int i = 0; i < 5; i++) {
+        if (self->f90[i]) {
+            layer = self->f90[i]->getLayer();
+            self->f90[i]->setLayer(layer + d);
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/fepopup", func_001CA0F0);
