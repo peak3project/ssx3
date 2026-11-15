@@ -1032,7 +1032,26 @@ int func_003B4338(int x, int y, int w) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B43C0);
+#ifdef SKIP_ASM
+int func_003B43C0(int x, int y, int w) {
+    int bw = w >> 7;
+    int bx = x >> 6;
+    int by = y >> 6;
+    int c = (y & 0x38) + (x & 7);
+    int a = ((x & 0x30) >> 1) + (y & 7);
+    int lo = (x & 8) << 1;
+    if (bx < bw) {
+        x = (bx << 6) + c;
+        y = (by << 6) + a;
+    } else {
+        x = ((bx - bw) << 6) + c;
+        y = (by << 6) + 0x20 + a;
+    }
+    return ((y * w / 2 + x) << 5) | lo;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003B4448);
