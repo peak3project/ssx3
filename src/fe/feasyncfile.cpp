@@ -1788,7 +1788,139 @@ extern "C" int func_001A5800(sOwner* self, char** name)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/feasyncfile", func_001A5898);
+#ifdef SKIP_ASM
+extern "C" void func_00260F80();
+extern "C" int func_00261460(void* self);
+extern "C" void func_002613C8(void* self);
+extern "C" void func_0025B800(void* self);
+extern "C" int func_00262598(void* self);
+extern "C" const char* func_002625C8(void* self, int idx);
+extern "C" void* func_00263308(void* self, int a1);
+extern "C" int func_00262468(void* self, const char* name);
+extern "C" int func_00263128(void* self, const char* name);
+extern "C" int func_00262400(void* self, int a1);
+extern "C" void* cMemMan_alloc(int size, const char* tag, unsigned int flags, int d);
+extern "C" void* cBXString_cBXString1(void* self, void* other);
+extern "C" void* cBXString_cBXString2(void* self, const char* str);
+extern "C" void func_001DB778(void* vec, void** pos, void* const* val);
+extern "C" cUIText* cUIScreen_getObjectByHashName(void* screen, int hash);
+extern "C" void func_0039B760(void* self, unsigned char a1);
+extern void* D_004A3328;
+extern void* D_004A3028;
+extern char D_00461798[];
+extern char D_00461590[];
+
+static inline void* GetSession_001A5898()
+{
+    if (D_004A3328 == 0) {
+        func_00260F80();
+    }
+    if (func_00261460(D_004A3328) == 0) {
+        func_002613C8(D_004A3328);
+    }
+    if (D_004A3328 == 0) {
+        func_0025B800(D_004A3028);
+    }
+    return D_004A3328;
+}
+
+struct sSession1A5898 {
+    char pad[0xBC];
+    void** mBegin;
+    void** mEnd;
+};
+
+static inline int Count1A5898(sSession1A5898* s) { return s->mEnd - s->mBegin; }
+
+struct sBXString1A5898 {
+    const char* str;
+};
+
+struct sElem1A5898 {
+    void* v;
+    sElem1A5898(void* const& x) : v(x) {}
+    void* operator new(unsigned int, void* p) throw() { return p; }
+};
+
+static inline void Construct1A5898(sElem1A5898* p, void* const& x) { new (p) sElem1A5898(x); }
+
+struct sPtrVec1A5898 {
+    int f0;
+    sElem1A5898* mBegin;
+    sElem1A5898* mEnd;
+    sElem1A5898* mCap;
+};
+
+struct sOwner1A5898 {
+    char pad[0x40];
+    void* screen;
+    char pad44[0x6E4 - 0x44];
+    sPtrVec1A5898 mNames;
+};
+
+static inline void PushBack1A5898(sOwner1A5898* o, sPtrVec1A5898* v, void* const& x)
+{
+    if (o->mNames.mEnd != o->mNames.mCap) {
+        Construct1A5898(v->mEnd, x);
+        ++o->mNames.mEnd;
+    } else {
+        func_001DB778(v, (void**)o->mNames.mEnd, &x);
+    }
+}
+
+struct sObj1A5898 {
+    char pad[0x96];
+    unsigned char count;
+};
+
+extern "C" void func_001A5898(void* vself)
+{
+    sOwner1A5898* self = (sOwner1A5898*)vself;
+    if (*(int*)((char*)GetSession_001A5898() + 0xE8) != 0) {
+        func_001A5450((sOwner1A5450*)self);
+        int n = func_00262598(GetSession_001A5898());
+        if (n != 0) {
+            int i;
+            for (int j = 0; j < Count1A5898((sSession1A5898*)GetSession_001A5898()); j++) {
+                sBXString1A5898* name = (sBXString1A5898*)func_00263308(GetSession_001A5898(), j);
+                if (name != 0 && func_00262468(GetSession_001A5898(), name->str) >= 0) {
+                    PushBack1A5898(self, &self->mNames, cBXString_cBXString1(cMemMan_alloc(4, D_00461798, 0x20000000, 0), name));
+                }
+            }
+            for (i = 0; i < n; i++) {
+                const char* name = func_002625C8(GetSession_001A5898(), i);
+                if (name != 0 && name[0xA7] != 0 && func_00263128(GetSession_001A5898(), name) == 0
+                    && func_00262400(GetSession_001A5898(), i) == 0) {
+                    PushBack1A5898(self, &self->mNames, cBXString_cBXString2(cMemMan_alloc(4, D_00461798, 0x20000000, 0), name));
+                }
+            }
+            for (i = 0; i < n; i++) {
+                const char* name = func_002625C8(GetSession_001A5898(), i);
+                if (name != 0 && func_00262400(GetSession_001A5898(), i) != 0
+                    && func_00263128(GetSession_001A5898(), name) == 0) {
+                    PushBack1A5898(self, &self->mNames, cBXString_cBXString2(cMemMan_alloc(4, D_00461798, 0x20000000, 0), name));
+                }
+            }
+            for (i = 0; i < n; i++) {
+                const char* name = func_002625C8(GetSession_001A5898(), i);
+                if (name != 0 && name[0xA7] == 0 && func_00263128(GetSession_001A5898(), name) == 0
+                    && func_00262400(GetSession_001A5898(), i) == 0) {
+                    PushBack1A5898(self, &self->mNames, cBXString_cBXString2(cMemMan_alloc(4, D_00461798, 0x20000000, 0), name));
+                }
+            }
+            if (self->screen != 0) {
+                sObj1A5898* list = (sObj1A5898*)cUIScreen_getObjectByHashName(self->screen, GetHashValue32(D_00461590));
+                unsigned int count = self->mNames.mEnd - self->mNames.mBegin;
+                if (list->count != count) {
+                    func_0039B760(list, count);
+                }
+            }
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/feasyncfile", func_001A5FB8);
