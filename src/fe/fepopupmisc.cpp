@@ -4920,7 +4920,31 @@ extern "C" void func_001E4458(void* self)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E4578);
+#ifdef SKIP_ASM
+extern "C" int func_001E4578(void* self, int a1, unsigned int key, int val)
+{
+    switch (key) {
+    case 4:
+        *(int*)((char*)self + 0x174) = val;
+        func_001E4658(self);
+        func_001E48B0(self);
+        break;
+    case 5:
+        func_001E4458(self);
+        break;
+    case 9:
+        return 0;
+    case 8:
+        return *(int*)((char*)self + 0x170) != 0;
+    case 6:
+    case 7:
+        return 1;
+    }
+    return 0x101;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E4610);
