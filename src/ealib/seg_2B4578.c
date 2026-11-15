@@ -5332,7 +5332,61 @@ void func_003BC000(float *out, int arg1, int arg2, int arg3) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003BC0B0);
+#ifdef SKIP_ASM
+extern int func_003B5C60_C0B0(int) __asm__("func_003B5C60");
+extern int D_0050AC30;
+extern unsigned char *D_0050AC38[];
+extern unsigned short D_0050A954[][6];  /* D_0050A8E8.setup.cfg.f58[-1]: row n = n speaker angles */
+
+#define PANPAIR_C0B0(i, c0, c1, a, b, x) \
+    func_003BC000(out, a, b, x); \
+    D_0050AC38[c0][i] = roundf_f4(out[0] * 65535.0f) >> 8; \
+    D_0050AC38[c1][i] = roundf_f4(out[1] * 65535.0f) >> 8
+
+static inline int wrapAngle(int a, int full) { return a - full; }
+
+void func_003BC0B0(void) {
+    int i, j;
+    unsigned short *row;
+    int pos;
+    float out[2];
+
+    func_003B58A0();
+    D_0050AC30 = func_003B5C60_C0B0(D_0050A8E8.setup.cfg.f27 << 8);
+    func_003B58D8();
+    for (j = 0; j < D_0050A8E8.setup.cfg.f27; j++) {
+        D_0050AC38[j] = (unsigned char *)(D_0050AC30 + j * 0x100);
+    }
+    for (i = 0; i < 0x100; i++) {
+        pos = i << 8;
+        if (D_0050A8E8.setup.cfg.f27 == 1) {
+            D_0050AC38[0][i] = 0x7F;
+            continue;
+        }
+        for (j = 0; j < D_0050A8E8.setup.cfg.f27; j++) {
+            D_0050AC38[j][i] = 0;
+        }
+        row = D_0050A954[D_0050A8E8.setup.cfg.f27];
+        if (pos <= row[0]) {
+            if (D_0050A8E8.setup.cfg.f27 >= 5) {
+                PANPAIR_C0B0(i, 0, 1, row[0], row[1], pos);
+            } else {
+                PANPAIR_C0B0(i, 0, D_0050A8E8.setup.cfg.f27 - 1, row[0], wrapAngle(row[D_0050A8E8.setup.cfg.f27 - 1], 0xFFFF), pos);
+            }
+        } else if (row[D_0050A8E8.setup.cfg.f27 - 1] <= pos) {
+            PANPAIR_C0B0(i, 0, D_0050A8E8.setup.cfg.f27 - 1, row[0], wrapAngle(row[D_0050A8E8.setup.cfg.f27 - 1], 0xFFFF), wrapAngle(pos, 0xFFFF));
+        } else {
+            for (j = 0; j < D_0050A8E8.setup.cfg.f27; j++) {
+                if (row[j] <= pos && pos <= row[j + 1]) {
+                    PANPAIR_C0B0(i, j, j + 1, row[j], row[j + 1], pos);
+                }
+            }
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003BC4C0);
