@@ -6929,7 +6929,23 @@ extern "C" void func_001E8880(void* self, void* a1, int a2)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E88D0);
+#ifdef SKIP_ASM
+// Same shape as the key filters in feasyncfile/fepopup: default result, inner arm re-sets it or returns early.
+extern "C" int func_001E88D0(void* self, int a1, int a2)
+{
+    int r = 0;
+    if (a2 == 6) {
+        if (*(int*)((char*)self + 0xA0) == 0) {
+            r = 0;
+        } else {
+            return 0x101;
+        }
+    }
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/fepopupmisc", func_001E88F0);
