@@ -1,0 +1,21 @@
+# VU0 data upload, sent through VIF0 from the DMA chain at D_0043CCA0.
+# Started by func_00391360 (src/render/lightman.cpp), which writes D_0043CCA0 to D0_TADR.
+
+	.DmaPackVif 0
+D_0043CCA0:
+	dmacnt *
+	unpack 4, 4, v4_32, 0x10, *
+	.int 0x00000000, 0x00000000, 0x00000000, 0x3f800000
+	.int 0x3ab3cc07, 0x3c4a4588, 0x3de38e39, 0x3f800000
+	.int 0x3c33cc07, 0x3d4a4588, 0x3e638e39, 0x3f800000
+	.int 0x3d17b426, 0x3de38e39, 0x3eaaaaaa, 0x3f800000
+	.int 0x3db3cc07, 0x3e4a4588, 0x3ee38e39, 0x3f800000
+	.int 0x3e2f953f, 0x3e9e0652, 0x3f0e38e3, 0x3f800000
+	.int 0x3e97b426, 0x3ee38e39, 0x3f2aaaaa, 0x3f800000
+	.int 0x3ef0e65d, 0x3f1add3c, 0x3f471c71, 0x3f800000
+	.int 0x3f33cc07, 0x3f4a4588, 0x3f638e39, 0x3f800000
+	.int 0x3f800000, 0x3f800000, 0x3f800000, 0x3f800000
+	.EndUnpack
+	.EndDmaData
+	dmaend *
+	.EndDmaData

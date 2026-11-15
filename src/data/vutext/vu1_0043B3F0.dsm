@@ -1,0 +1,323 @@
+# VU1 microprogram D_0043B3F0, loaded into VU1 micro memory by a DMA call chain.
+# Called from func_00364CD0 (src/object/railmodifier.cpp) with DMA_CALL(D_0043B3F0).
+
+	.DmaPackVif 1
+D_0043B3F0:
+	dmaret *
+	stcycl 4, 4
+	stmask 0x00000000
+	stmod 0
+	base 0x3
+	offset 0xb
+	mpg 0x0, *
+	nop                                      fcset       0x000000
+	nop                                      xtop        vi01
+	nop                                      lq.xyzw     vf11, 8(vi01)
+	nop                                      lq.xyzw     vf08, 9(vi01)
+	nop                                      lq.xyzw     vf12, 7(vi01)
+	nop                                      lq.xyzw     vf14, 2(vi00)
+	nop                                      lq.xyzw     vf01, 0(vi00)
+	nop                                      iaddiu      vi06, vi00, 25
+	nop                                      iaddiu      vi05, vi00, 0
+	nop                                      iaddiu      vi08, vi06, 1
+	nop                                      iaddiu      vi09, vi00, 128
+	nop                                      iaddiu      vi10, vi00, 64
+	nop                                      rinit       r, vf11y
+	nop                                      iaddiu      vi11, vi00, 32
+	nop                                      rnext.x     vf13, r
+	nop                                      rinit       r, vf11z
+	nop                                      rnext.y     vf13, r
+	nop                                      rinit       r, vf11w
+	nop                                      rnext.z     vf13, r
+	nop                                      iaddiu      vi07, vi00, 521
+	nop                                      iaddiu      vi04, vi00, 99
+	nop                                      iaddiu      vi03, vi00, 0
+	nop                                      mtir        vi02, vf11x
+	nop                                      mr32.z      vf11, vf00
+	nop                                      mr32.z      vf10, vf00
+	nop                                      lq.xyw      vf11, 5(vi01)
+	nop                                      lq.xyw      vf10, 4(vi01)
+	nop                                      lq.xyz      vf09, 10(vi01)
+	nop                                      lq.xyz      vf07, 6(vi01)
+	mulw.xyzw   vf14, vf14, vf08w            lq.xyzw     vf06, 3(vi01)
+	nop                                      lq.xyzw     vf05, 2(vi01)
+	nop                                      lq.xyzw     vf04, 1(vi01)
+	ftoi0.xyzw  vf12, vf12                   lq.xyzw     vf03, 0(vi01)
+	mul.xyzw    vf14, vf14, vf01             lq.xyzw     vf02, 1(vi00)
+L_0110:
+	nop                                      rinit       r, vf13y
+	nop                                      rnext.y     vf13, r
+	nop                                      rinit       r, vf13x
+	nop                                      rnext.x     vf13, r
+	nop                                      rinit       r, vf13z
+	nop                                      rnext.z     vf13, r
+	add.xyz     vf15, vf13, vf07             nop
+	sub.xyz     vf16, vf15, vf08             nop
+	abs.x       vf00, vf16                   fmand       vi12, vi09
+	nop                                      fmand       vi01, vi10
+	nop                                      ibeq        vi12, vi00, L_0178
+	nop                                      fmand       vi12, vi11
+	addw.x      vf15, vf15, vf00w            nop
+L_0178:
+	nop                                      ibeq        vi01, vi00, L_0190
+	nop                                      nop
+	addw.y      vf15, vf15, vf00w            nop
+L_0190:
+	nop                                      ibeq        vi12, vi00, L_01A8
+	nop                                      nop
+	addw.z      vf15, vf15, vf00w            nop
+L_01A8:
+	nop                                      nop
+	nop                                      nop
+	nop                                      nop
+	sub.xyz     vf16, vf15, vf09             nop
+	abs.x       vf00, vf16                   fmand       vi12, vi09
+	nop                                      fmand       vi01, vi10
+	nop                                      ibne        vi12, vi00, L_01F0
+	nop                                      fmand       vi12, vi11
+	subw.x      vf15, vf15, vf00w            nop
+L_01F0:
+	nop                                      ibne        vi01, vi00, L_0208
+	nop                                      nop
+	subw.y      vf15, vf15, vf00w            nop
+L_0208:
+	nop                                      ibne        vi12, vi00, L_0220
+	nop                                      nop
+	subw.z      vf15, vf15, vf00w            nop
+L_0220:
+	nop                                      nop
+	mulax.xyzw  acc, vf03, vf15x             nop
+	madday.xyzw acc, vf04, vf15y             nop
+	maddaz.xyzw acc, vf05, vf15z             nop
+	maddw.xyzw  vf16, vf06, vf00w            nop
+	clipw.xyz   vf16, vf16w                  nop
+	nop                                      nop
+	nop                                      nop
+	nop                                      nop
+	nop                                      fcand       vi01, 0x00003f
+	nop                                      ibne        vi01, vi00, L_0358
+	nop                                      nop
+	mulaw.xyzw  acc, vf02, vf00w             div         q, vf00w, vf16w
+	nop                                      nop
+	nop                                      nop
+	nop                                      nop
+	nop                                      nop
+	nop                                      nop
+	nop                                      nop
+	mulq.xyz    vf16, vf16, q                iaddiu      vi05, vi05, 1
+	nop                                      nop
+	nop                                      nop
+	mulq.xyzw   vf15, vf14, q                nop
+	madd.xyzw   vf16, vf16, vf01             nop
+	add.xyzw    vf17, vf16, vf15             nop
+	nop                                      nop
+	nop                                      nop
+	sub.xyzw    vf16, vf16, vf15             nop
+	ftoi4.xyzw  vf15, vf17                   sqi.xyzw    vf10, (vi08++)
+	nop                                      sqi.xyzw    vf12, (vi08++)
+	ftoi4.xyzw  vf16, vf16                   iaddiu      vi03, vi03, 1
+	nop                                      sqi.xyzw    vf15, (vi08++)
+	nop                                      sqi.xyzw    vf11, (vi08++)
+	nop                                      ibeq        vi03, vi02, L_03D8
+	nop                                      sqi.xyzw    vf16, (vi08++)
+	nop                                      ibeq        vi05, vi04, L_0388
+	nop                                      nop
+	nop                                      b           L_0110
+	nop                                      nop
+L_0358:
+	nop                                      iaddiu      vi03, vi03, 1
+	nop                                      nop
+	nop                                      ibeq        vi03, vi02, L_03D8
+	nop                                      nop
+	nop                                      b           L_0110
+	nop                                      nop
+L_0388:
+	nop                                      iaddiu      vi08, vi05, 16384
+	nop                                      iaddiu      vi05, vi06, 0
+	nop                                      iaddiu      vi08, vi08, 16384
+	nop                                      isw.x       vi08, 0(vi06)
+	nop                                      xgkick      vi06
+	nop                                      iaddiu      vi06, vi07, 0
+	nop                                      iaddiu      vi07, vi05, 0
+	nop                                      iaddiu      vi05, vi00, 0
+	nop                                      b           L_0110
+	nop                                      iaddiu      vi08, vi06, 1
+L_03D8:
+	nop                                      iaddiu      vi01, vi05, 16384
+	nop                                      iaddiu      vi01, vi01, 16384
+	nop                                      isw.x       vi01, 0(vi06)
+	nop                                      xgkick      vi06
+	nop[e]                                   nop
+	nop                                      nop
+	nop                                      xtop        vi12
+	nop                                      lq.xyzw     vf11, 8(vi12)
+	nop                                      lq.xyzw     vf01, 7(vi12)
+	nop                                      loi         0.8
+	nop                                      lq.xyzw     vf09, 10(vi12)
+	nop                                      lq.xyzw     vf08, 9(vi12)
+	ftoi0.xyz   vf15, vf01                   lq.xyzw     vf17, 2(vi00)
+	max.w       vf12, vf01, vf01             lq.xyzw     vf01, 0(vi00)
+	nop                                      div         q, vf00w, vf09w
+	muli.w      vf13, vf00, i                loi         0.3
+	nop                                      iaddiu      vi04, vi00, 99
+	nop                                      iaddiu      vi06, vi00, 25
+	nop                                      iaddiu      vi07, vi00, 521
+	nop                                      iaddiu      vi08, vi06, 1
+	nop                                      iaddiu      vi09, vi00, 128
+	nop                                      iaddiu      vi10, vi00, 64
+	nop                                      rinit       r, vf11y
+	nop                                      rnext.x     vf16, r
+	nop                                      rinit       r, vf11z
+	nop                                      rnext.y     vf16, r
+	nop                                      rinit       r, vf11w
+	nop                                      rnext.z     vf16, r
+	nop                                      iaddiu      vi11, vi00, 32
+	nop                                      iaddiu      vi05, vi00, 0
+	nop                                      iaddiu      vi03, vi00, 0
+	nop                                      mtir        vi02, vf11x
+	nop                                      mr32.z      vf11, vf00
+	nop                                      mr32.z      vf10, vf00
+	nop                                      iaddiu      vi01, vi00, 16
+	nop                                      lq.xyw      vf11, 5(vi12)
+	nop                                      lq.xyw      vf10, 4(vi12)
+	mulw.xyzw   vf17, vf17, vf08w            lq.xyz      vf07, 6(vi12)
+	nop                                      lq.xyzw     vf06, 3(vi12)
+	nop                                      lq.xyzw     vf05, 2(vi12)
+	addi.z      vf13, vf00, i                lq.xyzw     vf04, 1(vi12)
+	mul.xyzw    vf17, vf17, vf01             lq.xyzw     vf03, 0(vi12)
+	addq.z      vf14, vf00, q                lq.xyzw     vf02, 1(vi00)
+L_0530:
+	nop                                      rinit       r, vf16y
+	nop                                      rnext.y     vf16, r
+	nop                                      rinit       r, vf16x
+	nop                                      rnext.x     vf16, r
+	nop                                      rinit       r, vf16z
+	nop                                      rnext.z     vf16, r
+	add.xyz     vf12, vf16, vf07             nop
+	sub.xyz     vf13, vf12, vf08             nop
+	abs.x       vf00, vf13                   fmand       vi13, vi09
+	nop                                      fmand       vi12, vi10
+	nop                                      ibeq        vi13, vi00, L_0598
+	nop                                      fmand       vi13, vi11
+	addw.x      vf12, vf12, vf00w            nop
+L_0598:
+	nop                                      ibeq        vi12, vi00, L_05B0
+	nop                                      nop
+	addw.y      vf12, vf12, vf00w            nop
+L_05B0:
+	nop                                      ibeq        vi13, vi00, L_05C8
+	nop                                      nop
+	addw.z      vf12, vf12, vf00w            nop
+L_05C8:
+	nop                                      nop
+	nop                                      nop
+	nop                                      nop
+	sub.xyz     vf13, vf12, vf09             nop
+	abs.x       vf00, vf13                   fmand       vi13, vi09
+	nop                                      fmand       vi12, vi10
+	nop                                      ibne        vi13, vi00, L_0610
+	nop                                      fmand       vi13, vi11
+	subw.x      vf12, vf12, vf00w            nop
+L_0610:
+	nop                                      ibne        vi12, vi00, L_0628
+	nop                                      nop
+	subw.y      vf12, vf12, vf00w            nop
+L_0628:
+	nop                                      ibne        vi13, vi00, L_0640
+	nop                                      nop
+	subw.z      vf12, vf12, vf00w            nop
+L_0640:
+	nop                                      nop
+	mulax.xyzw  acc, vf03, vf12x             nop
+	madday.xyzw acc, vf04, vf12y             nop
+	maddaz.xyzw acc, vf05, vf12z             nop
+	maddw.xyzw  vf18, vf06, vf00w            nop
+	mul.z       vf19, vf18, vf14             nop
+	subz.zw     vf00, vf13, vf19z            nop
+	nop                                      nop
+	nop                                      nop
+	nop                                      nop
+	nop                                      fmand       vi12, vi11
+	nop                                      ibeq        vi12, vi00, L_0790
+	nop                                      fmand       vi12, vi01
+	nop                                      ibne        vi12, vi00, L_07D0
+	nop                                      nop
+	max.w       vf07, vf12, vf12             nop
+L_06C0:
+	mulaw.xyzw  acc, vf02, vf00w             div         q, vf00w, vf18w
+	nop                                      nop
+	nop                                      nop
+	nop                                      nop
+	nop                                      nop
+	nop                                      nop
+	nop                                      nop
+	mulq.xyz    vf18, vf18, q                iaddiu      vi05, vi05, 1
+	nop                                      nop
+	nop                                      nop
+	mulq.xyzw   vf19, vf17, q                iaddiu      vi03, vi03, 1
+	madd.xyzw   vf18, vf18, vf01             nop
+	add.xyzw    vf20, vf18, vf19             nop
+	nop                                      nop
+	ftoi0.w     vf15, vf07                   nop
+	sub.xyzw    vf18, vf18, vf19             nop
+	ftoi4.xyzw  vf19, vf20                   sqi.xyzw    vf10, (vi08++)
+	ftoi4.xyzw  vf18, vf18                   sqi.xyzw    vf15, (vi08++)
+	nop                                      sqi.xyzw    vf19, (vi08++)
+	nop                                      sqi.xyzw    vf11, (vi08++)
+	nop                                      ibeq        vi03, vi02, L_0868
+	nop                                      sqi.xyzw    vf18, (vi08++)
+	nop                                      ibeq        vi05, vi04, L_0818
+	nop                                      nop
+	nop                                      b           L_0530
+	nop                                      nop
+L_0790:
+	nop                                      loi         3.33
+	muli.z      vf12, vf19, i                nop
+	miniw.z     vf12, vf12, vf00w            nop
+	maxz.z      vf12, vf12, vf00z            nop
+	nop                                      nop
+	nop                                      nop
+	nop                                      b           L_06C0
+	mulz.w      vf07, vf12, vf12z            nop
+L_07D0:
+	subw.z      vf12, vf19, vf13w            loi         3.33
+	muli.z      vf12, vf12, i                nop
+	subz.w      vf07, vf00, vf12z            nop
+	miniw.w     vf07, vf07, vf00w            nop
+	maxz.w      vf07, vf07, vf00z            nop
+	nop                                      nop
+	nop                                      nop
+	nop                                      b           L_06C0
+	mulw.w      vf07, vf12, vf07w            nop
+L_0818:
+	nop                                      iaddiu      vi08, vi05, 16384
+	nop                                      iaddiu      vi05, vi06, 0
+	nop                                      iaddiu      vi08, vi08, 16384
+	nop                                      isw.x       vi08, 0(vi06)
+	nop                                      xgkick      vi06
+	nop                                      iaddiu      vi06, vi07, 0
+	nop                                      iaddiu      vi07, vi05, 0
+	nop                                      iaddiu      vi05, vi00, 0
+	nop                                      b           L_0530
+	nop                                      iaddiu      vi08, vi06, 1
+L_0868:
+	nop                                      iaddiu      vi01, vi05, 16384
+	nop                                      iaddiu      vi01, vi01, 16384
+	nop                                      isw.x       vi01, 0(vi06)
+	nop                                      xgkick      vi06
+	nop[e]                                   nop
+	nop                                      nop
+	.EndMpg
+	vifnop
+	vifnop
+	vifnop
+	vifnop
+	unpack 4, 4, v4_32, 0x19, *
+	.int 0x00008000, 0x502b4000, 0x00052512, 0x00000000
+	.EndUnpack
+	vifnop
+	vifnop
+	unpack 4, 4, v4_32, 0x209, *
+	.int 0x00008000, 0x502b4000, 0x00052512, 0x00000000
+	.EndUnpack
+	.EndDmaData
