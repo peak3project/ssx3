@@ -188,7 +188,99 @@ extern "C" void func_0022C3B8(void* self, int flags)
 }
 #endif
 
+//100%
 INCLUDE_ASM("main/game", func_0022C410);
+#ifdef SKIP_ASM
+extern const unsigned char D_004A2A10[8];
+
+struct sVEntry_C410 {
+    short delta;
+    short index;
+    void (*fn)(void*, void*, unsigned char*, int*, int);
+};
+
+struct sCamObj_C410 {
+    char pad0[4];
+    sVEntry_C410* vt;       // 0x4
+};
+
+struct sFogCam_C410 {
+    sCamObj_C410* cam;      // 0x0
+    char pad_0x4[0xC];
+    float x, y, z;          // 0x10
+    float pad_0x1C;
+    float k;                // 0x20
+    float c;                // 0x24
+    float n;                // 0x28
+    float f;                // 0x2C
+};
+
+struct sCorner_C410 {
+    float x, y, z;
+};
+
+struct sPatch_C410 {
+    char pad_0x0[0x170];
+    sCorner_C410 corner[4]; // 0x170
+    short s0;               // 0x1A0
+    short s1;               // 0x1A2
+};
+
+// PORT: g++ <? operator (EE min.s)
+static inline float clamp_C410(float v, float lo, float hi)
+{
+    float r;
+    if (lo <= v)
+        r = v <? hi;
+    else
+        r = lo;
+    return r;
+}
+
+// PORT: the unit declares func_0022C410(void*, int, int); bound by asm label.
+void func_0022C410_impl(sFogCam_C410* cam, sPatch_C410* p, int flag) __asm__("func_0022C410");
+
+void func_0022C410_impl(sFogCam_C410* cam, sPatch_C410* p, int flag)
+{
+    float x = cam->x;
+    float y = cam->y;
+    float z = cam->z;
+    float dx = x - p->corner[0].x;
+    float dy = y - p->corner[0].y;
+    float dz = z - p->corner[0].z;
+    float d0 = dx * dx + dy * dy + dz * dz;
+    dx = x - p->corner[1].x;
+    dy = y - p->corner[1].y;
+    dz = z - p->corner[1].z;
+    float d1 = dx * dx + dy * dy + dz * dz;
+    dx = x - p->corner[2].x;
+    dy = y - p->corner[2].y;
+    dz = z - p->corner[2].z;
+    float d2 = dx * dx + dy * dy + dz * dz;
+    dx = x - p->corner[3].x;
+    dy = y - p->corner[3].y;
+    dz = z - p->corner[3].z;
+    float d3 = dx * dx + dy * dy + dz * dz;
+    float f0 = cam->c + cam->k * (d0 + d1);
+    float f1 = cam->c + cam->k * (d2 + d3);
+    float f2 = cam->c + cam->k * (d0 + d2);
+    float f3 = cam->c + cam->k * (d1 + d3);
+    f0 = clamp_C410(f0, cam->n, cam->f);
+    f1 = clamp_C410(f1, cam->n, cam->f);
+    f2 = clamp_C410(f2, cam->n, cam->f);
+    f3 = clamp_C410(f3, cam->n, cam->f);
+    unsigned char fog[4];
+    int uv[2];
+    fog[0] = D_004A2A10[(int)f0];
+    fog[1] = D_004A2A10[(int)f1];
+    fog[2] = D_004A2A10[(int)f2];
+    fog[3] = D_004A2A10[(int)f3];
+    uv[0] = p->s0;
+    uv[1] = p->s1;
+    sCamObj_C410* o = cam->cam;
+    o->vt[21].fn((char*)o + o->vt[21].delta, p, fog, uv, flag);
+}
+#endif
 
 //100% - objdiff report; single-function view differs only in a relocation name
 INCLUDE_ASM("main/game", cGame_renderPatches);
