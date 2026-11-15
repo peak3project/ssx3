@@ -187,7 +187,57 @@ void cUIScreen_jumpToFrame(void* self, unsigned short frame)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ui/uiscreen", cUIScreen_playFrame);
+#ifdef SKIP_ASM
+extern char D_00493E10[];
+// PORT: cMemMan_alloc is the game's operator new(size, tag, flags, align)
+void* operator new(unsigned int size, const char* tag, unsigned int flags, int d) __asm__("cMemMan_alloc");
+struct cList;
+class cListNode {
+public:
+    cListNode* mPrev;
+    cListNode* mNext;
+    cListNode() { mNext = this; mPrev = this; }
+    virtual ~cListNode();
+};
+void cList_addToEnd(cList*, cListNode*);
+
+class cUIThread : public cListNode {
+public:
+    unsigned short mFrame;
+    unsigned short mPrevFrame;
+    unsigned short mEndFrame;
+    signed char mStep;
+    unsigned mPlaying : 1;
+    unsigned mPrimary : 1;
+    cUIThread() : mEndFrame(0xFFFF), mStep(1), mPlaying(0), mPrimary(0) {}
+    void setPlaying(bool on) { mPlaying = on; }
+    void play(unsigned short frame, bool primary, unsigned short endFrame = 0xFFFF, signed char step = 1)
+    {
+        mStep = step;
+        mEndFrame = endFrame;
+        mFrame = frame;
+        mPrevFrame = 0xFFFF;
+        setPlaying(true);
+        mPrimary = primary;
+    }
+};
+
+extern "C" void* cUIScreen_getPrimaryThread(void* self);
+void cUIThread_deleteThread(void* self);
+
+extern "C" void* cUIScreen_playFrame(void* self, unsigned short frame, int flag)
+{
+    void* thread;
+    if (flag == 0 && (thread = cUIScreen_getPrimaryThread(self)) != 0)
+        cUIThread_deleteThread(thread);
+    cUIThread* t = new (D_00493E10, 0x100, 0) cUIThread;
+    t->play(frame, flag == 0);
+    cList_addToEnd((cList*)((char*)self + 0x18), t);
+    return t;
+}
+#endif
 
 INCLUDE_ASM("ui/uiscreen", func_0039C978);
 
