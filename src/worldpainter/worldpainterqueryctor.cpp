@@ -146,7 +146,137 @@ extern "C" void func_002C06C0(sWPQuery_06C0* self, int flags)
 }
 #endif
 
+//100%
 INCLUDE_ASM("worldpainter/worldpainterqueryctor", func_002C0778);
+#ifdef SKIP_ASM
+// Callee func_002C0A10(self, list, x, y) returns the item for (x, y) in list = section->data->lists[type.flags].
+extern int D_004A3860;
+extern char* D_004A28A8;
+
+// PORT: PS2 sqrt.s asm helper.
+static inline float sqrt_0778(float x)
+{
+    float r;
+    __asm__("sqrt.s %0,%1" : "=f"(r) : "f"(x));
+    return r;
+}
+
+struct sVE_0778 {
+    short delta;
+    short index;
+    void* fn;
+};
+
+struct sImpl_0778 {
+    float dist;         // 0x0
+    sVE_0778* vtbl;     // 0x4
+};
+
+struct sItem_0778 {
+    int id;
+    int value;
+};
+
+struct sSectionData_0778 {
+    int pad0;
+    int count;
+    void* lists[1];
+};
+
+struct sSection_0778 {
+    short type;
+    short pad2;
+    int pad4;
+    sSectionData_0778* data;
+};
+
+struct sHeader_0778 {
+    unsigned int numSections;
+    sSection_0778* sections;
+};
+
+struct sQ_0778 {
+    sImpl_0778* obj;    // 0x0
+    void* vtbl;         // 0x4
+    float x;            // 0x8
+    float y;            // 0xC
+    sWPQueryType type;  // 0x10
+};
+
+extern "C" sItem_0778* func_002C0A10_0778(void* self, void* list, float x, float y) __asm__("func_002C0A10");
+
+typedef void (*VFn_0778)(void*);
+typedef int (*VFnI_0778)(void*, int);
+typedef void (*VFnF_0778)(float, void*);
+typedef void (*VFnFI_0778)(float, void*, int);
+typedef void (*VFnFP_0778)(float, void*, float*);
+
+extern "C" struct sImpl_0778* func_002C0778(struct sQ_0778* self, float x, float y, float step)
+{
+    struct sHeader_0778* hdr = *(struct sHeader_0778**)(*(char**)(*(char**)(D_004A28A8 + 0x84) + 0x10) + 8);
+    int unset = (self->obj->dist == -99999.0f);
+    if (!unset) {
+        float dx = self->x - x;
+        float dy = self->y - y;
+        self->obj->dist = self->obj->dist + sqrt_0778(dx * dx + dy * dy);
+    }
+    int idx = D_004A3860;
+    self->x = x;
+    self->y = y;
+    for (;;) {
+        int hit = 0;
+        if (hdr->sections[idx].type == 3) {
+            if (hdr->sections[idx].data != 0)
+                hit = 0 < hdr->sections[idx].data->count;
+        }
+        if (!hit)
+            break;
+        struct sSection_0778* sec = &hdr->sections[idx];
+        void* list = sec->data->lists[self->type.flags];
+        if (list == 0) {
+            if (unset) {
+                struct sVE_0778* vt = self->obj->vtbl;
+                ((VFn_0778)vt[69].fn)((char*)self->obj + vt[69].delta);
+            }
+            break;
+        }
+        struct sItem_0778* item = func_002C0A10_0778(self, list, self->x, self->y);
+        if (item == 0)
+            break;
+        if (item->id != self->type.kind)
+            return self->obj;
+        {
+            struct sVE_0778* vt = self->obj->vtbl;
+            int r = ((VFnI_0778)vt[68].fn)((char*)self->obj + vt[68].delta, item->value);
+            if (r != 0)
+                self->obj->dist = 0.0f;
+        }
+        if (unset) {
+            struct sVE_0778* vt = self->obj->vtbl;
+            ((VFnFI_0778)vt[66].fn)(-1.0f, (char*)self->obj + vt[66].delta, item->value);
+            self->obj->dist = 0.0f;
+        } else if (step == -99999.0f) {
+            if (0.0f <= *(float*)item->value && *(float*)item->value <= self->obj->dist) {
+                struct sVE_0778* vt = self->obj->vtbl;
+                ((VFnFI_0778)vt[66].fn)(1.0f, (char*)self->obj + vt[66].delta, item->value);
+                self->obj->dist = 0.0f;
+            } else {
+                struct sVE_0778* vt = self->obj->vtbl;
+                ((VFnFI_0778)vt[66].fn)(-*(float*)item->value, (char*)self->obj + vt[66].delta, item->value);
+            }
+        } else {
+            struct sVE_0778* vt = self->obj->vtbl;
+            ((VFnFI_0778)vt[66].fn)(step, (char*)self->obj + vt[66].delta, item->value);
+        }
+        return self->obj;
+    }
+    {
+        struct sVE_0778* vt = self->obj->vtbl;
+        ((VFn_0778)vt[69].fn)((char*)self->obj + vt[69].delta);
+    }
+    return self->obj;
+}
+#endif
 
 //100%
 INCLUDE_ASM("worldpainter/worldpainterqueryctor", func_002C0A10);
