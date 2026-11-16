@@ -3809,7 +3809,95 @@ int func_00403DD8(int *p) {
 
 INCLUDE_ASM("seg/seg_2FE810", func_00403E00);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00404050);
+#ifdef SKIP_ASM
+extern char D_00497E38[];
+extern char D_00497E58[];
+extern char D_00497E78[];
+extern void f4050_4758(int *, int, int, int, int, int, int, int, int, int, int, int) __asm__("func_00404758");
+extern void f4050_3470(int *, char *, int) __asm__("func_00403470");
+extern void f4050_5E30(int *, int *, int *, int, int) __asm__("func_00405E30");
+void func_00404050(int *p, int bx, int by, int type, int mt, int *mv, int *sel, int *dmv) {
+    int dm[4];
+    int fr[2][2];
+    int stw;
+    int cur;
+    /* field: 1 = field prediction in a frame picture, else the reference-field select; it lives in $19 from the
+       prologue across the calls and the mt == 1 test compares against it (a literal 1 is rematerialised). */
+    int field = 1;
+
+    stw = 0;
+    p[p[516] * 80 + 431] = 0;
+    if ((type & 8) || p[84] == 2) {
+        if (p[93] == 3) {
+            if (mt == 2 || !(type & 8)) {
+                f4050_4758(p, p[110], 0, 0, 0, 16, bx, by, mv[0], mv[1], 0, 0);
+            } else if (mt == 1) {
+                f4050_4758(p, p[110], sel[0], 0, 0, 8, bx, by, mv[0], mv[1] >> 1, field, 0);
+                f4050_4758(p, p[110], sel[2], 1, 0, 8, bx, by, mv[4], mv[5] >> 1, field, 0);
+            } else if (mt == 3) {
+                f4050_5E30(p, dm, dmv, mv[0], mv[1] >> 1);
+                f4050_4758(p, p[110], 0, 0, 0, 8, bx, by, mv[0], mv[1] >> 1, field, 0);
+                f4050_4758(p, p[110], 1, 0, 0, 8, bx, by, dm[0], dm[1], field, 1);
+                f4050_4758(p, p[110], 1, 1, 0, 8, bx, by, mv[0], mv[1] >> 1, field, 0);
+                f4050_4758(p, p[110], 0, 1, 0, 8, bx, by, dm[2], dm[3], field, 1);
+            } else {
+                f4050_3470(p, D_00497E38, mt);
+            }
+        } else {
+            cur = p[93] == 2;
+            fr[0][0] = p[114];
+            fr[0][1] = p[118];
+            fr[1][0] = p[115];
+            fr[1][1] = p[119];
+            if (p[84] == 2 && p[72] != 0 && cur != sel[0])
+                field = 1;
+            else
+                field = 0;
+            if (mt == 1 || !(type & 8)) {
+                f4050_4758(p, fr[field][sel[0]], 0, 0, 0, 16, bx, by, mv[0], mv[1], 0, 0);
+            } else if (mt == 2) {
+                f4050_4758(p, fr[field][sel[0]], 0, 0, 0, 8, bx, by, mv[0], mv[1], 0, 0);
+                if (p[84] == 2 && p[72] != 0 && cur != sel[2])
+                    field = 1;
+                else
+                    field = 0;
+                f4050_4758(p, fr[field][sel[2]], 0, 0, 8, 8, bx, by, mv[4], mv[5], 0, 0);
+            } else if (mt == 3) {
+                if (p[72] != 0)
+                    field = 1;
+                else
+                    field = 0;
+                f4050_5E30(p, dm, dmv, mv[0], mv[1]);
+                f4050_4758(p, fr[0][cur], 0, 0, 0, 16, bx, by, mv[0], mv[1], 0, 0);
+                f4050_4758(p, fr[field][!cur], 0, 0, 0, 16, bx, by, dm[0], dm[1], 0, 1);
+            } else {
+                f4050_3470(p, D_00497E58, mt);
+            }
+        }
+        stw = 1;
+    }
+    if (type & 4) {
+        if (p[93] == 3) {
+            field = 1;
+            if (mt == 2) {
+                f4050_4758(p, p[111], 0, 0, 0, 16, bx, by, mv[2], mv[3], 0, stw);
+            } else {
+                f4050_4758(p, p[111], sel[1], 0, 0, 8, bx, by, mv[2], mv[3] >> 1, field, stw);
+                f4050_4758(p, p[111], sel[3], 1, 0, 8, bx, by, mv[6], mv[7] >> 1, field, stw);
+            }
+        } else if (mt == 1) {
+            f4050_4758(p, sel[1] ? p[119] : p[115], 0, 0, 0, 16, bx, by, mv[2], mv[3], 0, stw);
+        } else if (mt == 2) {
+            f4050_4758(p, sel[1] ? p[119] : p[115], 0, 0, 0, 8, bx, by, mv[2], mv[3], 0, stw);
+            f4050_4758(p, sel[3] ? p[119] : p[115], 0, 0, 8, 8, bx, by, mv[6], mv[7], 0, stw);
+        } else {
+            f4050_3470(p, D_00497E78, mt);
+        }
+    }
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_00404758);
 
