@@ -841,7 +841,59 @@ void func_00424EA8(int cmd, int n, sTty *s) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_00425040);
+#ifdef SKIP_ASM
+struct Pkt_5040 { short f0; short f2; short f4; char f6; char f7; int f8; char data[1]; };
+extern int func_0042C078_r5(void) __asm__("func_0042C078");
+extern void func_0042C0C0(void);
+extern int func_0042C910_i(int, int) __asm__("func_0042C910");
+/* the caller ignores the result of func_0042C940 (declared void here; its own definition returns int) */
+extern void func_0042C940_i(int) __asm__("func_0042C940");
+extern char D_0052B900[];
+int func_00425040_d(char *str, int n) __asm__("func_00425040");
+int func_00425040_d(char *str, int n) {
+    struct Pkt_5040 *p;
+    char *out;
+    int i = 0;
+    int cnt = 0;
+    if (D_0052B8D0.fC != 0) {
+        return -1;
+    }
+    func_0042C078_r5();
+    p = (struct Pkt_5040 *)((int)D_0052B900 | 0x20000000);
+    D_0052B8D0.fC = 1;
+    D_0052B8D0.wp = (char *)p;
+    out = p->data;
+    while (n-- != 0) {
+        if (*str == '\n') {
+            *out++ = '\r';
+            i++;
+            if (i >= 0x100) {
+                break;
+            }
+        }
+        *out++ = *str++;
+        i++;
+        cnt++;
+        if (i >= 0x100) {
+            break;
+        }
+    }
+    D_0052B8D0.wlen = i + 0xC;
+    p->f0 = D_0052B8D0.wlen;
+    if (func_0042C910_i(D_0052B8D0.fd, p->f7) < 0) {
+        D_0052B8D0.fC = 0;
+        func_0042C0C0();
+        return -1;
+    }
+    while (D_0052B8D0.fC != 0) {
+        func_0042C940_i(D_0052B8D0.fd);
+    }
+    func_0042C0C0();
+    return cnt;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00425190);
