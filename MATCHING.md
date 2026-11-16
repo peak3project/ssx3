@@ -2,7 +2,7 @@
 
 Auto-generated from [objdiff](tools/objdiff) by diffing every unit's `obj/target` against `obj/current`. Regenerate with a dual build (`./configure.py -c -o && ninja`) followed by `python3 scripts/matching_report.py`; see [CONTRIBUTING.md](CONTRIBUTING.md).
 
-Snapshot of commit `62ca8aee`, generated 2026-11-16.
+Snapshot of commit `a39da246`, generated 2026-11-16.
 
 **Status definitions:**
 - **Matching** — byte-for-byte identical to the retail binary (100%), or a near-miss that objdiff's own report scores as matched despite a lower raw percentage (the only remaining byte difference is a relocation immediate baked in at link time by the original SN toolchain, not a real code difference — see the gp-relative note in [README.md](README.md)). Taken per function from objdiff's report; nothing is promoted to make counts agree.
@@ -11,9 +11,9 @@ Snapshot of commit `62ca8aee`, generated 2026-11-16.
 
 | | Count | % of total |
 |---|---|---|
-| Matching | 14,922 | 98.72% |
+| Matching | 14,924 | 98.73% |
 | Partial | 0 | 0.00% |
-| Not started | 194 | 1.28% |
+| Not started | 192 | 1.27% |
 | **Total** | **15,116** | |
 
 (Total here may differ slightly from the function count in README.md's progress table — that one comes from objdiff's own aggregate report, this one from summing every unit's individual symbol list, and the two count a handful of duplicated/weak symbols differently.)
@@ -29,7 +29,7 @@ Only files with at least one Matching or Partial function are listed here; files
 | `render/font` | 432 | 0 | 1 | 433 |
 | `fe/fepopupmisc` | 380 | 0 | 1 | 381 |
 | `object/railmodifier` | 366 | 0 | 3 | 369 |
-| `seg/seg_2FE810` | 357 | 0 | 9 | 366 |
+| `seg/seg_2FE810` | 358 | 0 | 8 | 366 |
 | `ealib/seg_2DCAE8` | 324 | 0 | 5 | 329 |
 | `dirtysock/tagsunk` | 314 | 0 | 3 | 317 |
 | `sound/soundsys` | 300 | 0 | 5 | 305 |
@@ -75,8 +75,8 @@ Only files with at least one Matching or Partial function are listed here; files
 | `fe/debugfe` | 86 | 0 | 2 | 88 |
 | `fe/festatecharequipdetail` | 86 | 0 | 3 | 89 |
 | `intersect/worldsphtree` | 86 | 0 | 0 | 86 |
+| `visualfx/boardwakefx` | 80 | 0 | 4 | 84 |
 | `be/belibrary` | 79 | 0 | 1 | 80 |
-| `visualfx/boardwakefx` | 79 | 0 | 5 | 84 |
 | `ai/computer` | 78 | 0 | 0 | 78 |
 | `intersect/riderspheretree` | 76 | 0 | 1 | 77 |
 | `worldpainter/worldpaintermanquery` | 76 | 0 | 0 | 76 |
@@ -12846,7 +12846,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 
 ### `seg/seg_2FE810`
 
-357 matching, 0 partial, 9 not started (366 total)
+358 matching, 0 partial, 8 not started (366 total)
 
 | Function | Status | Match % | Size |
 |---|---|---|---|
@@ -13025,6 +13025,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_00403DD8` | Matching | 100.00% | 36 |
 | `func_00403E00` | Matching | 100.00% | 592 |
 | `func_00404050` | Matching | 100.00% | 1796 |
+| `func_00404758` | Matching | 100.00% | 1052 |
 | `func_00404B78` | Matching | 100.00% | 540 |
 | `func_00404D98` | Matching | 100.00% | 116 |
 | `func_00404E10` | Matching | 100.00% | 148 |
@@ -15878,7 +15879,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 
 ### `visualfx/boardwakefx`
 
-79 matching, 0 partial, 5 not started (84 total)
+80 matching, 0 partial, 4 not started (84 total)
 
 | Function | Status | Match % | Size |
 |---|---|---|---|
@@ -15953,6 +15954,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_002E1A80` | Matching | 99.86% | 1264 |
 | `func_002E66B8` | Matching | 99.85% | 1360 |
 | `func_002E2260` | Matching | 99.84% | 380 |
+| `func_002E02B8` | Matching | 99.84% | 3120 |
 | `func_002E1598` | Matching | 99.82% | 1256 |
 | `func_002E39D8` | Matching | 99.79% | 284 |
 | `func_002E1F70` | Matching | 99.79% | 752 |
