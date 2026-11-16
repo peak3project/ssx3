@@ -14341,7 +14341,76 @@ unsigned char func_003CBC20(int arg0, int arg1, int arg2) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003CBC58);
+#ifdef SKIP_ASM
+struct Hdr_BC58 {
+    unsigned char f0;
+    unsigned char f1;
+    unsigned char f2;
+    unsigned char f3;
+    int f4;
+    unsigned char cnt[6][4];
+};
+extern struct Hdr_BC58 *D_00515D40_BC58 __asm__("D_00515D40");
+extern void **D_00515D44_BC58 __asm__("D_00515D44");
+extern struct sB40Node **D_00515D48_BC58 __asm__("D_00515D48");
+extern int D_00515D58_BC58 __asm__("D_00515D58");
+extern int D_00517600_BC58 __asm__("D_00517600");
+extern signed char D_0044E164[][6][6][6];
+extern void *f_6210_BC58(void *, int, int) __asm__("func_00416210");
+extern void func_003C51E8(void *, void *, int);
+extern int f_72F8_BC58(unsigned char *, int) __asm__("func_003C72F8");
+extern void f_F798_BC58(void *, void *) __asm__("func_003CF798");
+
+void func_003CBC58(int n) {
+    int used[6];
+    int a;
+    float *b;
+    int size;
+    int i;
+    int j;
+    signed char *p;
+    signed char (*map)[6][6];
+    struct sB40Node *o;
+
+    f_6210_BC58(used, 0, sizeof(used));
+    if (D_00515B40.f14 != 0) {
+        func_003C51E8(D_00515B40.f14, &D_00515D80, n * 4);
+        f_6210_BC58(&D_00515D80, 0, n * 4);
+        return;
+    }
+    a = D_00515B40.fB0;
+    b = D_00515B40.fB4;
+    if (++D_00515D80.f1800 < 3000) {
+        size = n * 4;
+        if (f_72F8_BC58(D_00515D40_BC58->cnt[D_00515D58_BC58 - 1], 4) != 0) {
+            f_F798_BC58(D_00515D44_BC58[D_00517600_BC58], &D_00515D80);
+            for (i = 0; i < D_00515B40.f05; i++) {
+                if (used[i] != 0) {
+                    continue;
+                }
+                o = D_00515D48_BC58[i + 1];
+                if (o == 0) {
+                    continue;
+                }
+                o->f00(o, n, a, b, i + 1);
+                D_00515B40.f1E0(n, b, D_00515B40.fD0[i], 1.0f);
+                used[i] = 1;
+                map = D_0044E164[D_00515D58_BC58]; /* single-use row pointer kept from the original */
+                p = map[D_00515B40.f05][i];
+                for (j = 0; j < D_00515B40.f05; j++, p++) {
+                    if (*p >= 0) {
+                        D_00515B40.f1E0(n, b, D_00515B40.fD0[*p], 1.0f);
+                        used[*p] = 1;
+                    }
+                }
+            }
+        }
+        f_6210_BC58(&D_00515D80, 0, size);
+    }
+}
+#endif
 
 INCLUDE_ASM("ealib/seg_2B4578", func_003CBEC8);
 
