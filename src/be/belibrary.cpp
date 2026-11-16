@@ -132,7 +132,54 @@ extern "C" void func_0014A188(char* p)
 }
 #endif
 
+//100%
 INCLUDE_ASM("be/belibrary", func_0014A5E0);
+#ifdef SKIP_ASM
+class cBEIface_A5E0 {
+public:
+    char pad[0xC];
+    virtual void v1();
+    virtual void onLoad();
+};
+cBEIface_A5E0* cBENewRaceInterface_getThis();
+cBEIface_A5E0* cBENewPlayerInterface_getThis();
+cBEIface_A5E0* cBEBAGTInterface_getThis();
+cBEIface_A5E0* cBEMissionInterface_getThis();
+cBEIface_A5E0* cBEScoreInterface_getThis();
+cBEIface_A5E0* func_00147F78_A5E0() __asm__("func_00147F78");
+extern char D_004A6CA8_A5E0[] __asm__("D_004A6CA8");
+
+// Restores the save block (race, player and profile data) into the global tables and notifies the interfaces.
+extern "C" void func_0014A5E0(char* p)
+{
+    __builtin_memcpy(D_005305B0, p, 0x4C);
+    cBENewRaceInterface_getThis()->onLoad();
+    p += 0x4C;
+    __builtin_memcpy(D_00535B20, p, 0xA8);
+    cBENewPlayerInterface_getThis()->onLoad();
+    p += 0xA8;
+    int charID = D_00535B20[0].mCharID;
+    __builtin_memcpy(D_004A6CA8_A5E0 + charID * 0xF88, p, 0xF88);
+    p += 0xF88;
+    charID = D_00535B20[1].mCharID;
+    if (charID >= 0) {
+        __builtin_memcpy(D_004B07F8 + charID * 0xF88, p, 0xF88);
+        p += 0xF88;
+    }
+    __builtin_memcpy(D_004BA348, p, 0x9B50);
+    p += 0x9B50;
+    __builtin_memcpy(D_005308B8, p, 0x20);
+    // the last four interfaces are notified through a local
+    cBEIface_A5E0* iface = cBEBAGTInterface_getThis();
+    iface->onLoad();
+    iface = cBEMissionInterface_getThis();
+    iface->onLoad();
+    iface = cBEScoreInterface_getThis();
+    iface->onLoad();
+    iface = func_00147F78_A5E0();
+    iface->onLoad();
+}
+#endif
 
 //100%
 INCLUDE_ASM("be/belibrary", func_0014AB20);
