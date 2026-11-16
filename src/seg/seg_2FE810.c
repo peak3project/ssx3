@@ -8062,7 +8062,14 @@ unsigned char func_0040BC70(unsigned char a) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040BCA0);
+#ifdef SKIP_ASM
+unsigned char func_0040BCA0(unsigned char x) {
+    unsigned char adj = (x >> 4) * 6;
+    return x - adj;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040BCC0);
