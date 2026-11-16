@@ -2193,7 +2193,54 @@ extern "C" void func_003B1498(void)
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2AEDC0", func_003B14F0);
+#ifdef SKIP_ASM
+extern int D_0050950C;
+extern int D_00509510;
+extern int D_00509514;
+extern int D_00509518;
+extern int D_0050951C;
+extern unsigned char D_0044C218[];
+extern unsigned char D_0044C298[];
+extern char D_00495450[];
+int func_003B2360(void* self);
+extern "C" void func_003B1988(void);
+
+extern "C" void func_003B14F0(void)
+{
+    int i;
+    int pos = D_0050A088->count; // read kept from the original: the bit position is not used here
+
+    D_005094F4 = func_003B1300(12);
+    D_005094F8 = func_003B1300(12);
+    D_0050950C = func_003B1300(4);
+    D_00509510 = func_003B1300(4);
+    D_00509514 = func_003B1300(18);
+    func_003B2360(D_00495450);
+    D_00509518 = func_003B1300(10);
+    D_0050951C = func_003B1300(1);
+    if ((D_0050A088->f410 = func_003B1300(1)) != 0) {
+        for (i = 0; i < 64; i++)
+            D_0050A088->a010[D_0044C218[i]] = func_003B1300(8);
+    } else {
+        for (i = 0; i < 64; i++)
+            D_0050A088->a010[i] = D_0044C298[i];
+    }
+    if ((D_0050A088->f414 = func_003B1300(1)) != 0) {
+        for (i = 0; i < 64; i++)
+            D_0050A088->a110[D_0044C218[i]] = func_003B1300(8);
+    } else {
+        for (i = 0; i < 64; i++)
+            D_0050A088->a110[i] = 16;
+    }
+    for (i = 0; i < 64; i++) {
+        D_0050A088->a210[i] = D_0050A088->a010[i];
+        D_0050A088->a310[i] = D_0050A088->a110[i];
+    }
+    func_003B1988();
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2AEDC0", group_of_pictures_header);
