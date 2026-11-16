@@ -2,7 +2,7 @@
 
 Auto-generated from [objdiff](tools/objdiff) by diffing every unit's `obj/target` against `obj/current`. Regenerate with a dual build (`./configure.py -c -o && ninja`) followed by `python3 scripts/matching_report.py`; see [CONTRIBUTING.md](CONTRIBUTING.md).
 
-Snapshot of commit `6ed5c3fa`, generated 2026-11-15.
+Snapshot of commit `b8a80844`, generated 2026-11-16.
 
 **Status definitions:**
 - **Matching** — byte-for-byte identical to the retail binary (100%), or a near-miss that objdiff's own report scores as matched despite a lower raw percentage (the only remaining byte difference is a relocation immediate baked in at link time by the original SN toolchain, not a real code difference — see the gp-relative note in [README.md](README.md)). Taken per function from objdiff's report; nothing is promoted to make counts agree.
@@ -11,9 +11,9 @@ Snapshot of commit `6ed5c3fa`, generated 2026-11-15.
 
 | | Count | % of total |
 |---|---|---|
-| Matching | 14,896 | 98.54% |
+| Matching | 14,897 | 98.55% |
 | Partial | 0 | 0.00% |
-| Not started | 220 | 1.46% |
+| Not started | 219 | 1.45% |
 | **Total** | **15,116** | |
 
 (Total here may differ slightly from the function count in README.md's progress table — that one comes from objdiff's own aggregate report, this one from summing every unit's individual symbol list, and the two count a handful of duplicated/weak symbols differently.)
@@ -270,6 +270,7 @@ Only files with at least one Matching or Partial function are listed here; files
 | `render/ps2bezierman` | 2 | 0 | 0 | 2 |
 | `render/ps2lightman` | 2 | 0 | 0 | 2 |
 | `wscript/wscriptmission` | 2 | 0 | 0 | 2 |
+| `data/vutext` | 1 | 0 | 0 | 1 |
 | `worldpainter/worldpainterman` | 1 | 0 | 0 | 1 |
 | `worldpainter/worldpainterquery` | 1 | 0 | 0 | 1 |
 
@@ -3333,7 +3334,11 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 
 ### `data/vutext`
 
-0 matching, 0 partial, 1 not started (1 total)
+1 matching, 0 partial, 0 not started (1 total)
+
+| Function | Status | Match % | Size |
+|---|---|---|---|
+| `D_0042E590` | Matching | 100.00% | 59504 |
 
 ### `dirtysock/tags`
 
