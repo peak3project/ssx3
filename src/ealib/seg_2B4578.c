@@ -8741,7 +8741,78 @@ void func_003C15D8(char *dst, char *src) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C1638);
+#ifdef SKIP_ASM
+extern char D_00512B80[];
+extern void *f_6210_1638(void *, int, int) __asm__("func_00416210");
+extern void f_BC00_1638(int *) __asm__("func_003CBC00");
+
+/* writes a chunk type word and reserves the chunk's data; some similar chunks below are written inline */
+static inline char *AddChunk_1638(int type, int size) {
+    char *p;
+    *(int *)(D_0050AD00.f1AB4 + D_0050AD00.f1AB2) = type;
+    D_0050AD00.f1AB2 += 4;
+    p = D_0050AD00.f1AB4 + D_0050AD00.f1AB2;
+    D_0050AD00.f1AB2 += size;
+    return p;
+}
+
+void func_003C1638(void) {
+    int n;
+    int *hdr;
+    unsigned short *len;
+    int i;
+
+    D_0050AD00.f1AB4 = (char *)((int)D_00512B80 | 0x20000000);
+    f_6210_1638(D_0050AD00.f1AB4, 0, 0x2C00);
+    n = (D_0050A8E8.setup.cfg.f0A << 9) / 48000;
+    D_0050AD00.f1AB2 = 0;
+    *(int *)(D_0050AD00.f1AB4 + D_0050AD00.f1AB2) = 0;
+    D_0050AD00.f1AB2 += 4;
+    D_0050AD00.fCB4 = (int *)(D_0050AD00.f1AB4 + D_0050AD00.f1AB2);
+    D_0050AD00.f1AB2 += 0xC;
+    hdr = (int *)AddChunk_1638(3, 4);
+    D_0050AD00.fCB0 = (struct sAD00Spu *)(D_0050AD00.f1AB4 + D_0050AD00.f1AB2);
+    *hdr = 0x2A0;
+    D_0050AD00.f1AB2 += 0x2A0;
+    while (D_0050AD00.f1AB2 & 0xF) {
+        D_0050AD00.f1AB2++;
+        (*hdr)++;
+    }
+    if (D_0050A8E8.setup.cfg.f22 != 0) {
+        *(int *)(D_0050AD00.f1AB4 + D_0050AD00.f1AB2) = 2;
+        D_0050AD00.f1AB2 += 0x10;
+        f_BC00_1638((int *)(D_0050AD00.f1AB4 + D_0050AD00.f1AB2));
+        D_0050AD00.f1AB2 += n * 4;
+    }
+    len = (unsigned short *)AddChunk_1638(1, 0xC);
+    for (i = 0; i < D_0050A8E8.setup.cfg.f27 + D_0050A8E8.setup.cfg.f28; i++) {
+        D_0050AD00.f1ABC[i] = D_0050AD00.f1AB4 + (D_0050AD00.f1AB2 + i * n * 2);
+    }
+    *len = n * 2 * (D_0050A8E8.setup.cfg.f27 + D_0050A8E8.setup.cfg.f28);
+    if (D_0050A8E8.setup.cfg.f27 == 1) {
+        D_0050AD00.f1ABC[1] = D_0050AD00.f1AB4 + (D_0050AD00.f1AB2 + n * 2);
+        *len += n * 2;
+    }
+    D_0050AD00.f1AB2 += *len;
+    if (D_0050A8E8.setup.cfg.f29 & 2) {
+        AddChunk_1638(4, 0xC);
+        D_0050AD00.f1AF4 = D_0050AD00.f1AB4 + D_0050AD00.f1AB2;
+        D_0050AD00.f1AB2 += 0x800;
+    }
+    *(int *)(D_0050AD00.f1AB4 + D_0050AD00.f1AB2) = 5;
+    D_0050AD00.f1AB2 += 4;
+    D_0050AD00.fCB8 = D_0050AD00.f1AB4 + D_0050AD00.f1AB2;
+    D_0050AD00.f1AB2 += 0xC;
+    *(int *)(D_0050AD00.f1AB4 + D_0050AD00.f1AB2) = 6;
+    D_0050AD00.f1AB2 += 0x10;
+    D_0050AD00.fCB4[1] = D_0050AD00.f1AB2;
+    D_0050AD00.f1B00 = D_00512B80;
+    D_0050AD00.f1B0C = 0;
+    D_0050AD00.f1B08 = D_0050AD00.f1AB2;
+}
+#endif
 
 //100%
 INCLUDE_ASM("ealib/seg_2B4578", func_003C1980);
