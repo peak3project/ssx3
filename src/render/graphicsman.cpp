@@ -564,7 +564,186 @@ extern "C" int func_0036A3E0(unsigned short x, unsigned short y) {
     return a | (func_0036A3B0(y) << 1);
 }
 #endif
+//100%
 INCLUDE_ASM("render/graphicsman", func_0036A428);
+#ifdef SKIP_ASM
+struct sGmV4_A428 {
+    float x, y, z, w;
+    sGmV4_A428() {}
+    sGmV4_A428(float ax, float ay, float az, float aw) : x(ax), y(ay), z(az), w(aw) {}
+} __attribute__((aligned(16)));
+
+struct sGmMtx_A428 {
+    sGmV4_A428 r[4];
+};
+
+struct sGmFog_A428 {
+    float nearZ;        // 0x0
+    float farZ;         // 0x4
+    int mode;           // 0x8
+    float density;      // 0xC
+    float col[4];       // 0x10
+};
+
+struct sGmGfx_A428 {
+    char pad_0x0[0x5930];
+    sGmMtx_A428 mats[(0x6C64 - 0x5930) / 0x40];     // 0x5930
+    char pad_0x6C30[0x6C64 - 0x5930 - ((0x6C64 - 0x5930) / 0x40) * 0x40];
+    sGmFog_A428 fog[2];                             // 0x6C64
+};
+
+extern int D_004A41A8[2];
+extern int D_004A5A28[2];
+extern int D_004A5A30[2];
+extern int D_004A5A38[2];
+extern int D_004A5A40[2];
+extern float D_004A5A48[2];
+extern "C" void func_0038F598(void* dma, int size, int arg);
+extern void* D_004A4474;
+extern "C" char* func_0038F460(void* self, unsigned int addr, int size, int flags);
+
+// PORT: PS2-only VU0 inline asm (4x4 matrix times vector).
+static inline sGmV4_A428 MulM_A428(const sGmMtx_A428* m, const sGmV4_A428& v)
+{
+    sGmV4_A428 r;
+    __asm__(
+        "lqc2         $vf8, %1\n"
+        "lqc2         $vf4, 0x0(%2)\n"
+        "lqc2         $vf5, 0x10(%2)\n"
+        "lqc2         $vf6, 0x20(%2)\n"
+        "lqc2         $vf7, 0x30(%2)\n"
+        "vmulax.xyzw  ACC, $vf4, $vf8x\n"
+        "vmadday.xyzw ACC, $vf5, $vf8y\n"
+        "vmaddaz.xyzw ACC, $vf6, $vf8z\n"
+        "vmaddw.xyzw  $vf12, $vf7, $vf8w\n"
+        "sqc2         $vf12, %0\n"
+        : "=m"(r)
+        : "m"(v), "r"(m)
+        : "memory");
+    return r;
+}
+
+// PORT: PS2-only VU0 inline asm (in-place vector times scalar).
+static inline void ScaleEq_A428(sGmV4_A428& v, float s)
+{
+    int t;
+    __asm__(
+        "mfc1      %1, %3\n"
+        "lqc2      $vf4, %2\n"
+        "qmtc2.ni  %1, $vf3\n"
+        "vmulx.xyzw $vf5, $vf4, $vf3x\n"
+        "sqc2      $vf5, %0\n"
+        : "=m"(v), "=&r"(t)
+        : "m"(v), "f"(s)
+        : "memory");
+}
+
+// PORT: g++ minimum operator (<?).
+static inline float clamp_A428(float v, float lo, float hi)
+{
+    float r;
+    if (lo <= v)
+        r = v <? hi;
+    else
+        r = lo;
+    return r;
+}
+
+static inline float exp_A428(float x)
+{
+    float r = x * 0.0001984127302421257f;
+    r = (r + 0.0013888890389353037f) * x;
+    r = (r + 0.008333333767950535f) * x;
+    r = (r + 0.0416666679084301f) * x;
+    r = (r + 0.1666666716337204f) * x;
+    r = (r + 0.5f) * x;
+    r = (r + 1.0f) * x;
+    return r + 1.0f;
+}
+
+static inline int clampN_A428(int v, int lo, int hi)
+{
+    int r;
+    if (v >= lo) {
+        r = v;
+        if (r > hi)
+            r = hi;
+    } else {
+        r = lo;
+    }
+    return r;
+}
+
+extern "C" void func_0036A428_d(sGmGfx_A428* self, void* mat, int idx) __asm__("func_0036A428");
+extern "C" void func_0036A428_d(sGmGfx_A428* self, void* mat, int idx)
+{
+    sGmFog_A428* f = &self->fog[idx];
+    sGmV4_A428 a = MulM_A428(&self->mats[idx], sGmV4_A428(0.0f, 0.0f, f->nearZ, 1.0f));
+    sGmV4_A428 b = MulM_A428(&self->mats[idx], sGmV4_A428(0.0f, 0.0f, f->farZ, 1.0f));
+    ScaleEq_A428(a, 1.0f / a.w);
+    ScaleEq_A428(b, 1.0f / b.w);
+    int n0 = clampN_A428((int)a.z >> 8, 0, 0xFF);
+    int n1 = clampN_A428((int)b.z >> 8, 0, 0xFF);
+    int cnt = n0 - n1 + 1;
+    if (cnt <= 0)
+        cnt = 1;
+    int col = (int)(f->col[1] * 255.0f) | ((int)(f->col[2] * 255.0f) << 8) | ((int)(f->col[3] * 255.0f) << 16);
+    float inv = 1.0f / (float)cnt;
+    if (D_004A41A8[idx] != 0 && n0 == D_004A5A28[idx] && n1 == D_004A5A30[idx] && col == D_004A5A38[idx]
+        && f->mode == D_004A5A40[idx] && f->density == D_004A5A48[idx])
+        return;
+    D_004A41A8[idx] = 1;
+    D_004A5A28[idx] = n0;
+    D_004A5A30[idx] = n1;
+    D_004A5A38[idx] = col;
+    D_004A5A40[idx] = f->mode;
+    D_004A5A48[idx] = f->density;
+    void* dma = D_004A4474;
+    unsigned int* buf = (unsigned int*)func_0038F460(dma, (unsigned int)mat, 0x400, 0);
+
+    int alpha;
+    switch (f->mode) {
+    case 0:
+        for (int i = 0; i < n0; i++) {
+            int m = n1 < i ? i : n1;
+            int k = i & ~0x18;
+            k |= (i & 0x8) << 1;
+            k |= (i & 0x10) >> 1;
+            alpha = ((m - n1) << 7) / cnt;
+            buf[k] = col | (clampN_A428(alpha, 0, 0x80) << 24);
+        }
+        break;
+    case 1:
+        for (int i = 0; i < n0; i++) {
+            int m = n1 < i ? i : n1;
+            int k = i & ~0x18;
+            k |= (i & 0x8) << 1;
+            k |= (i & 0x10) >> 1;
+            float d = f->density * 0.1f * (float)(n0 - m + 1) * inv;
+            buf[k] = col | ((int)(clamp_A428(exp_A428(-d), 0.0f, 1.0f) * 128.0f) << 24);
+        }
+        break;
+    case 2:
+        for (int i = 0; i < n0; i++) {
+            int m = n1 < i ? i : n1;
+            int k = i & ~0x18;
+            k |= (i & 0x8) << 1;
+            k |= (i & 0x10) >> 1;
+            float d = f->density * 0.1f * (float)(n0 - m + 1) * inv;
+            buf[k] = col | ((int)(clamp_A428(exp_A428(-(d * d)), 0.0f, 1.0f) * 128.0f) << 24);
+        }
+        break;
+    }
+    alpha = 0x80; // remaining entries are fully opaque (alpha left at its default)
+    for (int i = n0; i < 0x100; i++) {
+        int k = i & ~0x18;
+        k |= (i & 0x8) << 1;
+        k |= (i & 0x10) >> 1;
+        buf[k] = col | (0x80 << 24);
+    }
+    func_0038F598(dma, 0x400, 4);
+}
+#endif
 
 //100%
 INCLUDE_ASM("render/graphicsman", func_0036AA60);
