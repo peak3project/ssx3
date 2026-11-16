@@ -1481,7 +1481,64 @@ int func_004261F0(int a0, int a1, int a2, int a3, int a4, int a5) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_00426230);
+#ifdef SKIP_ASM
+// SIF command dispatch: the packet is copied to the stack, then the handler table entry (int addresses, as the
+// registration siblings func_00426020/func_00426050 store them) is called. One int holds the copy source address
+// and later the handler address.
+typedef unsigned int u128_6230 __attribute__((mode(TI)));
+struct H6230 { int size; int dest; volatile int cid; int opt; };
+union M6230 { u128_6230 q[7]; struct H6230 h; };
+struct E6230 { int func; int arg; };
+struct D6230 { unsigned char *buf; int p4; int p8; int tn; int nn; int tp; int np; };
+extern struct D6230 G_6230 __asm__("D_0052BCD8");
+extern void func_0042C0C0(void);
+extern int func_00424190(void);
+int func_00426230(void) {
+    union M6230 msg;
+    struct D6230 *g = &G_6230;
+    volatile unsigned char *src;
+    u128_6230 *d;
+    struct E6230 *e;
+    int addr;
+    int id;
+    func_0042C0C0();
+    src = g->buf;
+    id = *src;
+    if (id == 0) return 0;
+    *src = 0;
+    addr = (int)src;
+    id = (id + 15) / 16;
+    if (id > 0) {
+        int i = id;
+        d = msg.q;
+        do {
+            *d++ = *(u128_6230 *)addr;
+            addr += 16;
+        } while (--i);
+    }
+    func_00424190();
+    if (msg.h.cid < 0) {
+        id = msg.h.cid & 0x7FFFFFFF;
+        if (id < g->nn) {
+            e = (struct E6230 *)((id << 3) + g->tn);
+            addr = e->func;
+            if (addr) ((void (*)(void *, int))addr)(&msg, e->arg);
+        }
+    } else {
+        id = msg.h.cid;
+        if (id < g->np) {
+            e = (struct E6230 *)((id << 3) + g->tp);
+            addr = e->func;
+            if (addr) ((void (*)(void *, int))addr)(&msg, e->arg);
+        }
+    }
+    SYNC_4248();
+    EI_4248();
+    return 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_325220", func_00426358);
