@@ -1380,7 +1380,44 @@ int func_003FF330(i128 *src, int n) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FF390);
+#ifdef SKIP_ASM
+typedef struct { int *src; int dest; int size; int attr; } sDma_F390;
+extern int func_00424140(int);
+extern void func_00424698(int *, int *);
+extern int func_00424160(sDma_F390 *, int);
+extern char D_00497888[];
+extern void func_00425C60();
+// Both failure paths print the same message; the binary cross-jumps them into one copy, which the
+// `if (f0C == 0 || stat < 0) {...}` single-exit form does not give (that one keeps the products CSE'd).
+int func_003FF390(int port, int slot) {
+    int *buf = (int *)D_00526250[port][slot].actBuf;
+    sDma_F390 dma[16];
+    int n, dst, id;
+    if (D_00526250[port][slot].f0C != 0 && func_00424140(D_00526250[port][slot].f0C) >= 0) {
+        if (D_004515CC)
+            func_00425C60(D_00497888);
+        return 0;
+    }
+    n = *buf + 1;
+    dst = D_00526250[port][slot].f08 + ((n & 1) << 5);
+    *buf = n;
+    func_00424698(buf, (int *)((char *)buf + 0x1F));
+    dma[0].dest = dst;
+    dma[0].src = buf;
+    dma[0].size = 0x20;
+    dma[0].attr = 0;
+    id = func_00424160(dma, 1);
+    if (id == 0) {
+        if (D_004515CC)
+            func_00425C60(D_00497888);
+        return 0;
+    }
+    D_00526250[port][slot].f0C = id;
+    return 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FF4A8);
