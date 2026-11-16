@@ -2,7 +2,7 @@
 
 Auto-generated from [objdiff](tools/objdiff) by diffing every unit's `obj/target` against `obj/current`. Regenerate with a dual build (`./configure.py -c -o && ninja`) followed by `python3 scripts/matching_report.py`; see [CONTRIBUTING.md](CONTRIBUTING.md).
 
-Snapshot of commit `d8d8336e`, generated 2026-11-16.
+Snapshot of commit `c6b42154`, generated 2026-11-16.
 
 **Status definitions:**
 - **Matching** — byte-for-byte identical to the retail binary (100%), or a near-miss that objdiff's own report scores as matched despite a lower raw percentage (the only remaining byte difference is a relocation immediate baked in at link time by the original SN toolchain, not a real code difference — see the gp-relative note in [README.md](README.md)). Taken per function from objdiff's report; nothing is promoted to make counts agree.
@@ -11,9 +11,9 @@ Snapshot of commit `d8d8336e`, generated 2026-11-16.
 
 | | Count | % of total |
 |---|---|---|
-| Matching | 14,912 | 98.65% |
+| Matching | 14,914 | 98.66% |
 | Partial | 0 | 0.00% |
-| Not started | 204 | 1.35% |
+| Not started | 202 | 1.34% |
 | **Total** | **15,116** | |
 
 (Total here may differ slightly from the function count in README.md's progress table — that one comes from objdiff's own aggregate report, this one from summing every unit's individual symbol list, and the two count a handful of duplicated/weak symbols differently.)
@@ -29,7 +29,7 @@ Only files with at least one Matching or Partial function are listed here; files
 | `render/font` | 432 | 0 | 1 | 433 |
 | `fe/fepopupmisc` | 380 | 0 | 1 | 381 |
 | `object/railmodifier` | 366 | 0 | 3 | 369 |
-| `seg/seg_2FE810` | 356 | 0 | 10 | 366 |
+| `seg/seg_2FE810` | 357 | 0 | 9 | 366 |
 | `ealib/seg_2DCAE8` | 324 | 0 | 5 | 329 |
 | `dirtysock/tagsunk` | 314 | 0 | 3 | 317 |
 | `sound/soundsys` | 300 | 0 | 5 | 305 |
@@ -49,7 +49,7 @@ Only files with at least one Matching or Partial function are listed here; files
 | `ai/ai` | 174 | 0 | 0 | 174 |
 | `fe/all_in_one_fe` | 152 | 0 | 2 | 154 |
 | `wscript/wscriptman` | 152 | 0 | 0 | 152 |
-| `worldpainter/quadtree` | 148 | 0 | 3 | 151 |
+| `worldpainter/quadtree` | 149 | 0 | 2 | 151 |
 | `camera/trigger/cameratriggerfactory` | 144 | 0 | 0 | 144 |
 | `seg/seg_316FB8` | 137 | 0 | 0 | 137 |
 | `seg/seg_3249A0` | 136 | 0 | 0 | 136 |
@@ -12838,7 +12838,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 
 ### `seg/seg_2FE810`
 
-356 matching, 0 partial, 10 not started (366 total)
+357 matching, 0 partial, 9 not started (366 total)
 
 | Function | Status | Match % | Size |
 |---|---|---|---|
@@ -12948,6 +12948,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_00401488` | Matching | 100.00% | 108 |
 | `func_004014F8` | Matching | 100.00% | 368 |
 | `func_00401668` | Matching | 100.00% | 176 |
+| `func_00401718` | Matching | 100.00% | 736 |
 | `func_004019F8` | Matching | 100.00% | 504 |
 | `func_00401BF0` | Matching | 100.00% | 516 |
 | `func_00401DF8` | Matching | 100.00% | 480 |
@@ -16425,7 +16426,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 
 ### `worldpainter/quadtree`
 
-148 matching, 0 partial, 3 not started (151 total)
+149 matching, 0 partial, 2 not started (151 total)
 
 | Function | Status | Match % | Size |
 |---|---|---|---|
@@ -16577,6 +16578,7 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_002C6D70` | Matching | 100.00% | 80 |
 | `func_002C6DC0(void*)` | Matching | 100.00% | 28 |
 | `func_002C6DE0` | Matching | 100.00% | 180 |
+| `func_002C6E98` | Matching | 100.00% | 220 |
 
 ### `worldpainter/worldpainterman`
 
