@@ -132,3 +132,7 @@ rom:0x1D3B40 reloc:MIPS_HI16 symbol:D_004D4EB0
 rom:0x1D3BDC reloc:MIPS_LO16 symbol:D_004D4EB0
 rom:0x1D3C78 reloc:MIPS_LO16 symbol:D_004D4EB0
 rom:0x1D4604 reloc:MIPS_LO16 symbol:D_004D5390
+// visualfx/boardwakefx func_002E02B8: `lui $2, %hi(D_004A3B10)` in the prologue and `addiu $7, $2, %lo(D_004A3B10)` (the
+// {2, 1} id table copied with ldl/ldr) were left as raw immediates.
+rom:0x1E12BC reloc:MIPS_HI16 symbol:D_004A3B10
+rom:0x1E1320 reloc:MIPS_LO16 symbol:D_004A3B10
