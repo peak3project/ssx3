@@ -4393,5 +4393,49 @@ extern "C" const char* func_002C6DE0(func_002C6DE0_sMap* self, unsigned int key)
 }
 #endif
 
+//100%
 INCLUDE_ASM("worldpainter/quadtree", func_002C6E98);
+#ifdef SKIP_ASM
+extern "C" void* FILE_load(const char* name, int flags);
+extern "C" int func_003DB9D8(void* file, int a1);
+extern "C" int func_00416B18(void* a, const char* b, int n);
+extern char D_004A3978[];
+
+struct func_002C6E98_sElem {
+    int f0;
+    int f4;
+};
+
+struct func_002C6E98_sChunk {
+    int tag;
+    int offset;
+};
+
+struct func_002C6E98_sLoader {
+    char kind;
+    char pad_0x01[3];
+    func_002C6E98_sChunk* file;      // 0x04
+    unsigned int count;              // 0x08
+    func_002C6E98_sChunk* header;    // 0x0C
+    func_002C6E98_sElem* elems;      // 0x10
+};
+
+extern "C" void func_002C6E98(func_002C6E98_sLoader* self, const char* name, char kind)
+{
+    self->kind = kind;
+    self->file = (func_002C6E98_sChunk*)FILE_load(name, 0);
+    self->count = func_003DB9D8(self->file, 2);
+    int offset = self->file->offset;
+    self->header = (func_002C6E98_sChunk*)((char*)self->file + offset);
+    if (func_00416B18(self->header, D_004A3978, 4) != 0) {
+        self->header = 0;
+        return;
+    }
+    offset = self->header->offset;
+    self->elems = (func_002C6E98_sElem*)((char*)self->header + offset);
+    for (unsigned int i = 0; i < self->count; i++) {
+        self->elems[i].f4 = (int)func_002C6DC0(self, self->elems[i].f4);
+    }
+}
+#endif
 
