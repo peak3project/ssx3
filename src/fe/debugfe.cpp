@@ -46,7 +46,186 @@ extern char D_004A1358[];
 extern char D_004A1360[];
 extern "C" char* func_004162D0(char*, const char*);
 
+//100%
 INCLUDE_ASM("fe/debugfe", cDebugMenuScreen_draw);
+#ifdef SKIP_ASM
+extern "C" void* cBE_getBE();
+extern "C" int sprintf(char* buf, const char* fmt, ...);
+extern "C" void func_0017AE00(void* sub);
+extern "C" char* func_00145378(void* iface);
+extern "C" char* func_00145398(void* iface);
+extern "C" char* func_00145340(void* iface);
+extern "C" int func_00145C38(void* iface, int i);
+extern "C" char* func_00144BC0(void* iface);
+extern "C" char* func_0014EE28(void* iface, int i);
+extern "C" int func_00147618(void* iface, int i);
+extern "C" char* func_0028B180();
+extern "C" void func_00391CB0(void* font, float x, float y, const char* str);
+extern "C" void func_00392A60(void* font, float x, float y, const char* str);
+extern "C" void func_00392908(void* font, float x, float y, const char* str);
+extern "C" void func_001DC990(void* font, float x, float y, const char* fmt, ...);
+extern "C" void func_001DCA40(void* font, float x, float y, const char* fmt, ...);
+extern "C" void func_001DCA80(void* font, float x, float y, const char* fmt, ...);
+extern "C" void func_001DC9D0(void* font, float x, float y, float sx, float sy, const char* str, int n);
+extern int D_004A11B8;
+extern int D_00535C04[];
+extern char* D_004A12E0[2];
+extern char D_0045CEC0[], D_0045CED0[], D_0045CEE0[], D_0045CEF0[], D_0045CF08[], D_0045CF18[], D_0045CF28[];
+extern char D_0045CF38[], D_0045CF50[], D_0045CF68[], D_0045CF78[], D_0045CF88[], D_0045CF98[], D_0045CFD0[];
+extern char D_0045CFE0[], D_0045CFF0[], D_0045D008[];
+extern char D_004A12C0[], D_004A12C8[], D_004A12D0[], D_004A12D8[], D_004A12E8[], D_004A12F0[], D_004A1318[];
+
+// Font colour, alpha first.
+struct sColorDM {
+    float a, r, g, b;
+    sColorDM() {}
+    sColorDM(float a_, float r_, float g_, float b_) : a(a_), r(r_), g(g_), b(b_) {}
+};
+
+struct cFontDM {
+    char pad0[0x14];
+    int lineHeight;   // 0x14
+    char pad18[0x30 - 0x18];
+    float baseW;      // 0x30
+    float baseH;      // 0x34
+    float scaleW;     // 0x38
+    float scaleH;     // 0x3C
+    sColorDM color;   // 0x40
+};
+
+struct sMenuDM {
+    int f0;
+    int f4;
+    int active;       // 0x8
+};
+
+struct cDebugMenuScreen {
+    char pad0[0x8C10];
+    sMenuDM menu;     // 0x8C10
+    int sel;          // 0x8C1C
+    int f8C20;
+    int f8C24;        // 0x8C24
+    char pad8C28[0x8C30 - 0x8C28];
+    int f8C30;        // 0x8C30
+    int f8C34;        // 0x8C34
+    char pad8C38[0x8C44 - 0x8C38];
+    int f8C44;        // 0x8C44
+};
+
+struct sStats0028 {
+    char pad0[0x60A4];
+    char name[8][0x14];
+};
+struct sNamesDM {
+    char* name[5];
+};
+extern sNamesDM D_0045CFB8;
+
+
+extern "C" void cDebugMenuScreen_draw(cDebugMenuScreen* self)
+{
+    sMenuDM* menu = &self->menu;
+    if (menu->active >= 0) {
+        func_0017AE00(menu);
+        return;
+    }
+    cFontDM* font = *(cFontDM**)(*(char**)((char*)D_004A28A8 + 0x80) + 0x18);
+    void* i0 = cBE_getInterface_Fv(cBE_getBE(), 0);
+    void* i2 = cBE_getInterface_Fv(cBE_getBE(), 2);
+    void* i1 = cBE_getInterface_Fv(*(void**)((char*)D_004A28A8 + 0x78), 1);
+    font->scaleW = font->baseW;
+    font->scaleH = font->baseH;
+    float step = (float)font->lineHeight * font->scaleH;
+    sColorDM cA(1.0f, 0.7843138f, 0.0f, 0.0f);
+    sColorDM cB(1.0f, 0.7843138f, 0.7843138f, 0.7843138f);
+    sColorDM cC(1.0f, 0.3921569f, 0.3921569f, 0.3921569f);
+    float y = 20.0f;
+    font->color = self->sel == 0 ? cA : cB;
+    func_00391CB0(font, 60.0f, y, D_0045CEC0);
+    func_00392A60(font, 580.0f, y, func_00145378(i0));
+    y += step;
+    font->color = self->sel == 1 ? cA : cB;
+    func_00391CB0(font, 60.0f, y, D_0045CED0);
+    func_00392A60(font, 580.0f, y, func_00145398(i0));
+    y += step;
+    font->color = self->sel == 2 ? cA : cB;
+    func_00391CB0(font, 60.0f, y, D_0045CEE0);
+    func_00392A60(font, 580.0f, y, func_00145340(i0));
+    y += step;
+    font->color = self->sel == 3 ? cA : cB;
+    func_00391CB0(font, 60.0f, y, D_0045CEF0);
+    func_001DCA80(font, 580.0f, y, D_004A12C0, func_00145C38(i1, 0));
+    y += step;
+    char buf[0x80];
+    if (D_004A11B8 != 0) {
+        sprintf(buf, D_0045CF08, func_00144BC0(i0) + 4, func_00144BC0(i0) + 0x44, func_00144BC0(i0) + 0x34);
+    } else {
+        sprintf(buf, D_004A12C8, func_00144BC0(i0) + 0x34, func_00144BC0(i0) + 0x34);
+    }
+    font->color = self->sel == 4 ? cA : cB;
+    func_00391CB0(font, 60.0f, y, D_004A12D0);
+    func_00392A60(font, 580.0f, y, buf);
+    y += step;
+    font->color = self->sel == 5 ? cA : cB;
+    func_00391CB0(font, 60.0f, y, D_0045CF18);
+    func_00392A60(font, 580.0f, y, func_0014EE28(i2, 0));
+    y += step;
+    font->color = self->sel == 6 ? cA : cB;
+    func_00391CB0(font, 60.0f, y, D_0045CF28);
+    func_001DCA80(font, 580.0f, y, D_004A12C0, func_00147618(i1, 0));
+    y += step;
+    font->color = self->sel == 7 ? cA : cB;
+    func_00391CB0(font, 60.0f, y, D_004A12D8);
+    func_00392A60(font, 580.0f, y, D_004A12E0[self->f8C24]);
+    y += step;
+    font->color = self->sel == 8 ? cA : cB;
+    func_00391CB0(font, 60.0f, y, D_0045CF38);
+    func_001DCA80(font, 580.0f, y, D_004A12C0, D_00535C04[0]);
+    y += step;
+    font->color = self->sel == 9 ? cA : cB;
+    func_00391CB0(font, 60.0f, y, D_0045CF50);
+    func_001DCA80(font, 580.0f, y, D_004A12C0, self->f8C30);
+    y += step;
+    font->color = self->sel == 10 ? cA : cB;
+    func_00391CB0(font, 60.0f, y, D_004A12E8);
+    {
+        sVEntry<int(void*)>* vt = *(sVEntry<int(void*)>**)(D_004A289C + 0x10D8);
+        func_001DCA80(font, 580.0f, y, D_004A12F0,
+                      vt[9].fn(D_004A289C + vt[9].delta) ? D_0045CF68 : D_0045CF78);
+    }
+    y += step;
+    font->color = self->sel == 11 ? cA : cB;
+    func_00391CB0(font, 60.0f, y, D_0045CF88);
+    func_001DCA80(font, 580.0f, y, D_004A12F0, ((sStats0028*)func_0028B180())->name[self->f8C34]);
+    y += step;
+    unsigned int ip = 0;
+    if (D_004A2EB8 != 0) {
+        func_00256038(D_004A2EB8, (int*)&ip);
+    }
+    char ipbuf[0x20];
+    sprintf(ipbuf, D_0045CF98, ip >> 24, (ip >> 16) & 0xFF, (ip >> 8) & 0xFF, ip & 0xFF);
+    sNamesDM names = D_0045CFB8;
+    if (D_004A2EB8 != 0) {
+        font->color = self->sel == 12 ? cA : cB;
+    } else {
+        font->color = self->sel == 12 ? cA : cC;
+    }
+    func_001DC990(font, 60.0f, y, D_0045CFD0, ipbuf);
+    func_001DCA80(font, 580.0f, y, D_004A12F0, names.name[self->f8C44]);
+    y += step;
+    y += 5.0f;
+    font->color = self->sel == 13 ? cA : cC;
+    func_001DCA40(font, 320.0f, y, D_004A1318);
+    font->color = self->sel == 14 ? cA : cB;
+    func_001DCA40(font, 320.0f, y + step, D_0045CFE0);
+    if (*(int*)((char*)D_004A28A8 + 4) == 0) {
+        font->color = sColorDM(1.0f, 0.9f, 0.9f, 0.0f);
+        func_00392908(font, 320.0f, 420.0f, D_0045CFF0);
+    }
+    font->color = sColorDM(1.0f, 0.5f, 0.5f, 0.5f);
+    func_001DC9D0(font, 60.0f, 420.0f, 0.5f, 0.5f, D_0045D008, 7);
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/debugfe", func_0017D008);
