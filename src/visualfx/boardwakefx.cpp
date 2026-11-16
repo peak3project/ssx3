@@ -1135,7 +1135,259 @@ extern "C" void func_002DF920(sWakeFxF920* self)
 
 INCLUDE_ASM("visualfx/boardwakefx", func_002DFE88);
 
+//100%
 INCLUDE_ASM("visualfx/boardwakefx", func_002E02B8);
+#ifdef SKIP_ASM
+struct sWakeCfg02B8 {
+    char pad0[0x64];
+    int i64;                    // 0x64
+    char pad68[0x8];            // 0x68
+    float f70;                  // 0x70
+    float f74;                  // 0x74
+    int i78;                    // 0x78
+    float f7C;                  // 0x7C
+    float f80;                  // 0x80
+};
+
+struct sWakeParam02B8 {
+    char pad0[0xD8];
+    float fD8;                  // 0xD8
+    float fDC;                  // 0xDC
+    float fE0;                  // 0xE0
+    float fE4;                  // 0xE4
+};
+
+struct sWakeRow02B8 {
+    t4Vector v[7];
+};
+
+struct sWakeTrail02B8 {
+    int f0;                     // 0x00
+    int n;                      // 0x04
+    int row;                    // 0x08
+    sWakeRow02B8* rows;         // 0x0C
+    char pad10[0xA4];           // 0x10
+    int col;                    // 0xB4
+    const int& Num() const { return n; } // point count, read through a const-reference accessor
+};
+
+struct sWakeTrailOwner02B8 {
+    char pad0[0x3B0];
+    sWakeTrail02B8 trail;       // 0x3B0
+};
+
+struct sWakeFx02B8 {
+    char* obj;                  // 0x00
+    char pad4[0x24];            // 0x04
+    char* p28;                  // 0x28
+    sWakeParam02B8* p2C;        // 0x2C
+    char pad30[0x20];           // 0x30
+    t4Vector v50;               // 0x50
+    char pad60[0x30];           // 0x60
+    t4Vector col;               // 0x90
+    t4Vector pos;               // 0xA0
+    int iB0;                    // 0xB0
+    float fB4;                  // 0xB4
+    float fB8;                  // 0xB8
+    float fBC;                  // 0xBC
+    t4Vector vC0;               // 0xC0
+    sWakeCfg02B8* pD0;          // 0xD0
+    int iD4;                    // 0xD4
+    char padD8[0x8];            // 0xD8
+    float fE0;                  // 0xE0
+    char padE4[0xC];            // 0xE4
+    t4Vector vF0;               // 0xF0
+    t4Vector dir;               // 0x100
+    char pad110[0x4];           // 0x110
+    int i114;                   // 0x114
+};
+
+extern t4Vector D_004FF120;
+
+// The emitter indices the two spray loops walk ({2, 1}; the initialiser of the original local array).
+struct sWakeIds02B8 {
+    int v[2];
+};
+extern const sWakeIds02B8 D_004A3B10[];
+extern "C" void func_003717C0(void* em, void* pos, void* d, void* vel, int alive, float dt);
+
+// PORT: PS2-only VU0 inline asm (cross product, w = 0).
+static inline t4Vector wakeCross02B8(const t4Vector& a, const t4Vector& b)
+{
+    t4Vector r;
+    __asm__(
+        "lqc2      $vf4, %1\n"
+        "lqc2      $vf5, %2\n"
+        "vopmula.xyz ACC, $vf4, $vf5\n"
+        "vopmsub.xyz $vf6, $vf5, $vf4\n"
+        "vsub.w    $vf6, $vf6, $vf6\n"
+        "sqc2      $vf6, %0\n"
+        : "=m"(r)
+        : "m"(a), "m"(b)
+        : "memory");
+    return r;
+}
+
+#define WAKE_MIN02B8(a, b) ((a) <= (b) ? (a) : (b))
+static inline float wakeRandRange02B8(float lo, float hi)
+{
+    return lo + (hi - lo) * wakeRand();
+}
+
+// Random x and y in [lo, hi), one range for both.
+static inline void wakeRandXY02B8(t4Vector& r, float lo, float hi)
+{
+    float range = hi - lo;
+    r.x = lo + range * wakeRand();
+    r.y = lo + range * wakeRand();
+}
+
+static inline float wakeRatio02B8(float range, float v)
+{
+    return v / range;
+}
+// The rider handler's trail (rider + 0x77C -> handler, trail at +0x3B0).
+static inline sWakeTrail02B8* wakeTrail02B8(sWakeFx02B8* self)
+{
+    return &(*(sWakeTrailOwner02B8**)(self->obj + 0x77C))->trail;
+}
+static inline t4Vector* wakeVel02B8(sWakeFx02B8* self)
+{
+    char* sub = self->obj + 0x6C0;
+    sVEntry<t4Vector*(void*)>* vt = *(sVEntry<t4Vector*(void*)>**)sub;
+    return vt[2].fn(sub + vt[2].delta);
+}
+
+// A t4Vector built from four components (stands in for the vector class's 4-float constructor).
+struct sWakeV4_02B8 : t4Vector {
+    sWakeV4_02B8(const float& ax, const float& ay, const float& az, const float& aw)
+    {
+        x = ax;
+        y = ay;
+        z = az;
+        w = aw;
+    }
+};
+
+// km/h to cm/s.
+static inline float wakeKph02B8(float kph)
+{
+    return kph * 100.0f / 3.6f;
+}
+
+static inline t4Vector wakeScaleDir02B8(sWakeFx02B8* self, float s)
+{
+    return vu0Scale(self->dir, s);
+}
+
+static inline t4Vector wakeScaleVel02B8(sWakeFx02B8* self, float s)
+{
+    return vu0Scale(*(t4Vector*)(self->obj + 0x1E0), s);
+}
+
+static inline t4Vector wakeScaleUp02B8(sWakeFx02B8* self, float s)
+{
+    return vu0Scale(*(t4Vector*)(self->obj + 0x370), s);
+}
+
+extern "C" void func_002E02B8(sWakeFx02B8* self)
+{
+    sWakeIds02B8 ids = D_004A3B10[0];
+    float lim[2] = { self->pD0->f70, self->pD0->f74 };
+    if (self->fE0 > wakeKph02B8(2.0f) && self->i114 == 0) {
+        for (int i = 0; i < 2; i++) {
+            int id = ids.v[i];
+            t4Vector pos = self->vF0;
+            if (self->iD4 == 2) {
+                t4Vector r;
+                wakeRandXY02B8(r, -55.0f, 55.0f);
+                r.z = 0.0f;
+                r.w = 0.0f;
+                vu0AddEq(pos, r);
+            }
+            float a = WAKE_MIN02B8(wakeRatio02B8(2.5199999809265137f, self->fB8), 1.0f);
+            a = a * a;
+            if (self->pD0->i64 == 0) {
+                a *= 0.4000000059604645f;
+            }
+            float b = WAKE_MIN02B8(self->fE0 / wakeKph02B8(30.0f), 1.0f);
+            t4Vector vel = vu0Add(wakeScaleDir02B8(self, 1200.0f),
+                                  sWakeV4_02B8(wakeRandRange02B8(-500.0f, 500.0f), wakeRandRange02B8(-500.0f, 500.0f), wakeRand() * wakeKph02B8(18.0f), 1.0f));
+            wakeScaleE398(vel, vel, a * b);
+            vu0AddEq(vel, wakeScaleVel02B8(self, 0.75f));
+            func_003717C0(self->p28 + id * 0x210, &pos, &vel, &self->col, 1, 0.01666666753590107f);
+        }
+    } else {
+        int on = 0;
+        if (0.009999999776482582f < self->pD0->f70 || 0.009999999776482582f < self->pD0->f74) {
+            on = 1;
+        }
+        if (self->iB0 != 0 && on) {
+            float d = fsAbs(vu0Dot(*(t4Vector*)(self->obj + 0x3B0), self->vC0)) * 1.5f;
+            float k = 1.0f;
+            if (d < 1.0f)
+                k = d;
+            float b = wakeClamp((fsAbs(self->fB4) - -0.2f) * 0.8f + k, 0.0f, 1.0f);
+            float a = (fsAbs(*(float*)(self->obj + 0x214)) - 0.2f) * 3.0f;
+            float c = fsAbs(*(float*)(self->obj + 0x274)) - 0.4f;
+            float m = a <= c ? c : a;
+            float s;
+            if (m < b) {
+                s = b * wakeClamp((self->fB8 - wakeKph02B8(20.0f)) / wakeKph02B8(70.0f), 0.0f, 1.2000000476837158f);
+            } else {
+                s = m * wakeClamp((self->fB8 - wakeKph02B8(15.0f)) / wakeKph02B8(30.0f), 0.0f, 1.2000000476837158f);
+            }
+            t4Vector vel = D_004FF120;
+            t4Vector side = wakeCross02B8(self->v50, *(t4Vector*)(self->obj + 0x370));
+            if (self->fB4 < 0.0f)
+                side = vu0Scale(side, -1.0f);
+            for (int k2 = 0; k2 < 2; k2++) {
+                int alive = 0;
+                t4Vector pos = self->pos;
+                func_002DE398((char*)self, &pos);
+                int id = ids.v[k2];
+                if (wakeRand() < s * lim[k2])
+                    alive = 1;
+                if (m < b) {
+                    if (self->pD0->i78 != 0 && wakeTrail02B8(self)->Num() > 0) {
+                        sWakeTrail02B8* tr = wakeTrail02B8(self);
+                        t4Vector v = tr->rows[tr->row].v[tr->col - 1];
+                        float len = vu0Length(v);
+                        float f = wakeRandRange02B8(self->pD0->f7C, self->pD0->f80);
+                        float g = wakeRandRange02B8(-0.30000001192092896f, 0.5f);
+                        vel = vu0Add(vu0Scale(v, f), vu0Scale(vu0Scale(vu0Scale(side, len), f), g));
+                        vu0AddEq(vel, vu0Add(vu0Scale(self->v50, wakeRandRange02B8(0.05000000074505806f, -0.05000000074505806f) * len),
+                                             wakeScaleUp02B8(self, vu0Length(v) * 0.8399999737739563f)));
+                    } else {
+                        t4Vector* vp = wakeVel02B8(self);
+                        vel = vu0Add(
+                            vu0Add(
+                                vu0Add(vu0Scale(*vp, self->p2C[ids.v[k2]].fD8),
+                                       wakeScaleUp02B8(self, self->p2C[ids.v[k2]].fDC)),
+                                vu0Scale(wakeScaleUp02B8(self, self->p2C[ids.v[k2]].fE0), self->fBC)),
+                            vu0Scale(vu0Scale(vu0Scale(side, fsAbs(self->fB4)), self->p2C[ids.v[k2]].fE4), self->fBC));
+                    }
+                } else {
+                    t4Vector r;
+                    wakeRandXY02B8(r, -200.0f, 200.0f);
+                    r.z = wakeRand() * 200.0f;
+                    r.w = 1.0f;
+                    float n = WAKE_MIN02B8(self->fB8 / wakeKph02B8(45.0f), 1.0f);
+                    t4Vector* vp = wakeVel02B8(self);
+                    vel = vu0Add(vu0Add(vu0Scale(*vp, 0.800000011920929f),
+                                        vu0Scale(wakeScaleUp02B8(self, 1100.0f), n)),
+                                 vu0Scale(r, n));
+                }
+                func_003717C0(self->p28 + id * 0x210, &pos, &vel, &self->col, alive, 0.01666666753590107f);
+            }
+        } else {
+            for (int k3 = 0; k3 < 2; k3++) {
+                func_003717C0(self->p28 + ids.v[k3] * 0x210, &self->pos, &D_004FF120, 0, 0, 0.01666666753590107f);
+            }
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("visualfx/boardwakefx", func_002E0EE8);
