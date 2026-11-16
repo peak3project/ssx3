@@ -3608,7 +3608,26 @@ void func_00403620(int *p) {
 
 INCLUDE_ASM("seg/seg_2FE810", func_00403748);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_004039F0);
+#ifdef SKIP_ASM
+// Uncached (0x20000000 segment) view of an EE address.
+static inline unsigned uncached_39F0(unsigned addr) {
+    return (addr & 0x0FFFFFFF) | 0x20000000;
+}
+void func_004039F0(unsigned *a0, unsigned *a1, unsigned *a2, unsigned *b0, unsigned *b1, unsigned *b2,
+                   unsigned *c0, unsigned *c1, unsigned *c2, unsigned y, unsigned u, unsigned v, int w, int h) {
+    *a0 = uncached_39F0(y);
+    *a1 = uncached_39F0(u);
+    *a2 = uncached_39F0(v);
+    *b0 = uncached_39F0(y);
+    *b1 = uncached_39F0(u);
+    *b2 = uncached_39F0(v);
+    *c0 = uncached_39F0(y + w * h / 512 * 0x180);
+    *c1 = uncached_39F0(u + w * h / 512 * 0x180);
+    *c2 = uncached_39F0(v + w * h / 512 * 0x180);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00403AD0);
