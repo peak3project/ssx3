@@ -1510,6 +1510,7 @@ int func_00426230(void) {
     *src = 0;
     addr = (int)src;
     id = (id + 15) / 16;
+    /* hand-rotated qword copy loop: the plain for/while forms score 96-97 */
     if (id > 0) {
         int i = id;
         d = msg.q;
