@@ -6647,7 +6647,40 @@ void q8B80(int *p, unsigned addr, int n) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00408CA8);
+#ifdef SKIP_ASM
+// IPU DMA interrupt handler state; func_00408DF0 polls f0 (the chunk counter) in a loop, so it is volatile.
+struct S408CA8 { volatile int f0; int f4; int f8; int fC; int f10; };
+int func_00408CA8(int a, struct S408CA8 *s) {
+    int t;
+    *(volatile int *)0x1000E010 = 8;
+    s->f0++;
+    if (*(volatile int *)0x1000B020 != 0 || (*(volatile int *)0x1000B000 & 0x100) != 0) {
+        s->f4 = 1;
+        SYNC_0810();
+        EI_0810();
+        return 0;
+    }
+    t = s->f10 - 1;
+    if (s->f0 < t) {
+        *(volatile int *)0x1000B010 = s->fC;
+        *(volatile int *)0x1000B020 = 0xFFC0;
+        *(volatile int *)0x1000B000 = 0x100;
+        *(volatile int *)0x10002000 = 0x700003FF;
+        s->fC = (s->fC + 0xFFC00) & 0xFFFFFFF;
+    } else if (s->f0 == t) {
+        s->f8 -= s->f0 * 1023;
+        *(volatile int *)0x1000B010 = s->fC;
+        *(volatile int *)0x1000B020 = s->f8 << 6;
+        *(volatile int *)0x1000B000 = 0x100;
+        *(volatile int *)0x10002000 = s->f8 | 0x70000000;
+    }
+    SYNC_0810();
+    EI_0810();
+    return 0;
+}
+#endif
 
 INCLUDE_ASM("seg/seg_2FE810", func_00408DF0);
 
