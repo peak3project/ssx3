@@ -5595,7 +5595,23 @@ __asm__(
     ".set pop\n");
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00406A78);
+#ifdef SKIP_ASM
+void func_00406A78(int *p, int sh, int delta, int base, int flag) {
+    int v = *p;
+    int lim = 16 << sh;
+    if (flag) v >>= 1;
+    if (delta > 0) {
+        v += ((delta - 1) << sh) + base + 1;
+        if (v >= lim) v -= lim * 2;
+    } else if (delta < 0) {
+        v -= ((~delta) << sh) + base + 1;
+        if (v < -lim) v += lim * 2;
+    }
+    *p = flag ? v << 1 : v;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00406B00);
