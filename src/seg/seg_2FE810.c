@@ -2574,7 +2574,88 @@ int func_00401668(long id, int *out) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00401718);
+#ifdef SKIP_ASM
+extern int D_00451650;
+extern int D_00451654;
+extern int D_00526740;
+extern char D_005266E8[];
+extern char D_00497B18[];
+extern char D_00497B38[];
+extern void func_00400CB8();
+extern int func_00426D18_1718(char *, int, int, void *, int, void *, int, int, int) __asm__("func_00426D18");
+extern int func_00426B48_1718(char *, unsigned int, int) __asm__("func_00426B48");
+int func_00401718(int a) {
+    int i;
+    int r;
+    int rc;
+    int x4, x8, xC;
+    int *buf;
+    if (func_00401488(1) != 0) return 0;
+    func_00426408(0);
+    D_005264D8 = func_00423C90();
+    *(volatile int *)&D_00451624 = 1;
+    D_00451644 = -1;
+    D_0045163C = -1;
+    D_0045164C = -1;
+    D_00451648 = -1;
+    D_00451650 = -1;
+    D_00451640 = -1;
+    D_00451638 = 0;
+    D_00451654++;
+    while (1) {
+        if ((rc = func_00426B48_1718(D_005266E8, 0x80000592, 0)) < 0) {
+            if (D_00451610 > 0)
+                func_00425C60(D_00497B18, rc, D_00451654);
+            for (i = 0x100000; i--; )
+                ;
+            continue;
+        }
+        if (*(int *)(D_005266E8 + 0x24) != 0) {
+            buf = D_00452800;
+            D_00526740 = a;
+            D_00451650 = 0;
+            func_00426358((int)&D_00526740, 4);
+            if (func_00426D18_1718(D_005266E8, 0, 0, &D_00526740, 4, buf, 16, 0, 0) >= 0)
+                break;
+            *(volatile int *)&D_00451624 = 0;
+            return 0;
+        }
+        for (i = 0x100000; i--; )
+            ;
+    }
+    x4 = *(int *)((unsigned)&buf[1] | 0x20000000);
+    x8 = *(int *)((unsigned)&buf[2] | 0x20000000);
+    xC = *(int *)((unsigned)&buf[3] | 0x20000000);
+    r = 1;
+    if (xC != 0xFF) {
+        if (xC == 0xFE) {
+            D_00451610 = 1;
+        } else if (x4 / 256 < 2 || x8 / 256 < 2) {
+            r = 2;
+        }
+    }
+    *(volatile int *)&D_00451624 = 0;
+    switch (a) {
+    case 5:
+        if (D_00451610 > 0)
+            func_00425C60(D_00497B38);
+        func_00400CB8();
+        *(volatile int *)&D_00451628 = -1;
+        *(volatile int *)&D_0045162C = -1;
+        *(volatile int *)&D_00451620 = -1;
+        break;
+    case 0: /* 0 and 1 share the default path; the binary keeps their range test */
+    case 1:
+    default:
+        func_00400C00();
+        func_00400E30();
+        break;
+    }
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_004019F8);
