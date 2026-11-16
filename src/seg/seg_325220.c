@@ -4574,7 +4574,24 @@ int func_0042BF30(void) {
 
 INCLUDE_ASM("seg/seg_325220", func_0042BF68);
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_0042C078);
+#ifdef SKIP_ASM
+int func_0042C078_d(void) __asm__("func_0042C078");
+int func_0042C078_d(void) {
+    int s, st;
+    MFC0_STATUS_4248(s);
+    s &= 0x10000;
+    if (s) {
+        do {
+            DI_4248();
+            SYNCP_4248();
+            MFC0_STATUS_4248(st);
+        } while (st & 0x10000);
+    }
+    return s != 0;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_325220", func_0042C0C0);
