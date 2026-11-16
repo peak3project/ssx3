@@ -4681,7 +4681,39 @@ int func_0042BF30(void) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_325220", func_0042BF68);
+#ifdef SKIP_ASM
+// IOP reboot: builds "<D_0049AD60 prefix><path>" in an 80-byte buffer; 11 = prefix length + terminator.
+extern char D_0049AD60[];
+extern char D_0049AD70[];
+extern void f5C60(char *fmt, ...) __asm__("func_00425C60");
+extern void func_00426408(int);
+extern void func_004265A8(void);
+extern int f4BDC8(char *, int) __asm__("func_0042BDC8");
+int f4BF68(char *a0) __asm__("func_0042BF68");
+int f4BF68(char *a0) {
+    char buf[0x50];
+    char *pre = D_0049AD60;
+    char *d;
+    char *p;
+    for (p = a0; *p != 0; p++)
+        ;
+    if ((unsigned int)(p + 11 - a0) > 0x50) {
+        f5C60(D_0049AD70, a0);
+        return 0;
+    }
+    func_00426408(0);
+    func_004265A8();
+    d = buf;
+    while (*pre != 0)
+        *d++ = *pre++;
+    while (*a0 != 0)
+        *d++ = *a0++;
+    *d = 0;
+    return f4BDC8(buf, 0);
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_325220", func_0042C078);
