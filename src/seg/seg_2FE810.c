@@ -3928,7 +3928,67 @@ int func_00403DD8(int *p) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00403E00);
+#ifdef SKIP_ASM
+extern void E_3470(char *, char *, int) __asm__("func_00403470");
+extern void E_4050(char *, int, int, int) __asm__("func_00404050");
+extern void E_8988(char *) __asm__("func_00408988");
+extern char D_00497E10[];
+/* The macroblock x/y (x, y) are computed before the branch (the retail code shifts both before the flags test), and
+   the four entry pointers are (re)set inside each DMA-busy poll loop: loop.c hoists them out again, and their
+   in-loop references give them the register priorities the retail allocation shows. */
+int func_00403E00(char *d, int a, int b, unsigned flags, int c) {
+    int div = *(int *)(d + 0x12C);
+    int q = a / div;
+    int r = a % div;
+    int lo = flags & 1;
+    int x = r << 4;
+    int y = q << 4;
+    int *done, *f6c4, *f6c0, *f6b8;
+    if (lo) {
+        do {
+            done = (int *)(d + 0x6C8);
+            f6c4 = (int *)(d + 0x6C4);
+            f6c0 = (int *)(d + 0x6C0);
+            f6b8 = (int *)(d + 0x6B8);
+        } while ((*(volatile unsigned *)0x1000D400 >> 8) & 1);
+        done[*(int *)(d + 0x810) * 0x50] = 0;
+    } else {
+        if ((unsigned)(c - 1) >= 3) {
+            E_3470(d, D_00497E10, c);
+            *(int *)(d + 0x11C) = 1;
+            return 0;
+        }
+        E_4050(d, x, y, flags);
+        do {
+            done = (int *)(d + 0x6C8);
+            f6c4 = (int *)(d + 0x6C4);
+            f6c0 = (int *)(d + 0x6C0);
+            f6b8 = (int *)(d + 0x6B8);
+        } while ((*(volatile unsigned *)0x1000D400 >> 8) & 1);
+        E_8988(d);
+        done[*(int *)(d + 0x810) * 0x50] = 1;
+    }
+    if (b == 1 && (flags & 2) != 0)
+        f6c4[*(int *)(d + 0x810) * 0x50] = b;
+    else
+        f6c4[*(int *)(d + 0x810) * 0x50] = 0;
+    f6c0[*(int *)(d + 0x810) * 0x50] = lo;
+    if (*(int *)(d + 0x174) == 3) {
+        int *p = *(int **)(d + 0x1C0);
+        f6b8[*(int *)(d + 0x810) * 0x50] = p[0] + (r * p[4] + q) * 0x180;
+    } else {
+        int *p;
+        if (*(int *)(d + 0x174) == 2)
+            p = *(int **)(d + 0x1E0);
+        else
+            p = *(int **)(d + 0x1D0);
+        f6b8[*(int *)(d + 0x810) * 0x50] = p[0] + (r * p[4] + q) * 0x180;
+    }
+    return 1;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00404050);
