@@ -1586,7 +1586,90 @@ extern "C" void func_0017F2D0(void* p)
 }
 #endif
 
+//100%
 INCLUDE_ASM("fe/debugfe", func_0017F500);
+#ifdef SKIP_ASM
+extern void* D_004A28AC;
+
+
+struct sVec2_17F500 {
+    float x, y;
+    sVec2_17F500() {}
+    sVec2_17F500(float ax, float ay) : x(ax), y(ay) {}
+};
+
+static inline sVec2_17F500 operator+(const sVec2_17F500& a, const sVec2_17F500& b)
+{
+    return sVec2_17F500(a.x + b.x, a.y + b.y);
+}
+
+static inline sVec2_17F500 operator-(const sVec2_17F500& a, const sVec2_17F500& b)
+{
+    return sVec2_17F500(a.x - b.x, a.y - b.y);
+}
+
+static inline sVec2_17F500 operator*(const sVec2_17F500& a, float s)
+{
+    return sVec2_17F500(a.x * s, a.y * s);
+}
+
+struct sVec4_17F500 {
+    float x, y, z, w;
+    sVec4_17F500() {}
+    sVec4_17F500(float ax, float ay, float az, float aw) : x(ax), y(ay), z(az), w(aw) {}
+};
+
+struct sFirefly_17F500 {
+    sVec2_17F500 pos;        // 0x0
+    sVec2_17F500 phase;      // 0x8
+    sVec2_17F500 trail[64];  // 0x10
+    int head;                // 0x210
+};
+
+struct sRS_17F500 {
+    int f0;
+    unsigned int lo : 2;
+    unsigned int b2 : 5;
+    unsigned int b7 : 5;
+    unsigned int b12 : 8;
+    unsigned int b20 : 2;
+    unsigned int b22 : 1;
+    unsigned int b23 : 2;
+    unsigned int hi : 7;
+    int f8;
+    int fC;
+    short id;
+};
+
+static inline sRS_17F500* rs_17F500(char* m) { return *(sRS_17F500**)(m + 0xE84); }
+static inline void setB23_17F500(sRS_17F500* r, int v) { r->b23 = v; }
+static inline void setB20_17F500(sRS_17F500* r, int v) { r->b20 = v; }
+static inline void setB12_17F500(sRS_17F500* r, int v) { r->b12 = v; }
+static inline void setB2_17F500(sRS_17F500* r, int v) { r->b2 = v; }
+static inline void setB22_17F500(sRS_17F500* r, int v) { r->b22 = v; }
+
+void func_0038EC40_17F500(void* self, const sVec2_17F500& p0, const sVec2_17F500& p1, const sVec4_17F500& col, float z) __asm__("func_0038EC40");
+
+extern "C" void func_0017F500(void* p, int id)
+{
+    sFirefly_17F500* self = (sFirefly_17F500*)p;
+    char* m = D_004A289C;
+    setB23_17F500(rs_17F500(m), 2);
+    setB20_17F500(rs_17F500(m), 3);
+    setB12_17F500(rs_17F500(m), 0xD);
+    setB2_17F500(rs_17F500(m), 5);
+    setB22_17F500(rs_17F500(m), 1);
+    sVec2_17F500 size(6.0f, 6.0f);
+    rs_17F500(m)->id = id;
+    for (int i = 1; i < 64; i++) {
+        const sVec2_17F500& pos = self->trail[(self->head + i) % 64];
+        float f = (float)i / 64.0f;
+        func_0038EC40_17F500(D_004A28AC, pos - size * 0.5f, pos + size * 0.5f,
+                             sVec4_17F500(f * f * 0.15f, 0.5f, f * 0.2f + 0.3f, f * (f * 0.5f)), 0.0f);
+    }
+    func_0038EC40_17F500(D_004A28AC, self->trail[self->head] - size, self->trail[self->head] + size, sVec4_17F500(0.5f, 0.25f, 0.25f, 0.5f), 0.0f);
+}
+#endif
 
 //100%
 INCLUDE_ASM("fe/debugfe", func_0017F7B8);
