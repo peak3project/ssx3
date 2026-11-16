@@ -390,7 +390,96 @@ void *func_003FDAA0(void) {
 
 INCLUDE_ASM("seg/seg_2FE810", func_003FDAB0);
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", sceGsSyncPath);
+#ifdef SKIP_ASM
+extern char D_00497648[];
+extern char D_00497728[];
+extern char D_00497758[];
+extern char D_00497788[];
+extern char D_004977B0[];
+extern char D_00497678[];
+extern char D_00497688[];
+extern char D_00497698[];
+extern char D_004976A8[];
+extern char D_004976B8[];
+extern char D_004976C8[];
+extern char D_004976D8[];
+extern char D_004976E8[];
+extern char D_004976F8[];
+extern char D_00497710[];
+extern void func_00425C60();
+// PORT: PS2-only VU0 control-register read ($vi29, VPU status).
+static inline unsigned int vu0_cfc2_vi29_gs(void)
+{
+    unsigned int v;
+    __asm__ volatile(".set noreorder\n\tcfc2.ni %0, $vi29\n\t.set reorder" : "=r"(v));
+    return v;
+}
+static inline int gs_sync_timeout(char *msg)
+{
+    func_00425C60(msg);
+    func_00425C60(D_00497678, *(volatile unsigned *)0x10009000);
+    func_00425C60(D_00497688, *(volatile unsigned *)0x10009030);
+    func_00425C60(D_00497698, *(volatile unsigned *)0x10009010);
+    func_00425C60(D_004976A8, *(volatile unsigned *)0x10009020);
+    func_00425C60(D_004976B8, *(volatile unsigned *)0x1000A000);
+    func_00425C60(D_004976C8, *(volatile unsigned *)0x1000A030);
+    func_00425C60(D_004976D8, *(volatile unsigned *)0x1000A010);
+    func_00425C60(D_004976E8, *(volatile unsigned *)0x1000A020);
+    func_00425C60(D_004976F8, *(volatile unsigned *)0x10003C00);
+    func_00425C60(D_00497710, *(volatile unsigned *)0x10003020);
+    return -1;
+}
+int sceGsSyncPath(int mode) {
+    unsigned cnt = 0;
+    unsigned r;
+    unsigned st;
+    if (mode == 0) {
+        while (*(volatile unsigned *)0x10009000 & 0x100) {
+            if (cnt++ > 0x1000000) {
+                return gs_sync_timeout(D_00497648);
+            }
+        }
+        while (*(volatile unsigned *)0x1000A000 & 0x100) {
+            if (cnt++ > 0x1000000) {
+                return gs_sync_timeout(D_00497728);
+            }
+        }
+        while (*(volatile unsigned *)0x10003C00 & 0x1F000003) {
+            if (cnt++ > 0x1000000) {
+                return gs_sync_timeout(D_00497758);
+            }
+        }
+        st = vu0_cfc2_vi29_gs();
+        while (st & 0x100) {
+            if (cnt++ > 0x1000000) {
+                return gs_sync_timeout(D_00497788);
+            }
+            st = vu0_cfc2_vi29_gs();
+        }
+        while (*(volatile unsigned *)0x10003020 & 0xC00) {
+            if (cnt++ > 0x1000000) {
+                return gs_sync_timeout(D_004977B0);
+            }
+        }
+        return 0;
+    }
+    r = 0;
+    if (*(volatile unsigned *)0x10009000 & 0x100)
+        r |= 1;
+    if (*(volatile unsigned *)0x1000A000 & 0x100)
+        r |= 2;
+    if (*(volatile unsigned *)0x10003C00 & 0x1F000003)
+        r |= 4;
+    st = vu0_cfc2_vi29_gs();
+    if (st & 0x100)
+        r |= 8;
+    if (*(volatile unsigned *)0x10003020 & 0xC00)
+        r |= 0x10;
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FDE30);
