@@ -1054,7 +1054,39 @@ void func_003FEB38(unsigned short addr, Q3EB38 v) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FEB78);
+#ifdef SKIP_ASM
+typedef int Q3EB78_i __attribute__((mode(TI)));
+typedef union { Q3EB78_i q; unsigned long d[2]; int w[4]; short h[8]; } Q3EB78;
+// PORT: PS2-only VU0: save $vi1 and $vf1 (they are borrowed for the transfer).
+static inline void vu0_save_vi1_vf1_EB78(unsigned int *vi, Q3EB78_i *vf)
+{
+    __asm__ volatile(".set noreorder\n\tcfc2.ni %0, $vi1\n\tqmfc2.ni %1, $vf1\n\t.set reorder" : "=&r"(*vi), "=&r"(*vf));
+}
+// PORT: PS2-only VU0: load the qword at VU0 data address `addr` into $vf1 through $vi1.
+static inline void vu0_load_vf1_EB78(unsigned int addr)
+{
+    __asm__ volatile(".set noreorder\n\tctc2.ni %0, $vi1\n\tvlqi.xyzw $vf1, ($vi1++)\n\t.set reorder" : : "r"(addr));
+}
+// PORT: PS2-only VU0: read $vf1, then restore the saved $vi1 and $vf1.
+static inline Q3EB78_i vu0_read_vf1_restore_EB78(unsigned int vi, Q3EB78_i vf)
+{
+    Q3EB78_i v;
+    __asm__ volatile(".set noreorder\n\tqmfc2.ni %0, $vf1\n\tctc2.ni %1, $vi1\n\tqmtc2.ni %2, $vf1\n\t.set reorder" : "=&r"(v) : "r"(vi), "r"(vf));
+    return v;
+}
+Q3EB78 f3EB78(unsigned short addr) __asm__("func_003FEB78");
+Q3EB78 f3EB78(unsigned short addr) {
+    unsigned int vi;
+    Q3EB78_i vf;
+    Q3EB78 r;
+    vu0_save_vi1_vf1_EB78(&vi, &vf);
+    vu0_load_vf1_EB78(addr);
+    r.q = vu0_read_vf1_restore_EB78(vi, vf);
+    return r;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_003FEBC0);
