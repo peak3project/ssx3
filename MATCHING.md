@@ -2,7 +2,7 @@
 
 Auto-generated from [objdiff](tools/objdiff) by diffing every unit's `obj/target` against `obj/current`. Regenerate with a dual build (`./configure.py -c -o && ninja`) followed by `python3 scripts/matching_report.py`; see [CONTRIBUTING.md](CONTRIBUTING.md).
 
-Snapshot of commit `a39da246`, generated 2026-11-16.
+Snapshot of commit `28fcbc18`, generated 2026-11-16.
 
 **Status definitions:**
 - **Matching** — byte-for-byte identical to the retail binary (100%), or a near-miss that objdiff's own report scores as matched despite a lower raw percentage (the only remaining byte difference is a relocation immediate baked in at link time by the original SN toolchain, not a real code difference — see the gp-relative note in [README.md](README.md)). Taken per function from objdiff's report; nothing is promoted to make counts agree.
@@ -11,9 +11,9 @@ Snapshot of commit `a39da246`, generated 2026-11-16.
 
 | | Count | % of total |
 |---|---|---|
-| Matching | 14,924 | 98.73% |
+| Matching | 14,926 | 98.74% |
 | Partial | 0 | 0.00% |
-| Not started | 192 | 1.27% |
+| Not started | 190 | 1.26% |
 | **Total** | **15,116** | |
 
 (Total here may differ slightly from the function count in README.md's progress table — that one comes from objdiff's own aggregate report, this one from summing every unit's individual symbol list, and the two count a handful of duplicated/weak symbols differently.)
@@ -70,9 +70,9 @@ Only files with at least one Matching or Partial function are listed here; files
 | `mem/memstd` | 95 | 0 | 1 | 96 |
 | `object/movenode` | 95 | 0 | 1 | 96 |
 | `main/debugmenu` | 94 | 0 | 0 | 94 |
+| `fe/debugfe` | 88 | 0 | 0 | 88 |
 | `sound/ssxAudio` | 87 | 0 | 1 | 88 |
 | `sound/streamsys` | 87 | 0 | 0 | 87 |
-| `fe/debugfe` | 86 | 0 | 2 | 88 |
 | `fe/festatecharequipdetail` | 86 | 0 | 3 | 89 |
 | `intersect/worldsphtree` | 86 | 0 | 0 | 86 |
 | `visualfx/boardwakefx` | 80 | 0 | 4 | 84 |
@@ -5039,10 +5039,11 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 
 ### `fe/debugfe`
 
-86 matching, 0 partial, 2 not started (88 total)
+88 matching, 0 partial, 0 not started (88 total)
 
 | Function | Status | Match % | Size |
 |---|---|---|---|
+| `cDebugMenuScreen_draw` | Matching | 100.00% | 2576 |
 | `func_0017D008` | Matching | 100.00% | 160 |
 | `func_0017D0A8` | Matching | 100.00% | 272 |
 | `func_0017D1B8` | Matching | 100.00% | 72 |
@@ -5067,12 +5068,17 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_0017E490` | Matching | 100.00% | 96 |
 | `func_0017E4F0` | Matching | 100.00% | 104 |
 | `func_0017E558` | Matching | 100.00% | 108 |
+| `func_0017E5C8` | Matching | 100.00% | 3332 |
+| `func_0017F2D0` | Matching | 100.00% | 560 |
+| `func_0017F500` | Matching | 100.00% | 692 |
 | `func_0017F7B8` | Matching | 100.00% | 128 |
 | `func_0017F838` | Matching | 100.00% | 48 |
+| `func_0017F868` | Matching | 100.00% | 500 |
 | `func_0017FA60` | Matching | 100.00% | 76 |
 | `func_0017FAB0(void*)` | Matching | 100.00% | 32 |
 | `func_0017FAD0` | Matching | 100.00% | 196 |
 | `func_0017FB98` | Matching | 100.00% | 84 |
+| `func_0017FBF0` | Matching | 100.00% | 508 |
 | `func_0017FDF0` | Matching | 100.00% | 140 |
 | `func_0017FE80(void*)` | Matching | 100.00% | 32 |
 | `func_0017FEA0(void*)` | Matching | 100.00% | 32 |
@@ -5125,10 +5131,6 @@ Every unit, including ones with no progress yet. Matching and Partial functions 
 | `func_00180840` | Matching | 100.00% | 364 |
 | `func_001809B0` | Matching | 100.00% | 220 |
 | `func_00180A90` | Matching | 100.00% | 204 |
-| `func_0017FBF0` | Matching | 99.96% | 508 |
-| `func_0017F868` | Matching | 99.96% | 500 |
-| `func_0017F2D0` | Matching | 99.75% | 560 |
-| `func_0017E5C8` | Matching | 99.72% | 3332 |
 
 ### `fe/feasyncfile`
 
