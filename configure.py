@@ -90,6 +90,10 @@ UNIT_CFLAGS = {
     # with -fexceptions, and every already-matched function in them is unchanged by it (full-build check, 2026-10-21).
     # Per-unit flags come after COMMON_CXXFLAGS, so this overrides the -fno-exceptions default.
     "main/loadscreens_prestart": "-fexceptions",
+    # Built with -fforce-addr: cDebugMenuScreen_draw's colour temporaries are stored sp-relative (not through a
+    # ctor 'this' pseudo) and func_0017F500 hoists its float constants in retail order only with it; whole unit
+    # unchanged (2026-11-16 per-unit flag sweep).
+    "fe/debugfe": "-fforce-addr",
 }
 # Fork-only: per-unit compiler. EA's embedded $gp module (ealib/seg_2D7498, 0x3D6498-0x3DBAE8) was built with an
 # older SN build, ee-gcc 2.95.3-114 (its non-leaf functions save ra with sq; 107 and 114 reproduce all 48 landed
