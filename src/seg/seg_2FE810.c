@@ -6742,7 +6742,53 @@ void d86C0(struct S86C0 *a, struct B86C0 *b, int c) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_004087D0);
+#ifdef SKIP_ASM
+/* f858 points at two 64-bit timestamp triples filled by func_00408530; f80 takes the low word. */
+struct R87D0 { char pad[0x10]; long f10; long f18; long f20; long f28; long f30; long f38; };
+struct S87D0 { char pad0[0x80]; int f80; int pad84; long f88; char pad90[0x20]; int fB0; int fB4; int fB8; int fBC; int fC0; int fC4; int fC8; int fCC; int fD0; char padD4[0xA0]; int f174; char pad178[0x6E0]; struct R87D0 *f858; };
+struct B87D0 { char pad0[0x10]; int f10; char pad14[0x14]; int f28; char pad2C[0x14]; int f40; int f44; int f48; int f4C; int f50; int f54; int f58; int f5C; int f60; };
+extern void q87_8530(struct S87D0 *, struct B87D0 *, void *, void *, void *) __asm__("func_00408530");
+extern int q87_81D8(struct S87D0 *, struct B87D0 *) __asm__("func_004081D8");
+extern int q87_9088(struct S87D0 *, struct B87D0 *) __asm__("func_00409088");
+extern int q87_8278(struct S87D0 *, struct B87D0 *) __asm__("func_00408278");
+extern void q87_8508(struct S87D0 *) __asm__("func_00408508");
+void d87D0(struct S87D0 *a, struct B87D0 *b, struct B87D0 *c) __asm__("func_004087D0");
+void d87D0(struct S87D0 *a, struct B87D0 *b, struct B87D0 *c) {
+    struct B87D0 *x, *y;
+    int n = 0;
+    if (a->f174 == 2) {
+        x = b;
+        y = c;
+        n = 0x40;
+    } else {
+        x = c;
+        y = b;
+    }
+    q87_8530(a, x, &a->f858->f10, &a->f858->f18, &a->f858->f20);
+    a->f80 = a->f858->f10;
+    a->f88 = 1;
+    q87_8530(a, y, &a->f858->f28, &a->f858->f30, &a->f858->f38);
+    a->f80 = a->f858->f28;
+    a->f88 = 1;
+    a->f858->f20 |= n;
+    a->f858->f38 |= n;
+    a->fCC = x->f5C;
+    a->fD0 = x->f60;
+    a->fB4 = x->f44;
+    a->fB8 = y->f48;
+    a->fC0 = x->f50;
+    a->fC4 = y->f54;
+    if (q87_81D8(a, b) && b->f28 == 1 && c->f28 == 1) {
+        b->f10 <<= 1;
+        if (a->fB0 != 0) q87_9088(a, b);
+        else q87_8278(a, b);
+        b->f10 >>= 1;
+        q87_8508(a);
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00408988);
