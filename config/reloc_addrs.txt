@@ -119,3 +119,16 @@ rom:0x5C684 reloc:MIPS_HI16 symbol:D_004A6680
 rom:0x5C6A8 reloc:MIPS_LO16 symbol:D_004A6680
 rom:0x5C798 reloc:MIPS_HI16 symbol:D_004A6720
 rom:0x5C7FC reloc:MIPS_LO16 symbol:D_004A6720
+// seg/seg_1D3510 func_002D2988: four raw `lui $r, (0x4D0000 >> 16)` / `0x4xxx($r)` pairs to the colour tables, and a
+// raw `swc1 $f7, 0x5390($12)` whose base holds %hi(D_004D5390) (its sibling `addiu %lo(D_004D5390)` is relocated).
+// The D_004D4EB0 %lo at rom 0x1D3BDC is on $8, a daddu copy of the %hi register $5.
+rom:0x1D3AE0 reloc:MIPS_HI16 symbol:D_004D4EA0
+rom:0x1D3C00 reloc:MIPS_LO16 symbol:D_004D4EA0
+rom:0x1D3AF8 reloc:MIPS_HI16 symbol:D_004D4F10
+rom:0x1D3C70 reloc:MIPS_LO16 symbol:D_004D4F10
+rom:0x1D3B24 reloc:MIPS_HI16 symbol:D_004D5120
+rom:0x1D3C7C reloc:MIPS_LO16 symbol:D_004D5120
+rom:0x1D3B40 reloc:MIPS_HI16 symbol:D_004D4EB0
+rom:0x1D3BDC reloc:MIPS_LO16 symbol:D_004D4EB0
+rom:0x1D3C78 reloc:MIPS_LO16 symbol:D_004D4EB0
+rom:0x1D4604 reloc:MIPS_LO16 symbol:D_004D5390
