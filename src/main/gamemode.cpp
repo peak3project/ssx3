@@ -1493,7 +1493,34 @@ extern "C" void func_0023B070(void* self, cGameModeStream* s)
 }
 #endif
 
+//100%
 INCLUDE_ASM("main/gamemode", func_0023B0A8);
+#ifdef SKIP_ASM
+// Character ID of rider i.
+static inline int GetCharID_B0A8(cGameModeMan* gm, int i) { return gm->a18[i]; }
+
+extern "C" void func_0023B0A8(void* self)
+{
+    int arr[10];
+    int i;
+    for (i = 0; i < 10; i++) {
+        arr[i] = i;
+    }
+    func_0023C770(arr, 10);
+    int n = 2;
+    for (i = 0; i < 10; i++) {
+        // asymmetric as in the original: rider 0 through the getter, rider 1 read directly
+        if (arr[i] != GetCharID_B0A8(D_004A2C70, 0) && arr[i] != D_004A2C70->a18[1]) {
+            if (n >= 10) {
+                break;
+            }
+            D_004A2C70->a18[n] = arr[i];
+            D_004A2C70->a40[n] = 0;
+            n++;
+        }
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("main/gamemode", func_0023B170);
