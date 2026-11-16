@@ -7561,7 +7561,39 @@ int func_0040B028(int a, int b, char *s) {
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040B130);
+#ifdef SKIP_ASM
+struct E_B130 { char pad[0x10]; int f10; int f14; int f18; char pad2[0x24]; };
+struct S_B130 { int f0; struct E_B130 *tab; int n; int fC; int f10; };
+extern int D_004533E0[];
+extern struct S_B130 gB130 __asm__("D_00528FC0");
+extern struct E_B130 gB130_tab[] __asm__("D_005287C0");
+extern int sb_C078() __asm__("func_0042C078");
+extern void func_0042C0C0(void);
+extern void sb_B2D0(void) __asm__("func_0040B2D0");
+extern void sb_6020(int, void (*)(void), void *) __asm__("func_00426020");
+extern int sb_61B0(unsigned, void *, int, int, int, int) __asm__("func_004261B0");
+extern int func_00425CF0(int);
+void func_0040B130(void) {
+    struct E_B130 *e;
+    if (D_004533E0[0] == 0) {
+        D_004533E0[0] = 1;
+        sb_C078();
+        gB130.n = 0x20;
+        gB130.tab = (struct E_B130 *)((unsigned)gB130_tab | 0x20000000);
+        gB130.f0 = 1;
+        gB130.fC = 0;
+        gB130.f10 = 0;
+        sb_6020(0x80000018, sb_B2D0, &gB130);
+        func_0042C0C0();
+        e = &gB130_tab[1];
+        e->f14 = e->f10 = 1;
+        sb_61B0(0x80000001, e, 0x18, 0, 0, 0);
+        while (!func_00425CF0(1));
+    }
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_0040B1F8);
