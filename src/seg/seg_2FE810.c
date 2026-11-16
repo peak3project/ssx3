@@ -4161,7 +4161,141 @@ void func_00404050(int *p, int bx, int by, int type, int mt, int *mv, int *sel, 
 }
 #endif
 
+//100%
 INCLUDE_ASM("seg/seg_2FE810", func_00404758);
+#ifdef SKIP_ASM
+struct B4758 { char *addr; int f4; int f8; int fC; int f10; char *f14; char *f18; };
+struct E4758 {
+    char *buf;
+    void *src;
+    char *ref0[4];
+    char *ref1[4];
+    void (*fa[4])(void *);
+    void (*fb[4])(void *);
+    struct B4758 blk[8];
+    void *dst;
+    int count;
+    int f130;
+    int pad134;
+    int enable;
+    int f13C;
+};
+struct S4758 { char pad0[0x590]; struct E4758 e[2]; int cur; int pad814[2]; char *base; };
+/* reference picture: data is the frame address as an int (func_00404050 passes p[110] and does the same
+   p[0] + mb * 0x180 arithmetic); mbh = height in macroblocks */
+struct P4758 { int data; int pad4[3]; int mbh; };
+extern void (*D_00453280[])(void *);
+extern void (*D_004532A0[])(void *);
+void func_00404758(struct S4758 *s, struct P4758 *ref, int sfield, int dfield, int yoff, int h, int bx, int by,
+                   int dx, int dy, int fld, int avg) {
+    int xh;
+    char *base = s->base;
+    int y;
+    int cdx;
+    int cmbx;
+    int mbx;
+    int cmby;
+    int n;
+    char *cbuf;
+    int yh;
+    int idx;
+    int cyoff;
+    int x;
+    int ch;
+    struct B4758 *b1;
+    int k;
+    int mb;
+    struct B4758 *b0;
+    int mby;
+    char *buf;
+    int cdy;
+
+    k = s->e[s->cur].count;
+    b0 = &s->e[s->cur].blk[k];
+    x = (dx >> 1) + bx;
+    b1 = &s->e[s->cur].blk[k + 4];
+    if (fld)
+        y = ((dy >> 1) << 1) + (by + (yoff + sfield));
+    else
+        y = (dy >> 1) + (by + (yoff + sfield));
+    mbx = x >> 4;
+    mby = y >> 4;
+    xh = dx & 1;
+    mb = mbx * ref->mbh + mby;
+    y = y - (mby << 4);
+    b0->f4 = x - (mbx << 4);
+    yh = dy & 1;
+    b0->addr = base + (dfield + yoff) * 0x20;
+    if (yh) {
+        if (y + (h << fld) > 15) {
+            n = (16 >> fld) - (y >> fld) - 1;
+            b0->f8 = n;
+            b0->fC = h - n;
+        } else {
+            b0->f8 = h;
+            b0->fC = 0;
+        }
+    } else {
+        if (y + (h << fld) > 16) {
+            n = (16 >> fld) - (y >> fld);
+            b0->f8 = n;
+            b0->fC = h - n;
+        } else {
+            b0->f8 = h;
+            b0->fC = 0;
+        }
+    }
+    buf = s->e[s->cur].buf + k * 0x600;
+    b0->f14 = buf + y * 16;
+    b0->f18 = buf + 0x300 + y * 16;
+    b0->f10 = 16 << fld;
+    cdx = dx / 2;
+    cdy = dy / 2;
+    idx = avg << 2 | xh << 1 | yh;
+    cyoff = yoff >> 1;
+    ch = h >> 1;
+    x = (cdx >> 1) + (bx >> 1);
+    if (fld)
+        y = ((cdy >> 1) << 1) + ((by >> 1) + (cyoff + sfield));
+    else
+        y = (cdy >> 1) + ((by >> 1) + (cyoff + sfield));
+    xh = cdx & 1;
+    cmby = y >> 3;
+    cmbx = x >> 3;
+    y = y - (cmby << 3);
+    yh = cdy & 1;
+    b1->f4 = x - (cmbx << 3);
+    b1->addr = base + ((dfield + cyoff) * 0x10 + 0x200);
+    if (yh) {
+        if (y + (ch << fld) > 7) {
+            n = (8 >> fld) - (y >> fld) - 1;
+            b1->f8 = n;
+            b1->fC = ch - n;
+        } else {
+            b1->f8 = ch;
+            b1->fC = 0;
+        }
+    } else {
+        if (y + (ch << fld) > 8) {
+            n = (8 >> fld) - (y >> fld);
+            b1->f8 = n;
+            b1->fC = ch - n;
+        } else {
+            b1->f8 = ch;
+            b1->fC = 0;
+        }
+    }
+    cbuf = ((cmbx - mbx) * 2 + (cmby - mby)) * 0x180 + buf;
+    b1->f14 = cbuf + (y * 8 + 0x100);
+    b1->f18 = cbuf + (y * 8 + 0x400);
+    b1->f10 = 8 << fld;
+    s->e[s->cur].ref0[k] = (char *)(ref->data + mb * 0x180);
+    s->e[s->cur].fa[k] = D_00453280[idx];
+    s->e[s->cur].ref1[k] = (char *)((mb + ref->mbh) * 0x180 + ref->data);
+    s->e[s->cur].fb[k] = D_004532A0[avg << 2 | xh << 1 | yh];
+    s->e[s->cur].count++;
+}
+#endif
 
 //100%
 INCLUDE_ASM("seg/seg_2FE810", func_00404B78);
