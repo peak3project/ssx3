@@ -165,11 +165,11 @@ extern "C" void func_00268AB8(void* self, void* a1, int a2)
 INCLUDE_ASM("bx/bxstringctor", func_00268AE0);
 #ifdef SKIP_ASM
 extern sShortPad16 D_004A2FC0;
-extern "C" void func_00259A60(int);
+extern "C" void func_00259A60(int self, void* msg);
 
 extern "C" void func_00268AE0(void* self, void* a1, int a2)
 {
-    func_00259A60(a2 + D_004A2FC0.v);
+    func_00259A60(a2 + D_004A2FC0.v, a1);
 }
 #endif
 
@@ -189,11 +189,11 @@ extern "C" void func_00268B08(void* self, void* a1, char* a2)
 INCLUDE_ASM("bx/bxstringctor", func_00268B30);
 #ifdef SKIP_ASM
 extern sShortPad16 D_004A2FF8;
-extern "C" void func_00259B10(int);
+extern "C" void func_00259B10(int self, void* msg);
 
 extern "C" void func_00268B30(void* self, void* a1, int a2)
 {
-    func_00259B10(a2 + D_004A2FF8.v);
+    func_00259B10(a2 + D_004A2FF8.v, a1);
 }
 #endif
 
@@ -285,11 +285,11 @@ extern "C" void func_00268C48(void* self, void* a1, int a2)
 INCLUDE_ASM("bx/bxstringctor", func_00268C70);
 #ifdef SKIP_ASM
 extern sShortPad16 D_004A30E8;
-extern "C" void func_0025C8A8(int);
+extern "C" void func_0025C8A8(int self, void* msg);
 
 extern "C" void func_00268C70(void* self, void* a1, int a2)
 {
-    func_0025C8A8(a2 + D_004A30E8.v);
+    func_0025C8A8(a2 + D_004A30E8.v, a1);
 }
 #endif
 
@@ -501,11 +501,11 @@ extern "C" void func_00268F18(void* self, void* a1, int a2)
 INCLUDE_ASM("bx/bxstringctor", func_00268F40);
 #ifdef SKIP_ASM
 extern sShortPad16 D_004A3348;
-extern "C" void func_00261A28(int);
+extern "C" void func_00261A28(int self, void* msg);
 
 extern "C" void func_00268F40(void* self, void* a1, int a2)
 {
-    func_00261A28(a2 + D_004A3348.v);
+    func_00261A28(a2 + D_004A3348.v, a1);
 }
 #endif
 
@@ -513,11 +513,11 @@ extern "C" void func_00268F40(void* self, void* a1, int a2)
 INCLUDE_ASM("bx/bxstringctor", func_00268F68);
 #ifdef SKIP_ASM
 extern sShortPad16 D_004A3350;
-extern "C" void func_00261770(int);
+extern "C" void func_00261770(int self, void* msg);
 
 extern "C" void func_00268F68(void* self, void* a1, int a2)
 {
-    func_00261770(a2 + D_004A3350.v);
+    func_00261770(a2 + D_004A3350.v, a1);
 }
 #endif
 
@@ -1679,14 +1679,14 @@ int func_00269EC0(void* self)
 //100%
 INCLUDE_ASM("bx/bxstringctor", func_00269ED8);
 #ifdef SKIP_ASM
-extern "C" void func_0026BA68(void* p);
+extern "C" void func_0026BA68(void* dst, void* src);
 
-extern "C" void func_00269ED8(void* self, int a1, int id)
+extern "C" void func_00269ED8(void* self, void* src, int id)
 {
     if (id == 0x64) {
-        func_0026BA68((char*)self + 0x38);
+        func_0026BA68((char*)self + 0x38, src);
     } else if (id == 0x65) {
-        func_0026BA68((char*)self + 0x3C);
+        func_0026BA68((char*)self + 0x3C, src);
     }
 }
 #endif
@@ -1775,15 +1775,15 @@ void func_0026A068(void* self)
 }
 #endif
 
-extern "C" void func_0026BA88(void*);
+extern "C" void func_0026BA88(void* dst, void* src);
 
 //100%
 INCLUDE_ASM("bx/bxstringctor", func_0026A070);
 #ifdef SKIP_ASM
-extern "C" void func_0026A070(void* self, int a1, int a2)
+extern "C" void func_0026A070(void* self, void* src, int a2)
 {
     if (a2 == 0) {
-        func_0026BA88((char*)self + 0x38);
+        func_0026BA88((char*)self + 0x38, src);
     }
 }
 #endif
@@ -1865,8 +1865,6 @@ extern "C" float func_0026A138(sBXTab_A138* self)
 //100%
 INCLUDE_ASM("bx/bxstringctor", func_0026A180);
 #ifdef SKIP_ASM
-// PORT: func_0026BA68 takes (dst, src); the unit declares it with one arg
-void func_0026BA68_A180(void* dst, void* src) __asm__("func_0026BA68");
 extern "C" void func_0026BA48(void* p, void* q);
 extern "C" void func_0026A338(void* self, void* src, void* dst);
 extern "C" void func_0026A378(void* self, char* src, int* dst);
@@ -1895,22 +1893,22 @@ extern "C" int func_0026A180(sBXStr_26A180* self, char* src)
     int c;
     sVE0_26A180* vt0 = (sVE0_26A180*)self->vt;
     vt0[3].fn((char*)self + vt0[3].delta);
-    func_0026BA68_A180(&n, src);
+    func_0026BA68(&n, src);
     src += 4;
     for (int i = 0; i < n; i++)
     {
-        func_0026BA68_A180(&a, src);
+        func_0026BA68(&a, src);
         src += 4;
-        func_0026BA68_A180(&b, src);
+        func_0026BA68(&b, src);
         src += 4;
         sVE1_26A180* vt1 = (sVE1_26A180*)self->vt;
         vt1[4].fn((char*)self + vt1[4].delta, src, a, b);
         src += b;
     }
-    func_0026BA68_A180(&c, src);
+    func_0026BA68(&c, src);
     src += 4;
     self->count1 = c;
-    func_0026BA68_A180(&c, src);
+    func_0026BA68(&c, src);
     src += 4;
     self->count2 = c;
     func_0026BA48(self->vecA, src);
@@ -1939,28 +1937,24 @@ extern "C" int func_0026A180(sBXStr_26A180* self, char* src)
 INCLUDE_ASM("bx/bxstringctor", func_0026A338);
 #ifdef SKIP_ASM
 extern "C" void func_0026BA48(void* p, void* q);
-// PORT: func_0026BA88 takes (dst, src); the unit declares it with one arg
-void func_0026BA88_2(void* dst, void* src) __asm__("func_0026BA88");
 
 extern "C" void func_0026A338(void* self, void* src, void* dst)
 {
     func_0026BA48(dst, src);
-    func_0026BA88_2((char*)dst + 0xC, (char*)src + 0xC);
+    func_0026BA88((char*)dst + 0xC, (char*)src + 0xC);
 }
 #endif
 
 //100%
 INCLUDE_ASM("bx/bxstringctor", func_0026A378);
 #ifdef SKIP_ASM
-// PORT: func_0026BA68 takes (dst, src); the unit declares it with one arg
-void func_0026BA68_K2(void* dst, void* src) __asm__("func_0026BA68");
 extern int D_004453D0[];
 
 extern "C" void func_0026A378(void* self, char* src, int* dst)
 {
     int key;
     int i;
-    func_0026BA68_K2(&key, src);
+    func_0026BA68(&key, src);
     src += 4;
     *dst = 0;
     for (i = 0; i < 21; i++) {
@@ -1969,10 +1963,10 @@ extern "C" void func_0026A378(void* self, char* src, int* dst)
             break;
         }
     }
-    func_0026BA68_K2(dst + 1, src);
+    func_0026BA68(dst + 1, src);
     src += 4;
-    func_0026BA88_2(dst + 2, src);
-    func_0026BA88_2(dst + 3, src + 4);
+    func_0026BA88(dst + 2, src);
+    func_0026BA88(dst + 3, src + 4);
 }
 #endif
 
@@ -2661,8 +2655,6 @@ extern "C" int func_0026ADE8(void *arg0) {
 //100%
 INCLUDE_ASM("bx/bxstringctor", func_0026ADF0);
 #ifdef SKIP_ASM
-// PORT: func_0026BA68 takes (dst, src); the unit declares it with one arg
-void func_0026BA68_2(void* dst, void* src) __asm__("func_0026BA68");
 extern "C" int func_0026B410(void* self, char* p);
 extern "C" int cPathSys_resolvePaths(void* self, char* p);
 extern "C" int func_0026B7D8(void* self, char* p);
@@ -2675,7 +2667,7 @@ extern "C" void func_0026ADF0(void* self)
     *(int*)((char*)self + 0x8) = 0;
     *(int*)((char*)self + 0x10) = 0;
     *(int*)((char*)self + 0x0) = 0;
-    func_0026BA68_2(&header, p);
+    func_0026BA68(&header, p);
     p += 4;
     p += func_0026B410(self, p);
     p += cPathSys_resolvePaths(self, p);
@@ -2690,8 +2682,6 @@ INCLUDE_ASM("bx/bxstringctor", func_0026AE70);
 void cMemMan_free(void*);
 extern "C" void func_0026ADA8(void* self, int arg1);
 extern "C" int func_003E22F0(int, int);
-// PORT: func_0026BA68 takes (dst, src); the unit declares it with one arg
-void func_0026BA68_3(void* dst, void* src) __asm__("func_0026BA68");
 extern "C" int func_0026B410(void* self, char* p);
 extern "C" int cPathSys_resolvePaths(void* self, char* p);
 
@@ -2707,7 +2697,7 @@ extern "C" void func_0026AE70(void* self, int arg1)
     *(int*)((char*)self + 0x48) = 0;
     char* p = (char*)func_003E22F0(arg1, 0);
     *(char**)((char*)self + 0x48) = p;
-    func_0026BA68_3(&header, p);
+    func_0026BA68(&header, p);
     p += 4;
     p += func_0026B410(self, p);
     cPathSys_resolvePaths(self, p);
