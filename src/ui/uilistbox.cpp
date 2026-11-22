@@ -304,13 +304,13 @@ extern "C" void func_0039A928(char* self, int on)
 //100%
 INCLUDE_ASM("ui/uilistbox", func_0039AAC0);
 #ifdef SKIP_ASM
-extern "C" void* func_0039FE00(void* self);
+extern "C" void func_0039FE00(void* self, void* data);
 extern "C" char func_003979C0(void*);
 extern "C" void func_0039AB00(void* self, char a1);
 
-extern "C" void func_0039AAC0(void* self)
+extern "C" void func_0039AAC0(void* self, void* data)
 {
-    func_0039FE00(self);
+    func_0039FE00(self, data);
     char v = func_003979C0((char*)self + 0x74);
     *(char*)((char*)self + 0x97) = v;
     *(char*)((char*)self + 0x96) = v;
