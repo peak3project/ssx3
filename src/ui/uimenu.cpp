@@ -827,9 +827,12 @@ extern "C" void func_0039C240(void* self, int flags)
 //100%
 INCLUDE_ASM("ui/uimenu", func_0039C2C8);
 #ifdef SKIP_ASM
-extern "C" void func_0039C2C8(void* self)
+// PORT: func_0039FE00 really takes (self, data); the unit declares it with one argument.
+void func_0039FE00_2(void* self, void* data) __asm__("func_0039FE00");
+
+extern "C" void func_0039C2C8(void* self, void* data)
 {
-    func_0039FE00(self);
+    func_0039FE00_2(self, data);
     *(int*)((char*)self + 0x80) = 10;
     *(int*)((char*)self + 0x84) = 100;
 }
