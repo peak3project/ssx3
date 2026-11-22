@@ -1212,12 +1212,12 @@ extern "C" void func_002B6AE0(int* self, int flags)
 //100%
 INCLUDE_ASM("sound/icepick/worldtriggermanager", func_002B6B08);
 #ifdef SKIP_ASM
-extern "C" void func_002B6B50(void*);
+extern "C" void func_002B6B50(void* self, void* hdr);
 
-extern "C" int func_002B6B08(void* self, int a1)
+extern "C" int func_002B6B08(void* self, void* hdr)
 {
-    if (a1 != 0) {
-        func_002B6B50(self);
+    if (hdr != 0) {
+        func_002B6B50(self, hdr);
     }
     return 1;
 }
